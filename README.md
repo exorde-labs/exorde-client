@@ -28,7 +28,7 @@ Then install the required packages to run Launcher.py
 
  *Correct usage example:*
 
-    -m 0x0F67059ea5c125104E46B46769184dB6DC405C42,
+    -m 0x0F67059ea5c125104E46B46769184dB6DC405C42
 
   **0x... must be a VALID Ethereum Address (with the checksum format, lower &  uppercase, in case of doubt, copy paste from Etherscan, you must include the 0x prefix)**   
 
