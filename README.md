@@ -18,7 +18,7 @@ Then install the required packages to run Launcher.py
 
 **Launch the software with the following example:**
 
-    python Launcher.py -m 0x..... -l 2
+    python Launcher.py -m 0x0F67059ea5c125104E46B46769184dB6DC405C42 -l 2
 
 **Usage: python Launcher.py [-h] -m MAIN_ADDRESS [-l LOGGING]**
 
