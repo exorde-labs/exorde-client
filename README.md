@@ -64,8 +64,11 @@ For example, if you run Launcher.py it with -l 2 (moderate amount of logs), you 
 > Exorder!', 'lastUpdate': '1.3.1'}}
 >  [Init] FIRST WORKER LAUNCH
 >  [Init] New Worker Local Address =  0x4A94c5D4C49597cd889eB569D0Bf4d6e2aC3aE29
+
 > [Init] First funding of the worker wallet [Initial Auto Faucet] Top up
+
 > sFuel & some EXDT to worker address... 
+
 > [Faucet] selecting Auto-Faucet ...
 
 The module is autonomous.
