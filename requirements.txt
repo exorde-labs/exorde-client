@@ -218,7 +218,7 @@ varint
 w3lib	
 watchdog	
 wcwidth	
-web3	
+web3==5.*
 webencodings	
 websockets	
 wget	
