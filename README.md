@@ -26,9 +26,13 @@ On Ubuntu/Linux distributions:
 
 
 Make sure to be at the root of the folder.
+
 **cd ExordeModuleCLI/**
+
 Then install the required packages to run Launcher.py
     pip install -r requirements.txt
+ 
+This should install all the packages. The Launcher.py is now ready to be launched with the right arguments (your main Ethereum wallet address & level of logging)
 
 **Launch the software with the following example:**
 
@@ -54,9 +58,7 @@ Then install the required packages to run Launcher.py
 **Some packages might be missing, you can install then with pip: (it might be needed if your pip version is broken/outdated, etc)**
 
 pip install eth-account fasttext-langdetect facebook_scraper
-pip install geopy iso369 Pillow
-pip install apache-libcloud
-pip install ...
+pip install geopy iso369
 
 ## When running
 
