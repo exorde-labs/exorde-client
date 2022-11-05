@@ -2,14 +2,28 @@
 # Exorde Participation Module CLI v1.3.1
 
 [ This is a work in progress ] 
-[ only for experienced linux users ]
 
 ## Instructions
 
 **The software is written with Python 3.9.**
 
-**Please create a new virtual conda environment with Python 3.9 as the environment executable.**
-Activate the environment, then:
+**Please create a new virtual conda environment with Python 3.9 as the environment executable. (exorde-env is an example name)**
+
+    conda create --name exorde-env python=3.9
+ 
+
+Activate the environment:
+
+    conda activate exorde-env
+
+Upgrade Pip, On Windows the recommended command is:
+
+    python -m pip install --upgrade pip
+    
+On Ubuntu/Linux distributions:
+
+    pip install --upgrade pip
+
 
 Make sure to be at the root of the folder.
 **cd ExordeModuleCLI/**
