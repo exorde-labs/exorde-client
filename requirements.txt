@@ -35,7 +35,7 @@ geopy==2.*
 hexbytes==0.*
 idna==3.*
 importlib-metadata==5.*
-ipfshttpclient==0.8.*
+ipfshttpclient==0.*
 iso-639==0.4.*
 jellyfish==0.9.*
 jmespath==1.0.*
@@ -83,7 +83,7 @@ tzlocal==4.*
 urllib3==1.*
 varint==1.*
 w3lib==2.*
-web3==5.*
+web3==5.31.*
 websockets==10.*
 wget==3.*
 wheel==0.*
