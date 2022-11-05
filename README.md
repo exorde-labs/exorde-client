@@ -30,6 +30,7 @@ Make sure to be at the root of the folder.
 **cd ExordeModuleCLI/**
 
 Then install the required packages to run Launcher.py
+
     pip install -r requirements.txt
  
 This should install all the packages. The Launcher.py is now ready to be launched with the right arguments (your main Ethereum wallet address & level of logging)
