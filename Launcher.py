@@ -15,15 +15,14 @@ import facebook_scraper  as fb
 from functools import partial
 from ftlangdetect import detect
 detect.eprint = lambda x: None
-
 from geopy.geocoders import Nominatim
 import html
-from idlelib.tooltip import Hovertip
+# from idlelib.tooltip import Hovertip
 from iso639 import languages
 import itertools
 import json
-import keyboard
-import libcloud
+# import keyboard
+# import libcloud
 from lxml.html.clean import Cleaner
 import numpy as np
 from operator import itemgetter
@@ -31,8 +30,8 @@ import os
 import pandas as pd
 from pathlib import Path
 import pickle
-from PIL import Image, ImageTk, ImageFile
-from plyer import notification
+# from PIL import Image, ImageTk, ImageFile
+# from plyer import notification
 import pytz
 from queue import Queue
 import random
@@ -41,7 +40,7 @@ import requests
 from requests_html import HTML
 from requests_html import HTMLSession
 from scipy.special import softmax, expit
-import shutils
+# import shutils
 import snscrape.modules
 import string
 import sys
