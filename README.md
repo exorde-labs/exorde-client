@@ -78,6 +78,6 @@ The module is autonomous.
 ## Spontaneous updates
 
 Sometimes, Exorde Labs needs to push some update in the code. The module will detect it, and kill itself.
-You then have to run it again. This is important for the Exorde Network to remain hommogenous, so older versions have to be killed right away.
+This is important for the Exorde Network to remain hommogenous, so older versions have to be killed right away.
 
 When this happens, the module will print a message & shut down.
