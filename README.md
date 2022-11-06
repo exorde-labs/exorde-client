@@ -4,8 +4,15 @@
 [ This is a work in progress ] 
 
 ## Instructions
+You have two choices to run the Exorde CLI : 
+- create a **Conda** virtual environment: [conda guide](#conda)
+- use **Docker** to build and run a container: [docker guide](#docker)
+
+## Conda
 
 **The software is written with Python 3.9.**
+
+### Install
 
 **Please create a new virtual conda environment with Python 3.9 as the environment executable. (exorde-env is an example name)**
 
@@ -24,46 +31,123 @@ On Ubuntu/Linux distributions:
 
     pip install --upgrade pip
 
+Make sure to be at the root of the folder:
 
-Make sure to be at the root of the folder.
+    cd ExordeModuleCLI
 
-**cd ExordeModuleCLI/**
-
-Then install the required packages to run Launcher.py
+Then install the required packages to run Launcher.py:
 
     pip install -r requirements.txt
- 
+
 This should install all the packages. The Launcher.py is now ready to be launched with the right arguments (your main Ethereum wallet address & level of logging)
 
-**Launch the software with the following example:**
+### Run
+
+Run the program:
+
+    python Launcher.py -m YOUR_MAIN_ADDRESS -l LOGGING
+
+ *Usage example:* 
 
     python Launcher.py -m 0x0F67059ea5c125104E46B46769184dB6DC405C42 -l 2
 
-**Usage: python Launcher.py [-h] -m MAIN_ADDRESS [-l LOGGING]**
+For more informations about command-line arguments go to [arguments section.](#command-line-arguments) 
 
- -m MAIN_ADDRESS, --main-address MAIN_ADDRESS
-**Main Ethereum Address, which will get all REP & EXDT for this local worker contribution. Exorde Reputation is
- non-transferable.**
+ **Some packages might be missing, you can install then with pip: (it might be needed if your pip version is broken/outdated, etc)**
 
- *Correct usage example:*
+    pip install eth-account fasttext-langdetect facebook_scraper
+    pip install geopy iso369
+
+## Docker  
+
+### Docker install
+First you need to have Docker installed on your machine. 
+
+You can install Docker server or docker desktop [here.](https://docs.docker.com/engine/install/)
+
+Check you have docker correctly installed by typing on your terminal: 
+
+    docker --version
+
+If it's the case you'll have something like that in output:  
+
+    Docker version 20.10.20, build 9fdeb9c
+
+### Build
+You have to build the docker image only once, then you can skip this step and go directly to next section.
+
+Make sure to be at the root of the folder:
+
+    cd ExordeModuleCLI
+
+Build the docker image once (this may take some time depending on your internet connection):
+
+    docker build -t exorde-cli . 
+
+### Run 
+
+Run the program: 
+
+    docker run -it exorde-cli -m YOUR_MAIN_ADDRESS -l LOGGING
+
+*Usage example:* 
+
+    docker run -it exorde-cli -m 0x0F67059ea5c125104E46B46769184dB6DC405C42 -l 2
+
+For more informations about command-line arguments go to [arguments section.](#command-line-arguments) 
+
+## Command Line arguments
+This section gives you all the arguments you can pass to the command line.
+
+### Main address
+**Main Ethereum Address, which will get all REP & EXDT for this local worker contribution.**
+**Exorde Reputation is non-transferable.**
+
+> -m MAIN_ADDRESS, --main-address MAIN_ADDRESS
+
+ *Correct usage examples:*
 
     -m 0x0F67059ea5c125104E46B46769184dB6DC405C42
+or 
+    
+    --main-address=0x0F67059ea5c125104E46B46769184dB6DC405C42
 
-  **0x... must be a VALID Ethereum Address (with the checksum format, lower &  uppercase, in case of doubt, copy paste from Etherscan, you must include the 0x prefix)**   
+  **0x... must be a VALID Ethereum Address (with the checksum format, lower &  uppercase, in case of doubt, copy paste from Etherscan, you must include the 0x prefix)**  
 
--l,  --logging LOGGING
+### Logging 
+**Level of logging wanted in console output.** 
 
-    level of logging in the console: 0 = no logs, 1 = general logs, 2 = validation logs, 3 = validation + scraping logs, 4 = detailed validation + scraping logs (e.g. for troubleshooting)
+> -l,  --logging LOGGING
 
+Possible values: 
+- 0 = no logs, 
+- 1 = general logs
+- 2 = validation logs
+- 3 = validation + scraping logs
+- 4 = detailed validation + scraping logs (e.g. for troubleshooting)
 
-**Some packages might be missing, you can install then with pip: (it might be needed if your pip version is broken/outdated, etc)**
+*Correct usage examples:*
 
-pip install eth-account fasttext-langdetect facebook_scraper
-pip install geopy iso369
+    -l 2
+or
+    
+    --logging=2
+
+### Help 
+**Help command to see all arguments.** 
+
+> -h,  --help
+
+*Correct usage examples:*
+
+    -h
+or
+    
+    --help
 
 ## When running
 
-For example, if you run Launcher.py it with -l 2 (moderate amount of logs), you should see this in the console:
+For example, if you run in conda mode with -l 2 (moderate amount of logs), you should see this in the console:
 
 > (my_env) \...\user\ExordeModuleCLI>python Launcher.py -m 0x0000000000000000000000000000000000000001 -l 2 
 > 
