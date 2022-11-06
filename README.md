@@ -5,8 +5,8 @@
 
 ## Instructions
 You have two choices to run the Exorde CLI : 
-- create a **Conda** virtual environment 
-- use **Docker** to build and run a container
+- create a **Conda** virtual environment: [conda guide](#conda)
+- use **Docker** to build and run a container:[docker guide](#docker)
 
 ## Conda
 
