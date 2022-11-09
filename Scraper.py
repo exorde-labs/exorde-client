@@ -281,9 +281,17 @@ class Scraper():
                             self.threads.append(a)
                             
                     if(len(self.keywords) > 0):
-                        time.sleep(2.5*60)
+                        try:
+                            delay = int(_contract.functions.get("autoScrapingFrequency").call())
+                            time.sleep(delay)
+                        except:
+                            time.sleep(20*60)
                     else:
-                        time.sleep(2.5*60)
+                        try:
+                            delay = int(_contract.functions.get("autoScrapingFrequency").call())
+                            time.sleep(delay)
+                        except:
+                            time.sleep(20*60)
                 except Exception as e:
                     #print("inner manage_scraping", e)
                     pass
@@ -302,7 +310,7 @@ class Scraper():
                 exd_token = "bitcoin"
 
             if scrape_printing_enabled:
-                print("[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"COLLECT DATA", "scrape", "KEYWORDS  = [{}]\n".format(exd_token)))
+                print("[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"COLLECT DATA", "scrape", "KEYWORDS SELECTED = [{}]\n".format(exd_token)))
             if(exd_token not in keywords):
                 keywords.append(exd_token)
 
@@ -580,14 +588,12 @@ class Scraper():
                     
                     
                     for post in posts:
-
                         break
                         #try:
                         tr_post = dict()
                         
                         tr_post["internal_id"] = post["id"]
                         tr_post["internal_parent_id"] = post["parent_id"] if post["parent_id"] != None else 0
-                        
                         
                         
                         tr_post["domainName"] = "reddit.com"
