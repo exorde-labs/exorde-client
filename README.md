@@ -76,6 +76,10 @@ If it's the case you'll have something like that in output:
 ### Build
 You have to build the docker image only once, then you can skip this step and go directly to next section.
 
+Clone the github repository:
+
+    git clone https://github.com/exorde-labs/ExordeModuleCLI.git
+
 Make sure to be at the root of the folder:
 
     cd ExordeModuleCLI
