@@ -47,6 +47,8 @@ class Validator():
         self._blacklist = get_blacklist("QmT4PyxSJX2yqYpjypyP75PR7FacBQDyES4Mdvg8m5Hrxj")        
         self._contract = self.app.cm.instantiateContract("DataSpotting")
 
+        self._rewardsInfoLastTimestamp = 0
+
         self._isApproved = False
         self._isRegistered = False
         self._isRunning = False
@@ -66,6 +68,20 @@ class Validator():
         self.batchLength = 0
         self.gateWays = requests.get("https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/ipfs_gateways.txt").text.split("\n")
         
+        now_ts = time.time()
+        delay_between_rewardsInfo = 10*60 #10 min
+        try:
+            if general_printing_enabled:
+                if ( now_ts -self._rewardsInfoLastTimestamp ) > delay_between_rewardsInfo or self._rewardsInfoLastTimestamp == 0: 
+                    main_addr = self.app.localconfig["ExordeApp"]["MainERCAddress"]        
+                    exdt_rewards = round(self.app.cm.instantiateContract("RewardsManager").functions.RewardsBalanceOf(main_addr).call()/(10**18),2)
+                    rep_amount = round(self.app.cm.instantiateContract("Reputation").functions.balanceOf(main_addr).call()/(10**18),2)
+                    print("[CURRENT REWARDS & REP] Main Address {}, REP = {} and EXDT Rewards = {} ".format(str(main_addr), rep_amount, exdt_rewards))
+                    self._rewardsInfoLastTimestamp = now_ts
+        except:
+            time.sleep(2)
+            pass
+
         if validation_printing_enabled:
             print("[Validation] sub routine instancied")
         self.totalNbBatch = 0
@@ -111,8 +127,10 @@ class Validator():
         i = 0
         while True:
             
-            # if(self._isRunning):
-                
+            # if(self._isRunning):  
+
+            #     rep += round(contract.functions.balanceOf(Web3.toChecksumAddress(ad)).call()/(10**18),1) 
+
             # else:
             if validation_printing_enabled:
                 print("[Validation] Lauching the check content routine")
@@ -983,6 +1001,19 @@ class Validator():
             
         try:
             
+            now_ts = time.time()
+            delay_between_rewardsInfo = 10*60 #10 min
+            try:
+                if general_printing_enabled:
+                    if ( now_ts -self._rewardsInfoLastTimestamp ) > delay_between_rewardsInfo or self._rewardsInfoLastTimestamp == 0: 
+                        main_addr = self.app.localconfig["ExordeApp"]["MainERCAddress"]        
+                        exdt_rewards = round(self.app.cm.instantiateContract("RewardsManager").functions.RewardsBalanceOf(main_addr).call()/(10**18),2)
+                        rep_amount = round(self.app.cm.instantiateContract("Reputation").functions.balanceOf(main_addr).call()/(10**18),2)
+                        print("[CURRENT REWARDS & REP] Main Address {}, REP = {} and EXDT Rewards = {} ".format(str(main_addr), rep_amount, exdt_rewards))
+                        self._rewardsInfoLastTimestamp = now_ts
+            except:
+                time.sleep(2)
+                pass
             
             batchId, documents = self.get_content()
             
