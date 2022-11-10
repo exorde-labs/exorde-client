@@ -370,13 +370,15 @@ class Validator():
                         pass
                 nb_gateways = len(gateways)
                 
-                try:
-                    batchId = int(self._contract.functions.GetCurrentWork(self.app.localconfig["ExordeApp"]["ERCAddress"]).call())
-                    # batchId = 1208 
-                    # batchId = 1296 
-                    # print("overriding for debug: batch id = ",batchId)
-                except:
-                    batchId = 0
+                
+                for trial in range(max_trials_):  
+                    try:                        
+                        batchId = int(self._contract.functions.GetCurrentWork(self.app.localconfig["ExordeApp"]["ERCAddress"]).call())
+                    except:
+                        time.sleep(2*trial)
+                        batchId = 0
+                        pass
+                    
                 if(batchId > self._lastProcessedBatchId and batchId > self.current_batch):
                     
                     self.current_batch = batchId #moved up
