@@ -88,7 +88,34 @@ Build the docker image once (this may take some time depending on your internet 
 
     docker build -t exorde-cli . 
 
-### Run 
+### Run in detached mode (for Virtual Private Servers)
+Detached mode allows you to run the program in background so if you deploy it on a VPS you can exit your session and the program will continue to run.
+
+Run the program: 
+
+    docker run -d -e PYTHONUNBUFFERED=1 exorde-cli -m YOUR_MAIN_ADDRESS -l LOGGING
+
+
+*Usage example:* 
+
+    docker run -d -e PYTHONUNBUFFERED=1 exorde-cli -m 0x0F67059ea5c125104E46B46769184dB6DC405C42 -l 2
+
+For more informations about command-line arguments go to [arguments section.](#command-line-arguments) 
+
+
+**To get the logs of your container running in background:**
+
+First get the containers currently running
+    
+    docker ps 
+
+Take the output of the previous command and enter
+    
+    docker logs --follow <container_id> 
+
+
+### Run in interactive mode (for local machines)
+Interactive mode allows you to stop the program easily with CTRL + C
 
 Run the program: 
 
