@@ -7,4 +7,4 @@ ADD bob.txt .
 
 RUN pip install -r requirements.txt 
 
-ENTRYPOINT [ "python", "./Launcher.py"]
+ENTRYPOINT [ "python", "-u", "./Launcher.py"]
