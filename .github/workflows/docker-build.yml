@@ -1,0 +1,37 @@
+name: Build a container image of Exorde CLI
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-deploy:
+    name: Build and deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Get commit's short sha
+        id: vars
+        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+      - name: Log into registry ${{ secrets.CONTAINER_REGISTRY_URL }}
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ secrets.CONTAINER_REGISTRY_URL }}
+          username: ${{ secrets.CONTAINER_REGISTRY_LOGIN }}
+          password: ${{ secrets.CONTAINER_REGISTRY_SECRET_KEY }}
+      - name: Setup Docker buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Build and push Docker image
+        id: build-and-push
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ secrets.DEV_CONTAINER_REGISTRY_URL }}/exorde-cli:${{ steps.vars.outputs.sha_short }}
+            ${{ secrets.DEV_CONTAINER_REGISTRY_URL }}/exorde-cli:latest
