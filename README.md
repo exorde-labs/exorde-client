@@ -1,209 +1,122 @@
-
 # Exorde Participation Module CLI v1.3.1
 
-[ This is a work in progress ] 
+The full documentation of Exorde Participation Module CLI is available on https://docs.exorde.network.
 
 ## Instructions
-You have two choices to run the Exorde CLI : 
-- create a **Conda** virtual environment: [conda guide](#conda)
-- use **Docker** to build and run a container: [docker guide](#docker)
 
-## Conda
+You have several choices to run the Exorde CLI:
 
-**The software is written with Python 3.9.**
+- Run from sources inside a virtual Python environment
+- Run from a Docker image
 
-### Install
+The Exorde CLI does not come with a GUI, it aims to be used by advanced users who want to run it inside a terminal. The installation process assume that users who run Exorde CLI are familiar with command lines.
 
-**Please create a new virtual conda environment with Python 3.9 as the environment executable. (exorde-env is an example name)**
+The installation process primarly targets Linux distributions. However, most of commands used are the same on macOS and modern Windows system (using a PowerShell console).
 
+Using the container image is the recommanded way to run Exorde CLI, as it avoid dependencies issues, handles automatic restart in case of failure/application update and make multi easier to run multiple instances of the application.
+
+## Requirements
+
+- Windows 8.1/10/11 or Linux or macOS
+- 4 GB RAM
+- 2 CPU cores
+- 1 GB storage (HDD or SSD)
+
+## Quickstart using Python and Conda on Linux/macOS
+
+1.  Follow the [Conda's documentation](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html#regular-installation) to install it on your system.
+2.  Download and unzip the latest version of Exorde CLI:
+    ```bash
+    wget https://github.com/exorde-labs/ExordeModuleCLI/archive/refs/heads/main.zip \
+    --output-document=ExordeModuleCLI.zip \
+    && unzip ExordeModuleCLI.zip \
+    && rm ExordeModuleCLI.zip \
+    && mv ExordeModuleCLI-main ExordeModuleCLI
+    ```
+3.  Go to the root of Exorde CLI folder:
+    ```bash
+    cd ExordeModuleCLI
+    ```
+4.  Create and activate a new virtual conda environment with Python 3.9 as the environment executable (exorde-env is an example name):
+    ```bash
     conda create --name exorde-env python=3.9
- 
-
-Activate the environment:
-
     conda activate exorde-env
-
-Upgrade Pip, On Windows the recommended command is:
-
-    python -m pip install --upgrade pip
-    
-On Ubuntu/Linux distributions:
-
+    ```
+5.  Upgrade Pip :
+    ```bash
     pip install --upgrade pip
-
-Make sure to be at the root of the folder:
-
-    cd ExordeModuleCLI
-
-Then install the required packages to run Launcher.py:
-
+    ```
+6.  Install the required packages:
+    ```bash
     pip install -r requirements.txt
+    ```
+7.  Run the program:
 
-This should install all the packages. The Launcher.py is now ready to be launched with the right arguments (your main Ethereum wallet address & level of logging)
+    ```bash
+    python Launcher.py -m <YOUR_MAIN_ADDRESS> -l <LOGGING_LEVEL>
+    ```
 
-### Run
+    Usage example:
 
-Run the program:
-
-    python Launcher.py -m YOUR_MAIN_ADDRESS -l LOGGING
-
- *Usage example:* 
-
+    ```bash
     python Launcher.py -m 0x0F67059ea5c125104E46B46769184dB6DC405C42 -l 2
+    ```
 
-For more informations about command-line arguments go to [arguments section.](#command-line-arguments) 
+For more detailled informations, please read the [full documentation](https://docs.exorde.network).
 
- **Some packages might be missing, you can install then with pip: (it might be needed if your pip version is broken/outdated, etc)**
+## Quickstart using Docker on a Linux VPS
 
-    pip install eth-account fasttext-langdetect facebook_scraper
-    pip install geopy iso369
+1. Install [Docker](https://docs.docker.com/engine/install/).
+2. Run the program in background with autorestart:
 
-## Docker  
+   ```bash
+   docker run \
+   -d \
+   --restart unless-stopped \
+   --name exorde-cli \
+   rg.fr-par.scw.cloud/exorde-labs/exorde-cli \
+   -m <YOUR_MAIN_ADDRESS> \
+   -l <LOGGING_LEVEL>
+   ```
 
-### Docker install
-First you need to have Docker installed on your machine. 
+   Usage example:
 
-You can install Docker server or docker desktop [here.](https://docs.docker.com/engine/install/)
+   ```bash
+   docker run \
+   -d \
+   --restart unless-stopped \
+   --name exorde-cli \
+   rg.fr-par.scw.cloud/exorde-labs/exorde-cli \
+   -m 0x0F67059ea5c125104E46B46769184dB6DC405C42 \
+   -l 2
+   ```
 
-Check you have docker correctly installed by typing on your terminal: 
-
-    docker --version
-
-If it's the case you'll have something like that in output:  
-
-    Docker version 20.10.20, build 9fdeb9c
-
-### Build
-You have to build the docker image only once, then you can skip this step and go directly to next section.
-
-Clone the github repository:
-
-    git clone https://github.com/exorde-labs/ExordeModuleCLI.git
-
-Make sure to be at the root of the folder:
-
-    cd ExordeModuleCLI
-
-Build the docker image once (this may take some time depending on your internet connection):
-
-    docker build -t exorde-cli . 
-
-### Run in detached mode (for Virtual Private Servers)
-Detached mode allows you to run the program in background so if you deploy it on a VPS you can exit your session and the program will continue to run.
-
-Run the program: 
-
-    docker run -d -e PYTHONUNBUFFERED=1 exorde-cli -m YOUR_MAIN_ADDRESS -l LOGGING
-
-
-*Usage example:* 
-
-    docker run -d -e PYTHONUNBUFFERED=1 exorde-cli -m 0x0F67059ea5c125104E46B46769184dB6DC405C42 -l 2
-
-For more informations about command-line arguments go to [arguments section.](#command-line-arguments) 
-
-
-**To get the logs of your container running in background:**
-
-First get the containers currently running
-    
-    docker ps 
-
-Take the output of the previous command and enter
-    
-    docker logs --follow <container_id> 
-
-
-### Run in interactive mode (for local machines)
-Interactive mode allows you to stop the program easily with CTRL + C
-
-Run the program: 
-
-    docker run -it exorde-cli -m YOUR_MAIN_ADDRESS -l LOGGING
-
-*Usage example:* 
-
-    docker run -it exorde-cli -m 0x0F67059ea5c125104E46B46769184dB6DC405C42 -l 2
-
-For more informations about command-line arguments go to [arguments section.](#command-line-arguments) 
-
-## Command Line arguments
-This section gives you all the arguments you can pass to the command line.
-
-### Main address
-**Main Ethereum Address, which will get all REP & EXDT for this local worker contribution.**
-**Exorde Reputation is non-transferable.**
-
-> -m MAIN_ADDRESS, --main-address MAIN_ADDRESS
-
- *Correct usage examples:*
-
-    -m 0x0F67059ea5c125104E46B46769184dB6DC405C42
-or 
-    
-    --main-address=0x0F67059ea5c125104E46B46769184dB6DC405C42
-
-  **0x... must be a VALID Ethereum Address (with the checksum format, lower &  uppercase, in case of doubt, copy paste from Etherscan, you must include the 0x prefix)**  
-
-### Logging 
-**Level of logging wanted in console output.** 
-
-> -l,  --logging LOGGING
-
-Possible values: 
-- 0 = no logs, 
-- 1 = general logs
-- 2 = validation logs
-- 3 = validation + scraping logs
-- 4 = detailed validation + scraping logs (e.g. for troubleshooting)
-
-*Correct usage examples:*
-
-    -l 2
-or
-    
-    --logging=2
-
-### Help 
-**Help command to see all arguments.** 
-
-> -h,  --help
-
-*Correct usage examples:*
-
-    -h
-or
-    
-    --help
+For more detailled informations, please read the [full documentation](https://docs.exorde.network).
 
 ## When running
 
 For example, if you run in conda mode with -l 2 (moderate amount of logs), you should see this in the console:
 
-> (my_env) \...\user\ExordeModuleCLI>python Launcher.py -m 0x0000000000000000000000000000000000000001 -l 2 
-> 
-> Selected logging > Level:  2 .  (0 = no logs, 1 = general logs, 2 = validation logs, 3 =
-> validation + scraping logs, 4 = detailed validation + scraping logs
-> 
-> [INITIAL MODULE SETUP] Downloading code modules on decentralized
-> storage...
->         Code Sub-Module  1  /  4        Downloading...   https://bafybeibuxrjwffjeymrjlkd2r35r5rdlzxuavoeympqgr7xrxor6hp3bh4.ipfs.w3s.link/Transaction.py
->         Code Sub-Module  2  /  4        Downloading...   https://bafybeifqnq76utn767m4qbwd4j2jg6k3ypwcr2do7gkk3b26ooxfmzgc5e.ipfs.w3s.link/Scraper.py
->         Code Sub-Module  3  /  4        Downloading...   https://bafybeibbygfm276hjion7ocaoyp3wlfodszhlba6jy3b3fzd37zawkfbgi.ipfs.w3s.link/Validator.py
->         Code Sub-Module  4  /  4        Downloading...   https://bafybeicdgmxvetbi4yqjztzzroevcfvnwobk6zomsz5nh4lvb3dftyimxa.ipfs.w3s.link/App.py
-> 
-> [Init] UPDATING CONFIG [Init] READING CONFIG FILE [Init] Current Config :  {'ExordeApp': {'ERCAddress': '', 'MainERCAddress': '',  'Updated': 0, 'SendCountryInfo': 1, 'lastInfo': 'Hello, you are now an
-> Exorder!', 'lastUpdate': '1.3.1'}}
-> 
->  [Init] FIRST WORKER LAUNCH
->  
->  [Init] New Worker Local Address =  0x4A94c5D4C49597cd889eB569D0Bf4d6e2aC3aE29
+```bash
+>python Launcher.py -m 0x0000000000000000000000000000000000000001 -l 2
+Selected logging > Level: 2 . (0 = no logs, 1 = general logs, 2 = validation logs, 3 =
+validation + scraping logs, 4 = detailed validation + scraping logs
 
-> [Init] First funding of the worker wallet [Initial Auto Faucet] Top up
+[INITIAL MODULE SETUP] Downloading code modules on decentralized
+storage...
+Code Sub-Module 1 / 4 Downloading... https://bafybeibuxrjwffjeymrjlkd2r35r5rdlzxuavoeympqgr7xrxor6hp3bh4.ipfs.w3s.link/Transaction.py
+Code Sub-Module 2 / 4 Downloading... https://bafybeifqnq76utn767m4qbwd4j2jg6k3ypwcr2do7gkk3b26ooxfmzgc5e.ipfs.w3s.link/Scraper.py
+Code Sub-Module 3 / 4 Downloading... https://bafybeibbygfm276hjion7ocaoyp3wlfodszhlba6jy3b3fzd37zawkfbgi.ipfs.w3s.link/Validator.py
+Code Sub-Module 4 / 4 Downloading... https://bafybeicdgmxvetbi4yqjztzzroevcfvnwobk6zomsz5nh4lvb3dftyimxa.ipfs.w3s.link/App.py
 
-> sFuel & some EXDT to worker address... 
+[Init] UPDATING CONFIG [Init] READING CONFIG FILE [Init] Current Config : {'ExordeApp': {'ERCAddress': '', 'MainERCAddress': '', 'Updated': 0, 'SendCountryInfo': 1, 'lastInfo': 'Hello, you are now an Exorder!', 'lastUpdate': '1.3.1'}}
+[Init] FIRST WORKER LAUNCH
+[Init] New Worker Local Address = 0x4A94c5D4C49597cd889eB569D0Bf4d6e2aC3aE29
+[Init] First funding of the worker wallet [Initial Auto Faucet] Top up sFuel & some EXDT to worker address...
+[Faucet] selecting Auto-Faucet
 
-> [Faucet] selecting Auto-Faucet ...
+...
+```
 
 The module is autonomous.
 
@@ -212,4 +125,4 @@ The module is autonomous.
 Sometimes, Exorde Labs needs to push some update in the code. The module will detect it, and kill itself.
 This is important for the Exorde Network to remain hommogenous, so older versions have to be killed right away.
 
-When this happens, the module will print a message & shut down.
+When this happens, the module will print a message & shut down. It has to be restarted manually.
