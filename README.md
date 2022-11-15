@@ -6,8 +6,8 @@ The full documentation of Exorde Participation Module CLI is available on https:
 
 You have several choices to run the Exorde CLI:
 
-- Run [from sources](#run-from-sources) inside a virtual Python environment
-- Run [from a Docker image](#docker)
+- Run from sources inside a virtual Python environment
+- Run from a Docker image
 
 The Exorde CLI does not come with a GUI, it aims to be used by advanced users who want to run it inside a terminal. The installation process assume that users who run Exorde CLI are familiar with command lines.
 
