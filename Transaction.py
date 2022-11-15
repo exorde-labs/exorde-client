@@ -234,7 +234,21 @@ class TransactionManager():
                                 
                                 old = increment_tx[0]["nonce"]
                                 increment_tx[0]["nonce"] = self.w3.eth.get_transaction_count(increment_tx[1])
-                                increment_tx[0]["gas"] = 200000000
+
+                                gas = 1_000_000
+                                try:
+                                    gasEstimate = self.w3.eth.estimate_gas(increment_tx[0])*1.5
+                                    if gasEstimate > 30_000:
+                                        gas = gasEstimate
+                                except  Exception as e:
+                                    if detailed_validation_printing_enabled:
+                                        print("[TRANSACTION MANAGER] Gas estimation failed: ",e)
+
+                                increment_tx[0]["gas"] = int(round(int(gas),0))
+
+                                if detailed_validation_printing_enabled:
+                                    print("[TRANSACTION MANAGER] Gas = ",increment_tx[0]["gas"])
+                                    print("[TRANSACTION MANAGER] tx =>",increment_tx)
             
                                 tx_create = self.w3.eth.account.sign_transaction(increment_tx[0], increment_tx[2])
                                 tx_hash = self.w3.eth.send_raw_transaction(tx_create.rawTransaction)
@@ -261,11 +275,24 @@ class TransactionManager():
                                 
                                 old = increment_tx[0]["nonce"]
                                 increment_tx[0]["nonce"] = self.w3.eth.get_transaction_count(increment_tx[1])
-                                increment_tx[0]["gas"] = 200000000
-                
-                                tx_create = self.w3.eth.account.sign_transaction(increment_tx[0], increment_tx[2])
-                                tx_hash = self.w3.eth.send_raw_transaction(tx_create.rawTransaction)
+                                gas = 1_000_000
+                                try:
+                                    gasEstimate = self.w3.eth.estimate_gas(increment_tx[0])*1.5
+                                    if gasEstimate > 30_000:
+                                        gas = gasEstimate
+                                except  Exception as e:
+                                    if detailed_validation_printing_enabled:
+                                        print("[TRANSACTION MANAGER] Gas estimation failed: ",e)
+
+                                increment_tx[0]["gas"] = int(round(int(gas),0))
                                 
+                
+                                if detailed_validation_printing_enabled:
+                                    print("[TRANSACTION MANAGER] Gas = ",increment_tx[0]["gas"])
+                                    print("[TRANSACTION MANAGER] tx =>",increment_tx)
+
+                                tx_create = self.w3.eth.account.sign_transaction(increment_tx[0], increment_tx[2])
+                                tx_hash = self.w3.eth.send_raw_transaction(tx_create.rawTransaction)                                
                                 tx_receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash)
                                 # print()
                                 # print(tx_receipt)

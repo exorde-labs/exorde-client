@@ -330,6 +330,9 @@ class Validator():
 
         for trial in range(max_trials_):  
             try:                    
+                obj = self._contract.functions.isWorkerRegistered(str_my_address).call()
+                # print("DEBUG : isWorkerRegistered(str_my_address).call() => ",obj, " type = ", type(obj))
+
                 if(self._contract.functions.isWorkerRegistered(str_my_address).call() == False):
                     
                     if validation_printing_enabled:
@@ -346,14 +349,14 @@ class Validator():
 
 
         try:
+            # obj = self._contract.functions.IsNewWorkAvailable(self.app.localconfig["ExordeApp"]["ERCAddress"]).call()
             _isNewWorkAvailable = self._contract.functions.IsNewWorkAvailable(self.app.localconfig["ExordeApp"]["ERCAddress"]).call()
+            # print("DEBUG : IsNewWorkAvailable => ",obj, " type = ", type(obj))
         except:
             _isNewWorkAvailable = False
             
-        _isNewWorkAvailable = "True"
-        # print("overriding for debug: _isNewWorkAvailable = ",_isNewWorkAvailable)
 
-        if(_isNewWorkAvailable == "False"): 
+        if(_isNewWorkAvailable == False): 
             if validation_printing_enabled:
                 print("[Validation] No new work, standby.")
             return None, []
@@ -370,15 +373,13 @@ class Validator():
                         pass
                 nb_gateways = len(gateways)
                 
-                
-                for trial in range(max_trials_):  
-                    try:                        
-                        batchId = int(self._contract.functions.GetCurrentWork(self.app.localconfig["ExordeApp"]["ERCAddress"]).call())
-                    except:
-                        time.sleep(2*trial)
-                        batchId = 0
-                        pass
-                    
+                try:
+                    batchId = int(self._contract.functions.GetCurrentWork(self.app.localconfig["ExordeApp"]["ERCAddress"]).call())
+                    # batchId = 1208 
+                    # batchId = 1296 
+                    # print("overriding for debug: batch id = ",batchId)
+                except:
+                    batchId = 0
                 if(batchId > self._lastProcessedBatchId and batchId > self.current_batch):
                     
                     self.current_batch = batchId #moved up

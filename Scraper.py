@@ -310,7 +310,7 @@ class Scraper():
                 exd_token = "bitcoin"
 
             if scrape_printing_enabled:
-                print("[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"COLLECT DATA", "scrape", "KEYWORDS SELECTED = [{}]\n".format(exd_token)))
+                print("[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"COLLECT DATA", "scrape", "KEYWORDS SELECTED = [{}]".format(exd_token)))
             if(exd_token not in keywords):
                 keywords.append(exd_token)
 
@@ -1498,9 +1498,10 @@ class Scraper():
                             {
                                 'nonce': w3.eth.get_transaction_count(self.app.localconfig["ExordeApp"]["ERCAddress"]),
                                 'from': self.app.localconfig["ExordeApp"]["ERCAddress"],
-                                'gasPrice': w3.eth.gas_price,
-                                'gas':200000000
+                                'gasPrice': w3.eth.gas_price
                             })
+                            if detailed_validation_printing_enabled:
+                                print("Putting SpotData tx in the WaitingRoom")
                             self.app.tm.waitingRoom.put((increment_tx, self.app.localconfig["ExordeApp"]["ERCAddress"], self.app.pKey))
                             #print("File sent", res)
                         
