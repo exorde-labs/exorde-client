@@ -56,6 +56,9 @@ Created on Tue Sep 20 14:20:53 2022
 # import webbrowser
 # import yake
 
+
+default_gas_amount = 3_000_000
+
 class ContractManager():
     
     def __init__(self, address = "", key =""):
@@ -235,7 +238,7 @@ class TransactionManager():
                                 old = increment_tx[0]["nonce"]
                                 increment_tx[0]["nonce"] = self.w3.eth.get_transaction_count(increment_tx[1])
 
-                                gas = 1_000_000
+                                gas = default_gas_amount
                                 try:
                                     gasEstimate = self.w3.eth.estimate_gas(increment_tx[0])*1.5
                                     if gasEstimate > 30_000:
@@ -275,7 +278,7 @@ class TransactionManager():
                                 
                                 old = increment_tx[0]["nonce"]
                                 increment_tx[0]["nonce"] = self.w3.eth.get_transaction_count(increment_tx[1])
-                                gas = 1_000_000
+                                gas = default_gas_amount
                                 try:
                                     gasEstimate = self.w3.eth.estimate_gas(increment_tx[0])*1.5
                                     if gasEstimate > 30_000:
