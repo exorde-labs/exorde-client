@@ -221,6 +221,7 @@ class TransactionManager():
             #     self.netConfig = newNetConfig
             
             if(self.waitingRoom_VIP.qsize() == 0 and self.waitingRoom.qsize() == 0):
+                time.sleep(5)
                 pass
 
             else:
