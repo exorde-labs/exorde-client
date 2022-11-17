@@ -88,7 +88,9 @@ class Widget():
             self.userCountry = Web3.toHex(text="Unknown")
         
         netConfig = requests.get("https://raw.githubusercontent.com/MathiasExorde/TestnetProtocol-staging/main/NetworkConfig.txt").json()
-        self.w3 = Web3(Web3.HTTPProvider(netConfig["_urlSkale"]))
+        self.w3 = Web3(Web3.HTTPProvider(netConfig["_urlSkale"]))        
+        self.w3Tx = Web3(Web3.HTTPProvider(netConfig["_urlTxSkale"]))
+
         
         if general_printing_enabled:
             print("\n[Init] UPDATING CONFIG")
@@ -183,11 +185,11 @@ class Widget():
         user_address = self.localconfig["ExordeApp"]["ERCAddress"]
 
         ##### 0 - CHECK VALIDITY                
-        is_user_address_valid = self.w3.isAddress(user_address)
+        is_user_address_valid = self.w3Tx.isAddress(user_address)
         if is_user_address_valid == False:
             print("[Init] INVALID USER ADDRESS, ABORT")
             os._exit(1)
-        user_address = self.w3.toChecksumAddress(user_address)
+        user_address = self.w3Tx.toChecksumAddress(user_address)
                 
 
         chainId_ = 2139927552
@@ -200,14 +202,14 @@ class Widget():
                 (fi, Private_key) = self.select_random_faucet_pk()
                 if general_printing_enabled:
                     print("[Faucet] selecting Auto-Faucet n°",fi)
-                faucet_address = self.w3.eth.account.from_key(Private_key).address
+                faucet_address = self.w3Tx.eth.account.from_key(Private_key).address
                 
                                
                 ### 1 - SEND FUEL FIRST
                 #print("SEND FUEL")
-                signed_txn = self.w3.eth.account.sign_transaction(dict(
-                    nonce=self.w3.eth.get_transaction_count(faucet_address),
-                    gasPrice=self.w3.eth.gas_price,
+                signed_txn = self.w3Tx.eth.account.sign_transaction(dict(
+                    nonce=self.w3Tx.eth.get_transaction_count(faucet_address),
+                    gasPrice=self.w3Tx.eth.gas_price,
                     gas=1000000,
                     to=user_address,
                     value=500000000000000,
@@ -218,39 +220,44 @@ class Widget():
                 Private_key,
                 )
                 
-                tx_hash = self.w3.eth.send_raw_transaction(signed_txn.rawTransaction)
-                tx_receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash)
-                #print(f'Tx successful with hash: { tx_receipt.transactionHash.hex() }')
+                tx_hash = self.w3Tx.eth.send_raw_transaction(signed_txn.rawTransaction)
+                tx_receipt = self.w3Tx.eth.wait_for_transaction_receipt(tx_hash)
                     
+                print("[Faucet] sfuel funding tx = ",tx_receipt.transactionHash.hex())
                 
                 ### 1 - SEND EXDT TOKENS                    
                 token_abi = requests.get("https://raw.githubusercontent.com/MathiasExorde/TestnetProtocol-staging/main/ABIs/daostack/controller/daostack/controller/DAOToken.sol/DAOToken.json").json()["abi"]
                 
-                tok_contract = self.w3.eth.contract(EXDT_token_address, abi=token_abi)
+                tok_contract = self.w3Tx.eth.contract(EXDT_token_address, abi=token_abi)
                 
                 token_amount_to_send = 200000000000000000000 # 200 tokens EXDT
                 increment_tx = tok_contract.functions.transfer(user_address, token_amount_to_send).buildTransaction({
                         'from': faucet_address,
-                        'nonce': self.w3.eth.get_transaction_count(faucet_address),
+                        'nonce': self.w3Tx.eth.get_transaction_count(faucet_address),
                         'value': 0,
                         'gas': 1000000,
-                        'gasPrice': self.w3.eth.gas_price,
+                        'gasPrice': self.w3Tx.eth.gas_price,
                 })
                 
-                tx_create = self.w3.eth.account.sign_transaction(increment_tx, Private_key)
-                tx_hash = self.w3.eth.send_raw_transaction(tx_create.rawTransaction)
-                tx_receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash)
+                tx_create = self.w3Tx.eth.account.sign_transaction(increment_tx, Private_key)
+                tx_hash = self.w3Tx.eth.send_raw_transaction(tx_create.rawTransaction)
+                tx_receipt = self.w3Tx.eth.wait_for_transaction_receipt(tx_hash)
+                
+                print("[Faucet] token funding tx = ",tx_receipt.transactionHash.hex())
 
                 time.sleep(1)
-                _trials = 3
+                _trials = 5
                 read_status = False
                 for i in range(_trials):
-                    try:                              
+                    try:                             
+                        # print("[Faucet] debug: trying to read balance")
                         token_balance = tok_contract.functions.balanceOf(user_address).call()
-                        user_token_balance = w3.fromWei(token_balance, 'ether')
-                        user_sfuel_balance = w3.eth.get_balance(user_address)
+                        user_token_balance = self.w3Tx.fromWei(token_balance, 'ether')
+                        user_sfuel_balance = self.w3Tx.eth.get_balance(user_address)
                         read_status = True
-                    except:
+                        break
+                    except Exception as e:
+                        # print("[Faucet] debug: trying to read balance FAIL: ",e)
                         time.sleep((1+int(i)))
                 
                 if read_status == False:
@@ -259,11 +266,12 @@ class Widget():
                 print('[Faucet] Worker EXDT Balance:', user_token_balance, " ")
                 print('[Faucet] Worker sFuel Balance:', user_sfuel_balance, " sFUEL")
 
-                if user_token_balance >= 100 and user_sfuel_balance > 0:
+                if user_token_balance > 0 and user_sfuel_balance > 0:
                     faucet_success = True
                     print("[Faucet] Auto-Faucet n°",fi, " Success.")
                 break
-            except:
+            except Exception as e:
+                print("[Faucet] Error: ",e)
                 print("[Faucet] Auto-Faucet n°",fi, " Failure... retrying.")
                 time.sleep(2)
                 continue
@@ -358,7 +366,7 @@ class Widget():
                 print("[Init] New Worker Local Address = ",new_conf["ExordeApp"]["ERCAddress"])
                 # print("[Init] New Configuration = ",new_conf)
                 print("[Init] First funding of the worker wallet")
-                self.autofund()
+            self.autofund()
             
             with open('bob.txt', "wb") as file:
                 file.write(self.pKey)

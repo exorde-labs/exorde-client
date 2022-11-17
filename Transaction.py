@@ -57,7 +57,7 @@ Created on Tue Sep 20 14:20:53 2022
 # import yake
 
 
-default_gas_amount = 3_000_000
+default_gas_amount = 10_000_000
 
 class ContractManager():
     
@@ -198,7 +198,7 @@ class TransactionManager():
     def __init__(self, cm):
         
         self.netConfig = requests.get("https://raw.githubusercontent.com/MathiasExorde/TestnetProtocol-staging/main/NetworkConfig.txt").json()
-        self.w3 = Web3(Web3.HTTPProvider(self.netConfig["_urlSkale"]))
+        self.w3 = Web3(Web3.HTTPProvider(self.netConfig["_urlTxSkale"]))
         self.waitingRoom = Queue()
         self.waitingRoom_VIP = Queue()
         self.run = True
@@ -229,6 +229,7 @@ class TransactionManager():
                 try:
                     if(self.waitingRoom_VIP.qsize() != 0):
                         while(self.w3.eth.get_block('latest')["number"] <= self.last_block):
+                            time.sleep(1)
                             pass
                         
                         isSent = False
@@ -242,8 +243,10 @@ class TransactionManager():
                                 gas = default_gas_amount
                                 try:
                                     gasEstimate = self.w3.eth.estimate_gas(increment_tx[0])*1.5
-                                    if gasEstimate > 30_000:
-                                        gas = gasEstimate
+                                    if gasEstimate < 30_000:
+                                        gas = gasEstimate + 300_000
+                                    elif gasEstimate < 1_000_000:
+                                        gas = gasEstimate + 500_000
                                 except  Exception as e:
                                     if detailed_validation_printing_enabled:
                                         print("[TRANSACTION MANAGER] Gas estimation failed: ",e)
@@ -270,6 +273,7 @@ class TransactionManager():
                     
                     else:
                         while(self.w3.eth.get_block('latest')["number"] <= self.last_block):
+                            time.sleep(1)
                             pass
                         
                         isSent = False
@@ -282,8 +286,10 @@ class TransactionManager():
                                 gas = default_gas_amount
                                 try:
                                     gasEstimate = self.w3.eth.estimate_gas(increment_tx[0])*1.5
-                                    if gasEstimate > 30_000:
-                                        gas = gasEstimate
+                                    if gasEstimate < 30_000:
+                                        gas = gasEstimate + 300_000
+                                    elif gasEstimate < 1_000_000:
+                                        gas = gasEstimate + 500_000
                                 except  Exception as e:
                                     if detailed_validation_printing_enabled:
                                         print("[TRANSACTION MANAGER] Gas estimation failed: ",e)
