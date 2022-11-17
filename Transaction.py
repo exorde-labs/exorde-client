@@ -67,7 +67,7 @@ class ContractManager():
         self._AccountKey = key
         self._TransactionManager = TransactionManager(self)
         self.netConfig = requests.get("https://raw.githubusercontent.com/MathiasExorde/TestnetProtocol-staging/main/NetworkConfig.txt").json()
-        self.w3 = Web3(Web3.HTTPProvider(self.netConfig["_urlSkale"]))
+        self.w3 = Web3(Web3.HTTPProvider(self.netConfig["_urlTxSkale"]))
 
         
         to = 60
