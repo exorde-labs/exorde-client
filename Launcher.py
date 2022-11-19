@@ -66,22 +66,24 @@ warnings.filterwarnings("ignore")
 #     print(e)
 
 import argparse
-    
 
 
-def DownloadSingleIPFSFile(ipfsHash, timeout_ = 5, max_trials_ = 2):
+
+def DownloadSingleIPFSFile(ipfsHash, timeout_=5, max_trials_=2):
     ## constants & parameters
     _headers = {
-    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.146 Safari/537.36',
-    'pinata_api_key': "19d2b24b75ad7253aebf", 
-    'pinata_secret_api_key': "f69150422667f79ce5a7fb0997bfdbb3750894cd1734275f77d867647e4f3df4" 
+        "user-agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/88.0.4324.146 Safari/537.36"
+        ),
+        "pinata_api_key": "19d2b24b75ad7253aebf",
+        "pinata_secret_api_key": "f69150422667f79ce5a7fb0997bfdbb3750894cd1734275f77d867647e4f3df4",
     }
-    for trial in range(max_trials_):  
+    for _ in range(max_trials_):
         try:
             gateways =  requests.get("https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/ipfs_gateways.txt").text.split("\n")[:-1]
         except:
             time.sleep(3)
-            continue
     nb_gateways = len(gateways)
     content = None
     ## download each file after the other
@@ -89,23 +91,24 @@ def DownloadSingleIPFSFile(ipfsHash, timeout_ = 5, max_trials_ = 2):
     isOk = False
     # retry all gateways twice, after pause of 10s in between, before giving up on a batch
     for trial in range(max_trials_):    
-        _used_timeout = timeout_*(1+trial)
-        print("trial n°",trial,"/",(max_trials_-1))
+        _used_timeout = timeout_ * (1+trial)
+        print("trial n°", trial, "/", max_trials_-1)
         ## initialize the gateway loop
         gateway_cursor = 0 
         ### iterate a trial of the download over all gateways we have
-        for gateway_ in gateways:
+        for _ in gateways:
             _used_gateway = gateways[gateway_cursor]
             try:
                 _endpoint_url = _used_gateway+ipfsHash
                 print("\tDownload via: ",_endpoint_url)
-                content = requests.get(_endpoint_url, headers=_headers, stream = False, timeout =_used_timeout)
+                content = requests.get(_endpoint_url, headers=_headers, stream=False,
+                                       timeout=_used_timeout)
                 try:
                     content = content.json()                    
                 except:
                     print("\t\t--failed to open the content with json")
                     content = None   
-                if(content is not None):                    
+                if content is not None:
                     isOk = True
                 break
             except Exception as e:
@@ -123,19 +126,23 @@ def DownloadSingleIPFSFile(ipfsHash, timeout_ = 5, max_trials_ = 2):
         time.sleep(0.3)
     return content
 
-def SafeURLDownload(URL, timeout_ = 2, max_trials_ = 3):
+
+def SafeURLDownload(URL, timeout_=2, max_trials_=3):
     ## constants & parameters
     _headers = {
-    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.146 Safari/537.36',
-    'pinata_api_key': "19d2b24b75ad7253aebf", 
-    'pinata_secret_api_key': "f69150422667f79ce5a7fb0997bfdbb3750894cd1734275f77d867647e4f3df4" 
+        "user-agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/88.0.4324.146 Safari/537.36",
+        ),
+        "pinata_api_key": "19d2b24b75ad7253aebf",
+        "pinata_secret_api_key": "f69150422667f79ce5a7fb0997bfdbb3750894cd1734275f77d867647e4f3df4",
     }
     content = None
     ## download each file after the other
     isOk = False
     # retry all gateways twice, after pause of 10s in between, before giving up on a batch
     for trial in range(max_trials_):    
-        _used_timeout = timeout_*(1+trial)
+        _used_timeout = timeout_ * (1+trial)
         # print("trial n°",trial,"/",(max_trials_-1))
         ## initialize the gateway loop
         gateway_cursor = 0 
@@ -143,9 +150,10 @@ def SafeURLDownload(URL, timeout_ = 2, max_trials_ = 3):
         try:
             _endpoint_url = URL
             if general_printing_enabled:
-                print("\tDownloading...  ",_endpoint_url)
-            content = requests.get(_endpoint_url, headers=_headers, stream = False, timeout =_used_timeout)
-            if(content is not None):                    
+                print("\tDownloading...  ", _endpoint_url)
+            content = requests.get(_endpoint_url, headers=_headers, stream=False,
+                                   timeout=_used_timeout)
+            if content is not None:
                 isOk = True
             break
         except Exception as e:
@@ -173,14 +181,24 @@ try:
     main_wallet_ = argsdict['main_address']
 
     is_main_wallet_valid = Web3.isAddress(main_wallet_)
-    if is_main_wallet_valid == False:
-        print("[Error] INVALID Main-address argument. A valid Ethereum address looks like '0x0F67059ea5c125104E46B46769184dB6DC405C42'")
+    if not is_main_wallet_valid:
+        print(
+            "[Error] INVALID Main-address argument. A valid Ethereum address looks like "
+            "'0x0F67059ea5c125104E46B46769184dB6DC405C42'"
+        )
         sys.exit(1)
     main_wallet_ = Web3.toChecksumAddress(main_wallet_)
 
     verbosity_ = int(argsdict['logging'])
-    if verbosity_>0:
-        print("Selected logging Level: ",verbosity_,".  (0 = no logs, 1 = general logs, 2 = validation logs, 3 = validation + scraping logs, 4 = detailed validation + scraping logs")
+    if verbosity_ > 0:
+        print(
+            "Selected logging Level: ",
+            verbosity_,
+            (
+                ".  (0 = no logs, 1 = general logs, 2 = validation logs, "
+                "3 = validation + scraping logs, 4 = detailed validation + scraping logs"
+            ),
+        )
 except:
     parser.print_help()
     sys.exit(1)
@@ -239,7 +257,8 @@ override_code_dict = dict()
 if general_printing_enabled:
     print("\n[INITIAL MODULE SETUP] Downloading code modules on decentralized storage...")
 
-module_hash_list = ["_moduleHashContracts_cli","_moduleHashSpotting_cli","_moduleHashSpotChecking_cli","_moduleHashApp_cli"]
+module_hash_list = ["_moduleHashContracts_cli", "_moduleHashSpotting_cli", "_moduleHashSpotChecking_cli",
+                    "_moduleHashApp_cli"]
 for im, value in enumerate(module_hash_list):
     #print(value)
     success = False
@@ -247,7 +266,7 @@ for im, value in enumerate(module_hash_list):
     delay = 5
     if general_printing_enabled:
         print("\tCode Sub-Module ",(im+1)," / ", len(module_hash_list), end='')
-    while(trials < 5):
+    while trials < 5:
         try:
             if value  in override_code_dict:
                 URL = override_code_dict[value]
@@ -261,7 +280,7 @@ for im, value in enumerate(module_hash_list):
             time.sleep(5*(trials + 1))
             trials += 1
             
-    if(success == True):
+    if success:
         exec(code)
 
 desktop_app()
@@ -292,7 +311,7 @@ while True:
         except:
             print("[UPDATE SYSTEM] No Last Version: ", "New:", _version)
             
-        if(localconfig["ExordeApp"]["lastUpdate"] != _version):          
+        if localconfig["ExordeApp"]["lastUpdate"] != _version:
             print("\n\n\n***************************\n",\
                 "Version {}".format(_version)," has been released.\nPlease restart your module to continue.\nAuto quit, please relaunch the program. \n")
             print("Last message from Exorde Labs => ",_lastInfo,"\n***************************.")
