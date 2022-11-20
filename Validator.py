@@ -1,28 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Oct  6 11:19:57 2022
+Created on Tue Oct 20 14:20:53 2022
 
-@author: flore
+@author: florent, mathias
+Exorde Labs
 """
-
-# import boto3
-# import datetime as dt
-# import json
-# import os
-# import random
-# import re
-# import requests
-# import threading
-# import time
-# import tkinter as tk
-# import tkinter.messagebox
-# import transformers
-# from transformers import AutoTokenizer, AutoModelForSequenceClassification
-# import string
-# import sys
-# import web3
-# from web3 import Web3, HTTPProvider
-# import urllib
 
 
 
@@ -40,9 +22,6 @@ class Validator():
     def __init__(self, app):
 
         self.app = app
-        # self.localConfig = self.app.localConfig
-        # self.cm = app.cm
-        # self.tm = app.tm
         
         self._blacklist = get_blacklist("QmT4PyxSJX2yqYpjypyP75PR7FacBQDyES4Mdvg8m5Hrxj")        
         self._contract = self.app.cm.instantiateContract("DataSpotting")
@@ -109,9 +88,7 @@ class Validator():
     def threadHunter(self, thread):
         
         time.sleep(10)
-        #print(thread, "out of", threading.active_count())
         if(self.status == "DOWNLOADING"):
-            #print("Trying to kill thread", thread.ident, "-", thread.native_id)
             del thread
             try:
                 self.send_votes(self.current_batch, [], "DLERROR", 0, 0)
@@ -119,45 +96,20 @@ class Validator():
                 pass
         else:
             pass
-            #print("Thread", thread.ident, "-", thread.native_id, "on", self.status)
 
     def manage_checking(self):
-        
-        #print("[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"CHECKER", "manage_checking", "RUNNING")) 
         i = 0
-        while True:
-            
-            # if(self._isRunning):  
-
-            #     rep += round(contract.functions.balanceOf(Web3.toChecksumAddress(ad)).call()/(10**18),1) 
-
-            # else:
+        while True:            
             if validation_printing_enabled:
                 print("[Validation] Lauching the check content routine")
             exec("x{} = threading.Thread(target=self.check_content)".format(i))
             exec("x{}.daemon = True".format(i))
             exec("x{}.start()".format(i))
-            # exec("y = threading.Thread(target=self.threadHunter, args=(x{},))".format(i))
-            # exec("y.start()")
-            #self._isRunning = True
             time.sleep(60*3.5)
             i += 1
             if i >= 250000:
                 i = 0
-            # if(self.status == "DOWNLOADING"):
-            #     print("Trying to kill thread")
-            #     del x
                 
-        # while self._isRunning:
-            
-        #     try:
-                
-        #         x = threading.Thread(target=self.check_content)
-        #         x.start()
-        #         #self.check_content()
-        #         time.sleep(60)
-        #     except:
-        #         time.sleep(60)
                 
         
     def register(self):
@@ -173,7 +125,6 @@ class Validator():
         
             if(self._isApproved == False and self._isRegistered == False):
                 
-                #print("[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"CHECKER", "register", "REGISTERING")) 
                 trials = 0
                 
                 while(self._isApproved == False or trials < 5):
@@ -194,8 +145,7 @@ class Validator():
                         
                         _isRegisteredTrials = 0
                         while(_isRegisteredTrials < 5):
-                            
-                        
+                            time.sleep(0.5)                        
                             if(self._contract.functions.isWorkerRegistered(self.app.localconfig["ExordeApp"]["ERCAddress"]).call() == True):
                                 self._isRegistered = True
                                 break
@@ -244,11 +194,9 @@ class Validator():
                     
                     _isRegisteredTrials = 0
                     while(_isRegisteredTrials < 5):
-                        
-                    
                         if(self._contract.functions.isWorkerRegistered(self.app.localconfig["ExordeApp"]["ERCAddress"]).call() == True):
                             self._isRegistered = True
-                            
+                            time.sleep(0.5)
                             break
                         else:
                             _isRegisteredTrials += 1
@@ -260,26 +208,19 @@ class Validator():
                         
             elif(self._isRegistered == True):
                 return
+
          
-    def downloadFile(self, hashname: str):
-        
+    def downloadFile(self, hashname: str):        
         headers = {
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.146 Safari/537.36',
-            'pinata_api_key': "19d2b24b75ad7253aebf", 
-            'pinata_secret_api_key': "f69150422667f79ce5a7fb0997bfdbb3750894cd1734275f77d867647e4f3df4",
             'Connection':'close'
         }
 
-        
-        
-        trials = 0
-        
+        trials = 0        
         for gateway in ["https://ipfs.filebase.io/ipfs/",
                        "https://ipfs.eth.aragon.network/ipfs/",
-                       "https://api.ipfsbrowser.com/ipfs/get.php?hash="]:
-            
-            url = gateway + hashname
-            
+                       "https://api.ipfsbrowser.com/ipfs/get.php?hash="]:            
+            url = gateway + hashname            
             trials = 0
             while trials < 5:
                 try:
@@ -293,46 +234,36 @@ class Validator():
                         #print(r.__dict__)
                         trials += 1
                 except Exception as e:
-                    #print(e)
                     trials += 1
+                    time.sleep(1+trials)
                 if(trials >= 5):
                     break
             if(trials == 5):
                 break
                 #print("Couldn't download file", hashname)
         return None  
-            
-        
+
     
     def get_content(self):
         
         self.status = "DOWNLOADING"
         
         headers = {
-            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.146 Safari/537.36',
-            #'pinata_api_key': "19d2b24b75ad7253aebf", 
-            #'pinata_secret_api_key': "f69150422667f79ce5a7fb0997bfdbb3750894cd1734275f77d867647e4f3df4" 
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.146 Safari/537.36'
         }
         
         status = ""
         max_trials_ = 2
         timeout_ = 3
-
-            
-        
+                    
         if detailed_validation_printing_enabled:
             print("[Validation] Checking if worker is registered already")
 
         str_my_address = self.app.localconfig["ExordeApp"]["ERCAddress"]
         
-        # if validation_printing_enabled:
-        #     print("[Validation] Worker Address = ",str_my_address)
 
         for trial in range(max_trials_):  
             try:                    
-                obj = self._contract.functions.isWorkerRegistered(str_my_address).call()
-                # print("DEBUG : isWorkerRegistered(str_my_address).call() => ",obj, " type = ", type(obj))
-
                 if(self._contract.functions.isWorkerRegistered(str_my_address).call() == False):
                     
                     if validation_printing_enabled:
@@ -349,9 +280,7 @@ class Validator():
 
 
         try:
-            # obj = self._contract.functions.IsNewWorkAvailable(self.app.localconfig["ExordeApp"]["ERCAddress"]).call()
             _isNewWorkAvailable = self._contract.functions.IsNewWorkAvailable(self.app.localconfig["ExordeApp"]["ERCAddress"]).call()
-            # print("DEBUG : IsNewWorkAvailable => ",obj, " type = ", type(obj))
         except:
             _isNewWorkAvailable = False
             
@@ -375,9 +304,6 @@ class Validator():
                 
                 try:
                     batchId = int(self._contract.functions.GetCurrentWork(self.app.localconfig["ExordeApp"]["ERCAddress"]).call())
-                    # batchId = 1208 
-                    # batchId = 1296 
-                    # print("overriding for debug: batch id = ",batchId)
                 except:
                     batchId = 0
                 if(batchId > self._lastProcessedBatchId and batchId > self.current_batch):
@@ -398,12 +324,11 @@ class Validator():
                         
                         if detailed_validation_printing_enabled:
                             print("\t\tDownloading IPFS sub-file -> ",file," ... ", end='')
-                    #for file in fileList:
-                        #print("\nFetching IPFS file = ",file)    
                         isOk = False
                         # retry all gateways twice, after pause of 10s in between, before giving up on a batch
                         for trial in range(max_trials_):    
                             _used_timeout = timeout_*(1+trial)
+                            time.sleep(trial+0.1)
                             #print("trial n°",trial,"/",(max_trials_-1))
                             ## initialize the gateway loop
                             gateway_cursor = 0 
@@ -428,16 +353,14 @@ class Validator():
                                         content = content.json()
                                         content = content["Content"]
                                     except Exceptin as e:
-                                        #print(e)
-                                        #print("\t\t--failed to open the content")
                                         content = None                
                                     for item in content:
                                         try:
                                             dataBlocks.append(item)
                                         except Exception as e:
-                                            #print("\tDataBlock error", e, item)
+                                            if detailed_validation_printing_enabled:
+                                                print("\tDataBlock error", e, item)
                                             pass
-                                    #print("\t",len(content),"Items added")
                                     if(len(content)>0):                    
                                         isOk = True
                                     time.sleep(1)
@@ -450,10 +373,11 @@ class Validator():
                                 ## Break from gateway loop if we got the file
                                 if isOk:
                                     break        
-                                #time.sleep(1)
+                                time.sleep(0.5)
                             ## Break from trial loop if we got the file
                             if isOk:
                                 break
+                            time.sleep(0.1)
                             
                     if detailed_validation_printing_enabled:
                         print("\tData Batch files fetched sucessfully.")
@@ -479,11 +403,9 @@ class Validator():
             return False
             
     def isExplicitContent(self, text):
-        #print(text)
         return False
     
     def isAdvertisingContent(self, text, debug_=False):
-        # regex = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
         regex = r"(https?://[^\s]+)"
         if debug_: 
             print("isAdvertisingContent debug ",  regex)
@@ -539,17 +461,13 @@ class Validator():
         _secondsToWait = 5
         _isPeriodActive = False
         
-        for i in range(5):
-            
-            try:
-            
+        for i in range(5):            
+            try:            
                 _isPeriodActive = self._contract.functions.commitPeriodActive(batchId).call()
+                time.sleep(0.1)
                 if(_isPeriodActive == True):
-                    break
-            
-            except:
-                
-                
+                    break            
+            except:          
                 time.sleep(_secondsToWait*i)
                 
         return _isPeriodActive
@@ -560,16 +478,12 @@ class Validator():
         _isPeriodActive = False
         
         for i in range(6):
-            
             try:
-            
+                time.sleep(0.1)
                 _isPeriodActive = self._contract.functions.revealPeriodActive(batchId).call()
                 if(_isPeriodActive == True):
                     break
-            
             except:
-                
-                
                 time.sleep(_secondsToWait*i)
                 
         return _isPeriodActive
@@ -590,6 +504,7 @@ class Validator():
         res = ""
         
         while(_isUploaded == False or _uploadTrials < 5):
+            time.sleep(1)
             if(res == ""):
                 try:
                     configRegistry_ = self.app.cm.instantiateContract("ConfigRegistry")
@@ -597,6 +512,7 @@ class Validator():
                     trials_ = 0
                     bucket_to_upload = "exorde-spotdata-1"
                     while True:
+                        time.sleep(0.1)
                         try:
                             # print("bucket_to_upload try")
                             bucket_to_upload = configRegistry_.functions.get("SpotcheckBucket").call()
@@ -610,6 +526,7 @@ class Validator():
                             
                     trials_ = 0
                     while True:
+                        time.sleep(0.1)
                         try:
                             if validation_printing_enabled:
                                 print("[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"FILE UPLOAD ATTEMPT ", "send_votes", " Bucket({})".format(bucket_to_upload)))
@@ -672,7 +589,7 @@ class Validator():
                             try:
                                 
                                 while True:
-                                    
+                                    time.sleep(1)
                                     try:
                                         
                                         try:
@@ -707,7 +624,6 @@ class Validator():
                                         time.sleep(30)
                                     
                             except Exception as e:
-                                #print(e)
                                 pass
 
                             if(drop == False):
@@ -715,6 +631,7 @@ class Validator():
                                 while(hasCommitted == False):
                                     if(hasCommitted == False):
                                         try:
+                                            time.sleep(0.5)
                                             increment_tx = self._contract.functions.commitSpotCheck(batchId, self._contract.functions.getEncryptedStringHash(res, randomSeed).call(), self._contract.functions.getEncryptedHash(batchResult, randomSeed).call(), len(results), status).buildTransaction(
                                                 {
                                                     'from': self.app.localconfig["ExordeApp"]["ERCAddress"],
@@ -736,6 +653,7 @@ class Validator():
                                         break
                                 
                                 while True:
+                                    time.sleep(1)
                                     try:
                                         
                                         try:
@@ -746,7 +664,6 @@ class Validator():
                                         if detailed_validation_printing_enabled:
                                             print("\t[Validation - L2] _revealPeriodActive = ",_revealPeriodActive)
                                         if(_revealPeriodActive == True):
-                                            #print("Reveal period open")
                                             break
                                         else:
                                             time.sleep(10)
@@ -755,7 +672,7 @@ class Validator():
                                     
                                 
                                 while True:
-                                    
+                                    time.sleep(1)
                                     try:
                                         _revealPeriodOver = self._contract.functions.revealPeriodOver(batchId).call()
                                     except:
@@ -789,6 +706,7 @@ class Validator():
                                                 if(_didCommit == True):
                                                     hasRevealed = False
                                                     while(hasRevealed == False):
+                                                        time.sleep(0.5)
                                                         try:
                                                             increment_tx = self._contract.functions.revealSpotCheck(batchId, res, batchResult, randomSeed).buildTransaction(
                                                                 {
@@ -803,22 +721,21 @@ class Validator():
                                                             if validation_printing_enabled:
                                                                 print("[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"VALIDATION", "send_votes", "SUBMISSION & VOTE - Revealed ({})".format(batchId)))
 
-                                                            time.sleep(5)
+                                                            time.sleep(3)
                                                             self._lastProcessedBatchId = batchId
                                                             break
                                                         except Exception as e:
                                                             pass
-                                                            #print(e)
                                                     break
                                         except Exception as e:
                                             break
-                                            #print(e)
                                     else:
                                         break   
                                 
                                 
                     else:
-                        print("\t[Validation - L2] waiting 5s")
+                        if detailed_validation_printing_enabled:
+                            print("\t[Validation - L2] waiting 5s")
                         time.sleep(5)
                 else:
                     print("\t[Validation - L2] Worker not allocated the batch! [Error]")
@@ -826,7 +743,6 @@ class Validator():
         except Exception as e:
             print(e)
             pass
-        #print("[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"CHECKER", "send_votes", "VOTED({})".format(batchId)))
     
     def process_batch(self, batchId, documents):
         
@@ -841,7 +757,6 @@ class Validator():
             ram = list()
             
             if(len(documents) > 0):
-                #print("Checker on batch", batchId)
                 try:
                     
                     batchResult = 1
@@ -849,110 +764,57 @@ class Validator():
                         if i%50 == 0 and detailed_validation_printing_enabled:
                                 print("\t\t -> Web Content item ",int(i)," / ",len(documents))
 
-                        # if i >= 79:
-                        #     print("\t\t ******************Fucking item:")
-                        
-                        
                         try:
                             self.current_item = i                            
                             document = documents[i]
                         except:
                             document = None
-                        # print()
-                        # print(document)
-                        #print()
 
-                        try:
-    
+                        try:    
                             response = 1
                             if(document != None):
-                                # if i >= 79:
-                                #     print("Document is not none")
-                                #     print("document length = ",len(document))
-                                #     print("\nDocument = ",document,"\n")
-                                
-                                # if i >= 79:
-                                #     print("Opening content & replacing slashes...")
 
                                 document["item"]["Content"] = document["item"]["Content"].replace('"','\"')
 
-                                # if i >= 79:
-                                #     print("done...")
-                                #     print("Content = ",document["item"]["Content"])
     
                                 try:
                                     debug_toggle = False
-                                    # if i >= 79:
-                                    #     print("A...")
-                                    #     debug_toggle = True
-
                                     if(self.isAdvertisingContent(str(document["item"]["Content"]), debug_=debug_toggle)):
                                         
-                                        # if i >= 79:
-                                        #     print("A2...")
                                         self._results["Advertising"] += 1
                                         response = 0
 
-                                    # if i >= 79:
-                                    #     print("B...")
 
-                                    #print("B")
                                     if (document["item"]["Content"].strip() in ("[removed]", "[deleted]", "[citation needed]", "", "None")):
                                         self._results["Empty"] += 1
                                         response = 0
-
-                                    # if i >= 79:
-                                    #     print("C...")
                                     
                                     if(self.isExplicitContent(document["item"]["Content"])):
                                         self._results["Censoring"] += 1
                                         response = 0
-
-                                    # if i >= 79:
-                                    #     print("D...")
                                     
                                     if(document["item"]["Url"] in self._blacklist or document["item"]["DomainName"] in self._blacklist):
                                         self._results["Blacklist"] += 1
                                         response = 0
 
-                                    # if i >= 79:
-                                    #     print("e...")
-                                    
                                     if(self.isSpamContent(document["item"]["Author"])):
                                         self._results["Spam"] += 1
                                         response = 0
 
-                                    # if i >= 79:
-                                    #     print("f...")
-                                    
                                     if(document["item"]["Url"] in ram):
                                         self._results["Duplicates"] += 1
                                         response = 0
 
-                                    # if i >= 79:
-                                    #     print("g...")
-                                    
                                     if(response == 1):
                                         self._results["Validated"] += 1
                                         
-
-                                        # if i >= 79:
-                                        #     print("response = 1...")
-                                    
                                         if(document["item"]["Language"] not in self._languages):
                                             self._languages[document["item"]["Language"]] = 1
                                         else:
                                             self._languages[document["item"]["Language"]] += 1
                                             
-                                        # if i >= 79:
-                                        #     print("pre append to results")
-
-                                        # results.append(document) 
                                         results[document["item"]["Url"]] = document
                                         
-                                        # if i >= 79:
-                                        #     print("appened.")
-
                                         ram.append(document["item"]["Url"])
                                     
                                     self.nbItems += 1
@@ -970,22 +832,18 @@ class Validator():
                     status = "Success"
                     if validation_printing_enabled:
                         print("[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"VALIDATION", "Processing Status:", " [{}] ".format(status)))   
-                    # print("[Validation] Batch processing status = ",status)
-                    
+                   
                     x = threading.Thread(target=self.send_votes, args=(batchId, results, status, batchResult, randomSeed,))
                     x.daemon = True
                     x.start()
                 except Exception as e:
-                    #print("Bob2",e)
                     status = "Failure"
                     if validation_printing_enabled:
                         print("[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"VALIDATION", "Processing Status:", " [{}] ".format(status)))   
-                    # print("[Validation] Batch processing status = ",status)
                     batchResult = 0
                     x = threading.Thread(target=self.send_votes, args=(batchId, results, status, batchResult, randomSeed,))
                     x.daemon = True
                     x.start()
-                    #self.send_votes(batchId, results, status, batchResult, randomSeed)
                     
             elif(len(documents) == 0):   
                 status = "NoData"
@@ -993,14 +851,12 @@ class Validator():
                 x = threading.Thread(target=self.send_votes, args=(batchId, results, status, batchResult, randomSeed,))
                 x.daemon = True
                 x.start()
-                #self.send_votes(batchId, results, status, batchResult, randomSeed)
         except Exception as e:
             #print(e)
             pass
             
     def check_content(self, doc:str = ""):
         
-        #while self._isRunning:
             
         try:
             
@@ -1020,16 +876,12 @@ class Validator():
             
             batchId, documents = self.get_content()
             
-            #print("Protocol told me to do the batch", batchId)
             if(batchId != None):
                 
                 if(batchId != None and batchId >= self.current_batch):
-                    #self._isRunning = True
                     if validation_printing_enabled:
                         print("[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"VALIDATION", "check_content", "PROCESSING({})".format(batchId)))
                     try:
-                        # self.current_batch = batchId
-                        # self._lastProcessedBatchId = batchId
                         self.totalNbBatch += 1
                         self.batchLength = len(documents)
                         
@@ -1037,29 +889,11 @@ class Validator():
                         self._lastProcessedBatchId = batchId
                         self._isRunning = False
                     except Exception as e:
-                        #print(e)
                         self._isRunning = False
-                    #sys.exit()
                 else:
-                    #print("[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"CHECKER", "check_content", "NO NEW JOB".format(batchId)))
                     self.status = "OLDJOB"
             else:
                 self.status = "NOJOB"
                 
         except Exception as e:
-            #print("Bob", e)
             self._isRunning = False
-            #sys.exit()
-                
-            # cont = self.app.cm.instantiateContract("DataSpotting")
-            # increment_tx = cont.functions.UnregisterWorker().buildTransaction(
-            #     {
-            #         'from': self.localconfig["ExordeApp"]["ERCAddress"],
-            #         'gasPrice': w3.eth.gas_price,
-            #         'nonce': w3.eth.get_transaction_count(self.localconfig["ExordeApp"]["ERCAddress"]),
-            #     }
-            # )
-            # self.app.tm.waitingRoom_VIP.put((increment_tx, self.localconfig["ExordeApp"]["ERCAddress"], self.pKey))
-                
-            
-#print("[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"CHECKER", "import", "LOADED")) 

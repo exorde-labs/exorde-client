@@ -1,80 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Oct 28 09:04:47 2022
+Created on Tue Oct 28 14:20:53 2022
 
-@author: flore
+@author: florent, mathias
+Exorde Labs
 """
-
-# import boto3
-# from collections import Counter, deque
-# import csv
-# import datetime as dt
-# from datetime import timezone
-# from dateutil.parser import parse
-# from eth_account import Account
-# import facebook_scraper  as fb
-# from functools import partial
-# from ftlangdetect import detect
-# from geopy.geocoders import Nominatim
-# import html
-# from idlelib.tooltip import Hovertip
-# from iso639 import languages
-# import itertools
-# import json
-# import keyboard
-# import libcloud
-# from lxml.html.clean import Cleaner
-# import numpy as np
-# from operator import itemgetter
-# import os
-# import pandas as pd
-# from pathlib import Path
-# import pickle
-# from PIL import Image, ImageTk, ImageFile
-# from plyer import notification
-# import pytz
-# from queue import Queue
-# import random
-# import re
-# import requests
-# from requests_html import HTML
-# from requests_html import HTMLSession
-# from scipy.special import softmax, expit
-# import shutils
-# import snscrape.modules
-# import string
-# import sys
-# import threading
-# import time
-# import tkinter as tk
-# from tkinter import ttk
-# import tkinter.messagebox
-# import tldextract
-# # import transformers
-# # from transformers import AutoModelForSequenceClassification, AutoTokenizer, AutoConfig, TFAutoModelForSequenceClassification
-# import unicodedata
-# import urllib.request
-# import warnings
-# import web3
-# from web3 import Web3, HTTPProvider
-# import webbrowser
-# import yake
-
-
-
-# import requests
-# import web3
-# from web3 import Web3, HTTPProvider
-# import time
-# import tkinter as tk
-# from tkinter import ttk
-# import tkinter.messagebox
-
-# from Transaction import ContractManager, TransactionManager
-# from Scraper import Scraper
-# from Validator import Validator
-# import requests
-
 
 
 class Widget():
@@ -100,6 +30,67 @@ class Widget():
         x = threading.Thread(target=self.submarineManagement)
         x.daemon = True
         x.start()
+
+        contracts = requests.get("https://raw.githubusercontent.com/MathiasExorde/TestnetProtocol-staging/main/ContractsAddresses.txt", timeout=to).json()
+        abis = dict()
+        abis["ConfigRegistry"] = requests.get("https://raw.githubusercontent.com/MathiasExorde/TestnetProtocol-staging/main/ABIs/ConfigRegistry.sol/ConfigRegistry.json", timeout=to).json()
+
+        config_reg_contract = self.w3.eth.contract(contracts["ConfigRegistry"], abi=abis["ConfigRegistry"]["abi"])
+
+        # Check Updates                
+        with open("localConfig.json", "r") as f:
+            localconfig = json.load(f)
+        
+        ## check update   
+        try:
+            if general_printing_enabled:
+                print("[Init Version Check] Checking version on start")    
+            try:
+                _version = config_reg_contract.functions.get("version").call()
+                _lastInfo = config_reg_contract.functions.get("lastInfo").call()
+                print("Latest message from Exorde Labs: ",_lastInfo)
+            except:
+                _version = localconfig["ExordeApp"]["lastUpdate"]
+            
+            if("lastUpdate" not in localconfig["ExordeApp"]):            
+                localconfig["ExordeApp"]["lastUpdate"] = _version
+                with open("localConfig.json", "w") as f:
+                    json.dump(localconfig, f)
+                    
+            if(localconfig["ExordeApp"]["lastUpdate"] != _version):          
+                print("[Init Version Check] Updated to Version: ",_version)
+                localconfig["ExordeApp"]["lastUpdate"] = _version
+                with open("localConfig.json", "w") as f:
+                    json.dump(localconfig, f)
+            else:                
+                print("[Init Version Check] Current Module Version: ",_version)
+        except Exception as e:
+            print("[Init Version Check] Error: ",e)
+
+        nb_trials_reading_config = 0
+        nb_max_before_interrup = 4
+        while True:
+                
+            time.sleep(5*60)
+            ## Check RemoteKill   
+            try:
+                try:
+                    _remote_kill = str(config_reg_contract.functions.get("remote_kill").call())
+                except:
+                    nb_trials_reading_config += 1
+                    sleep(2)
+                
+                if(_remote_kill == "kill"):
+                    print("Forced Interruption of your Exorde Module. Check Discord for any update")  
+                    exit(1)
+                                    
+                if(nb_trials_reading_config >= nb_max_before_interrup ):        
+                    print("Could not read ConfigRegistry ",nb_max_before_interrup," times in a row. The Network might be in trouble, check Discord for any update.")  
+                    exit(1)
+            except Exception as e:
+                print("RemoteKill Error = ",e)
+
+
 
 
     def monitor(self):
@@ -185,31 +176,34 @@ class Widget():
         user_address = self.localconfig["ExordeApp"]["ERCAddress"]
 
         ##### 0 - CHECK VALIDITY                
-        is_user_address_valid = self.w3Tx.isAddress(user_address)
+        is_user_address_valid = self.w3.isAddress(user_address)
         if is_user_address_valid == False:
             print("[Init] INVALID USER ADDRESS, ABORT")
             os._exit(1)
-        user_address = self.w3Tx.toChecksumAddress(user_address)
+        user_address = self.w3.toChecksumAddress(user_address)
                 
 
         chainId_ = 2139927552
         EXDT_token_address = "0xcBc357F3077989B4636E93a8Ce193E05cd8cc56E"
 
         faucet_success = False
+        
+        max_nb_autofaucet_trials = 10
+        nb_autofaucet_trials = 0
         while faucet_success == False:
             try:
                 # select random faucet out of the  500 ones
                 (fi, Private_key) = self.select_random_faucet_pk()
                 if general_printing_enabled:
                     print("[Faucet] selecting Auto-Faucet n°",fi)
-                faucet_address = self.w3Tx.eth.account.from_key(Private_key).address
+                faucet_address = self.w3.eth.account.from_key(Private_key).address
                 
                                
                 ### 1 - SEND FUEL FIRST
                 #print("SEND FUEL")
-                signed_txn = self.w3Tx.eth.account.sign_transaction(dict(
-                    nonce=self.w3Tx.eth.get_transaction_count(faucet_address),
-                    gasPrice=self.w3Tx.eth.gas_price,
+                signed_txn = self.w3.eth.account.sign_transaction(dict(
+                    nonce=self.w3.eth.get_transaction_count(faucet_address),
+                    gasPrice=self.w3.eth.gas_price,
                     gas=1000000,
                     to=user_address,
                     value=500000000000000,
@@ -220,28 +214,58 @@ class Widget():
                 Private_key,
                 )
                 
+                previous_nounce = self.w3.eth.get_transaction_count(faucet_address)
+
+                # SEND RAW TRANSACTION VIA THE TX ENDPOINT
                 tx_hash = self.w3Tx.eth.send_raw_transaction(signed_txn.rawTransaction)
-                tx_receipt = self.w3Tx.eth.wait_for_transaction_receipt(tx_hash)
+
+                time.sleep(2)
+                for i in range (10):
+                    time.sleep(i*1.5+1)
+                    # WAIT FOR NEW NOUNCE BY READING PROXY
+                    current_nounce = self.w3.eth.get_transaction_count(faucet_address)
+                    if(current_nounce > previous_nounce):
+                        # found a new transaction because account nounce has increased
+                        break
+
+                # WAIT FOR TX RECEIPT
+                tx_receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=10, poll_latency = 3)
+                
                     
                 print("[Faucet] sfuel funding tx = ",tx_receipt.transactionHash.hex())
                 
                 ### 1 - SEND EXDT TOKENS                    
                 token_abi = requests.get("https://raw.githubusercontent.com/MathiasExorde/TestnetProtocol-staging/main/ABIs/daostack/controller/daostack/controller/DAOToken.sol/DAOToken.json").json()["abi"]
                 
-                tok_contract = self.w3Tx.eth.contract(EXDT_token_address, abi=token_abi)
+                tok_contract = self.w3.eth.contract(EXDT_token_address, abi=token_abi)
                 
                 token_amount_to_send = 200000000000000000000 # 200 tokens EXDT
                 increment_tx = tok_contract.functions.transfer(user_address, token_amount_to_send).buildTransaction({
                         'from': faucet_address,
-                        'nonce': self.w3Tx.eth.get_transaction_count(faucet_address),
+                        'nonce': self.w3.eth.get_transaction_count(faucet_address),
                         'value': 0,
                         'gas': 1000000,
-                        'gasPrice': self.w3Tx.eth.gas_price,
+                        'gasPrice': self.w3.eth.gas_price,
                 })
                 
-                tx_create = self.w3Tx.eth.account.sign_transaction(increment_tx, Private_key)
-                tx_hash = self.w3Tx.eth.send_raw_transaction(tx_create.rawTransaction)
-                tx_receipt = self.w3Tx.eth.wait_for_transaction_receipt(tx_hash)
+                tx_create = self.w3.eth.account.sign_transaction(increment_tx, Private_key)
+                previous_nounce = self.w3.eth.get_transaction_count(faucet_address)
+
+                # SEND RAW TRANSACTION VIA THE TX ENDPOINT
+                tx_hash = self.w3Tx.eth.send_raw_transaction(signed_txn.rawTransaction)
+
+                time.sleep(2)
+                for i in range (10):
+                    time.sleep(i*1.5+1)
+                    # WAIT FOR NEW NOUNCE BY READING PROXY
+                    current_nounce = self.w3.eth.get_transaction_count(faucet_address)
+                    if(current_nounce > previous_nounce):
+                        # found a new transaction because account nounce has increased
+                        break
+
+                # WAIT FOR TX RECEIPT
+                tx_receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=10, poll_latency = 3)
+                
                 
                 print("[Faucet] token funding tx = ",tx_receipt.transactionHash.hex())
 
@@ -250,14 +274,12 @@ class Widget():
                 read_status = False
                 for i in range(_trials):
                     try:                             
-                        # print("[Faucet] debug: trying to read balance")
                         token_balance = tok_contract.functions.balanceOf(user_address).call()
-                        user_token_balance = self.w3Tx.fromWei(token_balance, 'ether')
-                        user_sfuel_balance = self.w3Tx.eth.get_balance(user_address)
+                        user_token_balance = self.w3.fromWei(token_balance, 'ether')
+                        user_sfuel_balance = self.w3.eth.get_balance(user_address)
                         read_status = True
                         break
                     except Exception as e:
-                        # print("[Faucet] debug: trying to read balance FAIL: ",e)
                         time.sleep((1+int(i)))
                 
                 if read_status == False:
@@ -269,21 +291,26 @@ class Widget():
                 if user_token_balance > 0 and user_sfuel_balance > 0:
                     faucet_success = True
                     print("[Faucet] Auto-Faucet n°",fi, " Success.")
-                break
+                    break
+                nb_autofaucet_trials += 1
+                if nb_autofaucet_trials >= max_nb_autofaucet_trials:
+                    print("[Faucet] Auto-Faucet Failure. Tried ",max_nb_autofaucet_trials," times. Giving up. Please report this error. Faucets might be empty.")
+                    exit(1)
             except Exception as e:
                 print("[Faucet] Error: ",e)
                 print("[Faucet] Auto-Faucet n°",fi, " Failure... retrying.")
-                time.sleep(2)
+                nb_autofaucet_trials += 1
+                time.sleep(1+(nb_autofaucet_trials)*2)
+                if nb_autofaucet_trials >= max_nb_autofaucet_trials:
+                    print("[Faucet] Auto-Faucet critical Failure. Tried ",max_nb_autofaucet_trials," times. Giving up. Please report this error.")
+                    exit(1)
                 continue
 
         
-    def createUtils(self):
-        
+    def createUtils(self):        
         self.cm = ContractManager(self.localconfig["ExordeApp"]["ERCAddress"], self.pKey)
         self.tm = TransactionManager(self.cm)
         
-
-
             
     def generateLocalKey(self):
         random.seed(random.random())
@@ -295,7 +322,20 @@ class Widget():
     def stakeChecking(self):
         
         #print("[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"WIDGET", "stakeChecking", self.status))
-        
+    
+        self.am = self.cm.instantiateContract("AddressManager")
+
+        if(self.localconfig["ExordeApp"]["MainERCAddress"] != ""):
+
+            increment_tx = self.am.functions.ClaimMaster(self.localconfig["ExordeApp"]["MainERCAddress"]).buildTransaction(
+                {
+                    'from': self.localconfig["ExordeApp"]["ERCAddress"],
+                    'gasPrice': self.w3.eth.gas_price,
+                    'nonce': self.w3.eth.get_transaction_count(self.localconfig["ExordeApp"]["ERCAddress"]),
+                }
+            )
+            self.tm.waitingRoom_VIP.put((increment_tx, self.localconfig["ExordeApp"]["ERCAddress"], self.pKey))
+
         if(self.cm.readStake() == True):
 
             self.am = self.cm.instantiateContract("AddressManager")
@@ -311,9 +351,6 @@ class Widget():
                 )
                 self.tm.waitingRoom_VIP.put((increment_tx, self.localconfig["ExordeApp"]["ERCAddress"], self.pKey))
         else:
-            
-            
-            # https://api.faucet.exorde.network/fundAccount/{{account}}
             
             requests.post("https://api.faucet.exorde.network/fundAccount/"+self.localconfig["ExordeApp"]["ERCAddress"])
             
@@ -333,7 +370,6 @@ class Widget():
         self.cm.StakeManagement(self.tm)    
         if general_printing_enabled:
             print("[Init] Staking requirement OK")
-        #print("[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"WIDGET", "stakeChecking", self.status))
         
 
 
@@ -364,7 +400,6 @@ class Widget():
         
             if general_printing_enabled:
                 print("[Init] New Worker Local Address = ",new_conf["ExordeApp"]["ERCAddress"])
-                # print("[Init] New Configuration = ",new_conf)
                 print("[Init] First funding of the worker wallet")
             self.autofund()
             
@@ -380,36 +415,19 @@ class Widget():
         # updating localconfig with new MainERCAddress
         with open("localConfig.json", "w") as f:
             json.dump(new_conf,f)
-                
-        #print("[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"WIDGET", "__init__", self.status))
-        
+                        
         try:
             self.allowGeoCoordSending = self.localconfig["ExordeApp"]["SendCountryInfo"]
         except:
             self.allowGeoCoordSending = 1
                  
 
-
-    
-    # def createLocalConfig(self):
-    #     if general_printing_enabled:
-    #         print("[Init] CREATING CONFIG FILE")
-    #     if(self.localconfig["ExordeApp"]["MainERCAddress"] == ""):
-    #         self.localconfig["ExordeApp"]["MainERCAddress"] = str(main_wallet_)
-
-    #         self.autofund()
-    #         with open("localConfig.json", "w") as f:
-    #             json.dump(self.localconfig,f)
-    
-
-    def updateLocalConfig(self):
-        
+    def updateLocalConfig(self):        
         with open("localConfig.json", "w") as f:
             json.dump(self.localconfig,f)
+
             
     def changeAllowanceGeo(self):
-        
-        
         if(self.allowGeoCoordSending == 1):
             self.allowGeoCoordSending = 0
         else:
@@ -419,70 +437,12 @@ class Widget():
         self.updateLocalConfig()
 
         
-# class UserPanel():
-
-#     def __init__(self, master):
-#         naddress, background="#FFFFFF", width=50).pack() #, validatecommand= lambda: self.callback(self.tm)
-
-        
-#         contract = master.cm.instantiateContract("EXDT")
-#         self.balanceLabel = tk.Label(self.user_info, text="Balance (EXDT): ", background="#EAEAEA").pack(pady=25)
-#         money = 0
-#         # for ad in self.subworkers:
-#         #     money += round(contract.functions.balanceOf(Web3.toChecksumAddress(ad)).call()/(10**18),1)
-#         money += round(contract.functions.balanceOf(Web3.toChecksumAddress(master.localconfig["ExordeApp"]["ERCAddress"])).call()/(10**18),2)
-#         money += round(contract.functions.balanceOf(Web3.toChecksumAddress(master.localconfig["ExordeApp"]["MainERCAddress"])).call()/(10**18),2)
-#         self.balance = tk.StringVar(self.user_info, value = money)
-#         masterAddress = master.am.functions.FetchHighestMaster(master.localconfig["ExordeApp"]["ERCAddress"]).call()
-#         #self.balance = tk.StringVar(self.user_info, value = round(contract.functions.balanceOf(Web3.toChecksumAddress(self.localconfig["ExordeApp"]["ERCAddress"])).call()/(10**18),1))
-#         self.balanceValue = tk.Entry(self.user_info, textvariable=self.balance, background="#EAEAEA", width=50).pack()
-
-#         contract = master.cm.instantiateContract("Reputation")
-#         rep = 0
-#         # for ad in self.subworkers:
-#         #     rep += round(contract.functions.balanceOf(Web3.toChecksumAddress(ad)).call()/(10**18),1)
-#         rep += round(contract.functions.balanceOf(Web3.toChecksumAddress(master.localconfig["ExordeApp"]["ERCAddress"])).call()/(10**18),2)
-#         rep += round(contract.functions.balanceOf(Web3.toChecksumAddress(master.localconfig["ExordeApp"]["MainERCAddress"])).call()/(10**18),2)
-
-#         self.reputationLabel = tk.Label(self.user_info, text="Reputation (REP): ", background="#EAEAEA").pack(pady=25)
-#         #self.reputation = tk.StringVar(self.user_info, value = round(contract.functions.balanceOf(Web3.toChecksumAddress(masterAddress)).call()/(10**18),1))
-#         self.reputation = tk.StringVar(self.user_info, value = rep)
-#         self.reputationValue = tk.Entry(self.user_info, textvariable=self.reputation, background="#EAEAEA", width=50).pack()
-        
-#         reward = round(master.cm.instantiateContract("RewardsManager").functions.RewardsBalanceOf(master.localconfig["ExordeApp"]["MainERCAddress"]).call()/(10**18),2)
-#         self.rewardLabel = tk.Label(self.user_info, text="Total Rewards (EXDT): ", background="#EAEAEA").pack(pady=25)
-#         self.reward = tk.StringVar(self.user_info, value = reward)
-#         self.rewardValue = tk.Entry(self.user_info, textvariable=self.reward, background="#EAEAEA", width=50).pack()
-#         #tk.Button(self.user_info, text="Claim rewards", command=self.claimRewards).pack(padx= 25, pady= 25)
-
-#         #print(self.allowance.get())
-#         self.tmpAllowance = tk.BooleanVar(self.user_info)
-#         self.tmpAllowance.set(master.localconfig["ExordeApp"]["SendCountryInfo"])
-#         self._allowGeoCoordSending = tk.Checkbutton(self.user_info, text=" Allow sending geolocation data (Country)", variable=master.allowance, onvalue=1, offvalue=0, command=master.changeAllowanceGeo, background="#EAEAEA")
-#         self._allowGeoCoordSending.pack(pady=25)
-#         if(self.tmpAllowance.get() == True):
-#             self._allowGeoCoordSending.select()
-        
-#         #self.AddressValue = tk.Label(self.user_info, text = self.localconfig["ExordeApp"]["ERCAddress"], background="#EAEAEA").pack()
-#         # tk.Button(self.user_info, text="Quit", command=self.quitUserInfo).pack(anchor="se", padx= 25, pady= 25)
-#         self.userFrame.pack()
-#         #self.user_info.overrideredirect(1)
-        
-#         self.user_info.protocol("WM_DELETE_WINDOW", lambda: self.on_closing(master))
-        
-#         self.user_info.mainloop()
         
     def on_closing(self, master):
-        
         if general_printing_enabled:
             print("[ClaimMaster] Claiming...")
-        #print("[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"USERPNL", "on_closing", self.status))
         
         new_val = main_wallet_
-        #if(self.localconfig["ExordeApp"]["MainERCAddress"] != new_val):
-        
-        # with open("localConfig.json", "w") as f:
-        #     json.dump(self.localconfig, f)
         if(new_val == ""):
             print("No Main Ethereum Wallet", "Please indicate your main Ethereum wallet address.")
         else:
@@ -501,99 +461,9 @@ class Widget():
             
             master.updateLocalConfig()
             self.user_info.destroy()
-        
-# class ScrapingPanel():
 
-#     def __init__(self, master):
-#         #getting screen width and height of display
-#         window_width = int((master.root.winfo_screenwidth()*20)/100)  #int((self.root.winfo_screenwidth() )/5)
-#         #window_width= int((self.root.winfo_screenwidth() )/5)
-        
-#         window_height= int((master.root.winfo_screenheight()*30)/100)  #int((self.root.winfo_screenheight()-750)/1.75)+50  
-#         if(len(master.sm.keywords) > 0):
-#             #window_width *= 2
-#             window_height= int((master.root.winfo_screenheight()*(30 + (5+(2.5*len(master.sm.keywords[:5]))))/100))
-                
             
-        
-#         screen_width = master.root.winfo_screenwidth()
-#         screen_height = master.root.winfo_screenheight()        
-#         # find the center point
-#         center_x = int(screen_width/2 - window_width / 2)
-#         center_y = int(screen_height/2 - window_height / 2)        
-#         # set the position of the window to the center of the screen
-        
-#         #♦print(self.sm.keywords)
-        
-#         self.sConfig = tk.Tk()
-#         self.sConfig.configure(bg="#EAEAEA")
-#         self.sConfig.title(" Scraping Parameters")
-#         self.sConfig.iconbitmap("exd_logo.ico")
-#         wi = int(window_width)
-#         self.sConfig.geometry(f'{wi}x{window_height}+{center_x-10}+{center_y-35}')
-#         self.sConfig.resizable(False,False)
-#         self.sConfig.focus_force()
-        
-#         #SET PARAM FRAME
-#         self.params = tk.Frame(self.sConfig, name="paramFrame", background="#EAEAEA")#, width=window_width/2
-        
-#         self.config = tk.Frame(self.params, background="#EAEAEA")
-        
-#         if(len(master.sm.keywords) > 0):
-#             self.currentKeywordsFrame = tk.LabelFrame(self.config, name="currentKeywordsFrame", background="#EAEAEA", text="Active scrapings", padx=50, pady=20)
-#             internalFrame1 = tk.Frame(self.currentKeywordsFrame, background="#EAEAEA")
-#             for i in range(len(master.sm.keywords[:5])):
-#                 miniFrame = tk.Frame(internalFrame1, background="#EAEAEA")
-#                 #miniLabel = tk.Label(miniFrame, text=self.sm.keywords[i], background="#EAEAEA").pack(side = tk.LEFT, padx=5)
-#                 miniEntry = tk.Checkbutton(miniFrame, background="#EAEAEA", text=master.sm.keywords[i], onvalue=1, offvalue=1, command=partial(self.remove_item, master, master.sm.keywords[i])).pack() #,variable=var1
-#                 miniFrame.pack(side = tk.TOP, anchor = tk.W) #
-#             internalFrame1.pack(side=tk.LEFT, padx=5)    
-            
-#             internalFrame2 = tk.Frame(self.currentKeywordsFrame, background="#EAEAEA")
-#             for i in range(len(master.sm.keywords[5:])):
-#                 miniFrame = tk.Frame(internalFrame2, background="#EAEAEA")
-#                 #miniLabel = tk.Label(miniFrame, text=self.sm.keywords[i], background="#EAEAEA").pack(side = tk.LEFT, padx=5)
-#                 miniEntry = tk.Checkbutton(miniFrame, background="#EAEAEA", text=master.sm.keywords[i+5], onvalue=1, offvalue=1, command=partial(self.remove_item, master, master.sm.keywords[i+5])).pack() #,variable=var1
-#                 miniFrame.pack(side = tk.TOP, anchor = tk.W) #
-#             internalFrame2.pack(side=tk.LEFT, padx=5)    
-            
-#             self.currentKeywordsFrame.pack(fill="both", expand="yes",pady=10, padx=25)#side = tk.LEFT, , fill="both", expand="yes"
-        
-            
-#         self.nbFrame = tk.LabelFrame(self.config, name="nbFrame", background="#EAEAEA", text="Scraped urls", padx=50, pady=20)
-        
-#         self.nbOne = tk.Frame(self.nbFrame, background="#EAEAEA")
-#         self.keyoneLabel = tk.Label(self.nbOne, text="Urls scraped so far: ", background="#EAEAEA").pack(side = tk.TOP, padx=5)
-#         self.keyoneEntry = tk.Label(self.nbOne, text=str(master.sm.nbItems), background="#EAEAEA")
-#         self.keyoneEntry.pack()
-#         self.nbOne.pack(pady=2.5)
-        
-#         self.nbFrame.pack(fill="both", expand="yes", pady=10, padx=25)#side = tk.LEFT, , fill="both", expand="yes"
-        
-#         self.keyWordsFrame = tk.LabelFrame(self.config, name="keywordFrame", background="#EAEAEA", text="Add target", padx=50, pady=20)
-        
-#         self.One = tk.Frame(self.keyWordsFrame, background="#EAEAEA")
-#         self.keyoneLabel = tk.Label(self.One, text="Target: ", background="#EAEAEA").pack(side = tk.LEFT, padx=5)
-#         self.keyoneEntry = tk.Entry(self.One, width=25)
-        
-#         self.keyoneEntry.pack()
-#         self.One.pack(pady=2.5)
-        
-#         self.keyWordsFrame.pack(fill="both", expand="yes", pady=10, padx=25)#side = tk.LEFT, , fill="both", expand="yes"
-        
-        
-#         self.config.pack()
-#         self.RunButton = tk.Button(self.params, text="Start scraping", height=2, width=25, command = self.start_scraping)
-#         self.RunButton.pack(fill="both", expand="yes", padx=25, pady = 5) #pady=50, padx=25
-#         self.params.pack()
-#         self.sConfig.bind('<Return>', self.start_scraping)
-        
-#         self.keyoneEntry.focus_set()
-#         self.master = master
-#         self.sConfig.mainloop()
-    
     def start_scraping(self, event = None):
-
         try:
             if(len(self.master.sm.keywords) < 10):
                 target = self.keyoneEntry.get()
@@ -615,219 +485,12 @@ class Widget():
                 print("Processing info",
                                           "{} scrapers are already running on this machine.\nPlease stop one of them before starting another.".format(len(self.master.sm.keywords)))
         except Exception as e:
-            #print(e)
             pass
-        
-    # def remove_item(self, master, keyword):
-    #     master.sm.keywords.remove(keyword)
-    #     self.sConfig.destroy()
-        
-    #     #getting screen width and height of display
-    #     window_width = int((master.root.winfo_screenwidth()*20)/100)  #int((self.root.winfo_screenwidth() )/5)
-    #     #window_width= int((self.root.winfo_screenwidth() )/5)
-        
-    #     window_height= int((master.root.winfo_screenheight()*30)/100)  #int((self.root.winfo_screenheight()-750)/1.75)+50  
-    #     if(len(master.sm.keywords) > 0):
-    #         #window_width *= 2
-    #         window_height= int((master.root.winfo_screenheight()*(30 + (5+(2.5*len(master.sm.keywords[:5]))))/100))
-                
-            
-        
-    #     screen_width = master.root.winfo_screenwidth()
-    #     screen_height = master.root.winfo_screenheight()        
-    #     # find the center point
-    #     center_x = int(screen_width/2 - window_width / 2)
-    #     center_y = int(screen_height/2 - window_height / 2)        
-    #     # set the position of the window to the center of the screen
-        
-    #     #♦print(self.sm.keywords)
-        
-    #     self.sConfig = tk.Tk()
-    #     self.sConfig.configure(bg="#EAEAEA")
-    #     self.sConfig.title(" Scraping Parameters")
-    #     self.sConfig.iconbitmap("exd_logo.ico")
-    #     wi = int(window_width)
-    #     self.sConfig.geometry(f'{wi}x{window_height}+{center_x-10}+{center_y-35}')
-    #     self.sConfig.resizable(False,False)
-    #     self.sConfig.focus_force()
-        
-    #     #SET PARAM FRAME
-    #     self.params = tk.Frame(self.sConfig, name="paramFrame", background="#EAEAEA")#, width=window_width/2
-        
-    #     self.config = tk.Frame(self.params, background="#EAEAEA")
-        
-    #     if(len(master.sm.keywords) > 0):
-    #         self.currentKeywordsFrame = tk.LabelFrame(self.config, name="currentKeywordsFrame", background="#EAEAEA", text="Active scrapings", padx=50, pady=20)
-    #         internalFrame1 = tk.Frame(self.currentKeywordsFrame, background="#EAEAEA")
-    #         for i in range(len(master.sm.keywords[:5])):
-    #             miniFrame = tk.Frame(internalFrame1, background="#EAEAEA")
-    #             #miniLabel = tk.Label(miniFrame, text=self.sm.keywords[i], background="#EAEAEA").pack(side = tk.LEFT, padx=5)
-    #             miniEntry = tk.Checkbutton(miniFrame, background="#EAEAEA", text=master.sm.keywords[i], onvalue=1, offvalue=1, command=partial(self.remove_item, master, master.sm.keywords[i])).pack() #,variable=var1
-    #             miniFrame.pack(side = tk.TOP, anchor = tk.W) #
-    #         internalFrame1.pack(side=tk.LEFT, padx=5)    
-            
-    #         internalFrame2 = tk.Frame(self.currentKeywordsFrame, background="#EAEAEA")
-    #         for i in range(len(master.sm.keywords[5:])):
-    #             miniFrame = tk.Frame(internalFrame2, background="#EAEAEA")
-    #             #miniLabel = tk.Label(miniFrame, text=self.sm.keywords[i], background="#EAEAEA").pack(side = tk.LEFT, padx=5)
-    #             miniEntry = tk.Checkbutton(miniFrame, background="#EAEAEA", text=master.sm.keywords[i+5], onvalue=1, offvalue=1, command=partial(self.remove_item, master, master.sm.keywords[i+5])).pack() #,variable=var1
-    #             miniFrame.pack(side = tk.TOP, anchor = tk.W) #
-    #         internalFrame2.pack(side=tk.LEFT, padx=5)    
-            
-    #         self.currentKeywordsFrame.pack(fill="both", expand="yes",pady=10, padx=25)#side = tk.LEFT, , fill="both", expand="yes"
-        
-            
-    #     self.nbFrame = tk.LabelFrame(self.config, name="nbFrame", background="#EAEAEA", text="Scraped urls", padx=50, pady=20)
-        
-    #     self.nbOne = tk.Frame(self.nbFrame, background="#EAEAEA")
-    #     self.keyoneLabel = tk.Label(self.nbOne, text="Urls scraped so far: ", background="#EAEAEA").pack(side = tk.TOP, padx=5)
-    #     self.keyoneEntry = tk.Label(self.nbOne, text=str(master.sm.nbItems), background="#EAEAEA")
-    #     self.keyoneEntry.pack()
-    #     self.nbOne.pack(pady=2.5)
-        
-    #     self.nbFrame.pack(fill="both", expand="yes", pady=10, padx=25)#side = tk.LEFT, , fill="both", expand="yes"
-        
-    #     self.keyWordsFrame = tk.LabelFrame(self.config, name="keywordFrame", background="#EAEAEA", text="Add target", padx=50, pady=20)
-        
-    #     self.One = tk.Frame(self.keyWordsFrame, background="#EAEAEA")
-    #     self.keyoneLabel = tk.Label(self.One, text="Target: ", background="#EAEAEA").pack(side = tk.LEFT, padx=5)
-    #     self.keyoneEntry = tk.Entry(self.One, width=25)
-        
-    #     self.keyoneEntry.pack()
-    #     self.One.pack(pady=2.5)
-        
-    #     self.keyWordsFrame.pack(fill="both", expand="yes", pady=10, padx=25)#side = tk.LEFT, , fill="both", expand="yes"
-        
-        
-    #     self.config.pack()
-    #     self.RunButton = tk.Button(self.params, text="Start scraping", height=2, width=25, command = self.start_scraping)
-    #     self.RunButton.pack(fill="both", expand="yes", padx=25, pady = 5) #pady=50, padx=25
-    #     self.params.pack()
-    #     self.sConfig.bind('<Return>', self.start_scraping)
-        
-    #     self.keyoneEntry.focus_set()
-    #     self.sConfig.mainloop()
-        
-class CheckPanel():
-    
-    def __init__(self, master):
-        
-        try:            
-            self.master = master
-            #getting screen width and height of display
-            # window_width= int((self.root.winfo_screenwidth() )/2)+75
-            # window_height= int((self.root.winfo_screenheight()-400)/2)
-            # screen_width = self.master.root.winfo_screenwidth()
-            # screen_height = self.master.root.winfo_screenheight()        
-            
-            # #getting screen width and height of display
-            # window_width = int((self.master.root.winfo_screenwidth()*20)/100)  #int((self.root.winfo_screenwidth() )/5)
-            # if(len(self.master.val._languages) > 0):
-            #     window_width *= 2
-            # #window_width= int((self.root.winfo_screenwidth() )/5)
-            
-            # window_height= int((self.master.root.winfo_screenheight()*55)/100)  #int((self.root.winfo_screenheight()-750)/1.75)+50  
-    
-            # # find the center point
-            # center_x = int(screen_width/2 - window_width / 2)
-            # center_y = int(screen_height/2 - window_height / 2)        
-            # # set the position of the window to the center of the screen
-            
-            # self.fScreen1 = tk.Tk()
-            # self.fScreen1.configure(bg="#EAEAEA")
-            # self.fScreen1.title(" Checking")
-            # self.fScreen1.iconbitmap("exd_logo.ico")
-            # wi = int(window_width/1.5)
-            # self.fScreen1.geometry(f'{wi}x{window_height}+{center_x-10}+{center_y-35}')
-            # self.fScreen1.resizable(False,False)
-        
 
-            # self.masterFormat1 = tk.Frame(self.fScreen1, background="#EAEAEA")
-            
-            # self.currBatchFrame = tk.LabelFrame(self.masterFormat1, background="#EAEAEA", text="Batch info", pady=15, padx=5)
-            
-            # self.leftBatchFrame = tk.Frame(self.currBatchFrame, background="#EAEAEA")
-            
-            # self.miniLabel1 = tk.Label(self.currBatchFrame, text="Current batch:", background="#EAEAEA").pack(pady=5, padx=5)
-            # self.miniLabel2 = tk.Label(self.currBatchFrame, text="{}".format(self.master.val.current_batch), background="#EAEAEA") 
-            # self.miniLabel2.pack(pady=5, padx=5)
-            # self.miniLabel3 = tk.Label(self.currBatchFrame, text="{}/{}".format(self.master.val.current_item+1 if self.master.val.batchLength != 0 else 0, self.master.val.batchLength), background="#EAEAEA")
-            # self.miniLabel3.pack(pady=5, padx=5)
-            
-            # self.leftBatchFrame.pack(side=tk.LEFT)
-            
-            # self.rightBatchFrame = tk.Frame(self.currBatchFrame, background="#EAEAEA")
-            
-            # self.nbBatches1 = tk.Label(self.currBatchFrame, text="Total batches:", background="#EAEAEA").pack(pady=5, padx=5)
-            # self.nbBatches2 = tk.Label(self.currBatchFrame, text="{}".format(self.master.val.totalNbBatch), background="#EAEAEA").pack(pady=5, padx=5)
-            print("Total Batches processed: ",int(self.master.val.totalNbBatch))
-            # self.rightBatchFrame.pack(side = tk.LEFT, pady=15, padx=5)
-            
-            # self.currBatchFrame.pack(pady=15, padx=5, side=tk.TOP, fill="both", expand="yes") #
-            
-            # self.formatFrame1 = tk.LabelFrame(self.masterFormat1, background="#EAEAEA", text="Validation data", pady=15, padx=5)#
-            
-            for key in self.master.val._results:
-                text="{}: {}%".format(key, round((self.master.val._results[key]*100)/self.master.val.nbItems, 2) if self.master.val.nbItems > 0 else "N/A")
-                print("Results: ",text)
-                #miniEntry = tk.Checkbutton(miniFrame, background="#EAEAEA", text=self.sm.keywords[i], onvalue=1, offvalue=1, command=partial(remove_item, self.sm.keywords[i])).pack(side = tk.TOP, anchor=tk.W) #,variable=var1
-            #     # miniFrame.pack()
-
-
-            # self.formatFrame1.pack(pady=15, padx=5, side=tk.LEFT, fill="both", expand="yes")
-            
-            val_languages = self.master.val._languages.copy()
-            
-            if(len(val_languages) > 0):
-                
-                languages_list = dict(sorted(val_languages.items(), key = itemgetter(1), reverse = True))
-                
-                temp = list(set(master.sm.lang_table).intersection(languages_list))
-                #tk.messagebox.showinfo("Validation Data", "Good"+",".join(temp))
-                res = [languages_list[i] for i in temp]
-                #tk.messagebox.showinfo("Validation Data", "Good"+",".join([str(x) for x in res]))
-                
-                langs = dict(zip(temp,res))
-                for i in range(len(temp)):
-                    langs[temp[i]] = res[i]
-                    
-                langs = dict(sorted(langs.items(), key = itemgetter(1), reverse = True)[:7])
-                #print(langs)
-                
-                # self.formatFrame2 = tk.LabelFrame(self.masterFormat1, background="#EAEAEA", text="Languages", padx=5, pady=15)
-                
-                for k in langs.keys():
-                    
-                    text="{}: {}%".format( languages.get(alpha2=k).name, round((langs[k]*100)/self.master.val._results["Validated"],2))
-                    print("Lang: ",k," - ",text)
-                    # miniFrame = tk.Frame(self.formatFrame2, background="#EAEAEA")
-                    # miniLabel = tk.Label(miniFrame, , background="#EAEAEA").pack(side = tk.LEFT, pady=5, padx=5)
-                    # #miniLabel = tk.Label(miniFrame, text="{}: {}".format( languages.get(alpha2=k).name, langs[k]), background="#EAEAEA").pack(side = tk.LEFT, pady=5, padx=5)
-                    # #miniEntry = tk.Checkbutton(miniFrame, background="#EAEAEA", text=self.sm.keywords[i], onvalue=1, offvalue=1, command=partial(remove_item, self.sm.keywords[i])).pack(side = tk.TOP, anchor=tk.W) #,variable=var1
-                    # miniFrame.pack()
-    
-    
-                # self.formatFrame2.pack(pady=15, padx=5, side=tk.LEFT, fill="both", expand="yes")
-            
-            
-            # try:
-            #     self.brand1 = ImageTk.PhotoImage(file="brand.png")
-            #     label = tk.Label(self.masterFormat1, image=self.brand, anchor = tk.SE)
-            #     label.pack()
-            # except:
-            #     pass
-            # self.masterFormat1.pack(fill="both", expand="yes")
-            # self.fScreen1.mainloop()
-        except Exception as e:
-            print(e)
-            # self.fScreen1.destroy()
-            # tk.messagebox.showinfo("Initialization error", e)
-
+        
 def desktop_app():
     try:
         wdg = Widget()
     except Exception as e:
         print("Init error",e)        
 
-
-#print("[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"APP", "import", "LOADED"))           
