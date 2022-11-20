@@ -216,6 +216,7 @@ if verbosity_ == 4:
 netConfig = requests.get("https://raw.githubusercontent.com/MathiasExorde/TestnetProtocol-staging/main/NetworkConfig.txt").json()
 w3 = Web3(Web3.HTTPProvider(netConfig["_urlSkale"]))
 
+ConfigBypassURL = "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/CodeModules.txt"
 
 ################## BLOCKCHAIN INTERFACING
 to = 60    
@@ -226,28 +227,38 @@ abis["ConfigRegistry"] = requests.get("https://raw.githubusercontent.com/Mathias
 contract = w3.eth.contract(contracts["ConfigRegistry"], abi=abis["ConfigRegistry"]["abi"])
 
 config_reg_contract = contract
-################## READING ONCHAIN CONFIG TO DOWNLOAD LATEST CODE
 override_code_dict = dict()
-# override_code_dict["_moduleHashContracts"] = "https://bafybeibuxrjwffjeymrjlkd2r35r5rdlzxuavoeympqgr7xrxor6hp3bh4.ipfs.w3s.link/Transaction.py"              # Transaction.py
-# override_code_dict["_moduleHashSpotting"] = "https://bafybeifqnq76utn767m4qbwd4j2jg6k3ypwcr2do7gkk3b26ooxfmzgc5e.ipfs.w3s.link/Scraper.py"                   # Scraper.py
-# override_code_dict["_moduleHashSpotChecking"] = "https://bafybeibbygfm276hjion7ocaoyp3wlfodszhlba6jy3b3fzd37zawkfbgi.ipfs.w3s.link/Validator.py"             # Validator.py
-# override_code_dict["_moduleHashApp"] = "https://bafybeicdgmxvetbi4yqjztzzroevcfvnwobk6zomsz5nh4lvb3dftyimxa.ipfs.w3s.link/App.py"                            # App.py
+# override_code_dict["_moduleHashContracts_cli"] = "https://bafybeibuxrjwffjeymrjlkd2r35r5rdlzxuavoeympqgr7xrxor6hp3bh4.ipfs.w3s.link/Transaction.py"              # Transaction.py
+# override_code_dict["_moduleHashSpotting_cli"] = "https://bafybeifqnq76utn767m4qbwd4j2jg6k3ypwcr2do7gkk3b26ooxfmzgc5e.ipfs.w3s.link/Scraper.py"                   # Scraper.py
+# override_code_dict["_moduleHashSpotChecking_cli"] = "https://bafybeibbygfm276hjion7ocaoyp3wlfodszhlba6jy3b3fzd37zawkfbgi.ipfs.w3s.link/Validator.py"             # Validator.py
+# override_code_dict["_moduleHashApp_cli"] = "https://bafybeicdgmxvetbi4yqjztzzroevcfvnwobk6zomsz5nh4lvb3dftyimxa.ipfs.w3s.link/App.py"                            # App.py
 
 
+# _moduleHashContracts_cli = https://bafybeifqxkcdizq3b5yvgpf7pntbpz4z5ai3dp7pxjz7upli6x6xjs46ou.ipfs.w3s.link/Transaction.py
+# _moduleHashSpotting_cli = https://bafybeiecijnmxhcguorioqpzqo66fwoc5ruopmafglshdbj446xk2hdumq.ipfs.w3s.link/Scraper.py
+# _moduleHashSpotChecking_cli =  https://bafybeidpkdffmjghw23mjrtd7ow6tp5rmtfukx4mac5qdcnjffgfxvft5a.ipfs.w3s.link/Validator.py 
+# _moduleHashApp_cli = https://bafybeigtsi3pmaft5dajyykekqnax2jkxn4vdxvut3xxkupsv4res6pmkq.ipfs.w3s.link/App.py
 
 
 if general_printing_enabled:
     print("\n[INITIAL MODULE SETUP] Downloading code modules on decentralized storage...")
 
+################## READING ONCHAIN CONFIG TO DOWNLOAD LATEST CODE
 module_hash_list = ["_moduleHashContracts_cli","_moduleHashSpotting_cli","_moduleHashSpotChecking_cli","_moduleHashApp_cli"]
+
+
+nb_modules_fetched_from_config = 0
+nb_module_to_fetch = len(module_hash_list)
 for im, value in enumerate(module_hash_list):
     #print(value)
     success = False
     trials = 0
-    delay = 5
     if general_printing_enabled:
         print("\tCode Sub-Module ",(im+1)," / ", len(module_hash_list), end='')
-    while(trials < 5):
+        
+    print(" .")
+    while(trials < 4):
+        print(".",end='')
         try:
             if value  in override_code_dict:
                 URL = override_code_dict[value]
@@ -256,14 +267,37 @@ for im, value in enumerate(module_hash_list):
                 URL = hashValue = contract.functions.get(value).call()
                 code = SafeURLDownload(URL).text
             success = True
+            nb_modules_fetched_from_config += 1
             break
         except:
-            time.sleep(5*(trials + 1))
+            time.sleep(2*(trials + 1))
             trials += 1
             
     if(success == True):
         exec(code)
 
+if nb_modules_fetched_from_config == 0:
+    print("[BYPASS] Impossible to fetch latest code from the Protocol. Fetching from ExordeLabs github: ", ConfigBypassURL)
+    bypassModules = requests.get(ConfigBypassURL).json()
+    for im, ModuleURL in enumerate(bypassModules):
+        #print(value)
+        success = False
+        trials = 0
+        if general_printing_enabled:
+            print("\t[Github Override] Code Sub-Module ",(im+1))
+        while(trials < 3):
+            try:
+                code = SafeURLDownload(bypassModules[ModuleURL]).text
+                success = True
+                break
+            except:
+                time.sleep(2*(trials + 1))
+                trials += 1
+                
+        if(success == True):
+            exec(code)
+
+############# LAUNCH THE CORE MODULE
 desktop_app()
 
 with open("localConfig.json", "r") as f:
