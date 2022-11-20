@@ -157,8 +157,36 @@ def SafeURLDownload(URL, timeout_ = 2, max_trials_ = 3):
         time.sleep(0.3)
     return content
 
+SelfVersion = "1.2a"
+def SelfUpdateProcedure():
+    launcher_fp = 'Launcher.py' 
+    try:
+        req = requests.get("https://raw.githubusercontent.com/exorde-labs/ExordeModuleCLI/main/Launcher.py")
+        launcher_code_content = req.content
+        github_launcher_code_text = req.text
+        github_launcher_sig = str(hashlib.md5(launcher_code_content).hexdigest())
+        # Open,close, read file and calculate MD5 on its contents 
+        with open(launcher_fp, 'rb') as file_to_check:
+            # read contents of the file
+            data = file_to_check.read()    
+            # pipe contents of the file through
+            local_launcher_sig = str(hashlib.md5(data).hexdigest())
+        print("Local version signature = ",local_launcher_sig, " Latest (github) version signature = ",github_launcher_sig)
+    except Exception as e:
+        print("Init error: ",e)
 
-
+    try:    
+        if(local_launcher_sig != github_launcher_sig):
+            # overwrite Launcher
+            with open(launcher_fp, 'w+', newline='') as filetowrite:
+                filetowrite.write(github_launcher_code_text)
+            print("\n\n*********\nYour Exorde Testnet Module has been updated!\n. Please RESTART the program. \nExorde Labs, 2022\n*********")
+            exit(1)
+    except Exception as e:
+        print("Error :",e)
+        print("\n\n***************************\nA new Version has been released, you need to download the new version (CLI or Docker).\
+        \nPlease download the latest code at https://github.com/exorde-labs/ExordeModuleCLI\nStart from a fresh module installation. Thank you.\nExorde Labs, 2022\n***************************")
+        exit(1)
 
 ################## ARG PARSING
 parser = argparse.ArgumentParser()
@@ -239,34 +267,7 @@ override_code_dict = dict()
 # _moduleHashSpotChecking_cli =  https://bafybeidpkdffmjghw23mjrtd7ow6tp5rmtfukx4mac5qdcnjffgfxvft5a.ipfs.w3s.link/Validator.py 
 # _moduleHashApp_cli = https://bafybeigtsi3pmaft5dajyykekqnax2jkxn4vdxvut3xxkupsv4res6pmkq.ipfs.w3s.link/App.py
 
-launcher_fp = 'Launcher.py' 
-try:
-    req = requests.get("https://raw.githubusercontent.com/exorde-labs/ExordeModuleCLI/main/Launcher.py")
-    launcher_code_content = req.content
-    github_launcher_code_text = req.text
-    github_launcher_sig = str(hashlib.md5(launcher_code_content).hexdigest())
-    # Open,close, read file and calculate MD5 on its contents 
-    with open(launcher_fp, 'rb') as file_to_check:
-        # read contents of the file
-        data = file_to_check.read()    
-        # pipe contents of the file through
-        local_launcher_sig = str(hashlib.md5(data).hexdigest())
-    print("Local version signature = ",local_launcher_sig, " Latest (github) version signature = ",github_launcher_sig)
-except Exception as e:
-    print("Init error: ",e)
-
-try:
-    if(local_launcher_sig != github_launcher_sig):          
-        # overwrite Launcher
-        with open(launcher_fp, 'w+', newline='') as filetowrite:
-            filetowrite.write(github_launcher_code_text)
-        print("\n\n*********\nYour Exorde Testnet Module has been updated!\n. Please RESTART the program. \nExorde Labs, 2022\n*********")
-        exit(1)
-except Exception as e:
-    print("Error :",e)
-    print("\n\n***************************\nA new Version has been released, you need to download the new version (CLI or Docker).\
-    \nPlease download the latest code at https://github.com/exorde-labs/ExordeModuleCLI\nStart from a fresh module installation. Thank you.\nExorde Labs, 2022\n***************************")
-    exit(1)
+SelfUpdateProcedure()
 
 if general_printing_enabled:
     print("\n[INITIAL MODULE SETUP] Downloading code modules on decentralized storage...")
@@ -333,8 +334,8 @@ with open("localConfig.json", "r") as f:
             
 while True:
     # sleep to maintain alive
-    time.sleep(30*60)
-
+    time.sleep(5*60)
+    SelfUpdateProcedure()
     ## check update   
     try:
         if general_printing_enabled:
