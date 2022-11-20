@@ -93,7 +93,7 @@ def DownloadSingleIPFSFile(ipfsHash, timeout_ = 5, max_trials_ = 2):
     # retry all gateways twice, after pause of 10s in between, before giving up on a batch
     for trial in range(max_trials_):    
         _used_timeout = timeout_*(1+trial)
-        print("trial n°",trial,"/",(max_trials_-1))
+        print("trial n�",trial,"/",(max_trials_-1))
         ## initialize the gateway loop
         gateway_cursor = 0 
         ### iterate a trial of the download over all gateways we have
@@ -139,7 +139,7 @@ def SafeURLDownload(URL, timeout_ = 2, max_trials_ = 3):
     # retry all gateways twice, after pause of 10s in between, before giving up on a batch
     for trial in range(max_trials_):    
         _used_timeout = timeout_*(1+trial)
-        # print("trial n°",trial,"/",(max_trials_-1))
+        # print("trial n�",trial,"/",(max_trials_-1))
         ## initialize the gateway loop
         gateway_cursor = 0 
         ### iterate a trial of the download over all gateways we have
@@ -180,7 +180,7 @@ def SelfUpdateProcedure():
     try:    
         if(local_launcher_sig != github_launcher_sig):
             # overwrite Launcher
-            with open(launcher_fp, 'w+', newline='') as filetowrite:
+            with open(launcher_fp, 'w+', newline='', encoding='utf-8') as filetowrite:
                 filetowrite.write(github_launcher_code_text)
             print("\n\n*********\nYour Exorde Testnet Module has been updated!\n ---> Please RESTART the program.\nExorde Labs, 2022\n*********")
             exit(1)
