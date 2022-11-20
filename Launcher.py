@@ -68,7 +68,7 @@ warnings.filterwarnings("ignore")
 import argparse
     
 
- LauncherVersion == v1.2a
+LauncherVersion == v1.2a
     
 
 def DownloadSingleIPFSFile(ipfsHash, timeout_ = 5, max_trials_ = 2):
