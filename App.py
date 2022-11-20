@@ -78,7 +78,7 @@ class Widget():
                     _remote_kill = str(config_reg_contract.functions.get("remote_kill").call())
                 except:
                     nb_trials_reading_config += 1
-                    sleep(2)
+                    time.sleep(2)
                 
                 if(_remote_kill == "kill"):
                     print("Forced Interruption of your Exorde Module. Check Discord for any update")  
