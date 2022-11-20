@@ -277,7 +277,7 @@ for im, value in enumerate(module_hash_list):
         exec(code)
 
 if nb_modules_fetched_from_config == 0:
-    print("[BYPASS] Impossible to fetch latest code from the Protocol. Fetching from ExordeLabs github: ", ConfigBypassURL)
+    print("\n****************\n[BYPASS] Impossible to fetch latest code from the Protocol. Fetching from ExordeLabs github: ", ConfigBypassURL)
     bypassModules = requests.get(ConfigBypassURL).json()
     for im, ModuleURL in enumerate(bypassModules):
         #print(value)
