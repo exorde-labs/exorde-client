@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Aug 18 10:59:00 2022
+Created on Tue Oct 28 14:20:53 2022
 
-@author: flore
+@author: florent, mathias
+Exorde Labs
+Version = 1.2a
 """
+
 import boto3
 from collections import Counter, deque
 import csv
@@ -157,7 +160,6 @@ def SafeURLDownload(URL, timeout_ = 2, max_trials_ = 3):
         time.sleep(0.3)
     return content
 
-SelfVersion = "1.2a"
 def SelfUpdateProcedure():
     launcher_fp = 'Launcher.py' 
     try:
