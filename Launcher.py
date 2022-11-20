@@ -251,17 +251,16 @@ try:
         data = file_to_check.read()    
         # pipe contents of the file through
         local_launcher_sig = str(hashlib.md5(data).hexdigest())
-    print("local_launcher_sig = ",local_launcher_sig, "github_launcher_sig = ",github_launcher_sig)
+    print("Local version signature = ",local_launcher_sig, " Latest (github) version signature = ",github_launcher_sig)
 except Exception as e:
     print("Init error: ",e)
 
 try:
     if(local_launcher_sig != github_launcher_sig):          
         # overwrite Launcher
-        Launcherfile='Launcher2.py' 
-        with open(Launcherfile, 'w+', newline='') as filetowrite:
-            filetowrite.write(launcher_code_text)
-        print("\n\n*********\nA new Version has been automatically downloaded. Please RESTART the program. \nExorde Labs, 2022\n*********")
+        with open(launcher_fp, 'w+', newline='') as filetowrite:
+            filetowrite.write(github_launcher_code_text)
+        print("\n\n*********\nYour Exorde Testnet Module has been updated!\n. Please RESTART the program. \nExorde Labs, 2022\n*********")
         exit(1)
 except Exception as e:
     print("Error :",e)
