@@ -180,7 +180,7 @@ def SelfUpdateProcedure():
             # overwrite Launcher
             with open(launcher_fp, 'w+', newline='') as filetowrite:
                 filetowrite.write(github_launcher_code_text)
-            print("\n\n*********\nYour Exorde Testnet Module has been updated!\n. Please RESTART the program. \nExorde Labs, 2022\n*********")
+            print("\n\n*********\nYour Exorde Testnet Module has been updated!\n ---> Please RESTART the program.\nExorde Labs, 2022\n*********")
             exit(1)
     except Exception as e:
         print("Error :",e)
