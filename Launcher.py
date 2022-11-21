@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Aug 18 10:59:00 2022
+Created on Tue Oct 28 14:20:53 2022
 
-@author: flore
+@author: florent, mathias
+Exorde Labs
+Version = 1.2b
 """
+
 import boto3
 from collections import Counter, deque
 import csv
@@ -58,7 +61,7 @@ import webbrowser
 import yake
 import warnings
 warnings.filterwarnings("ignore")
-
+import hashlib
 # try:
 #     import logging, timeit
 #     logging.basicConfig(level=logging.DEBUG, format="%(message)s")
@@ -141,7 +144,7 @@ def SafeURLDownload(URL, timeout_=2, max_trials_=3):
     ## download each file after the other
     isOk = False
     # retry all gateways twice, after pause of 10s in between, before giving up on a batch
-    for trial in range(max_trials_):    
+    for trial in range(max_trials_):  
         _used_timeout = timeout_ * (1+trial)
         # print("trial n°",trial,"/",(max_trials_-1))
         ## initialize the gateway loop
@@ -165,8 +168,37 @@ def SafeURLDownload(URL, timeout_=2, max_trials_=3):
         time.sleep(0.3)
     return content
 
+def SelfUpdateProcedure():
+    launcher_fp = 'Launcher.py' 
+    try:
+        req = requests.get("https://raw.githubusercontent.com/exorde-labs/ExordeModuleCLI/main/Launcher.py")
+        launcher_code_content = req.content
+        github_launcher_code_text = req.text
+        if len(github_launcher_code_text) < 100:
+            raise ValueError('Error fetching a valid Launcher code.') 
+        github_launcher_sig = str(hashlib.md5(launcher_code_content).hexdigest())
+        # Open,close, read file and calculate MD5 on its contents 
+        with open(launcher_fp, 'rb') as file_to_check:
+            # read contents of the file
+            data = file_to_check.read()    
+            # pipe contents of the file through
+            local_launcher_sig = str(hashlib.md5(data).hexdigest())
+        print("Local version signature = ",local_launcher_sig, " Latest (github) version signature = ",github_launcher_sig)
+    except Exception as e:
+        print("Init error: ",e)
 
-
+    try:    
+        if(local_launcher_sig != github_launcher_sig):
+            # overwrite Launcher
+            with open(launcher_fp, 'w+', newline='', encoding='utf-8') as filetowrite:
+                filetowrite.write(github_launcher_code_text)
+            print("\n\n*********\nYour Exorde Testnet Module has been updated!\n ---> Please RESTART the program.\nExorde Labs, 2022\n*********")
+            exit(1)
+    except Exception as e:
+        print("Error :",e)
+        print("\n\n***************************\nA new Version has been released, you need to download the new version (CLI or Docker).\
+        \nPlease download the latest code at https://github.com/exorde-labs/ExordeModuleCLI\nStart from a fresh module installation. Thank you.\nExorde Labs, 2022\n***************************")
+        exit(1)
 
 ################## ARG PARSING
 parser = argparse.ArgumentParser()
@@ -234,6 +266,7 @@ if verbosity_ == 4:
 netConfig = requests.get("https://raw.githubusercontent.com/MathiasExorde/TestnetProtocol-staging/main/NetworkConfig.txt").json()
 w3 = Web3(Web3.HTTPProvider(netConfig["_urlSkale"]))
 
+ConfigBypassURL = "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/CodeModules.txt"
 
 ################## BLOCKCHAIN INTERFACING
 to = 60    
@@ -244,29 +277,41 @@ abis["ConfigRegistry"] = requests.get("https://raw.githubusercontent.com/Mathias
 contract = w3.eth.contract(contracts["ConfigRegistry"], abi=abis["ConfigRegistry"]["abi"])
 
 config_reg_contract = contract
-################## READING ONCHAIN CONFIG TO DOWNLOAD LATEST CODE
 override_code_dict = dict()
-# override_code_dict["_moduleHashContracts"] = "https://bafybeibuxrjwffjeymrjlkd2r35r5rdlzxuavoeympqgr7xrxor6hp3bh4.ipfs.w3s.link/Transaction.py"              # Transaction.py
-# override_code_dict["_moduleHashSpotting"] = "https://bafybeifqnq76utn767m4qbwd4j2jg6k3ypwcr2do7gkk3b26ooxfmzgc5e.ipfs.w3s.link/Scraper.py"                   # Scraper.py
-# override_code_dict["_moduleHashSpotChecking"] = "https://bafybeibbygfm276hjion7ocaoyp3wlfodszhlba6jy3b3fzd37zawkfbgi.ipfs.w3s.link/Validator.py"             # Validator.py
-# override_code_dict["_moduleHashApp"] = "https://bafybeicdgmxvetbi4yqjztzzroevcfvnwobk6zomsz5nh4lvb3dftyimxa.ipfs.w3s.link/App.py"                            # App.py
+# override_code_dict["_moduleHashContracts_cli"] = "https://bafybeibuxrjwffjeymrjlkd2r35r5rdlzxuavoeympqgr7xrxor6hp3bh4.ipfs.w3s.link/Transaction.py"              # Transaction.py
+# override_code_dict["_moduleHashSpotting_cli"] = "https://bafybeifqnq76utn767m4qbwd4j2jg6k3ypwcr2do7gkk3b26ooxfmzgc5e.ipfs.w3s.link/Scraper.py"                   # Scraper.py
+# override_code_dict["_moduleHashSpotChecking_cli"] = "https://bafybeibbygfm276hjion7ocaoyp3wlfodszhlba6jy3b3fzd37zawkfbgi.ipfs.w3s.link/Validator.py"             # Validator.py
+# override_code_dict["_moduleHashApp_cli"] = "https://bafybeicdgmxvetbi4yqjztzzroevcfvnwobk6zomsz5nh4lvb3dftyimxa.ipfs.w3s.link/App.py"                            # App.py
 
 
+# _moduleHashContracts_cli = https://bafybeifqxkcdizq3b5yvgpf7pntbpz4z5ai3dp7pxjz7upli6x6xjs46ou.ipfs.w3s.link/Transaction.py
+# _moduleHashSpotting_cli = https://bafybeiecijnmxhcguorioqpzqo66fwoc5ruopmafglshdbj446xk2hdumq.ipfs.w3s.link/Scraper.py
+# _moduleHashSpotChecking_cli =  https://bafybeidpkdffmjghw23mjrtd7ow6tp5rmtfukx4mac5qdcnjffgfxvft5a.ipfs.w3s.link/Validator.py 
+# _moduleHashApp_cli = https://bafybeigtsi3pmaft5dajyykekqnax2jkxn4vdxvut3xxkupsv4res6pmkq.ipfs.w3s.link/App.py
 
+SelfUpdateProcedure()
 
 if general_printing_enabled:
     print("\n[INITIAL MODULE SETUP] Downloading code modules on decentralized storage...")
 
+################## READING ONCHAIN CONFIG TO DOWNLOAD LATEST CODE
 module_hash_list = ["_moduleHashContracts_cli", "_moduleHashSpotting_cli", "_moduleHashSpotChecking_cli",
                     "_moduleHashApp_cli"]
+
+
+nb_modules_fetched_from_config = 0
+nb_module_to_fetch = len(module_hash_list)
+
 for im, value in enumerate(module_hash_list):
     #print(value)
     success = False
     trials = 0
-    delay = 5
     if general_printing_enabled:
         print("\tCode Sub-Module ",(im+1)," / ", len(module_hash_list), end='')
-    while trials < 5:
+        
+    print(" .")
+    while(trials < 4):
+        print(".",end='')
         try:
             if value  in override_code_dict:
                 URL = override_code_dict[value]
@@ -275,14 +320,37 @@ for im, value in enumerate(module_hash_list):
                 URL = hashValue = contract.functions.get(value).call()
                 code = SafeURLDownload(URL).text
             success = True
+            nb_modules_fetched_from_config += 1
             break
         except:
-            time.sleep(5*(trials + 1))
+            time.sleep(2*(trials + 1))
             trials += 1
             
     if success:
         exec(code)
 
+if nb_modules_fetched_from_config == 0:
+    print("\n****************\n[BYPASS] Impossible to fetch latest code from the Protocol. Fetching from ExordeLabs github: ", ConfigBypassURL)
+    bypassModules = requests.get(ConfigBypassURL).json()
+    for im, ModuleURL in enumerate(bypassModules):
+        #print(value)
+        success = False
+        trials = 0
+        if general_printing_enabled:
+            print("\t[Github Override] Code Sub-Module ",(im+1))
+        while(trials < 3):
+            try:
+                code = SafeURLDownload(bypassModules[ModuleURL]).text
+                success = True
+                break
+            except:
+                time.sleep(2*(trials + 1))
+                trials += 1
+                
+        if(success == True):
+            exec(code)
+
+############# LAUNCH THE CORE MODULE
 desktop_app()
 
 with open("localConfig.json", "r") as f:
@@ -290,8 +358,8 @@ with open("localConfig.json", "r") as f:
             
 while True:
     # sleep to maintain alive
-    time.sleep(30*60)
-
+    time.sleep(5*60)
+    SelfUpdateProcedure()
     ## check update   
     try:
         if general_printing_enabled:

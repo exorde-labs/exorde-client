@@ -1,47 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Sep 20 15:37:49 2022
+Created on Tue Sep 20 14:20:53 2022
 
-@author: flore
+@author: florent, mathias
+Exorde Labs
 """
 
-# import boto3
-# import csv
-# import datetime as dt
-# from datetime import timezone
-# from dateutil.parser import parse
-# from ftlangdetect import detect
-# import html
-# import json
-# import numpy as np
-# import os
-# import pandas as pd
-# import pickle
-# import psycopg2 as ps
-# import pytz
-# import random
-# import re
-# import requests
-# from scipy.special import softmax, expit
-# import shutil
-# import snscrape.modules
-# import string
-# import sys
-# import threading
-# import time
-# import transformers
-# from transformers import AutoModelForSequenceClassification, AutoTokenizer, AutoConfig, TFAutoModelForSequenceClassification
-# import urllib.request
-# import warnings
-# import web3
-# from web3 import Web3, HTTPProvider
-# import yake
-
-
-### Initiliazing variables
-#print("[INFO --- {}] Initializing variables".format(dt.datetime.now(pytz.timezone('Europe/Paris'))))
-
-#warnings.simplefilter(action='ignore')
 CLEANR = re.compile('<.*?>|&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});')
 
 netConfig = requests.get("https://raw.githubusercontent.com/MathiasExorde/TestnetProtocol-staging/main/NetworkConfig.txt").json()
@@ -70,7 +34,7 @@ def generateFileName():
     return fileName
 
 def filebase_upload(content: str, bucket_name: str):
-    
+    # this is not AWS credentials. These are just an open public API endpoint to pin IPFS file, temporarily.
     s3 = boto3.resource(
         's3',
         endpoint_url = 'https://s3.filebase.com',
@@ -95,10 +59,6 @@ def downloadFile(hashname: str, name: str):
 
     headers = {
         'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.146 Safari/537.36',
-        'pinata_api_key': "19d2b24b75ad7253aebf",  # "0a3c682cdac6f59c497f",
-        # "d17b895242d8913b5c5a8dc9933a11223fc5f81696705c78bce150083ad2341d"
-        'pinata_secret_api_key': "f69150422667f79ce5a7fb0997bfdbb3750894cd1734275f77d867647e4f3df4"
-        # 'Authorization': "Bearer MjRDODM2ODJFMzc1OERBNjNERDk6QjE0OUVRR2QxV3dHTHB1V0hnUEdUNXdRNU9xZ1hQcTNBT1F0VGVCcjpleG9yZGUtc3BvdHMtMQ=="
     }
 
     url = "https://ipfs.filebase.io/ipfs/" + hashname
@@ -116,20 +76,12 @@ def downloadFile2Data2(hashname: str):
 
     headers = {
         'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.146 Safari/537.36',
-        #'pinata_api_key': "19d2b24b75ad7253aebf",  # "0a3c682cdac6f59c497f",
-        #'pinata_secret_api_key': "f69150422667f79ce5a7fb0997bfdbb3750894cd1734275f77d867647e4f3df4"
-        # 'Authorization': "Bearer MjRDODM2ODJFMzc1OERBNjNERDk6QjE0OUVRR2QxV3dHTHB1V0hnUEdUNXdRNU9xZ1hQcTNBT1F0VGVCcjpleG9yZGUtc3BvdHMtMQ=="
     }
-    #hashname = "QmdwoHTfa2EHHxH1NVZvaBsE7hQm7aWzKHEMXPLS1VRSZH"
-    #url = "https://" + hashname + ".ipfs.w3s.link/"
-    #url = url+hashname
     url = "https://w3s.link/ipfs/" + hashname
-    #print("Downloading from: ", url)
 
     trials = 0
 
     while trials < 5:
-        #print("Trials:", trials)
         try:
             r = requests.get(url, timeout=(0.5,3))
             #print(r)
@@ -142,19 +94,15 @@ def downloadFile2Data2(hashname: str):
             else:
                 pass
         except requests.exceptions.Timeout:
-            #print("timeout")
             trials += 1
     # Maybe set up for a retry, or continue in a retry loop
         except requests.exceptions.TooManyRedirects:
-            #print("redirect")
             trials += 1
     # Tell the user their URL was bad and try a different one
         except requests.exceptions.RequestException as e:
-            #print("request", e)
             trials += 1
     # catastrophic error. bail.
         except Exception as e:
-            #print(e)
             trials += 1
             pass
     if (trials >= 5):
@@ -173,9 +121,6 @@ class Scraper():
         self.langcodes = pd.DataFrame(self.langcodes[0].str.split(",").values.tolist()).reset_index(drop=True)
         self.langcodes = self.langcodes[self.langcodes.columns[:-1]]
         self.langcodes.columns=names.split(",")
-        # self.languageIndex = requests.get("https://ipfs.io/ipfs/Qma8Vh9RwSZqgtF7YnwktmJqCyQosjDc3MdoArXKPQXaUc", allow_redirects=True, stream=True, timeout=(1,5)).json()["Content"]
-        # self.lang_registry = dict()
-        # self.lang_registry["en"] = requests.get("https://ipfs.io/ipfs/"+self.languageIndex["en"], allow_redirects=True, stream=True, timeout=(1,5)).json()["Content"]
         self.stopWords = dict()
         self.stopWords["en"] = requests.get("https://raw.githubusercontent.com/LIAAD/yake/master/yake/StopwordsList/stopwords_{}.txt".format("en"), allow_redirects=True, stream=True, timeout=(1,5)).text.replace("\r","").split("\n")
         self.models = dict()
@@ -204,7 +149,6 @@ class Scraper():
         self.listlang = self.lang_table
         
     def manage_scraping(self):
-        #print("Scraper manage_scraping started")
         sender = threading.Thread(target=self.manage_sending)
         
         sender.daemon = True
@@ -230,20 +174,7 @@ class Scraper():
                     while(len(removal) > 0):
                         del removal[0]
                             
-                    
-        
-                    # if(len(self.keywords) > 0):
-                        
-                    #     print("[INFO --- {}] Current active threads:".format(dt.datetime.now(pytz.timezone('Europe/Paris'))), len(self.threads))
-                    #     print("[INFO --- {}] Starting scraping -".format(dt.datetime.now(pytz.timezone('Europe/Paris'))), "Keywords:", self.keywords)
-        
                     keywords = [x.replace(" ","%20") for x in self.keywords]
-                    
-                    
-                    # for i in range(len(keywords)):
-                    #     keywords[i] = keywords[i].replace(" ","%20")
-                    # tk.messagebox.showwarning("New scraping session",
-                    #                           ','.join(keywords))
                     
                     for target in ["4chan", "twitter", "reddit"]: 
                         
@@ -293,10 +224,8 @@ class Scraper():
                         except:
                             time.sleep(20*60)
                 except Exception as e:
-                    #print("inner manage_scraping", e)
                     pass
         except Exception as e:
-            #print("manage_scraping",e)
             pass
             
     def scrape(self, target: str, keywords: list):
@@ -354,8 +283,6 @@ class Scraper():
                                     tr_post["authorLocation"] = ""
                                     tr_post["creationDateTime"] = dt.datetime.fromtimestamp(time,pytz.timezone('UTC'))
                                     if(tr_post["creationDateTime"] >= (dt.datetime.now(pytz.timezone('UTC')) - dt.timedelta(minutes=5))):
-                                    #print(tr_post["creationDateTime"])
-                                        #print(tr_post["url"])
                                         tr_post["lang"] = detect(text=com.replace("\n",""), low_memory=False)["lang"]
                                         if(tr_post["lang"] in self.languages):
                                             self.languages[tr_post["lang"]] += 1
@@ -366,62 +293,7 @@ class Scraper():
                                         tr_post["content"] = com.replace("\n","").replace("'","''")
                                         if(tr_post["content"] in ("","[removed]") and tr_post["title"] not in ("","[deleted]")):
                                             tr_post["content"] = tr_post["title"]
-                                           
-                                        # tokens = cat_tokenizer(tr_post["content"][:500], return_tensors='pt')
-                                        # output = cat_model(**tokens)
-                                        # scores = output[0][0].detach().numpy()
-                                        # scores = expit(scores)
-                                        # predictions = (scores >= 0.5) * 1
-                                        # cat_results = list()
-                                        # for i in range(len(predictions)):
-                                        #   if predictions[i]:
-                                        #       try:
-                                        #           cat_results.append(cat_class_mapping[i])
-                                        #       except:
-                                        #           pass
-                                        # tr_post["categories"] = cat_results
-                                        
-                                        # try:
-                                        #     text = preprocess(tr_post["content"])
-                                        #     encoded_input = ironizer(text, return_tensors='pt')
-                                        #     output = mdl_ironizer(**encoded_input)
-                                        #     scores = output[0][0].detach().numpy()
-                                        #     scores = softmax(scores)
-                
-                                        #     if(scores[0] < scores[1]):
-                                        #         isIrony = True
-                                        #     else:
-                                        #         isIrony = False
-                                        #     tr_post["isIrony"] = isIrony
-                                        # except:
-                                        #     text = preprocess(tr_post["content"][:500])
-                                        #     encoded_input = ironizer(text, return_tensors='pt')
-                                        #     output = mdl_ironizer(**encoded_input)
-                                        #     scores = output[0][0].detach().numpy()
-                                        #     scores = softmax(scores)
-                
-                                        #     if(scores[0] < scores[1]):
-                                        #         isIrony = True
-                                        #     else:
-                                        #         isIrony = False
-                                        #     tr_post["isIrony"] = isIrony
-                                            
-                                        
-                                        # try:
-                                        #     tr_post["emotions"] = self.calc_emotions(tr_post["content"])    
-                                        # except:
-                                        #     tr_post["emotions"] = self.calc_emotions(tr_post["content"][:500])    
-                                        # if(len(tr_post["content"]) < 50):
-                                        #     tr_post["emotions"] = tr_post["emotions"].loc[:2]
-                                        
-                                        # try:
-                                        #     tr_post["sentiment"] = tr_post["emotions"].loc[0, "label"]
-                                        # except:
-                                        #     tr_post["sentiment"] = tr_post["emotions"].loc[0, "label"]
                                         tr_post["controversial"] = False
-                                        # tr_post["toxic"] = self.models["toxicity"][0].predict(self.models["toxicity"][1].transform([tr_post["content"]]))[0]
-                                        # tr_post["censored"] = (self.models["censoring"][0].predict(self.models["censoring"][1].transform([tr_post["content"]]))[0] or self.models["censoring"][0].predict(self.models["censoring"][1].transform([tr_post["url"]]))[0])
-                
                                         tr_post["tokenOfInterest"] = list()
                                         max_ngram_size = 1
                                         deduplication_thresold = 0.9
@@ -449,7 +321,6 @@ class Scraper():
                                         
                                         if(tr_post["url"] not in results and tr_post["content"] != 'NaN'):
                                             self.send_doc(tr_post)
-                                            #results[tr_post["url"]] = tr_post
                                         
                                         
                                         if 'last_replies' in threads:
@@ -483,64 +354,7 @@ class Scraper():
                                                 if(tr_post["content"] in ("","[removed]") and tr_post["title"] != ""):
                                                     tr_post["content"] = tr_post["title"]
                                                     
-                                                # tokens = cat_tokenizer(tr_post["content"][:500], return_tensors='pt')
-                                                # output = cat_model(**tokens)
-                                                # scores = output[0][0].detach().numpy()
-                                                # scores = expit(scores)
-                                                # predictions = (scores >= 0.5) * 1
-                                                # cat_results = list()
-                                                # for i in range(len(predictions)):
-                                                #   if predictions[i]:
-                                                #       try:
-                                                #           cat_results.append(cat_class_mapping[i])
-                                                #       except:
-                                                #           pass
-                                                # tr_post["categories"] = cat_results
-                                                
-    
-                                                    
-                                                # try:
-                                                #     text = preprocess(tr_post["content"])
-                                                #     encoded_input = ironizer(text, return_tensors='pt')
-                                                #     output = mdl_ironizer(**encoded_input)
-                                                #     scores = output[0][0].detach().numpy()
-                                                #     scores = softmax(scores)
-                
-                                                #     if(scores[0] < scores[1]):
-                                                #         isIrony = True
-                                                #     else:
-                                                #         isIrony = False
-                                                #     tr_post["isIrony"] = isIrony
-                                                # except:
-                                                #     text = preprocess(tr_post["content"][:500])
-                                                #     encoded_input = ironizer(text, return_tensors='pt')
-                                                #     output = mdl_ironizer(**encoded_input)
-                                                #     scores = output[0][0].detach().numpy()
-                                                #     scores = softmax(scores)
-                
-                                                #     if(scores[0] < scores[1]):
-                                                #         isIrony = True
-                                                #     else:
-                                                #         isIrony = False
-                                                #     tr_post["isIrony"] = isIrony
-                                                                                                
-                                                # tr_post["emotions"] = emotions
-                                                # try:
-                                                #     tr_post["emotions"] = self.calc_emotions(tr_post["content"])    
-                                                # except:
-                                                #     tr_post["emotions"] = self.calc_emotions(tr_post["content"][:500])    
-                                                # if(len(tr_post["content"]) < 50):
-                                                #     tr_post["emotions"] = tr_post["emotions"].loc[:2]
-                                                
-                                                
-                                                # try:
-                                                #     tr_post["sentiment"] = tr_post["emotions"].loc[0, "label"]
-                                                # except:
-                                                #     tr_post["sentiment"] = tr_post["emotions"].loc[0, "label"]
                                                 tr_post["controversial"] = False
-                                                # tr_post["toxic"] = self.models["toxicity"][0].predict(self.models["toxicity"][1].transform([tr_post["content"]]))[0]
-                                                # tr_post["censored"] = (self.models["censoring"][0].predict(self.models["censoring"][1].transform([tr_post["content"]]))[0] or self.models["censoring"][0].predict(self.models["censoring"][1].transform([tr_post["url"]]))[0])
-                
                                                 tr_post["tokenOfInterest"] = list()
                                                 max_ngram_size = 1
                                                 deduplication_thresold = 0.9
@@ -712,7 +526,6 @@ class Scraper():
             if(target == "reddit2"):
                 
                 r = requests.get("https://api.pushshift.io/reddit/search/submission/?q="+"|".join(keywords)+"&after=5m").json()
-                #r = requests.get("https://api.pushshift.io/reddit/search/submission/?q="+keyword+"&after=5m").json()
                 posts = r["data"]  
     
                 for post in posts:
@@ -741,62 +554,7 @@ class Scraper():
                             
                         subkeywords = [x for x in keywords if x in tr_post["content"]]
                         tr_post["keyword"] = subkeywords[0] if len(subkeywords) != 0 else keywords[0]
-                        
-                        # tokens = cat_tokenizer(tr_post["content"][:500], return_tensors='pt')
-                        # output = cat_model(**tokens)
-                        # scores = output[0][0].detach().numpy()
-                        # scores = expit(scores)
-                        # predictions = (scores >= 0.5) * 1
-                        # cat_results = list()
-                        # for i in range(len(predictions)):
-                        #   if predictions[i]:
-                        #       try:
-                        #           cat_results.append(cat_class_mapping[i])
-                        #       except:
-                        #           pass
-                        # tr_post["categories"] = cat_results
-                                                
-                        # try:
-                        #     text = preprocess(tr_post["content"])
-                        #     encoded_input = ironizer(text, return_tensors='pt')
-                        #     output = mdl_ironizer(**encoded_input)
-                        #     scores = output[0][0].detach().numpy()
-                        #     scores = softmax(scores)
-    
-                        #     if(scores[0] < scores[1]):
-                        #         isIrony = True
-                        #     else:
-                        #         isIrony = False
-                        #     tr_post["isIrony"] = isIrony
-                        # except:
-                        #     text = preprocess(tr_post["content"][:500])
-                        #     encoded_input = ironizer(text, return_tensors='pt')
-                        #     output = mdl_ironizer(**encoded_input)
-                        #     scores = output[0][0].detach().numpy()
-                        #     scores = softmax(scores)
-    
-                        #     if(scores[0] < scores[1]):
-                        #         isIrony = True
-                        #     else:
-                        #         isIrony = False
-                        #     tr_post["isIrony"] = isIrony
-                            
-                        # try:
-                        #     tr_post["emotions"] = self.calc_emotions(tr_post["content"])    
-                        # except:
-                        #     tr_post["emotions"] = self.calc_emotions(tr_post["content"][:500])    
-                        # if(len(tr_post["content"]) < 50):
-                        #     tr_post["emotions"] = tr_post["emotions"].loc[:2]
-                        
-                        
-                        # try:
-                        #     tr_post["sentiment"] = tr_post["emotions"].loc[0, "label"]
-                        # except:
-                        #     tr_post["sentiment"] = tr_post["emotions"].loc[0, "label"]
                         tr_post["controversial"] = False
-                        # tr_post["toxic"] = self.models["toxicity"][0].predict(self.models["toxicity"][1].transform([tr_post["content"]]))[0]
-                        # tr_post["censored"] = (self.models["censoring"][0].predict(self.models["censoring"][1].transform([tr_post["content"]]))[0] or self.models["censoring"][0].predict(self.models["censoring"][1].transform([tr_post["url"]]))[0])
-    
                         tr_post["tokenOfInterest"] = list()
                         max_ngram_size = 1
                         deduplication_thresold = 0.9
@@ -823,14 +581,8 @@ class Scraper():
                         tr_post["links"] = list()
         
                         if(tr_post["url"] not in results):
-                            #self.send_item(tr_post)
-                            #results[tr_post["url"]] = tr_post
                             self.send_doc(tr_post)
-                            #Save to DB
                     except Exception as e:
-                        # print()
-                        # print(target, e)
-                        # print()
                         pass
                     
             if(target == "reddit3"):
@@ -866,61 +618,7 @@ class Scraper():
                         subkeywords = [x for x in keywords if x in tr_post["content"]]
                         tr_post["keyword"] = subkeywords[0] if len(subkeywords) != 0 else keywords[0]
                         
-                        # tokens = cat_tokenizer(tr_post["content"][:500], return_tensors='pt')
-                        # output = cat_model(**tokens)
-                        # scores = output[0][0].detach().numpy()
-                        # scores = expit(scores)
-                        # predictions = (scores >= 0.5) * 1
-                        # cat_results = list()
-                        # for i in range(len(predictions)):
-                        #   if predictions[i]:
-                        #       try:
-                        #           cat_results.append(cat_class_mapping[i])
-                        #       except:
-                        #           pass
-                        # tr_post["categories"] = cat_results
-                        
-                        # try:
-                        #     text = preprocess(tr_post["content"])
-                        #     encoded_input = ironizer(text, return_tensors='pt')
-                        #     output = mdl_ironizer(**encoded_input)
-                        #     scores = output[0][0].detach().numpy()
-                        #     scores = softmax(scores)
-    
-                        #     if(scores[0] < scores[1]):
-                        #         isIrony = True
-                        #     else:
-                        #         isIrony = False
-                        #     tr_post["isIrony"] = isIrony
-                        # except:
-                        #     text = preprocess(tr_post["content"][:500])
-                        #     encoded_input = ironizer(text, return_tensors='pt')
-                        #     output = mdl_ironizer(**encoded_input)
-                        #     scores = output[0][0].detach().numpy()
-                        #     scores = softmax(scores)
-    
-                        #     if(scores[0] < scores[1]):
-                        #         isIrony = True
-                        #     else:
-                        #         isIrony = False
-                        #     tr_post["isIrony"] = isIrony
-                            
-                        # try:
-                        #     tr_post["emotions"] = self.calc_emotions(tr_post["content"])    
-                        # except:
-                        #     tr_post["emotions"] = self.calc_emotions(tr_post["content"][:500])    
-                        # if(len(tr_post["content"]) < 50):
-                        #     tr_post["emotions"] = tr_post["emotions"].loc[:2]
-                        
-                        
-                        # try:
-                        #     tr_post["sentiment"] = tr_post["emotions"].loc[0, "label"]
-                        # except:
-                        #     tr_post["sentiment"] = tr_post["emotions"].loc[0, "label"]
                         tr_post["controversial"] = False
-                        # tr_post["toxic"] = self.models["toxicity"][0].predict(self.models["toxicity"][1].transform([tr_post["content"]]))[0]
-                        # tr_post["censored"] = (self.models["censoring"][0].predict(self.models["censoring"][1].transform([tr_post["content"]]))[0] or self.models["censoring"][0].predict(self.models["censoring"][1].transform([tr_post["url"]]))[0])
-    
                         tr_post["tokenOfInterest"] = list()
                         max_ngram_size = 1
                         deduplication_thresold = 0.9
@@ -947,20 +645,14 @@ class Scraper():
                         tr_post["links"] = list()
     
                         if(tr_post["url"] not in results):
-                            #self.send_item(tr_post)
-                            #results[tr_post["url"]] = tr_post
                             self.send_doc(tr_post)
                             #Save to DB
                     except Exception as e:
-                        # print()
-                        # print(target, e)
-                        # print()
                         pass
                     
             if(target == "reddit4"):
                 
                 r = requests.get("https://api.pushshift.io/reddit/search/submission/?subreddit="+"|".join(keywords)+"&after=5m").json()
-                #r = requests.get(f'https://api.pushshift.io/reddit/search/comment/?subreddit='+keyword+"&after=5m").json()
                 posts = r["data"] 
     
                 for post in posts:
@@ -991,61 +683,7 @@ class Scraper():
                         subkeywords = [x for x in keywords if x in tr_post["content"]]
                         tr_post["keyword"] = subkeywords[0] if len(subkeywords) != 0 else keywords[0]
                             
-                        # tokens = cat_tokenizer(tr_post["content"][:500], return_tensors='pt')
-                        # output = cat_model(**tokens)
-                        # scores = output[0][0].detach().numpy()
-                        # scores = expit(scores)
-                        # predictions = (scores >= 0.5) * 1
-                        # cat_results = list()
-                        # for i in range(len(predictions)):
-                        #   if predictions[i]:
-                        #       try:
-                        #           cat_results.append(cat_class_mapping[i])
-                        #       except:
-                        #           pass
-                        # tr_post["categories"] = cat_results
-                        
-                        # try:
-                        #     text = preprocess(tr_post["content"])
-                        #     encoded_input = ironizer(text, return_tensors='pt')
-                        #     output = mdl_ironizer(**encoded_input)
-                        #     scores = output[0][0].detach().numpy()
-                        #     scores = softmax(scores)
-    
-                        #     if(scores[0] < scores[1]):
-                        #         isIrony = True
-                        #     else:
-                        #         isIrony = False
-                        #     tr_post["isIrony"] = isIrony
-                        # except:
-                        #     text = preprocess(tr_post["content"][:500])
-                        #     encoded_input = ironizer(text, return_tensors='pt')
-                        #     output = mdl_ironizer(**encoded_input)
-                        #     scores = output[0][0].detach().numpy()
-                        #     scores = softmax(scores)
-    
-                        #     if(scores[0] < scores[1]):
-                        #         isIrony = True
-                        #     else:
-                        #         isIrony = False
-                        #     tr_post["isIrony"] = isIrony
-                            
-                        # try:
-                        #     tr_post["emotions"] = self.calc_emotions(tr_post["content"])    
-                        # except:
-                        #     tr_post["emotions"] = self.calc_emotions(tr_post["content"][:500])    
-                        # if(len(tr_post["content"]) < 50):
-                        #     tr_post["emotions"] = tr_post["emotions"].loc[:2]
-                        
-                        
-                        # try:
-                        #     tr_post["sentiment"] = tr_post["emotions"].loc[0, "label"]
-                        # except:
-                        #     tr_post["sentiment"] = tr_post["emotions"].loc[0, "label"]
                         tr_post["controversial"] = False
-                        # tr_post["toxic"] = self.models["toxicity"][0].predict(self.models["toxicity"][1].transform([tr_post["content"]]))[0]
-                        # tr_post["censored"] = (self.models["censoring"][0].predict(self.models["censoring"][1].transform([tr_post["content"]]))[0] or self.models["censoring"][0].predict(self.models["censoring"][1].transform([tr_post["url"]]))[0])
-    
                         tr_post["tokenOfInterest"] = list()
                         max_ngram_size = 1
                         deduplication_thresold = 0.9
@@ -1072,14 +710,8 @@ class Scraper():
                         tr_post["links"] = list()
     
                         if(tr_post["url"] not in results):
-                            #self.send_item(tr_post)
-                            #results[tr_post["url"]] = tr_post
                             self.send_doc(tr_post)
-                            #Save to DB
                     except Exception as e:
-                        # print()
-                        # print(target, e)
-                        # print()
                         pass        
                     
             if(target == "instagram"):
@@ -1119,61 +751,7 @@ class Scraper():
                             if(tr_post["content"] in ("","[removed]") and tr_post["title"] != ""):
                                 tr_post["content"] = tr_post["title"]
                             
-                            # tokens = cat_tokenizer(tr_post["content"][:500], return_tensors='pt')
-                            # output = cat_model(**tokens)
-                            # scores = output[0][0].detach().numpy()
-                            # scores = expit(scores)
-                            # predictions = (scores >= 0.5) * 1
-                            # cat_results = list()
-                            # for i in range(len(predictions)):
-                            #   if predictions[i]:
-                            #       try:
-                            #           cat_results.append(cat_class_mapping[i])
-                            #       except:
-                            #           pass
-                            # tr_post["categories"] = cat_results
-                                                    
-                            # try:
-                            #     text = preprocess(tr_post["content"])
-                            #     encoded_input = ironizer(text, return_tensors='pt')
-                            #     output = mdl_ironizer(**encoded_input)
-                            #     scores = output[0][0].detach().numpy()
-                            #     scores = softmax(scores)
-            
-                            #     if(scores[0] < scores[1]):
-                            #         isIrony = True
-                            #     else:
-                            #         isIrony = False
-                            #     tr_post["isIrony"] = isIrony
-                            # except:
-                            #     text = preprocess(tr_post["content"][:500])
-                            #     encoded_input = ironizer(text, return_tensors='pt')
-                            #     output = mdl_ironizer(**encoded_input)
-                            #     scores = output[0][0].detach().numpy()
-                            #     scores = softmax(scores)
-            
-                            #     if(scores[0] < scores[1]):
-                            #         isIrony = True
-                            #     else:
-                            #         isIrony = False
-                            #     tr_post["isIrony"] = isIrony
-                                
-                            # try:
-                            #     tr_post["emotions"] = self.calc_emotions(tr_post["content"])    
-                            # except:
-                            #     tr_post["emotions"] = self.calc_emotions(tr_post["content"][:500])    
-                            # if(len(tr_post["content"]) < 50):
-                            #     tr_post["emotions"] = tr_post["emotions"].loc[:2]
-                            
-                            
-                            # try:
-                            #     tr_post["sentiment"] = tr_post["emotions"].loc[0, "label"]
-                            # except:
-                            #     tr_post["sentiment"] = tr_post["emotions"].loc[0, "label"]
                             tr_post["controversial"] = False
-                            # tr_post["toxic"] = self.models["toxicity"][0].predict(self.models["toxicity"][1].transform([tr_post["content"]]))[0]
-                            # tr_post["censored"] = (self.models["censoring"][0].predict(self.models["censoring"][1].transform([tr_post["content"]]))[0] or self.models["censoring"][0].predict(self.models["censoring"][1].transform([tr_post["url"]]))[0])
-            
                             tr_post["tokenOfInterest"] = list()
                             max_ngram_size = 1
                             deduplication_thresold = 0.9
@@ -1255,29 +833,21 @@ class Scraper():
                             
                             
                             if(tr_post["url"] not in results):
-                                #self.send_item(tr_post)
-                                #results[tr_post["url"]] = tr_post
                                 self.send_doc(tr_post)
                                 
                 except Exception as e:
-                    # print()
-                    # print(target, e)
-                    # print()
                     pass
                 
             if (target == "twitter2"):
             
                 try:
-                    #headers={"Authorization": "Bearer "+random.choice(bearers)}
                     d= dt.datetime.now(pytz.timezone('UTC')) - dt.timedelta(minutes=5)
     
                     for keyword in keywords:
         
                         postList = [_post.__dict__ for i, _post in enumerate(snscrape.modules.twitter.TwitterHashtagScraper(keyword + ' since_time:{}'.format(int(d.timestamp()))).get_items()) if _post.__dict__["date"].timestamp() >= d.timestamp()]                
         
-                        #for i, _post in enumerate(snscrape.modules.twitter.TwitterHashtagScraper(keyword + ' since_time:{}'.format(int(d.timestamp()))).get_items()):
                         for post in postList:
-                            #post = _post.__dict__
                             
                             if(post["date"].timestamp() > d.timestamp()):
             
@@ -1303,62 +873,7 @@ class Scraper():
                                 tr_post["content"] = cleanhtml(post["renderedContent"].replace("\n","").replace("'","''"))
                                 if(tr_post["content"] in ("","[removed]") and tr_post["title"] != ""):
                                     tr_post["content"] = tr_post["title"]
-                                
-                                # tokens = cat_tokenizer(tr_post["content"][:500], return_tensors='pt')
-                                # output = cat_model(**tokens)
-                                # scores = output[0][0].detach().numpy()
-                                # scores = expit(scores)
-                                # predictions = (scores >= 0.5) * 1
-                                # cat_results = list()
-                                # for i in range(len(predictions)):
-                                #   if predictions[i]:
-                                #       try:
-                                #           cat_results.append(cat_class_mapping[i])
-                                #       except:
-                                #           pass
-                                # tr_post["categories"] = cat_results
-                                    
-                                # try:
-                                #     text = preprocess(tr_post["content"])
-                                #     encoded_input = ironizer(text, return_tensors='pt')
-                                #     output = mdl_ironizer(**encoded_input)
-                                #     scores = output[0][0].detach().numpy()
-                                #     scores = softmax(scores)
-            
-                                #     if(scores[0] < scores[1]):
-                                #         isIrony = True
-                                #     else:
-                                #         isIrony = False
-                                #     tr_post["isIrony"] = isIrony
-                                # except:
-                                #     text = preprocess(tr_post["content"][:500])
-                                #     encoded_input = ironizer(text, return_tensors='pt')
-                                #     output = mdl_ironizer(**encoded_input)
-                                #     scores = output[0][0].detach().numpy()
-                                #     scores = softmax(scores)
-            
-                                #     if(scores[0] < scores[1]):
-                                #         isIrony = True
-                                #     else:
-                                #         isIrony = False
-                                #     tr_post["isIrony"] = isIrony
-                                    
-                                # try:
-                                #     tr_post["emotions"] = self.calc_emotions(tr_post["content"])    
-                                # except:
-                                #     tr_post["emotions"] = self.calc_emotions(tr_post["content"][:500])    
-                                # if(len(tr_post["content"]) < 50):
-                                #     tr_post["emotions"] = tr_post["emotions"].loc[:2]
-                                
-                                
-                                # try:
-                                #     tr_post["sentiment"] = tr_post["emotions"].loc[0, "label"]
-                                # except:
-                                #     tr_post["sentiment"] = tr_post["emotions"].loc[0, "label"]
                                 tr_post["controversial"] = False
-                                # tr_post["toxic"] = self.models["toxicity"][0].predict(self.models["toxicity"][1].transform([tr_post["content"]]))[0]
-                                # tr_post["censored"] = (self.models["censoring"][0].predict(self.models["censoring"][1].transform([tr_post["content"]]))[0] or self.models["censoring"][0].predict(self.models["censoring"][1].transform([tr_post["url"]]))[0])
-            
                                 tr_post["tokenOfInterest"] = list()
                                 max_ngram_size = 1
                                 deduplication_thresold = 0.9
@@ -1440,13 +955,8 @@ class Scraper():
                                 
                                 
                                 if(tr_post["url"] not in results):
-                                    #self.send_item(tr_post)
                                     self.send_doc(tr_post)
-                                    #results[tr_post["url"]] = tr_post
                 except Exception as e:
-                    # print()
-                    # print(target, e)
-                    # print()
                     pass
                 
             sys.exit()
@@ -1466,13 +976,10 @@ class Scraper():
                     batchSize = int(_contract.functions.get("_ModuleMinSpotBatchSize").call())
                     self.lastBatchSize = batchSize
                 except Exception as e:
-                    #print("Couldn't get batch size")
-                    #print( e)
                     batchSize = self.lastBatchSize
 
                 if(len(self.pendingBlocks) >= batchSize):
                     
-                    #print([x["item"]["DomainName"] for x in self.pendingBlocks[:batchSize]])
                         tmp = self.pendingBlocks[:batchSize]
                         
                         
@@ -1486,12 +993,7 @@ class Scraper():
                             except:
                                 res = None
                         domNames = [x["item"]["DomainName"] for x in self.pendingBlocks[:batchSize]][0]
-                        # res = filebase_upload(json.dumps({"Content":self.pendingBlocks[:batchSize]}, indent=4, sort_keys=True, default=str), self.app.cm.instantiateContract("ConfigRegistry").functions.get("SpotBucket").call())
-                        #print("Res:", res)
                         if(res != None):
-                            
-                            #print("[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"SCRAPER", "manage_sending", "SPOTDATA")) 
-                            #print("Scraper sending file", res)
                             
                             contract = self.app.cm.instantiateContract("DataSpotting")
                             increment_tx = contract.functions.SpotData([res], [domNames], batchSize, 'Hi Bob!').buildTransaction(
@@ -1508,7 +1010,6 @@ class Scraper():
                         self.pendingBlocks = self.pendingBlocks[batchSize:]
                     
             except Exception as e:
-                #print("manage_sending", e)
                 pass
             
                 
@@ -1559,23 +1060,4 @@ class Scraper():
             self.nbItems += 1
             
         except Exception as e:
-            #print("send_doc", e)
             pass
-        #document["emotions"] = doc["emotions"]
-        
-        #print("BucketName:", self.app.cm.instantiateContract("ConfigRegistry").functions.get("SpotBucket").call())
-        # res = filebase_upload(json.dumps({"Content":document}, indent=4, sort_keys=True, default=str), self.app.cm.instantiateContract("ConfigRegistry").functions.get("SpotBucket").call())
-
-        # if(res != None):
-            
-        #     contract = self.app.cm.instantiateContract("DataSpotting")
-        #     increment_tx = contract.functions.SpotData([res], [doc["domainName"]], 1, 'Hi Bob!').buildTransaction(
-        #     {
-        #         'nonce': w3.eth.get_transaction_count(self.app.localconfig["ExordeApp"]["ERCAddress"]),
-        #         'from': self.app.localconfig["ExordeApp"]["ERCAddress"],
-        #         'gasPrice': w3.eth.gas_price,
-        #         'gas':200000000
-        #     })
-        #     self.app.tm.waitingRoom.put((increment_tx, self.app.localconfig["ExordeApp"]["ERCAddress"], self.app.pKey))
-            
-#print("[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"SCRAPER", "import", "LOADED")) 
