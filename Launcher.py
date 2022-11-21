@@ -166,6 +166,8 @@ def SelfUpdateProcedure():
         req = requests.get("https://raw.githubusercontent.com/exorde-labs/ExordeModuleCLI/main/Launcher.py")
         launcher_code_content = req.content
         github_launcher_code_text = req.text
+        if len(github_launcher_code_text) < 100:
+            raise ValueError('Error fetching a valid Launcher code.') 
         github_launcher_sig = str(hashlib.md5(launcher_code_content).hexdigest())
         # Open,close, read file and calculate MD5 on its contents 
         with open(launcher_fp, 'rb') as file_to_check:
