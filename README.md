@@ -73,6 +73,7 @@ For more detailled informations, please read the [full documentation](https://do
    docker run \
    -d \
    --restart unless-stopped \
+   --pull always \
    --name exorde-cli \
    rg.fr-par.scw.cloud/exorde-labs/exorde-cli \
    -m <YOUR_MAIN_ADDRESS> \
@@ -85,6 +86,7 @@ For more detailled informations, please read the [full documentation](https://do
    docker run \
    -d \
    --restart unless-stopped \
+   --pull always \
    --name exorde-cli \
    rg.fr-par.scw.cloud/exorde-labs/exorde-cli \
    -m 0x0F67059ea5c125104E46B46769184dB6DC405C42 \
@@ -126,3 +128,42 @@ Sometimes, Exorde Labs needs to push some update in the code. The module will de
 This is important for the Exorde Network to remain hommogenous, so older versions have to be killed right away.
 
 When this happens, the module will print a message & shut down. It has to be restarted manually.
+
+## How to update the Docker image:
+
+If you are already running Exorde CLI with Docker and you want to use a new uploaded image, please follow these instructions:
+1. Stop and delete all running containers of Exorde CLI:
+   ```
+   docker stop <container_name> && docker rm <container_name>
+   ```
+  
+   For example, if you are running only one container named "exorde-cli":
+   ```
+   docker stop exorde-cli && docker rm exorde-cli
+   ```
+
+2. Start new containers:
+   ```bash
+   docker run \
+   -d \
+   --restart unless-stopped \
+   --pull always \
+   --name exorde-cli \
+   rg.fr-par.scw.cloud/exorde-labs/exorde-cli \
+   -m <YOUR_MAIN_ADDRESS> \
+   -l <LOGGING_LEVEL>
+   ```
+
+   Usage example:
+
+   ```bash
+   docker run \
+   -d \
+   --restart unless-stopped \
+   --pull always \
+   --name exorde-cli \
+   rg.fr-par.scw.cloud/exorde-labs/exorde-cli \
+   -m 0x0F67059ea5c125104E46B46769184dB6DC405C42 \
+   -l 2
+   ```
+ 
