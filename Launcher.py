@@ -78,9 +78,7 @@ def DownloadSingleIPFSFile(ipfsHash, timeout_=5, max_trials_=2):
         "user-agent": (
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
             "Chrome/88.0.4324.146 Safari/537.36"
-        ),
-        "pinata_api_key": "19d2b24b75ad7253aebf",
-        "pinata_secret_api_key": "f69150422667f79ce5a7fb0997bfdbb3750894cd1734275f77d867647e4f3df4",
+        )
     }
     for _ in range(max_trials_):
         try:
@@ -135,10 +133,8 @@ def SafeURLDownload(URL, timeout_=2, max_trials_=3):
     _headers = {
         "user-agent": (
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
-            "Chrome/88.0.4324.146 Safari/537.36",
-        ),
-        "pinata_api_key": "19d2b24b75ad7253aebf",
-        "pinata_secret_api_key": "f69150422667f79ce5a7fb0997bfdbb3750894cd1734275f77d867647e4f3df4",
+            "Chrome/88.0.4324.146 Safari/537.36"
+        )
     }
     content = None
     ## download each file after the other
