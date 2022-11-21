@@ -139,10 +139,10 @@ class TransactionManager():
                                 gas = default_gas_amount
                                 try:
                                     gasEstimate = self.w3.eth.estimate_gas(increment_tx[0])*1.5
-                                    if gasEstimate < 30_000:
-                                        gas = gasEstimate + 300_000
-                                    elif gasEstimate < 1_000_000:
+                                    if gasEstimate < 100_000:
                                         gas = gasEstimate + 500_000
+                                    elif gasEstimate < 1_500_000:
+                                        gas = gasEstimate + 2_000_000
                                 except  Exception as e:
                                     if detailed_validation_printing_enabled:
                                         print("[TRANSACTION MANAGER] Gas estimation failed: ",e)
@@ -203,10 +203,10 @@ class TransactionManager():
                                 gas = default_gas_amount
                                 try:
                                     gasEstimate = self.w3.eth.estimate_gas(increment_tx[0])*1.5
-                                    if gasEstimate < 30_000:
-                                        gas = gasEstimate + 300_000
-                                    elif gasEstimate < 1_000_000:
+                                    if gasEstimate < 100_000:
                                         gas = gasEstimate + 500_000
+                                    elif gasEstimate < 1_500_000:
+                                        gas = gasEstimate + 2_000_000
                                 except  Exception as e:
                                     if detailed_validation_printing_enabled:
                                         print("[TRANSACTION MANAGER] Gas estimation failed: ",e)
