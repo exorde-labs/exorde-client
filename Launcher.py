@@ -306,7 +306,7 @@ for im, value in enumerate(module_hash_list):
         print("\tCode Sub-Module ",(im+1)," / ", len(module_hash_list), end='')
         
     print(" .")
-    while(trials < 4):
+    while(trials < 3):
         print(".",end='')
         try:
             if value  in override_code_dict:
