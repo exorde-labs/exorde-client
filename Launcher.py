@@ -298,6 +298,7 @@ module_hash_list = ["_moduleHashContracts_cli", "_moduleHashSpotting_cli", "_mod
 nb_modules_fetched_from_config = 0
 nb_module_to_fetch = len(module_hash_list)
 
+code_array = []
 for im, value in enumerate(module_hash_list):
     #print(value)
     success = False
@@ -315,6 +316,7 @@ for im, value in enumerate(module_hash_list):
             else:
                 URL = hashValue = contract.functions.get(value).call()
                 code = SafeURLDownload(URL).text
+            code_array.append(code)
             success = True
             nb_modules_fetched_from_config += 1
             break
@@ -322,10 +324,10 @@ for im, value in enumerate(module_hash_list):
             time.sleep(2*(trials + 1))
             trials += 1
             
-    if success:
-        exec(code)
+    # if success:
+    #     exec(code)
 
-if nb_modules_fetched_from_config == 0:
+if nb_modules_fetched_from_config != nb_module_to_fetch:
     print("\n****************\n[BYPASS] Impossible to fetch latest code from the Protocol. Fetching from ExordeLabs github: ", ConfigBypassURL)
     bypassModules = requests.get(ConfigBypassURL).json()
     for im, ModuleURL in enumerate(bypassModules):
@@ -345,6 +347,12 @@ if nb_modules_fetched_from_config == 0:
                 
         if(success == True):
             exec(code)
+else: # run the modules from the config
+    time.sleep(1)
+    for code_ in code_array:
+        exec(code_)
+        time.sleep(1)
+
 
 ############# LAUNCH THE CORE MODULE
 desktop_app()
