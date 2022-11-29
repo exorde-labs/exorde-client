@@ -4,7 +4,7 @@ Created on Tue Oct 28 14:20:53 2022
 
 @author: florent, mathias
 Exorde Labs
-Version = 1.3.4a
+Version = 1.3.4b
 """
 
 import boto3
@@ -294,41 +294,48 @@ if general_printing_enabled:
 module_hash_list = ["_moduleHashContracts_cli", "_moduleHashSpotting_cli", "_moduleHashSpotChecking_cli",
                     "_moduleHashApp_cli"]
 
+##############################
+bypass_enabled = True
+##############################
+
+
 
 nb_modules_fetched_from_config = 0
 nb_module_to_fetch = len(module_hash_list)
 
 code_array = []
-for im, value in enumerate(module_hash_list):
-    #print(value)
-    success = False
-    trials = 0
-    if general_printing_enabled:
-        print("\tCode Sub-Module ",(im+1)," / ", len(module_hash_list), end='')
-        
-    print(" .")
-    while(trials < 3):
-        print(".",end='')
-        try:
-            if value  in override_code_dict:
-                URL = override_code_dict[value]
-                code = SafeURLDownload(URL).text
-            else:
-                URL = hashValue = contract.functions.get(value).call()
-                code = SafeURLDownload(URL).text
-            code_array.append(code)
-            success = True
-            nb_modules_fetched_from_config += 1
-            break
-        except:
-            time.sleep(2*(trials + 1))
-            trials += 1
-            
-    # if success:
-    #     exec(code)
 
-if nb_modules_fetched_from_config != nb_module_to_fetch:
-    print("\n****************\n[BYPASS] Impossible to fetch latest code from the Protocol. Fetching from ExordeLabs github: ", ConfigBypassURL)
+if bypass_enabled == False:
+    for im, value in enumerate(module_hash_list):
+        #print(value)
+        success = False
+        trials = 0
+        if general_printing_enabled:
+            print("\tCode Sub-Module ",(im+1)," / ", len(module_hash_list), end='')
+            
+        print(" .")
+        while(trials < 3):
+            print(".",end='')
+            try:
+                if value  in override_code_dict:
+                    URL = override_code_dict[value]
+                    code = SafeURLDownload(URL).text
+                else:
+                    URL = hashValue = contract.functions.get(value).call()
+                    code = SafeURLDownload(URL).text
+                code_array.append(code)
+                success = True
+                nb_modules_fetched_from_config += 1
+                break
+            except:
+                time.sleep(2*(trials + 1))
+                trials += 1
+                
+        # if success:
+        #     exec(code)
+
+if bypass_enabled or (nb_modules_fetched_from_config != nb_module_to_fetch):
+    print("\n****************\n[BYPASS] Fetching from ExordeLabs github: ", ConfigBypassURL)
     bypassModules = requests.get(ConfigBypassURL).json()
     for im, ModuleURL in enumerate(bypassModules):
         #print(value)
