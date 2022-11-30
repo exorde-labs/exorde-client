@@ -38,6 +38,7 @@ import pickle
 import pytz
 from queue import Queue
 import random
+from random import randint
 import re
 import requests
 from requests_html import HTML
@@ -360,6 +361,10 @@ else: # run the modules from the config
         exec(code_)
         time.sleep(1)
 
+
+print("Waiting ")
+boot_sleep_delay = randint(30,5*60) # sleep randomly between 30s & 10 minutes
+print("[ Network Load Balancing ] Waiting ",boot_sleep_delay, " seconds - System status = Booting.")
 
 ############# LAUNCH THE CORE MODULE
 desktop_app()
