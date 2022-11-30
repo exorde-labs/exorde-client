@@ -1,4 +1,4 @@
-# Exorde Participation Module CLI v1.3.1
+# Exorde Participation Module CLI
 
 The full documentation of Exorde Participation Module CLI is available on https://docs.exorde.network.
 
@@ -92,6 +92,18 @@ For more detailled informations, please read the [full documentation](https://do
    -m 0x0F67059ea5c125104E46B46769184dB6DC405C42 \
    -l 2
    ```
+   
+   **Note** : if you are unable to retrieve the image from Exorde's container registry, you can use our Docker Hub registry [exorde-labs/exorde-cli](https://hub.docker.com/r/exordelabs/exorde-cli/):
+    ```bash
+    docker run \
+    -d \
+    --restart unless-stopped \
+    --pull always \
+    --name exorde-cli \
+    exordelabs/exorde-cli \
+    -m <YOUR_MAIN_ADDRESS> \
+    -l <LOGGING_LEVEL>
+    ```
 
 For more detailled informations, please read the [full documentation](https://docs.exorde.network).
 
