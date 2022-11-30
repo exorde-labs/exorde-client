@@ -261,7 +261,7 @@ if verbosity_ == 4:
 
 ################## NETWORK CONNECTION
 netConfig = requests.get("https://raw.githubusercontent.com/MathiasExorde/TestnetProtocol-staging/main/NetworkConfig.txt").json()
-w3 = Web3(Web3.HTTPProvider(netConfig["_urlSkale"]))
+w3 = Web3(Web3.HTTPProvider(netConfig["_urlSkale"], request_kwargs={"timeout": 5}))
 
 ConfigBypassURL = "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/CodeModules.txt"
 
