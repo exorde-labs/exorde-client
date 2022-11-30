@@ -24,6 +24,11 @@ jobs:
           registry: ${{ secrets.PROD_CONTAINER_REGISTRY_URL }}
           username: ${{ secrets.PROD_CONTAINER_REGISTRY_LOGIN }}
           password: ${{ secrets.PROD_CONTAINER_REGISTRY_SECRET_KEY }}
+      - name: Log into Docker HUB
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_LOGIN }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
       - name: Setup Docker buildx
         uses: docker/setup-buildx-action@v2
       - name: Build and push Docker image
@@ -35,3 +40,5 @@ jobs:
           tags: |
             ${{ secrets.PROD_CONTAINER_REGISTRY_URL }}/exorde-cli:${{ steps.vars.outputs.sha_short }}
             ${{ secrets.PROD_CONTAINER_REGISTRY_URL }}/exorde-cli:latest
+            exordelabs/exorde-cli:${{ steps.vars.outputs.sha_short }}
+            exordelabs/exorde-cli:latest
