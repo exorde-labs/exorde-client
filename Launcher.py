@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Oct 28 14:20:53 2022
+Nov 30/11/2022 17:33
 
 @author: florent, mathias
 Exorde Labs
-Version = 1.3.4.2a
+Version = 1.3.4.2
 """
 
 import boto3
