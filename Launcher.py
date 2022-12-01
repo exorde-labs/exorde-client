@@ -204,7 +204,7 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument('-m', '--main-address', help='Main Ethereum Address, which will get all REP & EXDT for this local worker contribution. Exorde Reputation is non-transferable. Correct usage example: -m 0x0F67059ea5c125104E46B46769184dB6DC405C42', required=True)
 parser.add_argument('-l', '--logging',  help='level of logging in the console: 0 = no logs, 1 = general logs, 2 = validation logs, 3 = validation + scraping logs, 4 = detailed validation + scraping logs (e.g. for troubleshooting)', default = 1)
-
+parser.add_argument('-d', '--debug',  help='debug logs', default = 1)
 
 try:            
     args = parser.parse_args()
@@ -222,6 +222,9 @@ try:
 
     verbosity_ = int(argsdict['logging'])
     if verbosity_ > 0:
+        
+        if verbosity_ >= 3:
+            verbosity_ = 3
         print(
             "Selected logging Level: ",
             verbosity_,
@@ -230,6 +233,10 @@ try:
                 "3 = validation + scraping logs, 4 = detailed validation + scraping logs"
             ),
         )
+
+    debug_ = int(argsdict['debug'])
+    if debug_ > 0:
+        print("******* [DEBUG LOGS ACTIVATED] *******")
 except:
     parser.print_help()
     sys.exit(1)
@@ -254,8 +261,8 @@ if verbosity_ == 3:
     general_printing_enabled = True
     validation_printing_enabled = True
     scrape_printing_enabled = True
-# 4 = detailed validation + scraping logs
-if verbosity_ == 4:
+# debug log
+if debug_ == 1:
     general_printing_enabled = True
     validation_printing_enabled = True
     scrape_printing_enabled = True
