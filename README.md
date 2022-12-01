@@ -9,9 +9,7 @@ You have several choices to run the Exorde CLI:
 - Run from sources inside a virtual Python environment
 - Run from a Docker image
 
-The Exorde CLI does not come with a GUI, it aims to be used by advanced users who want to run it inside a terminal. The installation process assume that users who run Exorde CLI are familiar with command lines.
-
-The installation process primarly targets Linux distributions. However, most of commands used are the same on macOS and modern Windows system (using a PowerShell console).
+Exorde CLI does not come with a GUI, it aims to be used by advanced users who want to run it inside a terminal. The installation process assume that users who run Exorde CLI are familiar with command lines.
 
 Using the container image is the recommanded way to run Exorde CLI, as it avoid dependencies issues, handles automatic restart in case of failure/application update and make multi easier to run multiple instances of the application.
 
@@ -75,7 +73,7 @@ For more detailled informations, please read the [full documentation](https://do
    --restart unless-stopped \
    --pull always \
    --name exorde-cli \
-   rg.fr-par.scw.cloud/exorde-labs/exorde-cli \
+   exordelabs/exorde-cli \
    -m <YOUR_MAIN_ADDRESS> \
    -l <LOGGING_LEVEL>
    ```
@@ -88,7 +86,7 @@ For more detailled informations, please read the [full documentation](https://do
    --restart unless-stopped \
    --pull always \
    --name exorde-cli \
-   rg.fr-par.scw.cloud/exorde-labs/exorde-cli \
+   exordelabs/exorde-cli \
    -m 0x0F67059ea5c125104E46B46769184dB6DC405C42 \
    -l 2
    ```
@@ -107,12 +105,42 @@ For more detailled informations, please read the [full documentation](https://do
 
 For more detailled informations, please read the [full documentation](https://docs.exorde.network).
 
+## How to update the Docker image:
+
+If you are already running Exorde CLI with Docker and you want to use a new uploaded image, please follow these instructions:
+
+1. Stop and delete all running containers of Exorde CLI:
+
+   ```
+   docker stop <container_name> && docker rm <container_name>
+   ```
+
+   For example, if you are running only one container named "exorde-cli":
+
+   ```
+   docker stop exorde-cli && docker rm exorde-cli
+   ```
+
+2. Start new containers:
+   ```bash
+   docker run \
+   -d \
+   --restart unless-stopped \
+   --pull always \
+   --name exorde-cli \
+   exordelabs/exorde-cli \
+   -m <YOUR_MAIN_ADDRESS> \
+   -l <LOGGING_LEVEL>
+   ```
+
 ## When running
 
-For example, if you run in conda mode with -l 2 (moderate amount of logs), you should see this in the console:
+For example, if you run in conda mode with `-l 2` (moderate amount of logs), you should see this in the console:
+
+> ⚠ This output is outdated, it will be replaced soon. ⚠
 
 ```bash
->python Launcher.py -m 0x0000000000000000000000000000000000000001 -l 2
+$ python Launcher.py -m 0x0000000000000000000000000000000000000001 -l 2
 Selected logging > Level: 2 . (0 = no logs, 1 = general logs, 2 = validation logs, 3 =
 validation + scraping logs, 4 = detailed validation + scraping logs
 
@@ -140,42 +168,3 @@ Sometimes, Exorde Labs needs to push some update in the code. The module will de
 This is important for the Exorde Network to remain hommogenous, so older versions have to be killed right away.
 
 When this happens, the module will print a message & shut down. It has to be restarted manually.
-
-## How to update the Docker image:
-
-If you are already running Exorde CLI with Docker and you want to use a new uploaded image, please follow these instructions:
-1. Stop and delete all running containers of Exorde CLI:
-   ```
-   docker stop <container_name> && docker rm <container_name>
-   ```
-  
-   For example, if you are running only one container named "exorde-cli":
-   ```
-   docker stop exorde-cli && docker rm exorde-cli
-   ```
-
-2. Start new containers:
-   ```bash
-   docker run \
-   -d \
-   --restart unless-stopped \
-   --pull always \
-   --name exorde-cli \
-   rg.fr-par.scw.cloud/exorde-labs/exorde-cli \
-   -m <YOUR_MAIN_ADDRESS> \
-   -l <LOGGING_LEVEL>
-   ```
-
-   Usage example:
-
-   ```bash
-   docker run \
-   -d \
-   --restart unless-stopped \
-   --pull always \
-   --name exorde-cli \
-   rg.fr-par.scw.cloud/exorde-labs/exorde-cli \
-   -m 0x0F67059ea5c125104E46B46769184dB6DC405C42 \
-   -l 2
-   ```
- 
