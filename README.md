@@ -72,7 +72,7 @@ For more detailled informations, please read the [full documentation](https://do
    -d \
    --restart unless-stopped \
    --pull always \
-   --name exorde-cli \
+   --name <CONTAINER_NAME> \
    exordelabs/exorde-cli \
    -m <YOUR_MAIN_ADDRESS> \
    -l <LOGGING_LEVEL>
@@ -90,18 +90,6 @@ For more detailled informations, please read the [full documentation](https://do
    -m 0x0F67059ea5c125104E46B46769184dB6DC405C42 \
    -l 2
    ```
-   
-   **Note** : if you are unable to retrieve the image from Exorde's container registry, you can use our Docker Hub registry [exorde-labs/exorde-cli](https://hub.docker.com/r/exordelabs/exorde-cli/):
-    ```bash
-    docker run \
-    -d \
-    --restart unless-stopped \
-    --pull always \
-    --name exorde-cli \
-    exordelabs/exorde-cli \
-    -m <YOUR_MAIN_ADDRESS> \
-    -l <LOGGING_LEVEL>
-    ```
 
 For more detailled informations, please read the [full documentation](https://docs.exorde.network).
 
@@ -127,7 +115,7 @@ If you are already running Exorde CLI with Docker and you want to use a new uplo
    -d \
    --restart unless-stopped \
    --pull always \
-   --name exorde-cli \
+   --name <CONTAINER_NAME> \
    exordelabs/exorde-cli \
    -m <YOUR_MAIN_ADDRESS> \
    -l <LOGGING_LEVEL>
