@@ -205,7 +205,9 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-m', '--main-address', help='Main Ethereum Address, which will get all REP & EXDT for this local worker contribution. Exorde Reputation is non-transferable. Correct usage example: -m 0x0F67059ea5c125104E46B46769184dB6DC405C42', required=True)
 parser.add_argument('-l', '--logging',  help='level of logging in the console: 0 = no logs, 1 = general logs, 2 = validation logs, 3 = validation + scraping logs, 4 = detailed validation + scraping logs (e.g. for troubleshooting)', default = 1)
 parser.add_argument('-d', '--debug', nargs='?', help='debug logs', default = 0)
+parser.add_argument('-n', '--noloc', nargs='?', help='disable sharing your country info (ONLY) (example: FR, UK, US, SP, etc) for statistics purposes. No personal information is ever sent.', default = 0)
 
+localization_enabled = True
 try:            
     args = parser.parse_args()
     argsdict = vars(args)
@@ -237,6 +239,11 @@ try:
     debug_ = int(argsdict['debug'])
     if debug_ > 0:
         print("******* [DEBUG LOGS ACTIVATED] *******")
+
+    noloc_ = int(argsdict['noloc'])
+    if noloc_ == 1:
+        print("[Localization (Country) statistic disabled]")
+        localization_enabled = False
 except:
     parser.print_help()
     sys.exit(1)
@@ -289,13 +296,9 @@ override_code_dict = dict()
 # override_code_dict["_moduleHashSpotChecking_cli"] = "https://bafybeibbygfm276hjion7ocaoyp3wlfodszhlba6jy3b3fzd37zawkfbgi.ipfs.w3s.link/Validator.py"             # Validator.py
 # override_code_dict["_moduleHashApp_cli"] = "https://bafybeicdgmxvetbi4yqjztzzroevcfvnwobk6zomsz5nh4lvb3dftyimxa.ipfs.w3s.link/App.py"                            # App.py
 
-
-# _moduleHashContracts_cli = https://bafybeifqxkcdizq3b5yvgpf7pntbpz4z5ai3dp7pxjz7upli6x6xjs46ou.ipfs.w3s.link/Transaction.py
-# _moduleHashSpotting_cli = https://bafybeiecijnmxhcguorioqpzqo66fwoc5ruopmafglshdbj446xk2hdumq.ipfs.w3s.link/Scraper.py
-# _moduleHashSpotChecking_cli =  https://bafybeidpkdffmjghw23mjrtd7ow6tp5rmtfukx4mac5qdcnjffgfxvft5a.ipfs.w3s.link/Validator.py 
-# _moduleHashApp_cli = https://bafybeigtsi3pmaft5dajyykekqnax2jkxn4vdxvut3xxkupsv4res6pmkq.ipfs.w3s.link/App.py
-
+########### AUTO UPDATE PROCEDURE ##################
 SelfUpdateProcedure()
+####################################################
 
 if general_printing_enabled:
     print("\n[INITIAL MODULE SETUP] Downloading code modules on decentralized storage...")
