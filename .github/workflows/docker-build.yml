@@ -18,12 +18,6 @@ jobs:
       - name: Get commit's short sha
         id: vars
         run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
-      - name: Log into registry ${{ secrets.PROD_CONTAINER_REGISTRY_URL }}
-        uses: docker/login-action@v2
-        with:
-          registry: ${{ secrets.PROD_CONTAINER_REGISTRY_URL }}
-          username: ${{ secrets.PROD_CONTAINER_REGISTRY_LOGIN }}
-          password: ${{ secrets.PROD_CONTAINER_REGISTRY_SECRET_KEY }}
       - name: Log into Docker HUB
         uses: docker/login-action@v2
         with:
@@ -43,7 +37,5 @@ jobs:
             linux/amd64
             linux/arm64
           tags: |
-            ${{ secrets.PROD_CONTAINER_REGISTRY_URL }}/exorde-cli:${{ steps.vars.outputs.sha_short }}
-            ${{ secrets.PROD_CONTAINER_REGISTRY_URL }}/exorde-cli:latest
             exordelabs/exorde-cli:${{ steps.vars.outputs.sha_short }}
             exordelabs/exorde-cli:latest
