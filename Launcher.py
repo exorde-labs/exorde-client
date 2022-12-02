@@ -278,7 +278,15 @@ if debug_ == 1:
 ################## NETWORK CONNECTION
 netConfig = requests.get("https://raw.githubusercontent.com/MathiasExorde/TestnetProtocol-staging/main/NetworkConfig.txt").json()
 
-w3 = Web3(Web3.HTTPProvider(netConfig["_urlSkale"]))      
+
+random_number = random.randint(1, 100 - 1)
+if random_number > 65:
+    selected_provider_ = netConfig["_urlSkale"]
+else:
+    selected_provider_ = netConfig["_urlSkale2"]
+
+
+w3 = Web3(Web3.HTTPProvider(selected_provider_))
 w3Tx = Web3(Web3.HTTPProvider(netConfig["_urlTxSkale"]))
 
 
