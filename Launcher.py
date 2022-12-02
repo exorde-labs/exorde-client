@@ -4,7 +4,7 @@ Nov 30/11/2022 19:04
 
 @author: florent, mathias
 Exorde Labs
-Version = v1.3.4.3a
+Version = v1.3.4.3b
 """
 
 import boto3
@@ -277,8 +277,10 @@ if debug_ == 1:
 
 ################## NETWORK CONNECTION
 netConfig = requests.get("https://raw.githubusercontent.com/MathiasExorde/TestnetProtocol-staging/main/NetworkConfig.txt").json()
-w3 = Web3(Web3.HTTPProvider(netConfig["_urlSkale"], request_kwargs={"timeout": 5}))
-w3Tx = Web3(Web3.HTTPProvider(netConfig["_urlTxSkale"], request_kwargs={"timeout": 5}))
+
+w3 = Web3(Web3.HTTPProvider(netConfig["_urlSkale"]))      
+w3Tx = Web3(Web3.HTTPProvider(netConfig["_urlTxSkale"]))
+
 
 ConfigBypassURL = "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/CodeModules.txt"
 
