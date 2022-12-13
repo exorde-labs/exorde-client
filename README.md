@@ -95,12 +95,14 @@ For more detailled informations, please read the [full documentation](https://do
 
 ## How to update the Docker image:
 
+**Note: Exorde CLI has an auto update mechanism, there is no need to pull a new Docker image. Script files inside the container are updated regularly. Pull a new image is useful only if the auto update fails.**
+
 If you are already running Exorde CLI with Docker and you want to use a new uploaded image, please follow these instructions:
 
 1. Stop and delete all running containers of Exorde CLI:
 
    ```
-   docker stop <container_name> && docker rm <container_name>
+   docker stop <CONTAINER_NAME> && docker rm <CONTAINER_NAME>
    ```
 
    For example, if you are running only one container named "exorde-cli":
