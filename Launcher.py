@@ -278,11 +278,34 @@ if debug_ == 1:
 ################## NETWORK SELECTION
 
 mainnet_selected = False
+testnet_selected = False
+potential_testnet = list()
+networkSelector_url = "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/NetworkLoadBalancing.json"
 
-random_number = random.randint(1, 100 - 1)
-if random_number > 70:
+try:
+    networkSelector = requests.get(networkSelector_url, timeout=30).json()
+except Exception as e:
+    print(e)
+    print(requests.get(networkSelector_url, timeout=30))
+
+mainnet_threshold_high = int(networkSelector["mainnet"])
+
+if detailed_validation_printing_enabled:  
+    print("Mainnet selected with probability : ",mainnet_threshold_high," %")
+if mainnet_threshold_high > 100:
+    mainnet_threshold_high = 100
+random_number = random.randint(1, 100)
+if random_number < mainnet_threshold_high:
     mainnet_selected = True
-    
+# testnet listing  
+for network_ in networkSelector:
+    if network_ != "mainnet":   
+        probability_testnet_selection = int(networkSelector[network_])
+        if probability_testnet_selection > 0: 
+            if detailed_validation_printing_enabled:  
+                print("possible testnet choice = ",network_)   
+            potential_testnet.append(network_)      
+
 mainnet_config_github_url = 'https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/NetworkConfig.txt'
 testnet_config_github_url = 'https://raw.githubusercontent.com/MathiasExorde/TestnetProtocol-staging/main/NetworkConfig.txt'
 
@@ -306,6 +329,23 @@ else:
 w3 = Web3(Web3.HTTPProvider(selected_provider_))
 w3Tx = Web3(Web3.HTTPProvider(netConfig["_urlTxSkale"]))
 
+
+## NETWORK FAILURE MITIGATION: select network if network last block is > 20min 
+last_block_on_read = w3.eth.get_block('latest')
+now  = time.time()
+duration = last_block_on_read['timestamp']-now
+print("Latest block on Read Proxy = ",last_block_on_read["number"]," -> ",round(duration)," seconds ago (",int(duration/60)," min ).")
+
+if abs(duration) > (20*60):
+    print("\n*****\nNetwork seems to have stopped block production > 20 min ago.\nRestart later please\n*****")
+    exit(1)
+    # random_number = random.randint(1, 100)
+    # if random_number < probability_testnet_selection:
+    #     testnet_selected = True
+    #     print("testnet selected.")    
+## NETWORK FAILURE MITIGATION: select network if network last block is > 20min 
+
+################################################################################################################################################
 
 ConfigBypassURL = "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/CodeModules.txt"
 
