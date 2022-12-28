@@ -275,9 +275,26 @@ if debug_ == 1:
     scrape_printing_enabled = True
     detailed_validation_printing_enabled = True
 
-################## NETWORK CONNECTION
-netConfig = requests.get("https://raw.githubusercontent.com/MathiasExorde/TestnetProtocol-staging/main/NetworkConfig.txt").json()
+################## NETWORK SELECTION
 
+mainnet_selected = False
+
+random_number = random.randint(1, 100 - 1)
+if random_number > 70:
+    mainnet_selected = True
+    
+mainnet_config_github_url = 'https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/NetworkConfig.txt'
+testnet_config_github_url = 'https://raw.githubusercontent.com/MathiasExorde/TestnetProtocol-staging/main/NetworkConfig.txt'
+
+if mainnet_selected:
+    print("\n-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_ TESTNET CHAIN A -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_")
+    netConfig = requests.get(mainnet_config_github_url, timeout=30).json()
+else:    
+    print("\n-*-*--*-*--*-*--*-*--*-*--*-*--*-*--*-*--  TESTNET CHAIN B  *-*--*-*--*-*--*-*--*-*--*-*--*-*--*-*--*-*--*-*--*-*--")
+    netConfig = requests.get(testnet_config_github_url, timeout=30).json()
+
+
+################## NETWORK CONNECTION
 
 random_number = random.randint(1, 100 - 1)
 if random_number > 65:
@@ -294,10 +311,14 @@ ConfigBypassURL = "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol
 
 ################## BLOCKCHAIN INTERFACING
 to = 60    
-contracts = requests.get("https://raw.githubusercontent.com/MathiasExorde/TestnetProtocol-staging/main/ContractsAddresses.txt", timeout=to).json()
+if mainnet_selected:
+    contracts = requests.get("https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/ContractsAddresses.txt", timeout=to).json()
+else:
+    contracts = requests.get("https://raw.githubusercontent.com/MathiasExorde/TestnetProtocol-staging/main/ContractsAddresses.txt", timeout=to).json()
 abis = dict()
 abis["ConfigRegistry"] = requests.get("https://raw.githubusercontent.com/MathiasExorde/TestnetProtocol-staging/main/ABIs/ConfigRegistry.sol/ConfigRegistry.json", timeout=to).json()
 
+print("Config Address = ",contracts["ConfigRegistry"])
 contract = w3.eth.contract(contracts["ConfigRegistry"], abi=abis["ConfigRegistry"]["abi"])
 
 config_reg_contract = contract
