@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Dec 15/12/2022 16h43
-
+Dec 30/12/2022 16pm utc+1
+Exorde Testnet December 2022
 @author: florent, mathias
 Exorde Labs
 Version = v1.3.5b
