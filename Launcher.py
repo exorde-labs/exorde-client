@@ -4,7 +4,7 @@ Dec 29/12/2022
 
 @author: florent, mathias
 Exorde Labs
-Version = v1.3.5
+Version = v1.3.5c
 """
 
 import boto3
