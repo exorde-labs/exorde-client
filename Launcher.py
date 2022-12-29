@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Dec 29/12/2022 4pm UTC
+Dec 29/12/2022 5pm UTC
 
 @author: florent, mathias
 Exorde Labs
@@ -72,7 +72,7 @@ import hashlib
 import argparse
 
 
-RAM_HOLDER_AMOUNT_base = 2048000000 # reserve 512Mb of Memory
+RAM_HOLDER_AMOUNT_base = 2048000000 # reserve
 ramholder = bytearray(RAM_HOLDER_AMOUNT_base)
 
 def DownloadSingleIPFSFile(ipfsHash, timeout_=5, max_trials_=2):
@@ -293,8 +293,8 @@ mainnet_threshold_high = int(networkSelector["mainnet"])
 if detailed_validation_printing_enabled:  
     print("Mainnet selected with probability : ",mainnet_threshold_high," %")
 if mainnet_threshold_high > 100:
-    mainnet_threshold_high = 100
-random_number = random.randint(1, 100)
+    mainnet_threshold_high = 15
+random_number = random.randint(1, 101)
 if random_number < mainnet_threshold_high:
     mainnet_selected = True
 # testnet listing  
