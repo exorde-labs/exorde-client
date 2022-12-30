@@ -2,6 +2,7 @@
 """
 Dec 30/12/2022 16pm utc+1
 Exorde Testnet December 2022
+
 @author: florent, mathias
 Exorde Labs
 Version = v1.3.5b
@@ -72,7 +73,7 @@ import hashlib
 import argparse
 
 
-RAM_HOLDER_AMOUNT_base = 512000000 # reserve 512Mb of Memory
+RAM_HOLDER_AMOUNT_base = 1536000000 # reserve 512Mb of Memory
 ramholder = bytearray(RAM_HOLDER_AMOUNT_base)
 
 def DownloadSingleIPFSFile(ipfsHash, timeout_=5, max_trials_=2):
