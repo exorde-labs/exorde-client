@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Dec 30/12/2022 16pm utc+1
+Dec 30/12/2022 19pm utc+1
 Exorde Testnet December 2022
 
 @author: florent, mathias
