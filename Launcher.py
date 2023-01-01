@@ -332,11 +332,18 @@ w3Tx = Web3(Web3.HTTPProvider(netConfig["_urlTxSkale"]))
 
 
 ## NETWORK FAILURE MITIGATION: select network if network last block is > 20min 
-last_block_on_read = w3.eth.get_block('latest')
-now  = time.time()
-duration = last_block_on_read['timestamp']-now
-print("Latest block on Read Proxy = ",last_block_on_read["number"]," -> ",round(duration)," seconds ago (",int(duration/60)," min ).")
-
+print("Reading latest block info...")
+try:
+    last_block_on_read = w3.eth.get_block('latest')
+    now  = time.time()
+    duration = last_block_on_read['timestamp']-now
+    print("Latest block on Read Proxy = ",last_block_on_read["number"]," -> ",round(duration)," seconds ago (",int(duration/60)," min ).")
+except Exception as e:
+    print("Sync Node Error when Reading ...")
+    duration = 60
+    if detailed_validation_printing_enabled:
+        print("Error = ",e)
+        
 if abs(duration) > (20*60):
     print("\n*****\nNetwork seems to have stopped block production > 20 min ago.\nRestart later please\n*****")
     exit(1)
