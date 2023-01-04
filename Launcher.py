@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Jan 1st 2023
+Jan 4th 2023
 Exorde Testnet
 
 @author: florent, mathias
