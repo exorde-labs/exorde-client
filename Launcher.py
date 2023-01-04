@@ -320,16 +320,17 @@ else:
 
 ################## NETWORK CONNECTION
 
-random_number = random.randint(1, 100 - 1)
-if random_number > 65:
-    selected_provider_ = netConfig["_urlSkale"]
-else:
-    selected_provider_ = netConfig["_urlSkale2"]
+print("Selecting Sync Node ...")
+syncnode_count = Web3(Web3.HTTPProvider(netConfig["SyncNodeCount"]))
 
+
+random_number = random.randint(1, syncnode_count) 
+sync_node_id = "_urlSkale{}".format(k)
+print("\n\tsync_node_id = ",sync_node_id)
+selected_provider_ = netConfig[sync_node_id]
 
 w3 = Web3(Web3.HTTPProvider(selected_provider_))
 w3Tx = Web3(Web3.HTTPProvider(netConfig["_urlTxSkale"]))
-
 
 ## NETWORK FAILURE MITIGATION: select network if network last block is > 20min 
 print("Reading latest block info...")
