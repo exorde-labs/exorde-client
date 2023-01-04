@@ -320,14 +320,22 @@ else:
 
 ################## NETWORK CONNECTION
 
-print("Selecting Sync Node ...")
-syncnode_count = Web3(Web3.HTTPProvider(netConfig["SyncNodeCount"]))
+try:
+    syncnode_count = int(netConfig["SyncNodeCount"])
+except:
+    print("Error: Could not read sync node count")
 
+print("Selecting 1/",syncnode_count, " Sync Nodes.")
+try:
+    random_number = random.randint(1, syncnode_count) 
+    sync_node_id = "_urlSkale{}".format(str(random_number))
+    print("Sync_node_id = ",sync_node_id)
+except Exception as e:
+    print("Error: could select sync node randomly: ",e)
+    exit(1)
 
-random_number = random.randint(1, syncnode_count) 
-sync_node_id = "_urlSkale{}".format(k)
-print("\n\tsync_node_id = ",sync_node_id)
 selected_provider_ = netConfig[sync_node_id]
+print("Selected Read-only Provider = ",selected_provider_)
 
 w3 = Web3(Web3.HTTPProvider(selected_provider_))
 w3Tx = Web3(Web3.HTTPProvider(netConfig["_urlTxSkale"]))
