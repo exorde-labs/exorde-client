@@ -73,7 +73,7 @@ import hashlib
 import argparse
 
 
-RAM_HOLDER_AMOUNT_base = 1536000000 # reserve 512Mb of Memory
+RAM_HOLDER_AMOUNT_base = 536000000 # reserve 512Mb of Memory
 ramholder = bytearray(RAM_HOLDER_AMOUNT_base)
 
 def DownloadSingleIPFSFile(ipfsHash, timeout_=5, max_trials_=2):
