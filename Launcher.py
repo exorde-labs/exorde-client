@@ -5,7 +5,7 @@ Exorde Testnet
 
 @author: florent, mathias
 Exorde Labs
-Version = v1.3.5b
+Version = v1.3.5c
 """
 
 import boto3
