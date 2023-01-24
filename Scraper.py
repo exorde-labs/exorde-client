@@ -5,13 +5,22 @@ Created on Tue Sep 20 14:20:53 2022
 @author: florent, mathias
 Exorde Labs
 """
+from datetime import datetime as dt
+from datetime import timedelta
+from datetime import date
+import subprocess
+def install_upgrade(package):
+    subprocess.check_call([sys.executable, "-m", "pip", "install", package, "--user", "--upgrade"])
+
+#### INIT
+try:
+    install_upgrade("snscrape")
+except:
+    print("failed upgrading package...")
+
+import snscrape.modules
 
 CLEANR = re.compile('<.*?>|&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});')
-
-netConfig = requests.get("https://raw.githubusercontent.com/MathiasExorde/TestnetProtocol-staging/main/NetworkConfig.txt").json()
-w3 = Web3(Web3.HTTPProvider(netConfig["_urlSkale"]))
-
-
 
 def cleanhtml(raw_html):
   cleantext = re.sub(CLEANR, '', raw_html)
@@ -33,18 +42,30 @@ def generateFileName():
     fileName = baseSeed + '.txt'
     return fileName
 
-def filebase_upload(content: str, bucket_name: str):
-    # this is not AWS credentials. These are just an open public API endpoint to pin IPFS file, temporarily.
-    s3 = boto3.resource(
-        's3',
-        endpoint_url = 'https://s3.filebase.com',
-        region_name='us-east-1',
-        aws_access_key_id='24C83682E3758DA63DD9',
-        aws_secret_access_key='B149EQGd1WwGLpuWHgPGT5wQ5OqgXPq3AOQtTeBr'
-    )
-    response = s3.Object(bucket_name, generateFileName()).put(Body=content)
+def ipfs_pin_upload(content: str):  
+    ## upload file & pin to IPFS network
+    newHeaders = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+    endpoint_url_ = 'http://ipfs-api.exorde.network/add'
+    time.sleep(0.5)
+    try:
+        response = requests.post(endpoint_url_, data=content ,headers=newHeaders)
+    except Exception as e:
+        print("request pin upload error: ",e)
 
-    return response["ResponseMetadata"]["HTTPHeaders"]['x-amz-meta-cid']
+    response_ok = False
+    json_response = None
+    try:
+        json_response = json.loads(response.text)
+        response_ok = True
+    except:
+        response_ok = False
+    
+    print("[Spotting]  json response = ",json_response)
+    if response_ok:
+        cid_obtained = json_response["cid"]
+    else:
+        cid_obtained = None
+    return cid_obtained
 
 
 def gen_chan(r):
@@ -211,19 +232,32 @@ class Scraper():
                             a.start()
                             self.threads.append(a)
                             
-                    if(len(self.keywords) > 0):
+                    if(len(self.keywords) > 0):                        
+                        time.sleep(0.5)
                         try:
                             delay = int(_contract.functions.get("autoScrapingFrequency").call())
+                            if scrape_printing_enabled:
+                                print("[{}]\t{}\t{}\t{}".format(dt.now(),"SLEEP ",delay," s BEFORE NEW COLLECT DATA"))
                             time.sleep(delay)
                         except:
-                            time.sleep(20*60)
-                    else:
+                            random_wait_ = random.randint(3, 10)*60
+                            if scrape_printing_enabled:
+                                print("[{}]\t{}".format(dt.now(),"SLEEP BEFORE NEW DATA COLLECT: "),random_wait_," s")
+                            time.sleep(random_wait_)
+                    else:                        
+                        time.sleep(0.5)
                         try:
                             delay = int(_contract.functions.get("autoScrapingFrequency").call())
+                            if scrape_printing_enabled:
+                                print("[{}]\t{}\t{}\t{}".format(dt.now(),"SLEEP ",delay," s BEFORE NEW COLLECT DATA"))
                             time.sleep(delay)
                         except:
-                            time.sleep(20*60)
+                            random_wait_ = random.randint(3, 10)*60
+                            if scrape_printing_enabled:
+                                print("[{}]\t{}".format(dt.now(),"SLEEP BEFORE NEW DATA COLLECT: "),random_wait_," s")
+                            time.sleep(random_wait_)
                 except Exception as e:
+                    print("Error manage_scraping: ",e)
                     pass
         except Exception as e:
             pass
@@ -239,7 +273,7 @@ class Scraper():
                 exd_token = "bitcoin"
 
             if scrape_printing_enabled:
-                print("[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"COLLECT DATA", "scrape", "KEYWORDS SELECTED = [{}]".format(exd_token)))
+                print("[{}]\t{}\t{}\t\t{}".format(dt.now(),"COLLECT DATA", "scrape", "KEYWORDS SELECTED = [{}]".format(exd_token)))
             if(exd_token not in keywords):
                 keywords.append(exd_token)
 
@@ -281,8 +315,8 @@ class Scraper():
                                     tr_post["url"] = "https://boards.4channel.org/biz/thread/" + str(no)
                                     tr_post["author"] = name
                                     tr_post["authorLocation"] = ""
-                                    tr_post["creationDateTime"] = dt.datetime.fromtimestamp(time,pytz.timezone('UTC'))
-                                    if(tr_post["creationDateTime"] >= (dt.datetime.now(pytz.timezone('UTC')) - dt.timedelta(minutes=5))):
+                                    tr_post["creationDateTime"] = dt.fromtimestamp(time,pytz.timezone('UTC'))
+                                    if(tr_post["creationDateTime"] >= ( dt.now(pytz.timezone('UTC')) -  timedelta(minutes=5))):
                                         tr_post["lang"] = detect(text=com.replace("\n",""), low_memory=False)["lang"]
                                         if(tr_post["lang"] in self.languages):
                                             self.languages[tr_post["lang"]] += 1
@@ -342,7 +376,7 @@ class Scraper():
                                                 #print(tr_post["url"])
                                                 tr_post["author"] = name
                                                 tr_post["authorLocation"] = ""
-                                                tr_post["creationDateTime"] = dt.datetime.fromtimestamp(time_com,pytz.timezone('UTC'))
+                                                tr_post["creationDateTime"] = dt.fromtimestamp(time_com,pytz.timezone('UTC'))
                                                 tr_post["lang"] = detect(text=com_com.replace("\n",""), low_memory=False)["lang"]
                                                 if(tr_post["lang"] in self.languages):
                                                     self.languages[tr_post["lang"]] += 1
@@ -406,7 +440,7 @@ class Scraper():
                         #try:
                         tr_post = dict()
                         
-                        tr_post["internal_id"] = post["id"]
+                        tr_post["internal_id"] = str(post["id"])
                         tr_post["internal_parent_id"] = post["parent_id"] if post["parent_id"] != None else 0
                         
                         
@@ -415,7 +449,7 @@ class Scraper():
                         tr_post["url"] = "https://www.reddit.com" + post["permalink"]
                         tr_post["author"] = post["author"]
                         tr_post["authorLocation"] = ""
-                        tr_post["creationDateTime"] = dt.datetime.fromtimestamp(post["created_utc"],pytz.timezone('UTC'))
+                        tr_post["creationDateTime"] = dt.fromtimestamp(post["created_utc"],pytz.timezone('UTC'))
                         tr_post["lang"] = detect(text=post["body"].replace("\n",""), low_memory=False)["lang"]
                         if(tr_post["lang"] in self.languages):
                             self.languages[tr_post["lang"]] += 1
@@ -532,7 +566,7 @@ class Scraper():
                     try:
                         tr_post = dict()
                         
-                        tr_post["internal_id"] = post["id"]
+                        tr_post["internal_id"] = str(post["id"])
                         tr_post["internal_parent_id"] = 0
                         
                         tr_post["domainName"] = "reddit.com"
@@ -540,7 +574,7 @@ class Scraper():
                         tr_post["url"] = post["full_link"]
                         tr_post["author"] = post["author"]
                         tr_post["authorLocation"] = ""
-                        tr_post["creationDateTime"] = dt.datetime.fromtimestamp(post["created_utc"],pytz.timezone('UTC'))
+                        tr_post["creationDateTime"] = dt.fromtimestamp(post["created_utc"],pytz.timezone('UTC'))
                         tr_post["lang"] = detect(text=post["selftext"].replace("\n",""), low_memory=False)["lang"] if "selftext" in post else detect(text=post["titile"].replace("\n",""), low_memory=False)["lang"]
                         if(tr_post["lang"] in self.languages):
                             self.languages[tr_post["lang"]] += 1
@@ -595,7 +629,7 @@ class Scraper():
                     try:
                         tr_post = dict()
                         
-                        tr_post["internal_id"] = post["id"]
+                        tr_post["internal_id"] = str(post["id"])
                         tr_post["internal_parent_id"] = post["parent_id"] if post["parent_id"] != None else 0
                         
                         tr_post["domainName"] = "reddit.com"
@@ -603,7 +637,7 @@ class Scraper():
                         tr_post["url"] = "https://www.reddit.com" + post["permalink"]
                         tr_post["author"] = post["author"]
                         tr_post["authorLocation"] = ""
-                        tr_post["creationDateTime"] = dt.datetime.fromtimestamp(post["created_utc"],pytz.timezone('UTC'))
+                        tr_post["creationDateTime"] = dt.fromtimestamp(post["created_utc"],pytz.timezone('UTC'))
                         tr_post["lang"] = detect(text=post["body"].replace("\n",""), low_memory=False)["lang"]
                         if(tr_post["lang"] in self.languages):
                             self.languages[tr_post["lang"]] += 1
@@ -659,7 +693,7 @@ class Scraper():
                     try:
                         tr_post = dict()
                         
-                        tr_post["internal_id"] = post["id"]
+                        tr_post["internal_id"] = str(post["id"])
                         tr_post["internal_parent_id"] = post["parent_id"] if post["parent_id"] != None else 0
                         
                         tr_post["domainName"] = "reddit.com"
@@ -668,7 +702,7 @@ class Scraper():
                         tr_post["url"] = "https://www.reddit.com" + post["permalink"]
                         tr_post["author"] = post["author"]
                         tr_post["authorLocation"] = ""
-                        tr_post["creationDateTime"] = dt.datetime.fromtimestamp(post["created_utc"],pytz.timezone('UTC'))
+                        tr_post["creationDateTime"] = dt.fromtimestamp(post["created_utc"],pytz.timezone('UTC'))
                         tr_post["lang"] = detect(text=post["body"].replace("\n",""), low_memory=False)["lang"]
                         if(tr_post["lang"] in self.languages):
                             self.languages[tr_post["lang"]] += 1
@@ -720,19 +754,31 @@ class Scraper():
                     
             if (target == "twitter1"):
     
-                d= dt.datetime.now(pytz.timezone('UTC')) - dt.timedelta(minutes=5)
+                d= dt.now(pytz.timezone('UTC')) - timedelta(minutes=5)
     
                 try:
+                    c = 0
                     for keyword in keywords:
-                    
-                        for i, _post in enumerate(snscrape.modules.twitter.TwitterSearchScraper('(from:{} OR about:{}) since_time:{}'.format(keyword, keyword, int(d.timestamp()))).get_items()):
+                        
+                        rng_top = random.randint(1, 100)
+                        top_selected = False
+                        if rng_top < 10:
+                            top_selected = True
+
+                        today = date.today()
+
+                        for i, _post in enumerate(snscrape.modules.twitter.TwitterSearchScraper('{} since:{}'.format(keyword, today), top = top_selected).get_items()):
                             post = _post.__dict__
-            
+                
                             tr_post = dict()
+                            c += 1
+                            if c > 100:
+                                break
                             
-                            tr_post["internal_id"] = post["id"]
+                            tr_post["internal_id"] = str(post["id"])
                             tr_post["internal_parent_id"] = post["inReplyToTweetId"] #post["referenced_tweets"][0]["id"] if "referenced_tweets" in post and len(post["referenced_tweet"]) != 0 and post["referenced_tweets"][0]["id"] != None else 0
                         
+
                             tr_post["keyword"] = keyword
                             tr_post["mediaType"] = "Social_Networks"
                             tr_post["domainName"] = "twitter.com"
@@ -759,6 +805,9 @@ class Scraper():
                             windowSize = 1
                             numOfKeywords = 20
                             
+                            if detailed_validation_printing_enabled:
+                                print("Tweet found  = ",tr_post["internal_id"], tr_post["creationDateTime"] )
+
                             kw_extractor = yake.KeywordExtractor(lan=tr_post["lang"], n=max_ngram_size, dedupLim=deduplication_thresold, dedupFunc=deduplication_algo, windowsSize=windowSize, top=numOfKeywords, features=None)
                             kx = kw_extractor.extract_keywords(tr_post["content"])
             
@@ -836,24 +885,30 @@ class Scraper():
                                 self.send_doc(tr_post)
                                 
                 except Exception as e:
+                    print("ERROR: ",e)
                     pass
                 
             if (target == "twitter2"):
             
                 try:
-                    d= dt.datetime.now(pytz.timezone('UTC')) - dt.timedelta(minutes=5)
+                    d= dt.now(pytz.timezone('UTC')) - timedelta(minutes=5)
     
+                    c = 0
                     for keyword in keywords:
         
                         postList = [_post.__dict__ for i, _post in enumerate(snscrape.modules.twitter.TwitterHashtagScraper(keyword + ' since_time:{}'.format(int(d.timestamp()))).get_items()) if _post.__dict__["date"].timestamp() >= d.timestamp()]                
-        
+
                         for post in postList:
                             
+                            c += 1
+                            if c > 100:
+                                break
+
                             if(post["date"].timestamp() > d.timestamp()):
             
                                 tr_post = dict()
                                 
-                                tr_post["internal_id"] = post["id"]
+                                tr_post["internal_id"] = str(post["id"])
                                 tr_post["internal_parent_id"] = post["inReplyToTweetId"] #post["referenced_tweets"][0]["id"] if "referenced_tweets" in post and len(post["referenced_tweet"]) != 0 and post["referenced_tweets"][0]["id"] != None else 0
                             
                                 tr_post["keyword"] = keyword
@@ -864,6 +919,10 @@ class Scraper():
                                 tr_post["authorLocation"] = post["user"].location
                                 tr_post["creationDateTime"] = post["date"] #parse(post["date"]).replace(tzinfo=pytz.timezone('UTC'))
                                 tr_post["lang"] = post["lang"]
+                                
+                                if detailed_validation_printing_enabled:
+                                    print("Tweet found  = ",tr_post["internal_id"], tr_post["creationDateTime"] )
+
                                 if(tr_post["lang"] in self.languages):
                                     self.languages[tr_post["lang"]] += 1
                                 else:
@@ -957,6 +1016,7 @@ class Scraper():
                                 if(tr_post["url"] not in results):
                                     self.send_doc(tr_post)
                 except Exception as e:
+                    print("ERROR: ",e)
                     pass
                 
             sys.exit()
@@ -969,10 +1029,9 @@ class Scraper():
         _contract = self.app.cm.instantiateContract("ConfigRegistry")        
 
         while True:
-
-            try:                
-
-                try:
+            try:    
+                try:                    
+                    time.sleep(0.5)
                     batchSize = int(_contract.functions.get("_ModuleMinSpotBatchSize").call())
                     self.lastBatchSize = batchSize
                 except Exception as e:
@@ -985,28 +1044,31 @@ class Scraper():
                         
                         res = None
                         
-                        while res == None:
+                        for i in range(3):
+                            time.sleep(0.5)
                             try:
-                                res = filebase_upload(json.dumps({"Content":tmp}, indent=4, sort_keys=True, default=str), self.app.cm.instantiateContract("ConfigRegistry").functions.get("SpotBucket").call())
+                                res = ipfs_pin_upload(json.dumps({"Content":tmp}, indent=4, sort_keys=True, default=str))
                                 time.sleep(7.5)
                                 break
-                            except:
+                            except Exception as e:
+                                print("[Spotting] ipfs_pin_upload error: ",e)
                                 res = None
                         domNames = [x["item"]["DomainName"] for x in self.pendingBlocks[:batchSize]][0]
                         if(res != None):
                             
                             contract = self.app.cm.instantiateContract("DataSpotting")
-                            increment_tx = contract.functions.SpotData([res], [domNames], batchSize, 'Hi Bob!').buildTransaction(
+                            increment_tx = contract.functions.SpotData([res], [domNames], [batchSize], 'Hi Bob!').buildTransaction(
                             {
                                 'nonce': w3.eth.get_transaction_count(self.app.localconfig["ExordeApp"]["ERCAddress"]),
                                 'from': self.app.localconfig["ExordeApp"]["ERCAddress"],
                                 'gasPrice': w3.eth.gas_price
                             })
-                            if detailed_validation_printing_enabled:
+                            if validation_printing_enabled:
                                 print("Putting SpotData tx in the WaitingRoom")
                             self.app.tm.waitingRoom.put((increment_tx, self.app.localconfig["ExordeApp"]["ERCAddress"], self.app.pKey))
                             #print("File sent", res)
-                        
+                        else:
+                            print("[Spotting] Failed to pin file to IPFS network")
                         self.pendingBlocks = self.pendingBlocks[batchSize:]
                     
             except Exception as e:
@@ -1051,7 +1113,14 @@ class Scraper():
             document["medias"] = doc["medias"]
             document["tokenOfInterest"] = doc["tokenOfInterest"]
             
-            if(self.app.localconfig["ExordeApp"]["SendCountryInfo"] == True):
+            localization_found = True
+            try:
+                if localization_enabled in locals() or localization_enabled in globals():
+                    localization_found = localization_enabled
+            except:
+                localization_enabled = True
+
+            if(localization_found):
                 document["spotterCountry"] = self.app.userCountry
             else:
                 document["spotterCountry"] = ""
