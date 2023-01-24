@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Jan 4th 2023
+Jan 24th 2023
 Exorde Testnet
 
 @author: florent, mathias
@@ -73,7 +73,7 @@ import hashlib
 import argparse
 
 
-RAM_HOLDER_AMOUNT_base = 536000000 # reserve 512Mb of Memory
+RAM_HOLDER_AMOUNT_base = 736000000 # reserve 512Mb of Memory
 ramholder = bytearray(RAM_HOLDER_AMOUNT_base)
 
 def DownloadSingleIPFSFile(ipfsHash, timeout_=5, max_trials_=2):
