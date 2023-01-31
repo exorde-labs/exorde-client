@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Jan 28th 2023
-Exorde Testnet v1.3.5
+Jan 31st 2023
+Exorde Testnet v1.3.5c
 
 @author: florent, mathias
 Exorde Labs
