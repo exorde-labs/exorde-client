@@ -2,6 +2,7 @@
 """
 Jan 31st 2023
 Exorde Testnet v1.3.5c
+A great year ahead
 
 @author: florent, mathias
 Exorde Labs
@@ -401,7 +402,7 @@ bypass_enabled = True
 ##############################
 
 
-boot_sleep_delay = randint(5,1*60) # sleep randomly between 30s & 10 minutes
+boot_sleep_delay = randint(20,90) # sleep randomly
 print("[ Network Load Balancing ] Waiting ",boot_sleep_delay, " seconds - System status = Booting.")
 time.sleep(boot_sleep_delay)
 
