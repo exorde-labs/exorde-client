@@ -402,7 +402,7 @@ bypass_enabled = True
 ##############################
 
 
-boot_sleep_delay = randint(20,90) # sleep randomly
+boot_sleep_delay = randint(5,20) # sleep randomly
 print("[ Network Load Balancing ] Waiting ",boot_sleep_delay, " seconds - System status = Booting.")
 time.sleep(boot_sleep_delay)
 
