@@ -2,7 +2,7 @@
 """
 Feb 3rd 2023
 Exorde Testnet v1.3.5c
-A great year ahead !
+A great year ahead ! :)
 
 @author: florent, mathias
 Exorde Labs
