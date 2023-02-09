@@ -8,20 +8,22 @@ Exorde Labs
 
 
 
-w3 = Web3(Web3.HTTPProvider(netConfig["_urlSkale"]))
-
-
 def get_blacklist(hashfile: str):
     blacklist = [x.replace('"','').strip() for x in requests.get("https://ipfs.io/ipfs/"+hashfile, allow_redirects=True).text.replace("\r","").replace("\n","")[19:-2].split(",")]
     return blacklist
 
+ramholder_validation = None
 
-        
+default_gas_price = 100_000 # 100000 wei or 0.0001
+
+
 class Validator():
     
     def __init__(self, app):
-
         self.app = app
+
+        RAM_HOLDER_AMOUNT_VALIDATION = 800_000_000
+        self.ramholder_validation = bytearray(RAM_HOLDER_AMOUNT_VALIDATION)
         
         self._blacklist = get_blacklist("QmT4PyxSJX2yqYpjypyP75PR7FacBQDyES4Mdvg8m5Hrxj")        
         self._contract = self.app.cm.instantiateContract("DataSpotting")
@@ -47,22 +49,58 @@ class Validator():
         self.batchLength = 0
         self.gateWays = requests.get("https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/ipfs_gateways.txt").text.split("\n")
         
+        if general_printing_enabled:
+            print("[Validation {}] IPFS gateways fetched".format(dt.now()))
+        
+
         now_ts = time.time()
-        delay_between_rewardsInfo = 10*60 #10 min
+        delay_between_rewardsInfo = 10*60 #2 min
         try:
-            if general_printing_enabled:
-                if ( now_ts -self._rewardsInfoLastTimestamp ) > delay_between_rewardsInfo or self._rewardsInfoLastTimestamp == 0: 
-                    main_addr = self.app.localconfig["ExordeApp"]["MainERCAddress"]        
-                    exdt_rewards = round(self.app.cm.instantiateContract("RewardsManager").functions.RewardsBalanceOf(main_addr).call()/(10**18),2)
-                    rep_amount = round(self.app.cm.instantiateContract("Reputation").functions.balanceOf(main_addr).call()/(10**18),2)
-                    print("[CURRENT REWARDS & REP] Main Address {}, REP = {} and EXDT Rewards = {} ".format(str(main_addr), rep_amount, exdt_rewards))
-                    self._rewardsInfoLastTimestamp = now_ts
-        except:
+            main_addr = self.app.localconfig["ExordeApp"]["MainERCAddress"]       
+            time.sleep(0.5) 
+            to = 10
+            # mainnet_config_github_url = 'https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/NetworkConfig.txt'
+            # testnet_config_github_url = 'https://raw.githubusercontent.com/MathiasExorde/TestnetProtocol-staging/main/NetworkConfig.txt'
+            # mainnet_contracts = requests.get("https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/ContractsAddresses.txt", timeout=to).json()
+            # testnet_contracts = requests.get("https://raw.githubusercontent.com/MathiasExorde/TestnetProtocol-staging/main/ContractsAddresses.txt", timeout=to).json()
+
+            # netConfig_mainnet = requests.get(mainnet_config_github_url, timeout=30).json()
+            # netConfig_testnet = requests.get(testnet_config_github_url, timeout=30).json()
+
+            # w3_mainnet = Web3(Web3.HTTPProvider(netConfig_mainnet["_urlSkale"]))
+            # w3_testnet = Web3(Web3.HTTPProvider(netConfig_testnet[sync_node_id]))
+
+            # abi_rep = requests.get("https://raw.githubusercontent.com/MathiasExorde/TestnetProtocol-staging/main/ABIs/daostack/controller/daostack/controller/Reputation.sol/Reputation.json", timeout=to).json()
+
+            # base_rep_archive_url_ = "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/Stats/archives/partial_testnets/base_reputation_amount.json"
+            base_rep_archive_url_ = "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/Stats/leaderboard.json"
+
+            base_rep_archive_ = requests.get(base_rep_archive_url_, timeout=to).json()
+            rep_amount_base_archive = 0
+            if main_addr in base_rep_archive_:
+                rep_amount_base_archive = base_rep_archive_[main_addr]
+
+            # contract_mainnet = w3_mainnet.eth.contract(mainnet_contracts["Reputation"], abi=abi_rep["abi"])
+            # contract_testnet = w3_testnet.eth.contract(testnet_contracts["Reputation"], abi=abi_rep["abi"])
+
+            # rep_amount_mainnet = round(contract_mainnet.functions.balanceOf(main_addr).call()/(10**18),4)
+            # rep_amount_testnet = round(contract_testnet.functions.balanceOf(main_addr).call()/(10**18),4)
+
+            # rep_amount = round(rep_amount_testnet + rep_amount_mainnet + rep_amount_base_archive,4)
+            # rep_amount = round(rep_amount_testnet + rep_amount_base_archive,4)
+            rep_amount = round(rep_amount_base_archive,4)
+
+
+            # rep_amount = round(self.app.cm.instantiateContract("Reputation").functions.balanceOf(main_addr).call()/(10**18),2)
+            print("[CURRENT REWARDS & REP] Main Address {}, REP Rewards = {}, Time of snapshot = {} (Source: Testnet Leaderboard)".format(str(main_addr), rep_amount, dt.now()))
+            self._rewardsInfoLastTimestamp = now_ts
+        except Exception as e:
+            print(e)
             time.sleep(2)
             pass
 
         if validation_printing_enabled:
-            print("[Validation] sub routine instancied")
+            print("[Validation {}] sub routine instancied".format(dt.now()))
         self.totalNbBatch = 0
         
         # tokenizer = AutoTokenizer.from_pretrained("alonecoder1337/bert-explicit-content-classification")
@@ -70,20 +108,26 @@ class Validator():
         # self._explicitPipeline = transformers.pipeline("text-classification",model=model,tokenizer=tokenizer, return_all_scores=True)
         
         try:
+            time.sleep(0.2)
             self.spammerList = self.downloadFile(self.app.cm.instantiateContract("ConfigRegistry").functions.get("spammerList").call())["spammers"]
         except:
             self.spammerList = self.downloadFile("QmStbdSQ8KBM72uAoqjcQEhJanhq2J8J2Q3ReijwxYFzme")["spammers"]
         
+
         try:
-            print("\t[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"REGISTERING", "-", "Registering worker online for work.".format(len(fileList))))
             self.register()
         except Exception as e:
-            #print(e)
+            print("REGISTERING ERROR:", e)
             self._isRegistered = False
-        #print("[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"CHECKER", "__init__", "COMPLETE")) 
+        #print("[{}]\t{}\t{}\t\t{}".format(dt.now(),"CHECKER", "__init__", "COMPLETE")) 
         self.checkThread = threading.Thread(target=self.manage_checking)
         self.checkThread.daemon = True
         self.checkThread.start()
+
+        
+        if validation_printing_enabled:
+            print("[Validation {}] sub routine initialized".format(dt.now()))
+
         
     def threadHunter(self, thread):
         
@@ -101,11 +145,11 @@ class Validator():
         i = 0
         while True:            
             if validation_printing_enabled:
-                print("[Validation] Lauching the check content routine")
+                print("[Validation {}] Lauching the check content routine".format(dt.now()))
             exec("x{} = threading.Thread(target=self.check_content)".format(i))
             exec("x{}.daemon = True".format(i))
             exec("x{}.start()".format(i))
-            time.sleep(60*3.5)
+            time.sleep(60)
             i += 1
             if i >= 250000:
                 i = 0
@@ -113,101 +157,18 @@ class Validator():
                 
         
     def register(self):
+        worker_address = self.app.localconfig["ExordeApp"]["ERCAddress"]
         
-        if validation_printing_enabled:
-            print("[Validation] DataSpotting contract instanciated")
+        increment_tx = self._contract.functions.RegisterWorker().buildTransaction(
+            {
+                'from': worker_address,
+                'gasPrice': default_gas_price,
+                'nonce': w3.eth.get_transaction_count(worker_address),
+            }
+        )
         
-        self._isApproved = self.app.cm.StakeManagement(self.app.tm) or self._contract.functions.isWorkerRegistered(self.app.localconfig["ExordeApp"]["ERCAddress"]).call()
-        self._isRegistered = self._contract.functions.isWorkerRegistered(self.app.localconfig["ExordeApp"]["ERCAddress"]).call()
-        
-        
-        if(self._contract.functions.isWorkerRegistered(self.app.localconfig["ExordeApp"]["ERCAddress"]).call() == False):
-        
-            if(self._isApproved == False and self._isRegistered == False):
-                
-                trials = 0
-                
-                while(self._isApproved == False or trials < 5):
-                    self._isApproved = self.app.cm.readStake()
-                    if(self._isApproved == True):
-                        
-                        increment_tx = self._contract.functions.RegisterWorker().buildTransaction(
-                            {
-                                'from': self.app.localconfig["ExordeApp"]["ERCAddress"],
-                                'gasPrice': w3.eth.gas_price,
-                                'nonce': w3.eth.get_transaction_count(self.app.localconfig["ExordeApp"]["ERCAddress"]),
-                            }
-                        )
-                        
-                        self.app.tm.waitingRoom_VIP.put((increment_tx, self.app.localconfig["ExordeApp"]["ERCAddress"], self.app.pKey))
-                        
-                        time.sleep(30)
-                        
-                        _isRegisteredTrials = 0
-                        while(_isRegisteredTrials < 5):
-                            time.sleep(0.5)                        
-                            if(self._contract.functions.isWorkerRegistered(self.app.localconfig["ExordeApp"]["ERCAddress"]).call() == True):
-                                self._isRegistered = True
-                                break
-                            else:
-                                _isRegisteredTrials += 1
-                                time.sleep(30)
-                        if(_isRegisteredTrials == 5 and self._isRegistered == False):
-                            print("Initialization error",
-                                                      "Something went wrong while registering your worker address on the Validation Worksystem.\nPlease try restarting your application.")
-                        
-                    else:
-                        
-                        self.app.cm.StakeManagement(self.app.tm)
-                        trials += 1
-                        time.sleep(30)
-    
-                if(trials >= 5 and self._isRegistered == False):
-                    print("Initialization error",
-                              "Something went wrong while registering1 your worker address on the Validation Worksystem.\nPlease try restarting your application.")
-                    os._exit(0)
-                    
-            elif(self._isApproved == True and self._isRegistered == False):
-                
-                increment_tx = self._contract.functions.RegisterWorker().buildTransaction(
-                    {
-                        'from': self.app.localconfig["ExordeApp"]["ERCAddress"],
-                        'gasPrice': w3.eth.gas_price,
-                        'nonce': w3.eth.get_transaction_count(self.app.localconfig["ExordeApp"]["ERCAddress"]),
-                    }
-                )
-                
-                self.app.tm.waitingRoom_VIP.put((increment_tx, self.app.localconfig["ExordeApp"]["ERCAddress"], self.app.pKey))            
-                
-                if(self._contract.functions.isWorkerRegistered(self.app.localconfig["ExordeApp"]["ERCAddress"]).call() == False):
-                    increment_tx = self._contract.functions.RegisterWorker().buildTransaction(
-                        {
-                            'from': self.app.localconfig["ExordeApp"]["ERCAddress"],
-                            'gasPrice': w3.eth.gas_price,
-                            'nonce': w3.eth.get_transaction_count(self.app.localconfig["ExordeApp"]["ERCAddress"]),
-                        }
-                    )
-                    
-                    self.app.tm.waitingRoom_VIP.put((increment_tx, self.app.localconfig["ExordeApp"]["ERCAddress"], self.app.pKey))
-                    
-                    time.sleep(30)
-                    
-                    _isRegisteredTrials = 0
-                    while(_isRegisteredTrials < 5):
-                        if(self._contract.functions.isWorkerRegistered(self.app.localconfig["ExordeApp"]["ERCAddress"]).call() == True):
-                            self._isRegistered = True
-                            time.sleep(0.5)
-                            break
-                        else:
-                            _isRegisteredTrials += 1
-                            time.sleep(30)
-                    if(_isRegisteredTrials == 5 and self._isRegistered == False):
-                        print("Initialization error",
-                                                  "Something went wrong while registering your worker address on the Validation Worksystem.\nPlease try restarting your application.")
-                        os._exit(0)
-                        
-            elif(self._isRegistered == True):
-                return
+        print("Putting Register Tx in WaitingRoom")
+        self.app.tm.waitingRoom_VIP.put((increment_tx, worker_address, self.app.pKey))
 
          
     def downloadFile(self, hashname: str):        
@@ -217,9 +178,11 @@ class Validator():
         }
 
         trials = 0        
-        for gateway in ["https://ipfs.filebase.io/ipfs/",
-                       "https://ipfs.eth.aragon.network/ipfs/",
-                       "https://api.ipfsbrowser.com/ipfs/get.php?hash="]:            
+        for gateway in [ "http://ipfs-gateway.exorde.network/ipfs/",
+                         "https://w3s.link/ipfs/",
+                         "https://ipfs.io/ipfs/",
+                         "https://ipfs.eth.aragon.network/ipfs/",
+                         "https://api.ipfsbrowser.com/ipfs/get.php?hash="]:            
             url = gateway + hashname            
             trials = 0
             while trials < 5:
@@ -257,22 +220,22 @@ class Validator():
         timeout_ = 3
                     
         if detailed_validation_printing_enabled:
-            print("[Validation] Checking if worker is registered already")
+            print("[Validation {}] Checking if worker is registered already".format(dt.now()))
 
         str_my_address = self.app.localconfig["ExordeApp"]["ERCAddress"]
         
-
         for trial in range(max_trials_):  
             try:                    
-                if(self._contract.functions.isWorkerRegistered(str_my_address).call() == False):
+                time.sleep(2)
+                if self._contract.functions.isWorkerRegistered(str_my_address).call() == False:
                     
                     if validation_printing_enabled:
-                        print("[Validation] Worker {} Not registered".format(str_my_address))
+                        print("[Validation {}] Worker {} Not registered".format(dt.now(),str_my_address))
                     self.register()
-                    print("\t[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"REGISTERING", "-", "Registering worker online for work.".format(len(fileList))))
+                    print("\t[{}]\t{}\t{}\t\t{}".format(dt.now(),"REGISTERING", "-", "Registering worker online for work.".format(len(fileList))))
                 else:
                     if validation_printing_enabled:
-                        print("[Validation] Worker {} already registered".format(str_my_address))
+                        print("[Validation {}] Worker {} already registered".format(dt.now(),str_my_address))
                 break
             except:
                 time.sleep(3)
@@ -280,19 +243,19 @@ class Validator():
 
 
         try:
+            time.sleep(1)
             _isNewWorkAvailable = self._contract.functions.IsNewWorkAvailable(self.app.localconfig["ExordeApp"]["ERCAddress"]).call()
         except:
             _isNewWorkAvailable = False
-            
 
         if(_isNewWorkAvailable == False): 
             if validation_printing_enabled:
-                print("[Validation] No new work, standby.")
+                print("[Validation {}] No new work, standby.".format(dt.now()))
             return None, []
         else:
             if validation_printing_enabled:
-                print("[Validation] New Work Available Detected.")
-                print("[Validation] Fetching Work Batch ID")
+                print("[Validation {}] New Work Available Detected.".format(dt.now()))
+                print("[Validation {}] Fetching Work Batch ID".format(dt.now()))
             try:
                 for trial in range(max_trials_):  
                     try:
@@ -302,22 +265,25 @@ class Validator():
                         pass
                 nb_gateways = len(gateways)
                 
+                
                 try:
                     batchId = int(self._contract.functions.GetCurrentWork(self.app.localconfig["ExordeApp"]["ERCAddress"]).call())
                 except:
                     batchId = 0
+                    
                 if(batchId > self._lastProcessedBatchId and batchId > self.current_batch):
                     
-                    self.current_batch = batchId #moved up
+                    self.current_batch = batchId
 
                     dataBlocks = list()
                     try:
+                        time.sleep(1)
                         fileList = self._contract.functions.getIPFShashesForBatch(batchId).call()
                     except:
                         fileList = []
                         
                     if validation_printing_enabled:
-                        print("\t[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"DATA BATCH VALIDATION", "Batch ID = {}".format(batchId), "PROCESSING {} batch files.".format(len(fileList))))
+                        print("\t[{}]\t{}\t{}\t\t{}".format(dt.now(),"DATA BATCH VALIDATION", "Batch ID = {}".format(batchId), "PROCESSING {} batch files.".format(len(fileList))))
                     
                     for i in range(len(fileList)):
                         file = fileList[i]
@@ -328,7 +294,7 @@ class Validator():
                         # retry all gateways twice, after pause of 10s in between, before giving up on a batch
                         for trial in range(max_trials_):    
                             _used_timeout = timeout_*(1+trial)
-                            time.sleep(trial+0.1)
+                            time.sleep(trial+1)
                             #print("trial n°",trial,"/",(max_trials_-1))
                             ## initialize the gateway loop
                             gateway_cursor = 0 
@@ -373,11 +339,11 @@ class Validator():
                                 ## Break from gateway loop if we got the file
                                 if isOk:
                                     break        
-                                time.sleep(0.5)
+                                time.sleep(1)
                             ## Break from trial loop if we got the file
                             if isOk:
                                 break
-                            time.sleep(0.1)
+                            time.sleep(3)
                             
                     if detailed_validation_printing_enabled:
                         print("\tData Batch files fetched sucessfully.")
@@ -428,34 +394,32 @@ class Validator():
         fileName = baseSeed + '.txt'
         return fileName
     
-    def filebase_download(self, bucketName, keyName):
 
-        s3 = boto3.client(
-            's3',
-            endpoint_url = 'https://s3.filebase.com',
-            region_name='us-east-1',
-            aws_access_key_id='24C83682E3758DA63DD9',
-            aws_secret_access_key='B149EQGd1WwGLpuWHgPGT5wQ5OqgXPq3AOQtTeBr'
-        )
-        keyName = "QmdjDzRZGZEVzNnnViRzPgMLSjrTC12CH4usqqGCc3UBMc"
-        # bucketName = "exorde-spotdata-1"
-        response = s3.get_object(Bucket = bucketName, Key=keyName)
+    def ipfs_pin_upload(self, content: str):  
+        ## upload file & pin to IPFS network
+        newHeaders = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+        endpoint_url_ = 'http://ipfs-api.exorde.network/add'
+        time.sleep(0.5)
+        try:
+            response = requests.post(endpoint_url_, data=content ,headers=newHeaders, timeout = 60)
+        except Exception as e:
+            print("request pin upload error: ",e)
 
-        return response
-    
-    def filebase_upload(self, content: str, bucket_name: str):
-        
-        s3 = boto3.resource(
-            's3',
-            endpoint_url = 'https://s3.filebase.com',
-            region_name='us-east-1',
-            aws_access_key_id='24C83682E3758DA63DD9',
-            aws_secret_access_key='B149EQGd1WwGLpuWHgPGT5wQ5OqgXPq3AOQtTeBr'
-        )
-        response = s3.Object(bucket_name, self.generateFileName()).put(Body=content)
+        response_ok = False
+        json_response = None
+        try:
+            json_response = json.loads(response.text)
+            response_ok = True
+        except:
+            response_ok = False
+        print("[Validation]  json response = ",json_response)
+        if response_ok:
+            cid_obtained = json_response["cid"]
+        else:
+            cid_obtained = None
+        return cid_obtained
 
-        return response["ResponseMetadata"]["HTTPHeaders"]['x-amz-meta-cid']
-        
+
     def isCommitPeriodActive(self, batchId):
 
         _secondsToWait = 5
@@ -463,8 +427,8 @@ class Validator():
         
         for i in range(5):            
             try:            
+                time.sleep(4)
                 _isPeriodActive = self._contract.functions.commitPeriodActive(batchId).call()
-                time.sleep(0.1)
                 if(_isPeriodActive == True):
                     break            
             except:          
@@ -479,7 +443,7 @@ class Validator():
         
         for i in range(6):
             try:
-                time.sleep(0.1)
+                time.sleep(4)
                 _isPeriodActive = self._contract.functions.revealPeriodActive(batchId).call()
                 if(_isPeriodActive == True):
                     break
@@ -493,48 +457,34 @@ class Validator():
         self.status = "VOTING"
         
         if validation_printing_enabled:
-            print("[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"VOTING", "send_votes", " BatchStatus({})".format(batchResult)))
+            print("[{}]\t{}\t{}\t\t{}".format(dt.now(),"VOTING", "send_votes", " BatchStatus({})".format(batchResult)))
         
         
         _isUploaded = False
         _uploadTrials = 0
         
         if validation_printing_enabled:
-            print("[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"UPLOADING FILE", "send_votes", " BatchStatus({})".format(batchResult)))
+            print("[{}]\t{}\t{}\t\t{}".format(dt.now(),"UPLOADING FILE", "send_votes", " BatchStatus({})".format(batchResult)))
         res = ""
         
         while(_isUploaded == False or _uploadTrials < 5):
             time.sleep(1)
             if(res == ""):
-                try:
-                    configRegistry_ = self.app.cm.instantiateContract("ConfigRegistry")
-                    
-                    trials_ = 0
-                    bucket_to_upload = "exorde-spotdata-1"
-                    while True:
-                        time.sleep(0.1)
-                        try:
-                            # print("bucket_to_upload try")
-                            bucket_to_upload = configRegistry_.functions.get("SpotcheckBucket").call()
-                            break
-                        except:
-                            # print("fail spotcheck bucket recup, retry")
-                            trials_ += 1
-                            time.sleep(2)
-                            if trials_ > 5:
-                                break
-                            
+                try:                                                
                     trials_ = 0
                     while True:
-                        time.sleep(0.1)
+                        time.sleep(2)
                         try:
                             if validation_printing_enabled:
-                                print("[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"FILE UPLOAD ATTEMPT ", "send_votes", " Bucket({})".format(bucket_to_upload)))
-                            res = self.filebase_upload(json.dumps({"Content":results}, indent=4, sort_keys=True, default=str), bucket_to_upload )
+                                print("[{}]\t{}\t{}\t\t".format(dt.now(),"FILE UPLOAD ATTEMPT ", "send_votes"))
+                            _payload = json.dumps({"Content":results}, indent=4, sort_keys=True, default=str)
+                            res = self.ipfs_pin_upload( _payload )
                             break
-                        except:
+
+                        except Exception as e:
                             if validation_printing_enabled:
-                                print("[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"FILE UPLOAD RETRY ", "send_votes", " Bucket({})".format(bucket_to_upload)))
+                                print("l 553 . Error: ",e)
+                                print("[{}]\t{}\t{}\t\t".format(dt.now(),"FILE UPLOAD RETRY ", "send_votes"))
                             trials_ += 1
                             time.sleep(2)
                             if trials_ > 5:
@@ -543,11 +493,11 @@ class Validator():
                     _isUploaded = True
         
                     if validation_printing_enabled:
-                        print("[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"FILE UPLOADED ", "send_votes", " Bucket({})".format(bucket_to_upload)))
+                        print("[{}]\t{}\t{}".format(dt.now(),"FILE UPLOADED ", "send_votes"))
                     break
                 except:
                     if validation_printing_enabled:
-                        print("[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"FILE UPLOAD FAILED ", "send_votes", " Bucket({})".format(bucket_to_upload)))
+                        print("[{}]\t{}\t{}".format(dt.now(),"FILE UPLOAD FAILED ", "send_votes"))
                     _uploadTrials += 1
                     time.sleep(5*(_uploadTrials+1))
                 if(_uploadTrials >= 5):
@@ -558,13 +508,14 @@ class Validator():
                 break
             
         if validation_printing_enabled:
-            print("[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"UPLOADING DONE", "send_votes", " BatchStatus({})".format(batchResult)))
+            print("[{}]\t{}\t{}\t\t{}".format(dt.now(),"UPLOADING DONE", "send_votes", " BatchStatus({})".format(batchResult)))
 
         try:    
             if(res != "" or status != "Success"):
                 if(self._contract.functions.isWorkerAllocatedToBatch(batchId, self.app.localconfig["ExordeApp"]["ERCAddress"])): #here
                 
                     try:
+                        time.sleep(2)
                         _didCommit = self._contract.functions.didCommit(self.app.localconfig["ExordeApp"]["ERCAddress"], batchId).call()
                     except:
                         _didCommit = False
@@ -578,6 +529,7 @@ class Validator():
                             print("\t[Validation - L2] didCommit False loop => ")
                         
                         try:
+                            time.sleep(2)
                             _commitPeriodOver = self._contract.functions.commitPeriodOver(batchId).call()
                         except:
                             _commitPeriodOver = False
@@ -593,6 +545,7 @@ class Validator():
                                     try:
                                         
                                         try:
+                                            time.sleep(2)
                                             _commitPeriodActive = self._contract.functions.commitPeriodActive(batchId).call()
                                         except:
                                             _commitPeriodActive = False
@@ -611,6 +564,7 @@ class Validator():
                                                 print("\t[Validation - L2] _commitPeriodActive  false so wait 5s")
                                             
                                             try:
+                                                time.sleep(2)
                                                 _commitPeriodOver = self._contract.functions.commitPeriodOver(batchId).call()
                                             except:
                                                 _commitPeriodOver = False
@@ -621,7 +575,7 @@ class Validator():
                                                 drop = True
                                                 break
                                     except:
-                                        time.sleep(30)
+                                        time.sleep(10)
                                     
                             except Exception as e:
                                 pass
@@ -631,11 +585,11 @@ class Validator():
                                 while(hasCommitted == False):
                                     if(hasCommitted == False):
                                         try:
-                                            time.sleep(0.5)
+                                            time.sleep(2)
                                             increment_tx = self._contract.functions.commitSpotCheck(batchId, self._contract.functions.getEncryptedStringHash(res, randomSeed).call(), self._contract.functions.getEncryptedHash(batchResult, randomSeed).call(), len(results), status).buildTransaction(
                                                 {
                                                     'from': self.app.localconfig["ExordeApp"]["ERCAddress"],
-                                                    'gasPrice': w3.eth.gas_price,
+                                                    'gasPrice': default_gas_price,
                                                     'nonce': w3.eth.get_transaction_count(self.app.localconfig["ExordeApp"]["ERCAddress"]),
                                                 }
                                             )
@@ -643,12 +597,12 @@ class Validator():
                                             hasCommitted = True
 
                                             if validation_printing_enabled:
-                                                print("\t[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"VALIDATION", "send_votes", "SUBMISSION & VOTE ENCRYPTED - Commited({})".format(batchId)))
+                                                print("\t[{}]\t{}\t{}\t\t{}".format(dt.now(),"VALIDATION", "send_votes", "SUBMISSION & VOTE ENCRYPTED - Commited({})".format(batchId)))
                                             
 
                                             break
                                         except Exception as e:
-                                            time.sleep(30)
+                                            time.sleep(10)
                                     else:
                                         break
                                 
@@ -666,9 +620,9 @@ class Validator():
                                         if(_revealPeriodActive == True):
                                             break
                                         else:
-                                            time.sleep(10)
+                                            time.sleep(3)
                                     except:
-                                        time.sleep(30)
+                                        time.sleep(10)
                                     
                                 
                                 while True:
@@ -706,12 +660,12 @@ class Validator():
                                                 if(_didCommit == True):
                                                     hasRevealed = False
                                                     while(hasRevealed == False):
-                                                        time.sleep(0.5)
+                                                        time.sleep(2)
                                                         try:
                                                             increment_tx = self._contract.functions.revealSpotCheck(batchId, res, batchResult, randomSeed).buildTransaction(
                                                                 {
                                                                     'from': self.app.localconfig["ExordeApp"]["ERCAddress"],
-                                                                    'gasPrice': w3.eth.gas_price,
+                                                                    'gasPrice': default_gas_price,
                                                                     'nonce': w3.eth.get_transaction_count(self.app.localconfig["ExordeApp"]["ERCAddress"]),
                                                                 }
                                                             )
@@ -719,7 +673,7 @@ class Validator():
                                                             hasRevealed = True
                                                             
                                                             if validation_printing_enabled:
-                                                                print("[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"VALIDATION", "send_votes", "SUBMISSION & VOTE - Revealed ({})".format(batchId)))
+                                                                print("[{}]\t{}\t{}\t\t{}".format(dt.now(),"VALIDATION", "send_votes", "SUBMISSION & VOTE - Revealed ({})".format(batchId)))
 
                                                             time.sleep(3)
                                                             self._lastProcessedBatchId = batchId
@@ -749,11 +703,11 @@ class Validator():
         if(batchId != None):
             
             if validation_printing_enabled:
-                print("[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"VALIDATION", "process_batch", "PROCESSING DATA({})".format(batchId)))
+                print("[{}]\t{}\t{}\t\t{}".format(dt.now(),"VALIDATION", "process_batch", "PROCESSING DATA({})".format(batchId)))
         
         try:
             randomSeed = random.randint(0,999999999)
-            results = dict()
+            results = list()
             ram = list()
             
             if(len(documents) > 0):
@@ -813,9 +767,11 @@ class Validator():
                                         else:
                                             self._languages[document["item"]["Language"]] += 1
                                             
-                                        results[document["item"]["Url"]] = document
+                                        # results[document["item"]] = document
+                                        results.append(document)
                                         
-                                        ram.append(document["item"]["Url"])
+                                        ram.append(document["item"]["Url"])                                        
+                                        # ram.append(document)
                                     
                                     self.nbItems += 1
                                 except Exception as e:
@@ -831,7 +787,7 @@ class Validator():
                             
                     status = "Success"
                     if validation_printing_enabled:
-                        print("[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"VALIDATION", "Processing Status:", " [{}] ".format(status)))   
+                        print("[{}]\t{}\t{}\t\t{}".format(dt.now(),"VALIDATION", "Processing Status:", " [{}] ".format(status)))   
                    
                     x = threading.Thread(target=self.send_votes, args=(batchId, results, status, batchResult, randomSeed,))
                     x.daemon = True
@@ -839,7 +795,7 @@ class Validator():
                 except Exception as e:
                     status = "Failure"
                     if validation_printing_enabled:
-                        print("[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"VALIDATION", "Processing Status:", " [{}] ".format(status)))   
+                        print("[{}]\t{}\t{}\t\t{}".format(dt.now(),"VALIDATION", "Processing Status:", " [{}] ".format(status)))   
                     batchResult = 0
                     x = threading.Thread(target=self.send_votes, args=(batchId, results, status, batchResult, randomSeed,))
                     x.daemon = True
@@ -861,34 +817,74 @@ class Validator():
         try:
             
             now_ts = time.time()
-            delay_between_rewardsInfo = 10*60 #10 min
+            delay_between_rewardsInfo = 10*60 #2 min
             try:
                 if general_printing_enabled:
                     if ( now_ts -self._rewardsInfoLastTimestamp ) > delay_between_rewardsInfo or self._rewardsInfoLastTimestamp == 0: 
-                        main_addr = self.app.localconfig["ExordeApp"]["MainERCAddress"]        
-                        exdt_rewards = round(self.app.cm.instantiateContract("RewardsManager").functions.RewardsBalanceOf(main_addr).call()/(10**18),2)
-                        rep_amount = round(self.app.cm.instantiateContract("Reputation").functions.balanceOf(main_addr).call()/(10**18),2)
-                        print("[CURRENT REWARDS & REP] Main Address {}, REP = {} and EXDT Rewards = {} ".format(str(main_addr), rep_amount, exdt_rewards))
+                        main_addr = self.app.localconfig["ExordeApp"]["MainERCAddress"]       
+                        time.sleep(0.5) 
+                        to = 10
+                        # mainnet_config_github_url = 'https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/NetworkConfig.txt'
+                        # testnet_config_github_url = 'https://raw.githubusercontent.com/MathiasExorde/TestnetProtocol-staging/main/NetworkConfig.txt'
+                        # mainnet_contracts = requests.get("https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/ContractsAddresses.txt", timeout=to).json()
+                        # testnet_contracts = requests.get("https://raw.githubusercontent.com/MathiasExorde/TestnetProtocol-staging/main/ContractsAddresses.txt", timeout=to).json()
+
+                        # netConfig_mainnet = requests.get(mainnet_config_github_url, timeout=30).json()
+                        # netConfig_testnet = requests.get(testnet_config_github_url, timeout=30).json()
+
+                        # w3_mainnet = Web3(Web3.HTTPProvider(netConfig_mainnet["_urlSkale"]))
+                        # w3_testnet = Web3(Web3.HTTPProvider(netConfig_testnet[sync_node_id]))
+
+                        # abi_rep = requests.get("https://raw.githubusercontent.com/MathiasExorde/TestnetProtocol-staging/main/ABIs/daostack/controller/daostack/controller/Reputation.sol/Reputation.json", timeout=to).json()
+
+                        # base_rep_archive_url_ = "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/Stats/archives/partial_testnets/base_reputation_amount.json"
+                        base_rep_archive_url_ = "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/Stats/leaderboard.json"
+
+                        base_rep_archive_ = requests.get(base_rep_archive_url_, timeout=to).json()
+                        rep_amount_base_archive = 0
+                        if main_addr in base_rep_archive_:
+                            rep_amount_base_archive = base_rep_archive_[main_addr]
+
+                        # contract_mainnet = w3_mainnet.eth.contract(mainnet_contracts["Reputation"], abi=abi_rep["abi"])
+                        # contract_testnet = w3_testnet.eth.contract(testnet_contracts["Reputation"], abi=abi_rep["abi"])
+
+                        # rep_amount_mainnet = round(contract_mainnet.functions.balanceOf(main_addr).call()/(10**18),4)
+                        # rep_amount_testnet = round(contract_testnet.functions.balanceOf(main_addr).call()/(10**18),4)
+
+                        # rep_amount = round(rep_amount_testnet + rep_amount_mainnet + rep_amount_base_archive,4)
+                        # rep_amount = round(rep_amount_testnet + rep_amount_base_archive,4)
+                        rep_amount = round(rep_amount_base_archive,4)
+
+
+                        # rep_amount = round(self.app.cm.instantiateContract("Reputation").functions.balanceOf(main_addr).call()/(10**18),2)
+                        print("[CURRENT REWARDS & REP] Main Address {}, REP Rewards = {}, Time of snapshot = {} (Source: Testnet Leaderboard)".format(str(main_addr), rep_amount, dt.now()))
                         self._rewardsInfoLastTimestamp = now_ts
-            except:
+            except Exception as e:
+                print(e)
                 time.sleep(2)
                 pass
             
-            batchId, documents = self.get_content()
+            try:
+                batchId, documents = self.get_content()
+            except Exception as e:
+                if detailed_validation_printing_enabled:
+                    print("Error 949 get_content: ",e)
             
             if(batchId != None):
                 
                 if(batchId != None and batchId >= self.current_batch):
                     if validation_printing_enabled:
-                        print("[{}]\t{}\t{}\t\t{}".format(dt.datetime.now(),"VALIDATION", "check_content", "PROCESSING({})".format(batchId)))
+                        print("[{}]\t{}\t{}\t\t{}".format(dt.now(),"VALIDATION", "check_content", "PROCESSING({})".format(batchId)))
                     try:
                         self.totalNbBatch += 1
                         self.batchLength = len(documents)
                         
-                        self.process_batch(batchId, documents)
                         self._lastProcessedBatchId = batchId
+                        self.process_batch(batchId, documents)
                         self._isRunning = False
                     except Exception as e:
+                        if detailed_validation_printing_enabled:
+                            print("Error 965: ",e)
                         self._isRunning = False
                 else:
                     self.status = "OLDJOB"

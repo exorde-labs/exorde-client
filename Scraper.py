@@ -129,6 +129,8 @@ def downloadFile2Data2(hashname: str):
     if (trials >= 5):
         return None
     
+default_gas_price = 100_000 # 100000 wei or 0.0001
+
 class Scraper():
     
     def __init__(self, app):
@@ -148,8 +150,9 @@ class Scraper():
         self.languages = dict()
         self.threads = list()
         self.pendingBlocks = list()
-        self.lastBatchSize = 100
+        self.lastBatchSize = 100 # fixed by default
         self.nbItems = 0
+        self.cid_dict = dict()
         
         self.keywords = list()
             
@@ -168,6 +171,10 @@ class Scraper():
         if (os.path.exists('ExordeWD\\lang.json') == False):
             goingOn = False
         self.listlang = self.lang_table
+
+    ############################################################################################################################
+    ############################################################################################################################
+    ############################################################################################################################
         
     def manage_scraping(self):
         sender = threading.Thread(target=self.manage_sending)
@@ -219,48 +226,39 @@ class Scraper():
                             x.daemon = True
                             x.start()
                             self.threads.append(x)
-                            y = threading.Thread(target=self.scrape, args=("reddit2", keywords))
-                            y.daemon = True
-                            y.start()
-                            self.threads.append(y)
+                            # y = threading.Thread(target=self.scrape, args=("reddit2", keywords))
+                            # y.daemon = True
+                            # y.start()
+                            # self.threads.append(y)
                             z = threading.Thread(target=self.scrape, args=("reddit3", keywords))
                             z.daemon = True
                             z.start()
                             self.threads.append(z)
-                            a = threading.Thread(target=self.scrape, args=("reddit4", keywords))
-                            a.daemon = True
-                            a.start()
-                            self.threads.append(a)
+                            # a = threading.Thread(target=self.scrape, args=("reddit4", keywords))
+                            # a.daemon = True
+                            # a.start()
+                            # self.threads.append(a)
                             
                     if(len(self.keywords) > 0):                        
                         time.sleep(0.5)
-                        try:
-                            delay = int(_contract.functions.get("autoScrapingFrequency").call())
-                            if scrape_printing_enabled:
-                                print("[{}]\t{}\t{}\t{}".format(dt.now(),"SLEEP ",delay," s BEFORE NEW COLLECT DATA"))
-                            time.sleep(delay)
-                        except:
-                            random_wait_ = random.randint(3, 10)*60
-                            if scrape_printing_enabled:
-                                print("[{}]\t{}".format(dt.now(),"SLEEP BEFORE NEW DATA COLLECT: "),random_wait_," s")
-                            time.sleep(random_wait_)
+                        random_wait_ = random.randint(3, 10)*60
+                        if scrape_printing_enabled:
+                            print("[{}]\t{}".format(dt.now(),"SLEEP BEFORE NEW DATA COLLECT: "),random_wait_," s")
+                        time.sleep(random_wait_)
                     else:                        
                         time.sleep(0.5)
-                        try:
-                            delay = int(_contract.functions.get("autoScrapingFrequency").call())
-                            if scrape_printing_enabled:
-                                print("[{}]\t{}\t{}\t{}".format(dt.now(),"SLEEP ",delay," s BEFORE NEW COLLECT DATA"))
-                            time.sleep(delay)
-                        except:
-                            random_wait_ = random.randint(3, 10)*60
-                            if scrape_printing_enabled:
-                                print("[{}]\t{}".format(dt.now(),"SLEEP BEFORE NEW DATA COLLECT: "),random_wait_," s")
-                            time.sleep(random_wait_)
+                        random_wait_ = random.randint(3, 10)*60
+                        if scrape_printing_enabled:
+                            print("[{}]\t{}".format(dt.now(),"SLEEP BEFORE NEW DATA COLLECT: "),random_wait_," s")
+                        time.sleep(random_wait_)
                 except Exception as e:
                     print("Error manage_scraping: ",e)
                     pass
         except Exception as e:
             pass
+
+    ##############################################################################################################################
+    ##############################################################################################################################
             
     def scrape(self, target: str, keywords: list):
 
@@ -805,8 +803,8 @@ class Scraper():
                             windowSize = 1
                             numOfKeywords = 20
                             
-                            if detailed_validation_printing_enabled:
-                                print("Tweet found  = ",tr_post["internal_id"], tr_post["creationDateTime"] )
+                            # if detailed_validation_printing_enabled:
+                            #     print("Tweet found  = ",tr_post["internal_id"], tr_post["creationDateTime"] )
 
                             kw_extractor = yake.KeywordExtractor(lan=tr_post["lang"], n=max_ngram_size, dedupLim=deduplication_thresold, dedupFunc=deduplication_algo, windowsSize=windowSize, top=numOfKeywords, features=None)
                             kx = kw_extractor.extract_keywords(tr_post["content"])
@@ -920,8 +918,8 @@ class Scraper():
                                 tr_post["creationDateTime"] = post["date"] #parse(post["date"]).replace(tzinfo=pytz.timezone('UTC'))
                                 tr_post["lang"] = post["lang"]
                                 
-                                if detailed_validation_printing_enabled:
-                                    print("Tweet found  = ",tr_post["internal_id"], tr_post["creationDateTime"] )
+                                # if detailed_validation_printing_enabled:
+                                #     print("Tweet found  = ",tr_post["internal_id"], tr_post["creationDateTime"] )
 
                                 if(tr_post["lang"] in self.languages):
                                     self.languages[tr_post["lang"]] += 1
@@ -1029,18 +1027,12 @@ class Scraper():
         _contract = self.app.cm.instantiateContract("ConfigRegistry")        
 
         while True:
-            try:    
-                try:                    
-                    time.sleep(0.5)
-                    batchSize = int(_contract.functions.get("_ModuleMinSpotBatchSize").call())
-                    self.lastBatchSize = batchSize
-                except Exception as e:
-                    batchSize = self.lastBatchSize
+            try:                    
+                batchSize = self.lastBatchSize
 
                 if(len(self.pendingBlocks) >= batchSize):
                     
                         tmp = self.pendingBlocks[:batchSize]
-                        
                         
                         res = None
                         
@@ -1054,16 +1046,23 @@ class Scraper():
                                 print("[Spotting] ipfs_pin_upload error: ",e)
                                 res = None
                         domNames = [x["item"]["DomainName"] for x in self.pendingBlocks[:batchSize]][0]
-                        if(res != None):
+
+                        ### CHECK IF CID HAS NEVER BEEN SENT LOCALLY
+                        is_a_new_cid = False
+                        if res != None and (res not in self.cid_dict):
+                            self.cid_dict[res] = True
+                            is_a_new_cid = True
                             
+                        if is_a_new_cid:
                             contract = self.app.cm.instantiateContract("DataSpotting")
                             increment_tx = contract.functions.SpotData([res], [domNames], [batchSize], 'Hi Bob!').buildTransaction(
                             {
                                 'nonce': w3.eth.get_transaction_count(self.app.localconfig["ExordeApp"]["ERCAddress"]),
                                 'from': self.app.localconfig["ExordeApp"]["ERCAddress"],
-                                'gasPrice': w3.eth.gas_price
+                                'gasPrice': default_gas_price
                             })
                             if validation_printing_enabled:
+                                print("Number of unique CIDs so far = ",len(self.cid_dict.keys()))
                                 print("Putting SpotData tx in the WaitingRoom")
                             self.app.tm.waitingRoom.put((increment_tx, self.app.localconfig["ExordeApp"]["ERCAddress"], self.app.pKey))
                             #print("File sent", res)
