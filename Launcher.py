@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 """
 Feb 3rd 2023
-Exorde Testnet v1.3.5c
+Exorde Testnet v1.3.5d
+
 A great year ahead
 
 @author: florent, mathias
 Exorde Labs
-Version = v1.3.5c
+Version = v1.3.5d
 """
 
 import boto3
