@@ -9,9 +9,9 @@ You have several choices to run the Exorde CLI:
 - Run from sources inside a virtual Python environment
 - Run from a Docker image
 
-Exorde CLI does not come with a GUI, it aims to be used by advanced users who want to run it inside a terminal. The installation process assume that users who run Exorde CLI are familiar with command lines.
+Exorde CLI does not come with a GUI, it aims to be used by advanced users who want to run it inside a terminal. The installation process assumes that users who run Exorde CLI are familiar with command lines.
 
-Using the container image is the recommanded way to run Exorde CLI, as it avoid dependencies issues, handles automatic restart in case of failure/application update and make multi easier to run multiple instances of the application.
+Using the container image is the recommended way to run Exorde CLI, as it avoids dependencies issues, handles automatic restart in case of failure/application update and makes multi easier to run multiple instances of the application.
 
 ## Requirements
 
@@ -60,7 +60,7 @@ Using the container image is the recommanded way to run Exorde CLI, as it avoid 
     python Launcher.py -m 0x0F67059ea5c125104E46B46769184dB6DC405C42 -l 2
     ```
 
-For more detailled informations, please read the [full documentation](https://docs.exorde.network).
+For more detailed informations, please read the [full documentation](https://docs.exorde.network).
 
 ## Quickstart using Docker on a Linux VPS
 
@@ -91,7 +91,7 @@ For more detailled informations, please read the [full documentation](https://do
    -l 2
    ```
 
-For more detailled informations, please read the [full documentation](https://docs.exorde.network).
+For more detailed informations, please read the [full documentation](https://docs.exorde.network).
 
 ## How to update the Docker image:
 
@@ -155,6 +155,6 @@ The module is autonomous.
 ## Spontaneous updates
 
 Sometimes, Exorde Labs needs to push some update in the code. The module will detect it, and kill itself.
-This is important for the Exorde Network to remain hommogenous, so older versions have to be killed right away.
+This is important for the Exorde Network to remain homogeneous, so older versions have to be killed right away.
 
 When this happens, the module will print a message & shut down. It has to be restarted manually.
