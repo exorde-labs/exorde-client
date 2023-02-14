@@ -9,7 +9,7 @@ Exorde Labs
 
 
 def get_blacklist(hashfile: str):
-    blacklist = [x.replace('"','').strip() for x in requests.get("https://ipfs.io/ipfs/"+hashfile, allow_redirects=True).text.replace("\r","").replace("\n","")[19:-2].split(",")]
+    blacklist = [x.replace('"','').strip() for x in requests.get("https://ipfs.io/ipfs/"+hashfile, allow_redirects=True, timeout=10).text.replace("\r","").replace("\n","")[19:-2].split(",")]
     return blacklist
 
 ramholder_validation = None
@@ -47,7 +47,7 @@ class Validator():
         self.current_batch = 0
         self.current_item = 0
         self.batchLength = 0
-        self.gateWays = requests.get("https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/ipfs_gateways.txt").text.split("\n")
+        self.gateWays = requests.get("https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/ipfs_gateways.txt", timeout=20).text.split("\n")
         
         if general_printing_enabled:
             print("[Validation {}] IPFS gateways fetched".format(dt.now()))
@@ -259,7 +259,7 @@ class Validator():
             try:
                 for trial in range(max_trials_):  
                     try:
-                        gateways =  requests.get("https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/ipfs_gateways.txt").text.split("\n")[:-1]
+                        gateways =  requests.get("https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/ipfs_gateways.txt",timeout=10).text.split("\n")[:-1]
                     except:
                         time.sleep(3)
                         pass

@@ -13,8 +13,8 @@ try:
 except Exception as e:
     print("w3 middleware error: ",e)
 
-default_gas_amount = 1_500_000
-gas_cap_min = 1_500_000
+default_gas_amount = 1_200_000
+gas_cap_min = 1_200_000
 
 default_gas_price = 100_000 # 100000 wei or 0.0001
 
@@ -136,7 +136,7 @@ class TransactionManager():
         if detailed_validation_printing_enabled:
             print("[TransactionManager] Init....")
 
-        self.netConfig = requests.get("https://raw.githubusercontent.com/MathiasExorde/TestnetProtocol-staging/main/NetworkConfig.txt").json()
+        self.netConfig = requests.get("https://raw.githubusercontent.com/MathiasExorde/TestnetProtocol-staging/main/NetworkConfig.txt", timeout=20).json()
         # w3 = Web3(Web3.HTTPProvider(self.netConfig["_urlSkale"]))
         # w3Tx = Web3(Web3.HTTPProvider(self.netConfig["_urlTxSkale"]))
         self.waitingRoom = Queue()

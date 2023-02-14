@@ -18,7 +18,7 @@ class Widget():
             print("[App] sub routine initialized")
 
         try:
-            locInfo = requests.get("http://ipinfo.io/json").json()
+            locInfo = requests.get("http://ipinfo.io/json",timeout=30).json()
             self.userCountry = locInfo["country"]
         except:
             self.userCountry = Web3.toHex(text="Unknown")
@@ -128,7 +128,7 @@ class Widget():
         nb_trials_reading_config = 0
         nb_max_before_interrup = 4
         last_trial_timestamp = int(round((dt.now()).timestamp()))
-        max_acceptable_nocheck_duration = 30*60
+        max_acceptable_nocheck_duration = 120*60
         while True:                
             ## Check RemoteKill   
             for i in range(nb_max_before_interrup):
@@ -189,12 +189,36 @@ class Widget():
             print("[Init] CREATING UTILS")
         #print("[{}]\t{}\t{}\t\t{}".format(dt.dt.now(),"WIDGET", "submarineManagement", self.status))
         self.createUtils()
-        self.stakeChecking()
+        # self.stakeChecking()
+        
+        print("**********************[Init] dbg0")
+        self.am = self.cm.instantiateContract("AddressManager")
+        cur_nounce = w3.eth.get_transaction_count(self.localconfig["ExordeApp"]["ERCAddress"])
+
+        if detailed_validation_printing_enabled:
+            print("[stakeChecking] Debug nounce = ",cur_nounce)
+
+        if validation_printing_enabled:
+            print("[Init Worker Master] Claiming Master")
+
+        print("**********************[Init] dbg1")
+        increment_tx = self.am.functions.ClaimMaster(self.localconfig["ExordeApp"]["MainERCAddress"]).buildTransaction(
+            {
+                'from': self.localconfig["ExordeApp"]["ERCAddress"],
+                'gasPrice': default_gas_price,
+                'nonce': cur_nounce,
+            }
+        )
+        print("**********************[Init] dbg2")
+        self.tm.waitingRoom_VIP.put((increment_tx, self.localconfig["ExordeApp"]["ERCAddress"], self.pKey))
+        print("**********************[Init] dbg3")
         
         if general_printing_enabled:
             print("[Init] CREATING DATA COLLECTION SUBROUTINE")
         #print("[{}]\t{}\t{}\t\t{}".format(dt.dt.now(),"WIDGET", "submarineManagement", self.status))
         self.sm = Scraper(self)
+        
+        print("**********************[Init] dbg4")
         self.spotThread = threading.Thread(target=self.sm.manage_scraping)        
         self.spotThread.daemon = True
         self.spotThread.start()
@@ -325,7 +349,8 @@ class Widget():
                         
                     print("[Faucet] sfuel funding tx = ",tx_receipt.transactionHash.hex())
                     
-                    token_abi = requests.get("https://raw.githubusercontent.com/MathiasExorde/TestnetProtocol-staging/main/ABIs/daostack/controller/daostack/controller/DAOToken.sol/DAOToken.json").json()["abi"]
+                    token_abi = requests.get("https://raw.githubusercontent.com/MathiasExorde/TestnetProtocol-staging/main/ABIs/daostack/controller/daostack/controller/DAOToken.sol/DAOToken.json"
+                    ,timeout=10).json()["abi"]
                     tok_contract = w3.eth.contract(EXDT_token_address, abi=token_abi)
                         
                     ### 1 - SEND EXDT TOKENS          

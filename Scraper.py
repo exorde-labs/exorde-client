@@ -171,10 +171,6 @@ class Scraper():
         if (os.path.exists('ExordeWD\\lang.json') == False):
             goingOn = False
         self.listlang = self.lang_table
-
-    ############################################################################################################################
-    ############################################################################################################################
-    ############################################################################################################################
         
     def manage_scraping(self):
         sender = threading.Thread(target=self.manage_sending)
@@ -241,13 +237,13 @@ class Scraper():
                             
                     if(len(self.keywords) > 0):                        
                         time.sleep(0.5)
-                        random_wait_ = random.randint(3, 10)*60
+                        random_wait_ = random.randint(7, 20)*60
                         if scrape_printing_enabled:
                             print("[{}]\t{}".format(dt.now(),"SLEEP BEFORE NEW DATA COLLECT: "),random_wait_," s")
                         time.sleep(random_wait_)
                     else:                        
                         time.sleep(0.5)
-                        random_wait_ = random.randint(3, 10)*60
+                        random_wait_ = random.randint(7, 20)*60
                         if scrape_printing_enabled:
                             print("[{}]\t{}".format(dt.now(),"SLEEP BEFORE NEW DATA COLLECT: "),random_wait_," s")
                         time.sleep(random_wait_)
