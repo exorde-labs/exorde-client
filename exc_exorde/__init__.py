@@ -9,11 +9,8 @@ a88aaaa    dP. .dP .d8888b. 88d888b. .d888b88 .d8888b.
 
           Supported composition for EXD mining.
 '''
-
+import json
 from exorde.bindings import wire
-
-from exc_twitter import tweet_wire
-from exc_ipfs import upload_to_ipfs
 
 PARAMETERS = {
     'ipfs_path': {
@@ -22,22 +19,37 @@ PARAMETERS = {
 }
 
 def twitter_to_exorde_format(data: dict) -> dict:
-    return data
+    return {
+        "Author": "",
+        "Content": data['full_text'],
+        "Controversial": data.get('possibly_sensitive', False),
+        "CreationDateTime": data['created_at'],
+        "Description": "",
+        "DomainName": "twitter.com",
+        "Language": data['lang'],
+        "Reference": "",
+        "Title": "",
+        "Url": f"https://twitter.com/a/status/{data['id_str']}",
+        "internal_id": data['id'],
+        "media_type": "",
+        # "source": data['source'], # new
+        # "nbQuotes": data['quote_count'], # new
+        "nbComments": data['reply_count'],
+        "nbLikes": data['favorite_count'],
+        "nbShared": data['retweet_count'],
+        # "isQuote": data['is_quote_status'] # new
+    }
 
 formated_tweet_trigger, formated_tweet_wire = wire()
-@tweet_wire
-async def format_tweet(tweet):
-    await formated_tweet_trigger(twitter_to_exorde_format(tweet))
+async def format_tweet(tweet, **kwargs):
+    await formated_tweet_trigger(
+        twitter_to_exorde_format(tweet),
+        **kwargs
+    )
 
 async def spot(data, ipfs_path):
-    '''
-    Spotting data happens in two steps :
-        - upload_to_ipfs
-        - send a transaction to say "Job Done !"
-    '''
-    await upload_to_ipfs(data, ipfs_path)
-
-formated_tweet_wire(spot)
+    print(json.dumps(data, indent=4), ipfs_path)
+    # await upload_to_ipfs(data, ipfs_path)
 
 # 1. retrieve tweets -> upload to ipfs -> data_spotting
 # 2. get_job -> check
