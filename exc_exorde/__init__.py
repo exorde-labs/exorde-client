@@ -40,7 +40,7 @@ def twitter_to_exorde_format(data: dict) -> dict:
         # "isQuote": data['is_quote_status'] # new
     }
 
-formated_tweet_trigger, formated_tweet_wire = wire(batch=10)
+formated_tweet_trigger, formated_tweet_wire = wire(batch=100)
 async def format_tweet(tweet, **kwargs):
     formated = twitter_to_exorde_format(tweet)
     await formated_tweet_trigger(formated, **kwargs)
