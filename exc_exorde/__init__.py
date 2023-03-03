@@ -40,15 +40,15 @@ def twitter_to_exorde_format(data: dict) -> dict:
         # "isQuote": data['is_quote_status'] # new
     }
 
-formated_tweet_trigger, formated_tweet_wire = wire()
+formated_tweet_trigger, formated_tweet_wire = wire(batch=10)
 async def format_tweet(tweet, **kwargs):
-    await formated_tweet_trigger(
-        twitter_to_exorde_format(tweet),
-        **kwargs
-    )
+    formated = twitter_to_exorde_format(tweet)
+    await formated_tweet_trigger(formated, **kwargs)
 
-async def spot(data, ipfs_path):
-    print(json.dumps(data, indent=4), ipfs_path)
+async def spot(data:list, ipfs_path):
+    ''''''
+    tweets = [tweet[0] for tweet in data]
+    print(json.dumps(tweets, indent=4), ipfs_path)
     # await upload_to_ipfs(data, ipfs_path)
 
 # 1. retrieve tweets -> upload to ipfs -> data_spotting
