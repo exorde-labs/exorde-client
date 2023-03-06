@@ -1,10 +1,8 @@
-# DO-NOT-TOUCH ; this is provided by exorde
 ---
 source: https://raw.github.com/exorde-labs/TestnetProtocol/main/
-network: ./config/network.json
 contracts: ContractsAddresses.json
 default_gas_amount: 100000
-target_protocol: testNet
+target: testNet
 ABI:
   data-spotting: ABIs/DataSpotting.sol/DataSpotting.json
   reputation: ABIs/daostack/controller/daostack/controller/Reputation.sol/Reputation.json

@@ -8,5 +8,6 @@ setup(
     license='MIT',
     install_requires=[
         'exc_twitter',
+        'web3'
     ],
 )
