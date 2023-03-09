@@ -1,0 +1,47 @@
+---
+mainnet-A:
+  _networkId: mainNet-A
+  _urlSkale:
+    - http://44.212.212.254:10067/
+    - http://57.128.81.82:10067/
+  SyncNodeCount: '2'
+  _urlTxSkale: https://mainnet.skalenodes.com/v1/light-vast-diphda
+  _chainID: '2139927552'
+  _blockExplorer: https://light-vast-diphda.explorer.mainnet.skalenodes.com/
+  _webSocket: wss://mainnet.skalenodes.com/v1/ws/light-vast-diphda
+testnet-A:
+  _networkId: testNet-A
+  _urlSkale:
+    - http://57.128.84.254:10259
+    - http://57.128.80.82:10259
+    - http://35.84.228.194:10259
+    - http://44.230.146.249:10259
+    - http://57.128.87.76:10259
+    - http://57.128.82.225:10259
+    - http://57.128.86.197:10259
+    - http://57.128.85.245:10259
+    - http://152.228.211.160:10259
+    - http://152.228.215.238:10259
+  _urlTxSkale: https://legacy-proxy.skalenodes.com/v1/soft-legitimate-sarin
+  SyncNodeCount: '10'
+  _chainID: '797272215'
+  _blockExplorer: https://soft-legitimate-sarin.legacy-explorer.skalenodes.com/
+  _webSocket: wss://legacy-proxy.skalenodes.com/v1/ws/soft-legitimate-sarin
+source: https://raw.github.com/exorde-labs/TestnetProtocol/main/
+contracts: ContractsAddresses.json
+default_gas_amount: 100000
+target: testnet-A
+ABI:
+  DAOToken: ABIs/ABIs/daostack/controller/daostack/controller/DAOToken.sol/DAOToken.json
+  data-spotting: ABIs/DataSpotting.sol/DataSpotting.json
+  reputation: ABIs/daostack/controller/daostack/controller/Reputation.sol/Reputation.json
+  reward-manager: ABIs/RewardsManager.sol/RewardsManager.json
+  stacking-manager: ABIs/StakingManager.sol/StakingManager.json
+  config-registry: ABIs/ConfigRegistry.sol/ConfigRegistry.json
+  address-manager: ABIs/AddressManager.sol/AddressManager.json
+EXDT:
+  address: '0xcBc357F3077989B4636E93a8Ce193E05cd8cc56E'
+  private_key: 'deaddeaddeaddead5fb92d83ed54c0ea1eb74e72a84ef980d42953caaa6ddead'
+  faucet: 2139927552
+  faucet_base: 'deaddeaddeaddead5fb92d83ed54c0ea1eb74e72a84ef980d42953caaa6d'
+keywords: https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/keywords.txt
