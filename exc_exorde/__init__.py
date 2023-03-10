@@ -26,10 +26,6 @@ from web3 import Web3
 from web3.middleware.cache import _simple_cache_middleware as cache_middleware
 
 PARAMETERS = {
-    'workers': {
-        'help': 'Number of workers',
-        'default': 1
-    },
     'ethereum_address': {
         'help': 'Main Ethereum Address to be rewarded',
         'default' :None
