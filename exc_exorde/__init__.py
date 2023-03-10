@@ -15,16 +15,21 @@ import aiohttp
 import asyncio
 import os
 import random
-import json
 import yaml
+from typing import Union
+import string
 
-from exorde.bindings import wire
 from exorde.utils import read_only 
 
+from eth_account import Account
 from web3 import Web3
 from web3.middleware.cache import _simple_cache_middleware as cache_middleware
 
 PARAMETERS = {
+    'workers': {
+        'help': 'Number of workers',
+        'default': 1
+    },
     'ethereum_address': {
         'help': 'Main Ethereum Address to be rewarded',
         'default' :None
@@ -39,7 +44,7 @@ def load_yaml(path):
         yaml_data = yaml.safe_load(_file)
         return yaml_data
 
-async def fetch(session, url):
+async def fetch(session, url) -> Union[tuple, dict]:
     async with session.get(url) as response:
         return await response.json(content_type=None)
 
@@ -59,11 +64,12 @@ async def contracts_and_abi_cnf(configuration):
             request = asyncio.create_task(fetch(session, url))
             requests.append(request)
         abis = await asyncio.gather(*requests)
-        contracts = await fetch(
+        contracts = dict(await fetch( # casted to dict for the IDEs
             session,
             f"{configuration['source']}/{configuration['contracts']}"
-        )
+        ))
     logging.info('abis loaded are : %s', ', '.join([abi['contractName'] for abi in abis]))
+    logging.info(type(contracts))
     return {
         'contracts_cnf': read_only(**contracts),
         'abi_cnf': read_only(**{ abi['contractName']: abi for abi in abis })
@@ -88,44 +94,72 @@ read_web3 = lambda configuration: {
     )
 }
 
-contract = lambda name, read_w3, abi_cnf, contracts_cnf, configuration: read_w3.eth.contract(
-    contracts_cnf()[configuration['target']][name],
-    abi=abi_cnf()[name]["abi"]
-)
+def contract(name, read_w3, abi_cnf, contracts_cnf, configuration):
+    try:
+        return read_w3.eth.contract(
+            contracts_cnf()[configuration['target']][name],
+            abi=abi_cnf()[name]["abi"]
+        )
+    except:
+        logging.debug('Skipped contract instanciation for %s', name)
+        return None
 
 contracts = lambda read_w3, abi_cnf, contracts_cnf, configuration: {
     name: contract(name, read_w3, abi_cnf, contracts_cnf, configuration) 
     for name in contracts_cnf()[configuration['target']]
 }
 
-reset_transactions = lambda: {
-    'transactions': [],
-    'nounce': None 
+def worker_address():
+    '''Generates an ERC address and key'''
+    random.seed(random.random())
+    base_seed = ''.join(
+        random.choices(string.ascii_uppercase + string.digits, k=256)
+    )
+    acct = Account.create(base_seed)
+    erc_address, private_key = acct.address, acct.key
+    logging.debug('Generated a key "%s"', acct.address)
+    return erc_address, private_key
+
+def check_erc_address_validity(w3_gateway, erc_address):
+    '''check validity'''
+    erc_address_valid = w3_gateway.isAddress(erc_address)
+    if not erc_address_valid:
+        logging.critical("Invalid user address")
+    erc_address = w3_gateway.toChecksumAddress(erc_address)
+    logging.debug(
+        'User address %s is valid : %s',
+        erc_address,
+        erc_address_valid
+    )
+    return erc_address, erc_address_valid
+
+worker_addresses = lambda workers: {
+    'worker_addresses': {
+        addr: key for addr, key in 
+            (worker_address() for __i__ in range(0, workers))
+    }
 }
-
-def register_main_erc_address():
-    '''Transaction which binds an ethereum address to workers'''
-    # am = self.cm.instantiateContract("AddressManager")
-    # increment_tx = am.functions.ClaimMaster(self.localconfig["ExordeApp"]["MainERCAddress"]).buildTransaction(
-    #     {
-    #        'from': self.localconfig["ExordeApp"]["ERCAddress"],
-    #        'gasPrice': w3.eth.gas_price,
-    #        'nonce': w3.eth.get_transaction_count(self.localconfig["ExordeApp"]["ERCAddress"]),
-    #    }
-    # )
-    # self.tm.waitingRoom_VIP.put((increment_tx, self.localconfig["ExordeApp"]["ERCAddress"], self.pKey, True))
-
-def claim_data_batch():
-    '''Transaction which registers ownership of an uploaded data-block'''
-    # contract = self.app.cm.instantiateContract("DataSpotting")
-    # increment_tx = contract.functions.SpotData([res], [domNames], batchSize, 'Hi Bob!').buildTransaction(
-    # {
-    #     'nonce': w3.eth.get_transaction_count(self.app.localconfig["ExordeApp"]["ERCAddress"]),
-    #     'from': self.app.localconfig["ExordeApp"]["ERCAddress"],
-    #     'gasPrice': w3.eth.gas_price,
-    #     'gas':200000000
-    # })
-    # self.app.tm.waitingRoom.put((increment_tx, self.app.localconfig["ExordeApp"]["ERCAddress"], self.app.pKey))
+reset_transactions = lambda: {
+    'signed_transaction': None,
+    'transactions': [],
+    'nounce': None
+}
+select_transaction_to_send = lambda transactions: {
+    'signed_transaction': transactions[0],
+    'transactions': transactions[1:]
+}
+signed_transaction = lambda transaction, read_web3: read_web3.sign_transaction(
+    transaction[0], transaction[1]
+)
+send_transaction = lambda transaction, transactions: {
+    'transactions': transactions + [transaction]
+}
+send_raw_transaction = lambda signed_transaction, write_web3: write_web3.send_raw_transaction(
+    signed_transaction.rawTransaction
+)
+nounce = lambda worker_address, read_web3: read_web3.eth.get_transaction_count(
+    worker_address
+)
 
 twitter_to_exorde_format = lambda data: {
     "Author": "",
@@ -148,20 +182,11 @@ twitter_to_exorde_format = lambda data: {
     # "isQuote": data['is_quote_status'] # new
 }
 
-formated_tweet_trigger, formated_tweet_wire = wire(batch=100)
-async def format_tweet(tweet, **kwargs):
-    formated = twitter_to_exorde_format(tweet)
-    await formated_tweet_trigger(formated, **kwargs)
-
-async def spot(data:list, ipfs_path):
-    tweets = [tweet[0] for tweet in data]
-    spot_block = {
-        "entities": tweets,
-        "keyword": "",
-        "links": "",
-        "medias": "",
-        "spotterCountry": "",
-        "tokenOfInterest": ""
-    }
-    print(json.dumps(spot_block, indent=4), ipfs_path)
-    # await upload_to_ipfs(data, ipfs_path)
+spot_block = lambda entities: {
+    "entities": entities,
+    "keyword": "",
+    "links": "",
+    "medias": "",
+    "spotterCountry": "",
+    "tokenOfInterest": ""
+}

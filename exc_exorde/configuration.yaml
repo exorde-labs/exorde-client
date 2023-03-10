@@ -32,7 +32,8 @@ contracts: ContractsAddresses.json
 default_gas_amount: 100000
 target: testnet-A
 ABI:
-  DAOToken: ABIs/ABIs/daostack/controller/daostack/controller/DAOToken.sol/DAOToken.json
+  EXDT: ABIs/EXDT/EXDT.json 
+  EXD: ABIs/EXD/EXD.json
   data-spotting: ABIs/DataSpotting.sol/DataSpotting.json
   reputation: ABIs/daostack/controller/daostack/controller/Reputation.sol/Reputation.json
   reward-manager: ABIs/RewardsManager.sol/RewardsManager.json
