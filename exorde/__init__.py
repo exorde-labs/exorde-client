@@ -19,7 +19,7 @@ import yaml
 from typing import Union
 import string
 
-from exorde.utils import read_only 
+from aiosow.bindings import read_only 
 
 from eth_account import Account
 from web3 import Web3
@@ -64,8 +64,9 @@ async def contracts_and_abi_cnf(configuration):
             session,
             f"{configuration['source']}/{configuration['contracts']}"
         ))
-    logging.info('abis loaded are : %s', ', '.join([abi['contractName'] for abi in abis]))
-    logging.info(type(contracts))
+    logging.info(
+        'abis loaded are : %s', ', '.join([abi['contractName'] for abi in abis])
+    )
     return {
         'contracts_cnf': read_only(**contracts),
         'abi_cnf': read_only(**{ abi['contractName']: abi for abi in abis })
