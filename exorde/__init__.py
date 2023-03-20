@@ -19,21 +19,12 @@ import yaml
 from typing import Union
 import string
 
+from aiosow.command import run
 from aiosow.bindings import read_only 
 
 from eth_account import Account
 from web3 import Web3
 from web3.middleware.cache import _simple_cache_middleware as cache_middleware
-
-PARAMETERS = {
-    'ethereum_address': {
-        'help': 'Main Ethereum Address to be rewarded',
-        'default' :None
-    },
-    'ipfs_path': {
-        'default': 'http://ipfs-api.exorde.network/add',
-    }
-}
 
 def load_yaml(path):
     with open(path, 'r') as _file:
@@ -113,9 +104,8 @@ def worker_address():
         random.choices(string.ascii_uppercase + string.digits, k=256)
     )
     acct = Account.create(base_seed)
-    erc_address, private_key = acct.address, acct.key
     logging.debug('Generated a key "%s"', acct.address)
-    return erc_address, private_key
+    return acct
 
 def check_erc_address_validity(w3_gateway, erc_address):
     '''check validity'''
@@ -157,7 +147,6 @@ send_raw_transaction = lambda signed_transaction, write_web3: write_web3.send_ra
 nounce = lambda worker_address, read_web3: read_web3.eth.get_transaction_count(
     worker_address
 )
-
 twitter_to_exorde_format = lambda data: {
     "Author": "",
     "Content": data['full_text'],
@@ -187,3 +176,5 @@ spot_block = lambda entities: {
     "spotterCountry": "",
     "tokenOfInterest": ""
 }
+
+launch = lambda:run('exorde')

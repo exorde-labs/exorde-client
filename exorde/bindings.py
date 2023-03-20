@@ -11,16 +11,21 @@ TODOS:
     - cache
     - smoother request frequency
 '''
-from aiosow.bindings import on, wrap, wire
+import json
+
+from aiosow.bindings import on, wrap, wire, option, alias, debug, pdb, each
 from aiosow.routines import routine
 
-from aiosow_twitter.bindings import tweets
+from aiosow_twitter.bindings import on_tweet_reception_do
 
 from exorde import *
 
+option('ethereum_address', help='Ethereum wallet address', default=None)
+alias('ipfs_path')(lambda: 'http://ipfs-api.exorde.network/add')
+
 # instanciate workers
-routine(0, life=-1)(wrap(lambda addr, key: {
-    'worker_address': addr, 'worker_key': key
+routine(0, life=-1)(wrap(lambda acct: {
+    'worker_address': acct.address, 'worker_key': acct.key
 })(worker_address))
 
 # retrieve configuration
@@ -52,7 +57,7 @@ routine(100, life=5)(wrap(lambda val: {'nounce': val})(nounce))
 # set signed_transaction to None on nounce change
 on('nounce')(lambda: { 'signed_transaction': None })
 
-broadcast_formated, formated = wire()
+broadcast_formated, on_formated_tweet_do = wire()
 # tweet retrieval
-tweets(broadcast_formated(twitter_to_exorde_format))
-
+on_formated_tweet_do(lambda value: print('----', json.dumps(value, indent=4, default=lambda v: str(v))[:2000]))
+on_tweet_reception_do(broadcast_formated(twitter_to_exorde_format))

@@ -5,6 +5,11 @@ setup(
     version='0.1.0',
     packages=find_packages(include=['exorde']),
     license='MIT',
+    entry_points={
+        'console_scripts': [
+            'exorde = exorde.__init__:launch',
+        ],
+    },
     install_requires=[
         'pyyaml',
         'aiosow_twitter',
