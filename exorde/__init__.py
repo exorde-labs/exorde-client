@@ -169,12 +169,12 @@ twitter_to_exorde_format = lambda data: {
 }
 
 spot_block = lambda entities: {
-    "entities": entities,
     "keyword": "",
     "links": "",
     "medias": "",
     "spotterCountry": "",
-    "tokenOfInterest": ""
+    "tokenOfInterest": "",
+    "entities": entities
 }
 
 launch = lambda:run('exorde')

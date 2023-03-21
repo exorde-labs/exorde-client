@@ -13,7 +13,7 @@ TODOS:
 '''
 import json
 
-from aiosow.bindings import on, wrap, wire, option, alias, debug, pdb, each
+from aiosow.bindings import on, wrap, wire, option, alias, accumulator
 from aiosow.routines import routine
 
 from aiosow_twitter.bindings import on_tweet_reception_do
@@ -51,13 +51,18 @@ on('signed_transaction', condition=lambda signed_transaction: signed_transaction
     send_raw_transaction
 )
 
-# nounce is retrieved every secondition
-routine(100, life=5)(wrap(lambda val: {'nounce': val})(nounce))
+# nounce is retrieved every second
+# routine(100, life=5)(wrap(lambda val: {'nounce': val})(nounce))
 
 # set signed_transaction to None on nounce change
 on('nounce')(lambda: { 'signed_transaction': None })
 
+print_formated = lambda value: print(f"batch ready with {len(value['entities'])}")
+
 broadcast_formated, on_formated_tweet_do = wire()
 # tweet retrieval
-on_formated_tweet_do(lambda value: print('----', json.dumps(value, indent=4, default=lambda v: str(v))[:2000]))
 on_tweet_reception_do(broadcast_formated(twitter_to_exorde_format))
+broadcast_batch_ready, on_batch_ready_do = wire()
+build_batch = broadcast_batch_ready(accumulator(100)(spot_block))
+on_formated_tweet_do(build_batch)
+on_batch_ready_do(print_formated)
