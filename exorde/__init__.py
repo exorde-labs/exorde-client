@@ -183,7 +183,7 @@ async def upload_to_ipfs(data, ipfs_path):
         async with session.post(ipfs_path, data=json.dumps(data)) as resp:
             if resp.status == 200:
                 response_json = await resp.json()
-                return response_json['hash']
+                return response_json['cid']
             else:
                 raise Exception('Failed to upload to IPFS')
 
