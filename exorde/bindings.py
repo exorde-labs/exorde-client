@@ -11,12 +11,12 @@ TODOS:
     - cache
     - smoother request frequency
 '''
-import json
 
-from aiosow.bindings import on, wrap, wire, option, alias, accumulator
+from aiosow.bindings import on, wrap, wire, option, alias, accumulator, setup
 from aiosow.routines import routine
 
 from aiosow_twitter.bindings import on_tweet_reception_do
+from aiosow.http import aiohttp_session
 
 from exorde import *
 
@@ -51,18 +51,27 @@ on('signed_transaction', condition=lambda signed_transaction: signed_transaction
     send_raw_transaction
 )
 
-# nounce is retrieved every second
-# routine(100, life=5)(wrap(lambda val: {'nounce': val})(nounce))
+# nounce is retrieved every second, initial life set to 5 for setup time
+# routine(1, life=5)(wrap(lambda val: {'nounce': val})(nounce))
 
 # set signed_transaction to None on nounce change
 on('nounce')(lambda: { 'signed_transaction': None })
 
 print_formated = lambda value: print(f"batch ready with {len(value['entities'])}")
 
+# tweet retrieval and format
 broadcast_formated, on_formated_tweet_do = wire()
-# tweet retrieval
 on_tweet_reception_do(broadcast_formated(twitter_to_exorde_format))
+
+# batching
 broadcast_batch_ready, on_batch_ready_do = wire()
 build_batch = broadcast_batch_ready(accumulator(100)(spot_block))
+
+# when a tweet is formated, push it to batch preparation
 on_formated_tweet_do(build_batch)
+
+# when a batch is ready, print it
 on_batch_ready_do(print_formated)
+
+# setup an aiohttp session for ipfs upload
+setup(wrap(lambda session: {'session': session})(aiohttp_session))
