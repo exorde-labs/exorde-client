@@ -59,8 +59,8 @@ async def contracts_and_abi_cnf(configuration):
         'abis loaded are : %s', ', '.join([abi['contractName'] for abi in abis])
     )
     return {
-        'contracts_cnf': read_only(**contracts),
-        'abi_cnf': read_only(**{ abi['contractName']: abi for abi in abis })
+        'contracts_cnf': read_only(contracts),
+        'abi_cnf': read_only({ abi['contractName']: abi for abi in abis })
     }
 
 def instanciate_w3(url):
