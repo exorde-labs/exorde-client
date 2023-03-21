@@ -18,6 +18,7 @@ import random
 import yaml
 from typing import Union
 import string
+import json
 
 from aiosow.command import run
 from aiosow.bindings import read_only 
@@ -176,5 +177,14 @@ spot_block = lambda entities: {
     "tokenOfInterest": "",
     "entities": entities
 }
+
+async def upload_to_ipfs(data, ipfs_path):
+    async with aiohttp.ClientSession() as session:
+        async with session.post(ipfs_path, data=json.dumps(data)) as resp:
+            if resp.status == 200:
+                response_json = await resp.json()
+                return response_json['hash']
+            else:
+                raise Exception('Failed to upload to IPFS')
 
 launch = lambda:run('exorde')
