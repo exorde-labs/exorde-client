@@ -21,6 +21,9 @@ from aiosow.http import aiohttp_session
 from exorde import *
 
 option('ethereum_address', help='Ethereum wallet address', default=None)
+
+# setup an aiohttp session for ipfs upload
+setup(wrap(lambda session: {'session': session})(aiohttp_session))
 alias('ipfs_path')(lambda: 'http://ipfs-api.exorde.network/add')
 
 # instanciate workers
@@ -57,7 +60,7 @@ on('signed_transaction', condition=lambda signed_transaction: signed_transaction
 # set signed_transaction to None on nounce change
 on('nounce')(lambda: { 'signed_transaction': None })
 
-print_formated = lambda value: print(f"batch ready with {len(value['entities'])}")
+print_formated = lambda value, ipfs_path: print(f"batch ready with {ipfs_path} and {len(value['entities'])} tweets (\n {json.dumps(value, indent=4, default=lambda value: str(value))}\n")
 
 # tweet retrieval and format
 broadcast_formated, on_formated_tweet_do = wire()
@@ -65,13 +68,11 @@ on_tweet_reception_do(broadcast_formated(twitter_to_exorde_format))
 
 # batching
 broadcast_batch_ready, on_batch_ready_do = wire()
-build_batch = broadcast_batch_ready(accumulator(100)(spot_block))
+build_batch = broadcast_batch_ready(accumulator(10)(spot_block))
 
 # when a tweet is formated, push it to batch preparation
 on_formated_tweet_do(build_batch)
 
-# when a batch is ready, print it
-on_batch_ready_do(print_formated)
-
-# setup an aiohttp session for ipfs upload
-setup(wrap(lambda session: {'session': session})(aiohttp_session))
+# when a batch is ready, upload it to ipfs
+broadcast_new_cid, on_new_cid_do = wire()
+on_batch_ready_do(broadcast_new_cid(upload_to_ipfs))

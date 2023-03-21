@@ -170,21 +170,19 @@ twitter_to_exorde_format = lambda data: {
 }
 
 spot_block = lambda entities: {
-    "keyword": "",
-    "links": "",
-    "medias": "",
-    "spotterCountry": "",
-    "tokenOfInterest": "",
     "entities": entities
 }
 
-async def upload_to_ipfs(data, ipfs_path):
+async def upload_to_ipfs(value, ipfs_path):
     async with aiohttp.ClientSession() as session:
-        async with session.post(ipfs_path, data=json.dumps(data)) as resp:
+        async with session.post(ipfs_path, data=json.dumps(value), headers={
+            'Content-Type': 'application/json'
+        }) as resp:
             if resp.status == 200:
-                response_json = await resp.json()
-                return response_json['cid']
+                response = await resp.json()
+                return response
             else:
-                raise Exception('Failed to upload to IPFS')
+                content = await resp.text()
+                raise Exception(f'Failed to upload to IPFS ({resp.status}) -> {content}')
 
 launch = lambda:run('exorde')
