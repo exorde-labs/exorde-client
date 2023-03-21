@@ -19,6 +19,7 @@ import yaml
 from typing import Union
 import string
 import json
+from dateutil import parser
 
 from aiosow.command import run
 from aiosow.bindings import read_only 
@@ -152,7 +153,7 @@ twitter_to_exorde_format = lambda data: {
     "Author": "",
     "Content": data['full_text'],
     "Controversial": data.get('possibly_sensitive', False),
-    "CreationDateTime": data['created_at'],
+    "CreationDateTime": parser.parse(data['created_at']).isoformat(),
     "Description": "",
     "DomainName": "twitter.com",
     "Language": data['lang'],
