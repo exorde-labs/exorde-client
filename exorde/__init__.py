@@ -18,7 +18,7 @@ import random
 import yaml
 from typing import Union
 import string
-import json
+import json, jsonschema
 from dateutil import parser
 
 from aiosow.command import run
@@ -150,29 +150,46 @@ nounce = lambda worker_address, read_web3: read_web3.eth.get_transaction_count(
     worker_address
 )
 twitter_to_exorde_format = lambda data: {
-    "Author": "",
-    "Content": data['full_text'],
-    "Controversial": data.get('possibly_sensitive', False),
-    "CreationDateTime": parser.parse(data['created_at']).isoformat(),
-    "Description": "",
-    "DomainName": "twitter.com",
-    "Language": data['lang'],
-    "Reference": "",
-    "Title": "",
-    "Url": f"https://twitter.com/a/status/{data['id_str']}",
-    "internal_id": data['id'],
-    "media_type": "",
-    # "source": data['source'], # new
-    # "nbQuotes": data['quote_count'], # new
-    "nbComments": data['reply_count'],
-    "nbLikes": data['favorite_count'],
-    "nbShared": data['retweet_count'],
-    # "isQuote": data['is_quote_status'] # new
+    "entities": [],
+    "item": {
+        "Author": "",
+        "Content": data['full_text'].replace('\n', '').replace("'", "''"),
+        "Controversial": data.get('possibly_sensitive', False),
+        "CreationDateTime": parser.parse(data['created_at']).isoformat(),
+        "Description": "",
+        "DomainName": "twitter.com",
+        "Language": data['lang'],
+        "Reference": "",
+        "Title": "",
+        "Url": f"https://twitter.com/a/status/{data['id_str']}",
+        "internal_id": str(data['id']),
+        "internal_parent_id": None,
+        "mediaType": "",
+        # "source": data['source'], # new
+        # "nbQuotes": data['quote_count'], # new
+        "nbComments": data['reply_count'],
+        "nbLiked": data['favorite_count'],
+        "nbShared": data['retweet_count'],
+        # "isQuote": data['is_quote_status'] # new
+    },
+    "keyword": "",
+    "links": [],
+    "medias": [],
+    "spotterCountry": "",
+    "tokenOfInterest": []
 }
 
 spot_block = lambda entities: {
-    "entities": entities
+    "Content": entities
 }
+
+async def load_json_schema():
+    with open(os.path.abspath(os.path.join(os.path.dirname(__file__), 'schema.json')), 'r') as f:
+        return json.load(f)
+
+async def validate_batch_schema(value, ipfs_schema):
+    jsonschema.validate(instance=value, schema=ipfs_schema)
+    return value
 
 async def upload_to_ipfs(value, ipfs_path):
     async with aiohttp.ClientSession() as session:

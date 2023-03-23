@@ -11,7 +11,9 @@ setup(
         ],
     },
     install_requires=[
+        'python-dateutil',
         'pyyaml',
+        'aiosow',
         'aiosow_twitter',
         'web3'
     ],
