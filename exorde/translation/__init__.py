@@ -39,4 +39,4 @@ def translate(item, low_memory, installed_languages):
         ).translate(text)
     except:
         logging.error(f"Error translating from {language['lang']} ({text})")
-    return text
+    return item
