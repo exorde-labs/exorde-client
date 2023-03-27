@@ -10,5 +10,11 @@ setup(
             "exorde = exorde.__init__:launch",
         ],
     },
-    install_requires=["python-dateutil", "pyyaml", "aiosow", "web3"],
+    install_requires=[
+        "python-dateutil",
+        "pyyaml",
+        "web3",
+        "playwright",
+        "playwright-stealth",
+    ],
 )

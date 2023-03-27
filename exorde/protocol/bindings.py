@@ -1,4 +1,4 @@
-from aiosow.routines import routine
+from aiosow.routines import routine, spawn_consumer
 from aiosow.bindings import setup, wrap, on, option
 
 from exorde.protocol import (
@@ -14,11 +14,12 @@ from exorde.protocol import (
 
 option("ethereum_address", help="Ethereum wallet address", default=None)
 # nounce is retrieved every second, initial life set to 5 for setup time
+# setup the routine consumer
+setup(spawn_consumer)
 # routine(1, life=5)(wrap(lambda val: {'nounce': val})(nounce))
 
 # set signed_transaction to None on nounce change
 on("nounce")(lambda: {"signed_transaction": None})
-
 
 # instanciate workers
 setup(

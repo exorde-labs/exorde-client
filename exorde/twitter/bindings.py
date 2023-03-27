@@ -24,6 +24,3 @@ on_available_browser_tab(scrap_twitter)
 # tweet retrieval and format
 broadcast_formated, on_formated_tweet_do = wire()
 on_tweet_reception_do(broadcast_formated(twitter_to_exorde_format))
-
-# when a tweet is formated, push it to batch preparation
-# on_formated_tweet_do(build_batch)

@@ -11,7 +11,7 @@ spot_block = lambda entities: {"Content": entities}
 
 # batching
 broadcast_batch_ready, on_batch_ready_do = wire()
-build_batch = broadcast_batch_ready(accumulator(10)(spot_block))
+push_to_next_batch = broadcast_batch_ready(accumulator(10)(spot_block))
 
 # when a batch is ready, upload it to ipfs
 broadcast_new_valid_batch, on_new_valid_batch_do = wire()
@@ -19,5 +19,3 @@ on_batch_ready_do(broadcast_new_valid_batch(validate_batch_schema))
 
 broadcast_new_cid, on_new_cid_do = wire()
 on_new_valid_batch_do(broadcast_new_cid(upload_to_ipfs))
-
-on_new_cid_do(lambda value: print(value))
