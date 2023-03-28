@@ -11,16 +11,17 @@ a88aaaa    dP. .dP .d8888b. 88d888b. .d888b88 .d8888b.
 
 import exorde.playwright.bindings as _
 import exorde.protocol.bindings as _
-from exorde.translation.bindings import on_translated_do
-from exorde.translation import translate
+from exorde.translation.bindings import on_translated_do, translate
 from exorde.twitter.bindings import on_formated_tweet_do
 from exorde.ipfs.bindings import push_to_ipfs, on_new_cid_do
-
+from exorde.xyake.bindings import on_keywords_extracted_do, populate_keywords
 
 # when a tweet is formated, push it to translation
 on_formated_tweet_do(translate)
 
-on_translated_do(lambda value: print(value))
+on_translated_do(populate_keywords)
+
+on_keywords_extracted_do(lambda value: print(value))
 
 when_item_is_ready = lambda v: v
 when_item_is_ready(push_to_ipfs)
