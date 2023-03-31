@@ -1,4 +1,9 @@
 import os, json, jsonschema
+from aiohttp import ClientSession
+
+
+def create_session(*__args__, **__kwargs__):
+    return ClientSession()
 
 
 async def load_json_schema():

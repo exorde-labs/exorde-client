@@ -9,9 +9,11 @@ import string
 import aiohttp
 from aiosow.bindings import read_only
 
-from web3.middleware.cache import _simple_cache_middleware as cache_middleware
+from web3.middleware.async_cache import (
+    _async_simple_cache_middleware as cache_middleware,
+)
 from eth_account import Account
-from web3 import Web3
+from web3 import AsyncWeb3, AsyncHTTPProvider
 
 
 def load_yaml(path):
@@ -57,20 +59,25 @@ async def contracts_and_abi_cnf(configuration):
 
 
 def instanciate_w3(url):
-    w3_instance = Web3(Web3.HTTPProvider(url))
+    w3_instance = AsyncWeb3(AsyncHTTPProvider(url))
     w3_instance.middleware_onion.add(cache_middleware)
     return w3_instance
 
 
-write_web3 = lambda configuration: {
-    "write_web3": instanciate_w3(configuration[configuration["target"]]["_urlTxSkale"])
-}
+def write_web3(configuration):
+    return {
+        "write_web3": instanciate_w3(
+            configuration[configuration["target"]]["_urlTxSkale"]
+        )
+    }
 
-read_web3 = lambda configuration: {
-    "read_web3": instanciate_w3(
-        random.choice(configuration[configuration["target"]]["_urlSkale"])
-    )
-}
+
+def read_web3(configuration):
+    return {
+        "read_web3": instanciate_w3(
+            random.choice(configuration[configuration["target"]]["_urlSkale"])
+        )
+    }
 
 
 def contract(name, read_w3, abi_cnf, contracts_cnf, configuration):
@@ -83,10 +90,11 @@ def contract(name, read_w3, abi_cnf, contracts_cnf, configuration):
         return None
 
 
-contracts = lambda read_w3, abi_cnf, contracts_cnf, configuration: {
-    name: contract(name, read_w3, abi_cnf, contracts_cnf, configuration)
-    for name in contracts_cnf()[configuration["target"]]
-}
+def contracts(read_w3, abi_cnf, contracts_cnf, configuration):
+    return {
+        name: contract(name, read_w3, abi_cnf, contracts_cnf, configuration)
+        for name in contracts_cnf()[configuration["target"]]
+    }
 
 
 def worker_address():
@@ -96,6 +104,14 @@ def worker_address():
     acct = Account.create(base_seed)
     logging.debug('Generated a key "%s"', acct.address)
     return acct
+
+
+def worker_addresses(workers):
+    return {
+        "worker_addresses": {
+            addr: key for addr, key in (worker_address() for __i__ in range(0, workers))
+        }
+    }
 
 
 def check_erc_address_validity(w3_gateway, erc_address):
@@ -108,31 +124,37 @@ def check_erc_address_validity(w3_gateway, erc_address):
     return erc_address, erc_address_valid
 
 
-worker_addresses = lambda workers: {
-    "worker_addresses": {
-        addr: key for addr, key in (worker_address() for __i__ in range(0, workers))
+def reset_transactions():
+    return {
+        "signed_transaction": None,
+        "transactions": [],
+        "nounce": None,
     }
-}
-reset_transactions = lambda: {
-    "signed_transaction": None,
-    "transactions": [],
-    "nounce": None,
-}
-select_transaction_to_send = lambda transactions: {
-    "signed_transaction": transactions[0],
-    "transactions": transactions[1:],
-}
-signed_transaction = lambda transaction, read_web3: read_web3.sign_transaction(
-    transaction[0], transaction[1]
-)
-send_transaction = lambda transaction, transactions: {
-    "transactions": transactions + [transaction]
-}
-send_raw_transaction = (
-    lambda signed_transaction, write_web3: write_web3.send_raw_transaction(
-        signed_transaction.rawTransaction
-    )
-)
-nounce = lambda worker_address, read_web3: read_web3.eth.get_transaction_count(
-    worker_address
-)
+
+
+def reset_signed_transaction():
+    return {"signed_transaction": None}
+
+
+def select_transaction_to_send(transactions):
+    if transactions:
+        return {
+            "signed_transaction": transactions[0],
+            "transactions": transactions[1:],
+        }
+
+
+def signed_transaction(transaction, read_web3):
+    return read_web3.sign_transaction(transaction[0], transaction[1])
+
+
+def send_transaction(transaction, transactions):
+    return {"transactions": transactions + [transaction]}
+
+
+async def send_raw_transaction(signed_transaction, write_web3):
+    return await write_web3.send_raw_transaction(signed_transaction.rawTransaction)
+
+
+async def nounce(worker_address, read_web3):
+    return await read_web3.eth.get_transaction_count(worker_address)

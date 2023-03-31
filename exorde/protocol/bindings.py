@@ -1,7 +1,8 @@
 from aiosow.routines import routine, spawn_consumer
-from aiosow.bindings import setup, wrap, on, option
+from aiosow.bindings import setup, wrap, on, option, expect
 
 from exorde.protocol import (
+    reset_signed_transaction,
     worker_address,
     configuration,
     contracts_and_abi_cnf,
@@ -9,17 +10,22 @@ from exorde.protocol import (
     read_web3,
     contracts,
     select_transaction_to_send,
-    send_raw_transaction,
+    send_raw_transaction as send_raw_transaction_implementation,
+    nounce,
+    reset_transactions,
 )
 
 option("ethereum_address", help="Ethereum wallet address", default=None)
-# nounce is retrieved every second, initial life set to 5 for setup time
 # setup the routine consumer
 setup(spawn_consumer)
-# routine(1, life=5)(wrap(lambda val: {'nounce': val})(nounce))
 
+get_nounce = expect(read_web3, retries=2)(wrap(lambda val: {"nounce": val})(nounce))
+# nounce is not retrieved in a routine but before new transaction
+routine(1, life=5)(get_nounce)
+
+setup(reset_transactions)
 # set signed_transaction to None on nounce change
-on("nounce")(lambda: {"signed_transaction": None})
+on("nounce")(reset_signed_transaction)
 
 # instanciate workers
 setup(
@@ -29,7 +35,7 @@ setup(
 )
 
 # retrieve configuration
-routine(60 * 5, life=0)(configuration)
+setup(configuration)
 
 # retrieve contracts and abi
 on("configuration")(contracts_and_abi_cnf)
@@ -46,6 +52,7 @@ no_signed_transaction = lambda signed_transaction: not signed_transaction
 on("transactions", condition=no_signed_transaction)(select_transaction_to_send)
 on("nounce", condition=no_signed_transaction)(select_transaction_to_send)
 
+send_raw_transaction = send_raw_transaction_implementation
 # send_raw_transaction (may have to be a routine)
 on("signed_transaction", condition=lambda signed_transaction: signed_transaction)(
     send_raw_transaction

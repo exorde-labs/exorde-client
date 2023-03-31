@@ -18,9 +18,13 @@ option("tab_lifetime", default=120, help="Lifetime of open tabs in seconds")
 
 # set's up playwright
 setup(setup_playwright)
-pages = wrap(
-    lambda pages: {"pages": {index: pages[index] for index in range(0, len(pages))}}
-)
+
+
+def build_pages(pages):
+    return {"pages": {index: pages[index] for index in range(0, len(pages))}}
+
+
+organize_pages = wrap(build_pages)
 
 
 async def _tabs(tabs):
@@ -30,10 +34,10 @@ async def _tabs(tabs):
 
 for_each_tabs = each(iter=_tabs)
 page = wrap(lambda page: {"page": page, "available": True})
-setup(pages(for_each_tabs(page(create_page))))
 on_page_available = on(
     "pages", condition=lambda page: page["available"], singularize=True
 )
+routine(5, repeat=False, life=5)(organize_pages(for_each_tabs(page(create_page))))
 
 # do something with the page when available
 on_page_available(manage_page)
