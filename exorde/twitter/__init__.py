@@ -15,8 +15,9 @@ def response_to_tweet(response):
 
 
 async def scrap_twitter(page, pages, twitter_url):
+    (page_id, __page_descr__) = page
     logging.info('Scraping "%s"', twitter_url)
-    await pages[page]["page"].goto(twitter_url, timeout=80000)
+    await pages[page_id]["page"].goto(twitter_url, timeout=80000)
     await asyncio.sleep(0.1)
     scroll = """
     var lookup = 0;
@@ -25,7 +26,7 @@ async def scrap_twitter(page, pages, twitter_url):
       scroll(0, lookup);
     }, 750)
     """
-    await pages[page]["page"].evaluate(scroll)
+    await pages[page_id]["page"].evaluate(scroll)
 
 
 twitter_to_exorde_format = lambda data: {

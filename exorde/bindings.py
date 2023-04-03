@@ -10,32 +10,50 @@ a88aaaa    dP. .dP .d8888b. 88d888b. .d888b88 .d8888b.
 """
 
 import logging
+from aiosow.routines import spawn_consumer
+from aiosow.bindings import setup, call_limit
+from aiosow.perpetuate import on
 
 from exorde.twitter.bindings import on_formated_tweet_do
 from exorde.translation.bindings import on_translated_do, translate
 from exorde.xyake.bindings import on_keywords_extracted_do, populate_keywords
 from exorde.ipfs.bindings import push_to_ipfs, on_new_cid_do
 import exorde.protocol.bindings as _
-from aiosow.routines import routine
+from exorde import (
+    push_to_stack,
+    print_stack_len,
+    reset_stack,
+    consume_stack,
+    reset_cids,
+    push_new_cid,
+    choose_cid_to_commit,
+)
 
-from collections import deque
+# setup the routine consumer
+setup(spawn_consumer)
+setup(reset_stack)
+setup(reset_cids)
 
-stack = deque(maxlen=1000)
+## sources
 
+on_formated_tweet_do(translate)
 
-def push_to_stack(value):
-    global stack
-    stack.append(value)
+#
 
+on_translated_do(populate_keywords)
+on_keywords_extracted_do(push_to_stack)
 
-def print_stack():
-    logging.info(f"{len(stack)} items ready to processed")
-
-
-routine(1)(print_stack)
-
-on_formated_tweet_do(push_to_stack)
-# on_formated_tweet_do(translate)
-# on_translated_do(populate_keywords)
-# on_keywords_extracted_do(push_to_ipfs)
-# on_new_cid_do(lambda value: print(value))
+on("stack")(call_limit(1)(print_stack_len))
+on("stack")(consume_stack)
+on("batch_to_consume")(push_to_ipfs)
+on_new_cid_do(push_new_cid)
+on("cids")(lambda: logging.info("A batch has been uploaded to IPFS"))
+on(
+    "cids",
+    condition=lambda current_cid_commit, cids: not current_cid_commit and len(cids) > 0,
+)(choose_cid_to_commit)
+on("current_cid_commit", condition=lambda value: value)(
+    lambda value: logging.info(
+        f"New CID has been choosen for ritual transaction ({value})"
+    )
+)

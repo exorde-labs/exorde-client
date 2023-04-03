@@ -95,11 +95,13 @@ def on_available_browser_tab(function):
 async def manage_page(page, tab_lifetime, memory):
     """Launch a scraping method, sets page as taken and conjure availability"""
 
-    def update():
+    page_id, page_descr = page
+
+    def roll_page():
         """Rolls and update on page and specifies it as available"""
-        nonlocal page
-        logging.debug("Rolling page %s as available", page)
-        return {"pages": {page: {"page": page["page"], "available": True}}}
+        nonlocal page_id, page_descr
+        logging.info("Rolling page %s as available", page)
+        return {"pages": {page_id: {"page": page_descr["page"], "available": True}}}
 
     if len(PAGE_ACTIONS) > 1:
         action = random.choice(PAGE_ACTIONS)
@@ -109,4 +111,4 @@ async def manage_page(page, tab_lifetime, memory):
         action = None
     if action:
         await perpetuate(action, args=(page,), memory=memory)
-    routine(interval=tab_lifetime, life=tab_lifetime, repeat=False)(update)
+    routine(frequency=-int(tab_lifetime), timeout=int(tab_lifetime))(roll_page)

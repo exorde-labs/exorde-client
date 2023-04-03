@@ -22,5 +22,5 @@ on_adaptive_response(broadcast_tweet(response_to_tweet))
 on_available_browser_tab(scrap_twitter)
 
 # tweet retrieval and format
-broadcast_formated, on_formated_tweet_do = wire()
+broadcast_formated, on_formated_tweet_do = wire(perpetual=True)
 on_tweet_reception_do(broadcast_formated(twitter_to_exorde_format))

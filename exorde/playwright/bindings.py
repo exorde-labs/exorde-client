@@ -37,7 +37,7 @@ page = wrap(lambda page: {"page": page, "available": True})
 on_page_available = on(
     "pages", condition=lambda page: page["available"], singularize=True
 )
-routine(5, repeat=False, life=5)(organize_pages(for_each_tabs(page(create_page))))
+routine(-5)(organize_pages(for_each_tabs(page(create_page))))
 
 # do something with the page when available
 on_page_available(manage_page)
