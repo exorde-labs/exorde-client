@@ -4,6 +4,7 @@ import os
 import logging
 import asyncio
 import random
+from ens.async_ens import default
 import yaml
 import string
 import aiohttp
@@ -124,11 +125,10 @@ def check_erc_address_validity(w3_gateway, erc_address):
     return erc_address, erc_address_valid
 
 
-def reset_transactions():
+def reset_transaction():
     return {
         "signed_transaction": None,
-        "transactions": [],
-        "nounce": None,
+        "nonce": None,
     }
 
 
@@ -136,25 +136,30 @@ def reset_signed_transaction():
     return {"signed_transaction": None}
 
 
-def select_transaction_to_send(transactions):
-    if transactions:
-        return {
-            "signed_transaction": transactions[0],
-            "transactions": transactions[1:],
-        }
-
-
 def signed_transaction(transaction, read_web3):
     return read_web3.sign_transaction(transaction[0], transaction[1])
-
-
-def send_transaction(transaction, transactions):
-    return {"transactions": transactions + [transaction]}
 
 
 async def send_raw_transaction(signed_transaction, write_web3):
     return await write_web3.send_raw_transaction(signed_transaction.rawTransaction)
 
 
-async def nounce(worker_address, read_web3):
+async def nonce(worker_address, read_web3):
     return await read_web3.eth.get_transaction_count(worker_address)
+
+
+async def spot_data(cid, DataSpotting):
+    # todo: "1" is for twitter.com, it should be specified dynamicaly
+    try:
+        return DataSpotting.functions.SpotData([cid], ["1"], [100], "")
+    except Exception:
+        logging.error("Error calling SpotData")
+
+
+async def build_transaction(transaction, worker_address, nonce, default_gas_price):
+    try:
+        return await transaction.build_transaction(
+            {"nonce": nonce, "from": worker_address, "gasPrice": default_gas_price}
+        )
+    except Exception:
+        logging.error("Error building transaction")

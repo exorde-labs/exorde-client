@@ -10,8 +10,11 @@ def generate_twitter_url() -> str:
 # adaptive.json is a json request made on the website on search pages.
 # It contains a list of tweets to be added to the feed
 def response_to_tweet(response):
-    for tweet in response["globalObjects"]["tweets"].values():
-        yield tweet
+    try:
+        for tweet in response["globalObjects"]["tweets"].values():
+            yield tweet
+    except:
+        pass
 
 
 async def scrap_twitter(page, pages, twitter_url):

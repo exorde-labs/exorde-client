@@ -18,7 +18,7 @@ from exorde.twitter.bindings import on_formated_tweet_do
 from exorde.translation.bindings import on_translated_do, translate
 from exorde.xyake.bindings import on_keywords_extracted_do, populate_keywords
 from exorde.ipfs.bindings import push_to_ipfs, on_new_cid_do
-import exorde.protocol.bindings as _
+from exorde.protocol.bindings import commit_current_cid
 from exorde import (
     push_to_stack,
     print_stack_len,
@@ -45,15 +45,23 @@ on_keywords_extracted_do(push_to_stack)
 
 on("stack")(call_limit(1)(print_stack_len))
 on("stack")(consume_stack)
-on("batch_to_consume")(push_to_ipfs)
+on("batch_to_consume", condition=lambda value: value)(push_to_ipfs)
 on_new_cid_do(push_new_cid)
-on("cids")(lambda: logging.info("A batch has been uploaded to IPFS"))
+on("cids", condition=lambda cids: len(cids))(
+    lambda __cids__: logging.info(f"A batch has been uploaded to IPFS")
+)
 on(
     "cids",
-    condition=lambda current_cid_commit, cids: not current_cid_commit and len(cids) > 0,
+    condition=lambda cids, current_cid_commit: len(cids) and not current_cid_commit,
 )(choose_cid_to_commit)
-on("current_cid_commit", condition=lambda value: value)(
+
+on_new_cid_to_commit = on("current_cid_commit", condition=lambda value: value)
+on_new_cid_to_commit(
     lambda value: logging.info(
         f"New CID has been choosen for ritual transaction ({value})"
     )
 )
+
+on_new_cid_to_commit(commit_current_cid)
+
+on("transaction")(lambda transaction: print(transaction))

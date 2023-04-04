@@ -30,13 +30,12 @@ def print_stack_len(stack):
     logging.info(f"{len(stack)} items ready to be processed")
 
 
-SIZE = 50
+SIZE = 100
 
 
 def consume_stack(stack):
     if len(stack) < SIZE:
         return
-    logging.info("consuming_stack")
     return {"batch_to_consume": [stack.popleft() for _ in range(SIZE)], "stack": stack}
 
 
