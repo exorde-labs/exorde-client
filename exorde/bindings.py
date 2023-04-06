@@ -21,7 +21,7 @@ from exorde.ipfs.bindings import push_to_ipfs, on_new_cid_do
 from exorde.protocol.bindings import commit_current_cid
 from exorde import (
     push_to_stack,
-    print_stack_len,
+    log_stack_len,
     reset_stack,
     consume_stack,
     reset_cids,
@@ -38,12 +38,10 @@ setup(reset_cids)
 
 on_formated_tweet_do(translate)
 
-#
-
 on_translated_do(populate_keywords)
 on_keywords_extracted_do(push_to_stack)
 
-on("stack")(call_limit(1)(print_stack_len))
+on("stack")(call_limit(1)(log_stack_len))
 on("stack")(consume_stack)
 on("batch_to_consume", condition=lambda value: value)(push_to_ipfs)
 on_new_cid_do(push_new_cid)

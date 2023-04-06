@@ -40,7 +40,7 @@ def translate(item, low_memory, installed_languages):
             language["lang"], "en", installed_languages
         ).translate(text)
     except:
-        logging.error(
+        logging.debug(
             f"Error translating from {language['lang']} ({item['item']['internal_id']})"
         )
     return item

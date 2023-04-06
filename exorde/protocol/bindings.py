@@ -1,5 +1,6 @@
 import logging, os
 from aiosow.bindings import setup, wrap, on, option, expect, chain, alias, until_success
+from aiosow.routines import routine
 
 from exorde.protocol import (
     check_provided_user_address,
@@ -19,15 +20,11 @@ from exorde.protocol import (
     init_gas_cache,
     estimate_gas,
     faucet,
+    log_current_rep,
 )
 
 option("user_address", help="Ethereum wallet address", default=None)
-option(
-    "worker_keys_path",
-    help="Path to worker keys",
-    default=f"{os.getcwd()}/worker_keys.json",
-)
-
+routine(5 * 60)(log_current_rep)
 # instanciate workers
 setup(
     wrap(lambda acct: {"worker_address": acct.address, "worker_key": acct.key})(
@@ -59,7 +56,7 @@ commit_current_cid = push_new_transaction(
 )
 
 
-on("transaction", condition=lambda value: value)(
-    lambda transaction: logging.info(f"Current transaction: {transaction}")
+on("transaction")(
+    lambda transaction: logging.debug(f"Current transaction: {transaction}")
 )
 on("transaction", condition=lambda value: value)(send_raw_transaction)

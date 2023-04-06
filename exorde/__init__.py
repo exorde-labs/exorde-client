@@ -23,11 +23,11 @@ def push_to_stack(value, stack):
         # we could also trigger page roll after a certain amount of duplicates
         # but we should be able to pass on this option to be able to "monitor"
         # specific items
-        logging.info("Duplicate collection")
+        logging.debug("Duplicate collection")
 
 
-def print_stack_len(stack):
-    logging.info(f"{len(stack)} items ready to be processed")
+def log_stack_len(stack):
+    logging.debug(f"{len(stack)} items ready to be processed")
 
 
 SIZE = 100

@@ -99,7 +99,7 @@ async def manage_page(page, tab_lifetime, memory):
     def roll_page():
         """Rolls and update on page and specifies it as available"""
         nonlocal page_id, page_descr
-        logging.info("Rolling page %s as available", page)
+        logging.debug("Rolling page %s as available", page)
         return {"pages": {page_id: {"page": page_descr["page"], "available": True}}}
 
     if len(PAGE_ACTIONS) > 1:
