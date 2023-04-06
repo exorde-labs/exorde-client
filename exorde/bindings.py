@@ -54,14 +54,10 @@ on(
     "cids",
     condition=lambda cids, current_cid_commit: len(cids) and not current_cid_commit,
 )(choose_cid_to_commit)
-
 on_new_cid_to_commit = on("current_cid_commit", condition=lambda value: value)
 on_new_cid_to_commit(
     lambda value: logging.info(
         f"New CID has been choosen for ritual transaction ({value})"
     )
 )
-
 on_new_cid_to_commit(commit_current_cid)
-
-on("transaction")(lambda transaction: print(transaction))

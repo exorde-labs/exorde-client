@@ -94,8 +94,6 @@ def on_available_browser_tab(function):
 
 async def manage_page(page, tab_lifetime, memory):
     """Launch a scraping method, sets page as taken and conjure availability"""
-    print("MANAGE_PAGE >", tab_lifetime)
-
     page_id, page_descr = page
 
     def roll_page():

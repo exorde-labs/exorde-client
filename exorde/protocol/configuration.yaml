@@ -22,14 +22,13 @@ testnet-A:
     - http://57.128.85.245:10451
     - http://152.228.211.160:10451
     - http://152.228.215.238:10451
-  _urlTxSkale: https://legacy-proxy.skalenodes.com/v1/soft-legitimate-sarin
+  _urlTxSkale: https://staging-v3.skalenodes.com/v1/staging-untimely-yawning-algorab
   SyncNodeCount: '10'
   _chainID: '797272215'
   _blockExplorer: https://soft-legitimate-sarin.legacy-explorer.skalenodes.com/
   _webSocket: wss://legacy-proxy.skalenodes.com/v1/ws/soft-legitimate-sarin
 source: https://raw.github.com/exorde-labs/TestnetProtocol/main/
 contracts: ContractsAddresses.json
-default_gas_amount: 100000
 target: testnet-A
 ABI:
   EXDT: ABIs/EXDT/EXDT.json 
