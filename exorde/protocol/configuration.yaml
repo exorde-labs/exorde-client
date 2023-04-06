@@ -24,9 +24,9 @@ testnet-A:
     - http://152.228.215.238:10451
   _urlTxSkale: https://staging-v3.skalenodes.com/v1/staging-untimely-yawning-algorab
   SyncNodeCount: '10'
-  _chainID: '797272215'
-  _blockExplorer: https://soft-legitimate-sarin.legacy-explorer.skalenodes.com/
-  _webSocket: wss://legacy-proxy.skalenodes.com/v1/ws/soft-legitimate-sarin
+  _chainID: '1722394779'
+  _blockExplorer: https://staging-untimely-yawning-algorab.explorer.staging-v3.skalenodes.com/
+  _webSocket: wss://staging-v3.skalenodes.com/v1/ws/staging-untimely-yawning-algorab
 source: https://raw.github.com/exorde-labs/TestnetProtocol/main/
 contracts: ContractsAddresses.json
 target: testnet-A
