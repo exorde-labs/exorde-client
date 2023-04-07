@@ -1,4 +1,4 @@
-import logging, os
+import logging
 from aiosow.bindings import setup, wrap, on, option, expect, chain, alias, until_success
 from aiosow.routines import routine
 
@@ -59,4 +59,7 @@ commit_current_cid = push_new_transaction(
 on("transaction")(
     lambda transaction: logging.debug(f"Current transaction: {transaction}")
 )
-on("transaction", condition=lambda value: value)(send_raw_transaction)
+on(
+    "transaction",
+    condition=lambda value: value,
+)(send_raw_transaction)

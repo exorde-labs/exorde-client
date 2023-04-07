@@ -98,16 +98,17 @@ def contracts(read_w3, abi_cnf, contracts_cnf, configuration):
     }
 
 
-async def claim_master(user_address, AddressManager, read_web3, write_web3):
+# faire 2 fois
+async def claim_master(user_address, user_key, AddressManager, read_web3, write_web3):
     current_nonce = await read_web3.eth.get_transaction_count(user_address)
     transaction = AddressManager.ClaimMaster().buildTransaction(
         {
             "from": user_address,
-            "gasPrice": 100_000,
+            "gasPrice": 500_000,
             "nonce": current_nonce,
         }
     )
-    # transaction = read_web3.eth.account.sign_transaction(transaction, user_key)
+    transaction = read_web3.eth.account.sign_transaction(transaction, user_key)
     await write_web3.eth.send_raw_transaction(transaction)
 
 

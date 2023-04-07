@@ -3,6 +3,7 @@
 import logging
 from collections import deque
 from aiosow.command import run
+from datetime import datetime, timedelta, timezone
 
 # 2. on('stack', condition: lambda stack: len(stack) >= 100)
 # 3. build transaction & push to transaction manager
@@ -13,6 +14,10 @@ def reset_stack():
 
 
 def push_to_stack(value, stack):
+    if datetime.fromisoformat(value["item"]["CreationDateTime"]) - datetime.now(
+        timezone.utc
+    ) > timedelta(seconds=180):
+        return {}
     if value not in stack:
         stack.append(value)
         # technicaly the stack is already updated here
