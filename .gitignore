@@ -4,3 +4,4 @@ __pycache__
 bt
 aiosow
 tracemalloc
+cli

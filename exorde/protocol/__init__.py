@@ -208,6 +208,10 @@ async def spot_data(cid, DataSpotting):
         logging.error("Error calling SpotData")
 
 
+async def is_new_work_available(worker_address, DataSpotting) -> bool:
+    return DataSpotting.IsNewWorkAvailable(worker_address).call()
+
+
 async def build_transaction(transaction, worker_address, nonce):
     try:
         return await transaction.build_transaction(
