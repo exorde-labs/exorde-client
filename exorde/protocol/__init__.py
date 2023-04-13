@@ -209,7 +209,15 @@ async def spot_data(cid, DataSpotting):
 
 
 async def is_new_work_available(worker_address, DataSpotting) -> bool:
-    return DataSpotting.IsNewWorkAvailable(worker_address).call()
+    return await DataSpotting.IsNewWorkAvailable(worker_address).call()
+
+
+async def get_current_work(worker_address, DataSpotting) -> int:
+    return await DataSpotting.GetCurrentWork(worker_address)
+
+
+async def get_ipfs_hashes_for_batch(DataSpotting, batch_id):
+    return await DataSpotting.getIPFShashesForBatch(batch_id).call()
 
 
 async def build_transaction(transaction, worker_address, nonce):
