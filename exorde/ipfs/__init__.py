@@ -1,4 +1,9 @@
 import os, json, jsonschema
+from aiohttp import ClientSession
+
+
+def create_session(*__args__, **__kwargs__):
+    return ClientSession()
 
 
 async def load_json_schema():
@@ -23,5 +28,10 @@ async def upload_to_ipfs(value, ipfs_path, session):
 
 
 async def validate_batch_schema(value, ipfs_schema):
-    jsonschema.validate(instance=value, schema=ipfs_schema)
+    try:
+        jsonschema.validate(instance=value, schema=ipfs_schema)
+    except Exception as error:
+        print("value is :", value)
+        print("ipfs_schema is :", ipfs_schema)
+        raise (error)
     return value

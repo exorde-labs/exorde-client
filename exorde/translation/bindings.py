@@ -1,6 +1,6 @@
 from aiosow.bindings import setup, wrap, option, wire
 from argostranslate import translate as _translate
-from . import install_translation_modules, translate as translate_implementation
+from . import translate as translate_implementation
 
 get_installed_languages = wrap(lambda result: {"installed_languages": result})(
     _translate.get_installed_languages

@@ -12,24 +12,23 @@ mainnet-A:
 testnet-A:
   _networkId: testNet-A
   _urlSkale:
-    - http://57.128.84.254:10259
-    - http://57.128.80.82:10259
-    - http://35.84.228.194:10259
-    - http://44.230.146.249:10259
-    - http://57.128.87.76:10259
-    - http://57.128.82.225:10259
-    - http://57.128.86.197:10259
-    - http://57.128.85.245:10259
-    - http://152.228.211.160:10259
-    - http://152.228.215.238:10259
-  _urlTxSkale: https://legacy-proxy.skalenodes.com/v1/soft-legitimate-sarin
+    - http://57.128.84.254:10451
+    - http://57.128.80.82:10451
+    - http://35.84.228.194:10451
+    - http://44.230.146.249:10451
+    - http://57.128.87.76:10451
+    - http://57.128.82.225:10451
+    - http://57.128.86.197:10451
+    - http://57.128.85.245:10451
+    - http://152.228.211.160:10451
+    - http://152.228.215.238:10451
+  _urlTxSkale: https://staging-v3.skalenodes.com/v1/staging-untimely-yawning-algorab
   SyncNodeCount: '10'
-  _chainID: '797272215'
-  _blockExplorer: https://soft-legitimate-sarin.legacy-explorer.skalenodes.com/
-  _webSocket: wss://legacy-proxy.skalenodes.com/v1/ws/soft-legitimate-sarin
+  _chainID: '1722394779'
+  _blockExplorer: https://staging-untimely-yawning-algorab.explorer.staging-v3.skalenodes.com/
+  _webSocket: wss://staging-v3.skalenodes.com/v1/ws/staging-untimely-yawning-algorab
 source: https://raw.github.com/exorde-labs/TestnetProtocol/main/
 contracts: ContractsAddresses.json
-default_gas_amount: 100000
 target: testnet-A
 ABI:
   EXDT: ABIs/EXDT/EXDT.json 

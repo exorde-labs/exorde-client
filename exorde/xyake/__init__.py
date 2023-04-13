@@ -32,6 +32,7 @@ kw_extractor_2 = yake.KeywordExtractor(
 extract_keywords_1 = lambda text: kw_extractor_1.extract_keywords(text)
 extract_keywords_2 = lambda text: kw_extractor_2.extract_keywords(text)
 
+
 def populate_keywords(item):
     if item["item"]["Language"] in ["en", ""]:
         try:
@@ -40,7 +41,7 @@ def populate_keywords(item):
             keywords_set_2 = extract_keywords_2(item["item"]["Content"])
             yake_keywords = list(keywords_set_1)
             # combine both list without potential duplicates
-            yake_keywords.extend(x for x in keywords_set_2 if x not in yake_keywords)       
+            yake_keywords.extend(x for x in keywords_set_2 if x not in yake_keywords)
             # set tokenOfInterests to this list
             item["tokenOfInterests"] = set(yake_keywords)
         except:
