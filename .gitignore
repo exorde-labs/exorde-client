@@ -1,3 +1,6 @@
 __pycache__
 *.pyc
 *.egg-info
+bt
+aiosow
+tracemalloc

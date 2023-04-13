@@ -6,7 +6,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         "aiosow",
-        "argos-translate",
+        "argostranslate",
         "fasttext-langdetect",
     ],
 )

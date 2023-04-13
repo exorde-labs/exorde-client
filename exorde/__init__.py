@@ -9,19 +9,19 @@ from datetime import datetime, timedelta, timezone
 # 3. build transaction & push to transaction manager
 
 
-def reset_stack():
-    return {"stack": deque(maxlen=1000)}
-
-
 def push_to_stack(value, stack):
     if datetime.fromisoformat(value["item"]["CreationDateTime"]) - datetime.now(
         timezone.utc
     ) > timedelta(seconds=180):
         return {}
-    if value not in stack:
+    if stack and value not in stack:
         stack.append(value)
         # technicaly the stack is already updated here
         # we return to trigger the ONS events
+        return {"stack": stack}
+    elif not stack:
+        stack = deque(maxlen=100)
+        stack.append(value)
         return {"stack": stack}
     else:
         # if we had keyword we could weight in the duplicates in keyword choice
@@ -32,7 +32,7 @@ def push_to_stack(value, stack):
 
 
 def log_stack_len(stack):
-    logging.debug(f"{len(stack)} items ready to be processed")
+    logging.info(f"{len(stack)} items in memory")
 
 
 SIZE = 100

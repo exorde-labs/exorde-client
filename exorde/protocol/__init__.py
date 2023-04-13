@@ -28,11 +28,12 @@ async def fetch(session, url) -> Union[tuple, dict]:
         return await response.json(content_type=None)
 
 
-configuration = lambda: {
-    "configuration": load_yaml(
-        os.path.dirname(os.path.abspath(__file__)) + "/configuration.yaml"
-    )
-}
+async def configuration():
+    return {
+        "configuration": load_yaml(
+            os.path.dirname(os.path.abspath(__file__)) + "/configuration.yaml"
+        )
+    }
 
 
 # cnf stands for configuration

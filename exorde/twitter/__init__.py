@@ -1,35 +1,8 @@
 from dateutil import parser
-import logging
-import asyncio
 
 
 def generate_twitter_url() -> str:
     return "https://twitter.com/search?q=BTC&src=typed_query&f=live"
-
-
-# adaptive.json is a json request made on the website on search pages.
-# It contains a list of tweets to be added to the feed
-def response_to_tweet(response):
-    try:
-        for tweet in response["globalObjects"]["tweets"].values():
-            yield tweet
-    except:
-        pass
-
-
-async def scrap_twitter(page, pages, twitter_url):
-    (page_id, __page_descr__) = page
-    logging.info('Scraping "%s"', twitter_url)
-    await pages[page_id]["page"].goto(twitter_url, timeout=80000)
-    await asyncio.sleep(0.1)
-    scroll = """
-    var lookup = 0;
-    setInterval( () => {
-      lookup += 1000;
-      scroll(0, lookup);
-    }, 750)
-    """
-    await pages[page_id]["page"].evaluate(scroll)
 
 
 twitter_to_exorde_format = lambda data: {
