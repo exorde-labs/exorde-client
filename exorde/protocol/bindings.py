@@ -55,7 +55,6 @@ commit_current_cid = push_new_transaction(
     chain(spot_data, build_transaction, estimate_gas, sign_transaction)
 )
 
-
 on("transaction")(
     lambda transaction: logging.debug(f"Current transaction: {transaction}")
 )
