@@ -1,6 +1,5 @@
 from typing import Union
 
-import itertools
 import os, json
 import logging
 import asyncio
@@ -207,20 +206,6 @@ async def spot_data(cid, DataSpotting):
         return DataSpotting.functions.SpotData([cid], ["1"], [100], "")
     except Exception:
         logging.error("Error calling SpotData")
-
-
-def rotate_gateways():
-    gateways = [
-        "http://ipfs-gateway.exorde.network/ipfs/",
-        "http://ipfs-gateway.exorde.network/ipfs/",
-        "http://ipfs-gateway.exorde.network/ipfs/",
-        "https://w3s.link/ipfs/",
-        "https://ipfs.io/ipfs/",
-        "https://ipfs.eth.aragon.network/ipfs/",
-        "https://api.ipfsbrowser.com/ipfs/get.php?hash=",
-    ]
-
-    return (gateways[i % len(gateways)] for i in itertools.count())
 
 
 async def is_new_work_available(worker_address, DataSpotting) -> bool:
