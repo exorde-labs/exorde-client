@@ -9,6 +9,7 @@ import string
 import aiohttp
 from pathlib import Path
 from aiosow.bindings import read_only
+from aiosow.autofill import autofill
 
 from web3.middleware.async_cache import (
     _async_simple_cache_middleware as cache_middleware,
@@ -99,7 +100,6 @@ def contracts(read_w3, abi_cnf, contracts_cnf, configuration):
     }
 
 
-# faire 2 fois
 async def claim_master(user_address, user_key, AddressManager, read_web3, write_web3):
     current_nonce = await read_web3.eth.get_transaction_count(user_address)
     transaction = AddressManager.ClaimMaster().buildTransaction(
@@ -209,15 +209,67 @@ async def spot_data(cid, DataSpotting):
 
 
 async def is_new_work_available(worker_address, DataSpotting) -> bool:
-    return await DataSpotting.IsNewWorkAvailable(worker_address).call()
+    return await DataSpotting.functions.IsNewWorkAvailable(worker_address).call()
 
 
 async def get_current_work(worker_address, DataSpotting) -> int:
-    return await DataSpotting.GetCurrentWork(worker_address)
+    return await DataSpotting.functions.GetCurrentWork(worker_address).call()
 
 
-async def get_ipfs_hashes_for_batch(DataSpotting, batch_id) -> list:
-    return await DataSpotting.getIPFShashesForBatch(batch_id).call()
+async def get_ipfs_hashes_for_batch(batch_id, DataSpotting) -> list:
+    return await DataSpotting.functions.getIPFShashesForBatch(batch_id).call()
+
+
+async def is_commit_period_active(batch_id, DataSpotting):
+    return await DataSpotting.functions.commitPeriodActive(batch_id).call()
+
+
+async def is_commit_period_over(batch_id, DataSpotting):
+    return await DataSpotting.functions.comitPeriodOver(batch_id).call()
+
+
+async def is_reveal_period_active(batch_id, DataSpotting):
+    return await DataSpotting.functions.revealPeriodActive(batch_id).call()
+
+
+async def is_worker_allocated_to_batch(batch_id, worker_address, DataSpotting):
+    return await DataSpotting.functions.isWorkerAllocatedToBatch(
+        batch_id, worker_address
+    ).call()
+
+
+async def did_commit(batch_id, worker_address, DataSpotting):
+    return await DataSpotting.functions.didCommit(worker_address, batch_id).call()
+
+
+async def get_encrypted_string_hash(file_cid, random_seed, DataSpotting):
+    return await DataSpotting.functions.getEncryptedStringHash(
+        file_cid, random_seed
+    ).call()
+
+
+async def get_encrypted_hash(batch_result, random_seed, DataSpotting):
+    return await DataSpotting.functions.getEncryptedHash(
+        batch_result, random_seed
+    ).call()
+
+
+async def commit_spot_check(batch_id, result, content, DataSpotting, memory):
+    encrypted_string_hash = await autofill(
+        get_encrypted_string_hash, args=[result], memory=memory
+    )
+    encrypted_hash = await autofill(get_encrypted_hash, args=[content], memory=memory)
+    return await DataSpotting.functions.commit_spot_check(
+        batch_id, encrypted_string_hash, encrypted_hash
+    )
+
+
+async def remaining_commit_duration(batch_id, DataSpotting):
+    return await DataSpotting.functions.remainingCommitDuration(batch_id).call()
+
+
+async def remaining_reveal_duration(batch_id, DataSpotting):
+    return await DataSpotting.functions.remainingRevealDuration(batch_id).call()
 
 
 async def build_transaction(transaction, worker_address, nonce):
