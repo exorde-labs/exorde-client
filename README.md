@@ -1,5 +1,5 @@
 # DataHub
-Exorde'sdata team exclusive repository. 
+Exorde's data team exclusive repository. 
 
 - Embedded Data Tools (Protocol):
 
