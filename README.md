@@ -20,8 +20,7 @@ Exorde's data team exclusive repository.
    // Dimensionality Reduction Preprocessing:
     - PCA
     - UMAP
-    - t-SNE
-    -
+    
    // Dimensionality Reduction Pooling:
     - MMCA (Multiview Canonical Correlation Analysis)
     
@@ -29,7 +28,7 @@ Exorde's data team exclusive repository.
     - K-means
     - HDBSCAN
     - Spectral Clustering
-    -
+    
    // Clustering Pooling:
     - Agglomerative Clustering
     
@@ -37,7 +36,7 @@ Exorde's data team exclusive repository.
     - SpaCy's syntaxic structures + similarity matrix
     - YAKE's keyword (+ tf-idf vectorizer) + LDA (Latent Dirichlet Allocation)
     - scraping keyword frequency top 3
-    -
+    
    // Topic Modelling Pooling:
     - MultiviewKMeans => closest datapoint from the centroid
     
