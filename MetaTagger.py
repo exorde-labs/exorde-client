@@ -103,16 +103,10 @@ def zero_shot(text, labeldict, path = None, depth = 0, max_depth = None):
         depth += 1
         
         keys = list(labeldict.keys())
-        # if(len(path) > 0):
-        #     keys.append(path[-1])
         
         output=classifier(text, keys, multi_label=False, max_length=32)
         class_idx = np.argmax(output["scores"])
         label = output["labels"][class_idx]
-        # if(len(path) > 0):
-        #     if(label == path[-1]):
-        #         return path[-1]
-        # else:
         path.append(label)
         if((depth == max_depth) or (len(labeldict[label]) == 0)):
             return path[-1]
