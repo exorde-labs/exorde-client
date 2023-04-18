@@ -10,6 +10,7 @@ import json
 import numpy as np
 import os
 import pandas as pd
+import requests
 from sentence_transformers import SentenceTransformer
 import spacy
 import swifter
@@ -26,7 +27,7 @@ with warnings.catch_warnings():
 
 device = torch.cuda.current_device() if torch.cuda.is_available() else -1
 classifier = pipeline("zero-shot-classification", model="MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli", device=device, batch_size=16, return_all_scores=False, max_length=64)
-labels = None # à récupérer du protocole, ce sera un paramètre de la config, voir avec Mathias
+labels =  requests.get("https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/cateogry_tree.json").json()
 mappings = {
     "Gender":{0:"Female", 1:"Male"},
     "Age":{0:"<20", 1:"20<30",2:"30<40",3:">=40"},
@@ -183,168 +184,9 @@ def tag(documents, keep):
     return tmp
 
 
-### TEST ZONE
-test = """Bitcoin hit 30.000$ last night! """
-field = zero_shot(test, labels, max_depth=1)
-print(field)
+# ### TEST ZONE
+# test = """Bitcoin hit 30.000$ last night! """
+# field = zero_shot(test, labels, max_depth=1)
+# print(field)
 
-
-labels = {
-   "Arts and Entertainment": {
-      "Celebrities and Entertainment News": {},
-      "Comics and Animation": {},
-      "Entertainment Industry": {},
-      "Events and Listings": {},
-      "Fun and Trivia": {},
-      "Humor": {},
-      "Movies": {},
-      "Music and Audio": {},
-      "Offbeat": {},
-      "Online Media": {},
-      "Performing Arts": {},
-      "TV and Video": {},
-      "Visual Art and Design": {}
-   },
-   "Lifestyle and Traditions": {
-      "Hobbies and Leisure": {},
-      "Home and Garden": {}
-   },
-   "Science and Research": {
-      "Astronomy": {},
-      "Biological Sciences": {},
-      "Chemistry": {},
-      "Computer Science": {},
-      "Earth Sciences": {},
-      "Ecology and Environment": {},
-      "Engineering and Technology": {},
-      "Mathematics": {},
-      "Physics": {},
-      "Scientific Equipment": {},
-      "Scientific Institutions": {}
-   },
-   "Technology and Innovation": {
-      "Computers and Electronics": {},
-      "Internet and Telecom": {},
-      "Cryptocurrency": {}
-   },
-   "Economy and Finance": {
-      "Accounting and Auditing": {},
-      "Banking": {},
-      "Credit and Lending": {},
-      "Currencies and Foreign Exchange": {},
-      "Financial Planning": {},
-      "Grants and Financial Assistance": {},
-      "Insurance": {},
-      "Investing": {},
-      "Retirement and Pension": {},
-      "Cryptocurrency": {}
-   },
-   "Politics and Society": {
-      "People and Society": {},
-      "Politics": {},
-      "Online Communities": {}
-   },
-   "Nature and Environment": {
-      "Earth Sciences": {},
-      "Ecology and Environment": {},
-      "Pets and Animals": {}
-   },
-   "Business and Industry": {
-      "Advertising and Marketing": {},
-      "Aerospace and Defense": {},
-      "Agriculture and Forestry": {},
-      "Automotive Industry": {},
-      "Business Education": {},
-      "Business Finance": {},
-      "Business News": {},
-      "Business Operations": {},
-      "Business Services": {},
-      "Chemicals Industry": {},
-      "Construction and Maintenance": {},
-      "Energy and Utilities": {},
-      "Enterprise Technology": {},
-      "Entertainment Industry": {},
-      "Hospitality Industry": {},
-      "Industrial Materials and Equipment": {},
-      "Manufacturing": {},
-      "Metals and Mining": {},
-      "Pharmaceuticals and Biotech": {},
-      "Printing and Publishing": {},
-      "Professional and Trade Associations": {},
-      "Retail Trade": {},
-      "Small Business": {},
-      "Textiles and Nonwovens": {},
-      "Transportation and Logistics": {}
-   },
-   "Education and Learning": {
-      "Education": {},
-      "Jobs": {}
-   },
-   "Religion and Spirituality": {
-      "Religion and Belief": {}
-   },
-   "Health and Wellness": {
-      "Aging and Geriatrics": {},
-      "Alternative and Natural Medicine": {},
-      "Health Conditions": {},
-      "Health Education and Medical Training": {},
-      "Health Foundations and Medical Research": {},
-      "Health News": {},
-      "Medical Devices and Equipment": {},
-      "Medical Facilities and Services": {},
-      "Medical Literature and Resources": {},
-      "Men's Health": {},
-      "Mental Health": {},
-      "Nursing": {},
-      "Nutrition": {},
-      "Oral and Dental Care": {},
-      "Pediatrics": {},
-      "Pharmacy": {},
-      "Public Health": {},
-      "Reproductive Health": {},
-      "Substance Abuse": {},
-      "Vision Care": {},
-      "Women's Health": {}
-   },
-   "Travel and Exploration": {
-      "Air Travel": {},
-      "Bus and Rail": {},
-      "Car Rental and Taxi Services": {},
-      "Carpooling and Ridesharing": {},
-      "Cruises and Charters": {},
-      "Hotels and Accommodations": {},
-      "Luggage and Travel Accessories": {},
-      "Specialty Travel": {},
-      "Tourist Destinations": {},
-      "Travel Agencies and Services": {},
-      "Travel Guides and Travelogues": {}
-   },
-   "Law and Justice": {
-      "Government": {},
-      "Legal": {},
-      "Military": {},
-      "Public Safety": {},
-      "Social Services": {}
-   },
-   "Media and Communication": {
-      "News": {},
-      "Reference": {}
-   },
-   "Sports and Recreation": {
-      "College Sports": {},
-      "Combat Sports": {},
-      "Extreme Sports": {},
-      "Fantasy Sports": {},
-      "Individual Sports": {},
-      "Live Sporting Events": {},
-      "Motor Sports": {},
-      "Sporting Goods": {},
-      "Sports Coaching and Training": {},
-      "Sports News": {},
-      "Team Sports": {},
-      "Water Sports": {},
-      "Winter Sports": {},
-      "World Sports Competitions": {}
-   }
-}
 
