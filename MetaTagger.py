@@ -114,10 +114,10 @@ def zero_shot(text, labeldict, path = None, depth = 0, max_depth = None):
         #         return path[-1]
         # else:
         path.append(label)
-        if((depth == max_depth) or (labeldict[label] == None)):
+        if((depth == max_depth) or (len(labeldict[label]) == 0)):
             return path[-1]
         else:
-            if((labeldict[label] != None) and (max_depth == None or depth < max_depth)):
+            if((len(labeldict[label]) != 0) and (max_depth == None or depth < max_depth)):
                 return zero_shot(text, labeldict[label], path, depth, max_depth)
     except Exception as e:
         print(e)
@@ -188,103 +188,169 @@ def tag(documents, keep):
 
     return tmp
 
-labels = {              
-            "Entertainment":{"Films":None,
-                             "Books":None,
-                             "Shows":None,
-                             "Series":None},
-                
-            "Finance":
-                    {
-                        "Cryptocurrency":
-                            {
-                                "NFT": {"Collectible":None,
-                                        "Digital art":None,
-                                        "Domain name":None,
-                                        "Gaming":None,
-                                        "Market place":None},
-                                "Tokens": {
-                                    "Blockchain":{"Layer1":None,
-                                                  "Layer2":None},
-                                    "Stablecoins":None,
-                                    "DeFi":None,
-                                    "Gaming":None,
-                                    "Meme":None, 
-                                    "AI":None,
-                                    "NFT":None,
-                                    "Exchange token":{"CEX":None,
-                                                      "DEX":None}
-                                    },
-                                "Wallet":{"Hot wallet":None,
-                                          "Hardware wallet":None},
-                                "Exchanges":{"CEX":None,
-                                             "DEX":None}
-                            },
 
-                        "Banking":None,
-                        "Market": 
-                            {
-                                "Stocks":{"indicies":None,
-                                          "ETG":None,
-                                          "Derivatives":None},
-                                "Platforms":None
-                                   
-                            },
-                        "Investing":None,
-                        "Real estate":None,
-                        "Trading":{"Currencies":None,
-                                   "Commodities":None}
-                        },
-                "Society":
-                        {"Public figures":{"Influencer":None,
-                                           "Actor":None,
-                                           "Politician":None,
-                                           "Writer":None,
-                                           "Athletes":None,
-                                           "Leaders":None}
-                        },
-                "Business":
-                        {
-                            "Mode":{"Luxe":None,
-                                    "Fast fashion":None,
-                                    "Slow fashion":None},
-                            "Beauty":{"Luxe":None,
-                                      "Creme":None,
-                                      "Leather goods":None,
-                                      "Fragrance":None},
-                            "Automobile":{"Cars":None,
-                                          "Trucks":None}
-                        },
-                "Industry":{"Energy":None,
-                            "Green tech":None},
-                "Miscalleneous":None
-                }
-
-test = """Get ready to ride the wave of #AltcoinSeason!"""
-zero_shot(test, labels)
-tag(test)
-
-start = datetime.now()
-data, docs = load_data("5 minutes", [], meta=False, max_size=25)
-print("Done in:", datetime.now()-start)
-
-for i in range(len(docs)):
-    print(docs.loc[i, "Content"])
-    print(classifier(docs.loc[i, "Content"], ["Art and entertainement", "Lifestyle and Traditions", "Science and Research", "Technology and Innovation", "Economy and Finance", "Politics and Society", "Nature and Environment", "Business and Industry", "Education and Learning", "Religion and Spirituality", "Health and Wellness", "Travel and Exploration", "Law and Justice", "Media and Communication", "Sports and Recreation"])["labels"][0])
-    print()
-    
+### TEST ZONE
+test = """Bitcoin hit 30.000$ last night! """
+field = zero_shot(test, labels, max_depth=1)
+print(field)
 
 
-classifier("Orange is a French communication company", ["Art and lifestyle", "Science and Technology", "Economy and politics", "Nature"])
-classifier("Orange like the sun", ["Art and lifestyle", "Science and Technology", "Economy and politics", "Nature"])
-classifier("Orange is pretty warm for paintings", ["Art and lifestyle", "Science and Technology", "Economy and politics", "Nature"])
-classifier("An orange contains a lot of vitamins", ["Art and lifestyle", "Science and Technology", "Economy and politics", "Nature"])
+labels = {
+   "Arts and Entertainment": {
+      "Celebrities and Entertainment News": {},
+      "Comics and Animation": {},
+      "Entertainment Industry": {},
+      "Events and Listings": {},
+      "Fun and Trivia": {},
+      "Humor": {},
+      "Movies": {},
+      "Music and Audio": {},
+      "Offbeat": {},
+      "Online Media": {},
+      "Performing Arts": {},
+      "TV and Video": {},
+      "Visual Art and Design": {}
+   },
+   "Lifestyle and Traditions": {
+      "Hobbies and Leisure": {},
+      "Home and Garden": {}
+   },
+   "Science and Research": {
+      "Astronomy": {},
+      "Biological Sciences": {},
+      "Chemistry": {},
+      "Computer Science": {},
+      "Earth Sciences": {},
+      "Ecology and Environment": {},
+      "Engineering and Technology": {},
+      "Mathematics": {},
+      "Physics": {},
+      "Scientific Equipment": {},
+      "Scientific Institutions": {}
+   },
+   "Technology and Innovation": {
+      "Computers and Electronics": {},
+      "Internet and Telecom": {},
+      "Cryptocurrency": {}
+   },
+   "Economy and Finance": {
+      "Accounting and Auditing": {},
+      "Banking": {},
+      "Credit and Lending": {},
+      "Currencies and Foreign Exchange": {},
+      "Financial Planning": {},
+      "Grants and Financial Assistance": {},
+      "Insurance": {},
+      "Investing": {},
+      "Retirement and Pension": {},
+      "Cryptocurrency": {}
+   },
+   "Politics and Society": {
+      "People and Society": {},
+      "Politics": {},
+      "Online Communities": {}
+   },
+   "Nature and Environment": {
+      "Earth Sciences": {},
+      "Ecology and Environment": {},
+      "Pets and Animals": {}
+   },
+   "Business and Industry": {
+      "Advertising and Marketing": {},
+      "Aerospace and Defense": {},
+      "Agriculture and Forestry": {},
+      "Automotive Industry": {},
+      "Business Education": {},
+      "Business Finance": {},
+      "Business News": {},
+      "Business Operations": {},
+      "Business Services": {},
+      "Chemicals Industry": {},
+      "Construction and Maintenance": {},
+      "Energy and Utilities": {},
+      "Enterprise Technology": {},
+      "Entertainment Industry": {},
+      "Hospitality Industry": {},
+      "Industrial Materials and Equipment": {},
+      "Manufacturing": {},
+      "Metals and Mining": {},
+      "Pharmaceuticals and Biotech": {},
+      "Printing and Publishing": {},
+      "Professional and Trade Associations": {},
+      "Retail Trade": {},
+      "Small Business": {},
+      "Textiles and Nonwovens": {},
+      "Transportation and Logistics": {}
+   },
+   "Education and Learning": {
+      "Education": {},
+      "Jobs": {}
+   },
+   "Religion and Spirituality": {
+      "Religion and Belief": {}
+   },
+   "Health and Wellness": {
+      "Aging and Geriatrics": {},
+      "Alternative and Natural Medicine": {},
+      "Health Conditions": {},
+      "Health Education and Medical Training": {},
+      "Health Foundations and Medical Research": {},
+      "Health News": {},
+      "Medical Devices and Equipment": {},
+      "Medical Facilities and Services": {},
+      "Medical Literature and Resources": {},
+      "Men's Health": {},
+      "Mental Health": {},
+      "Nursing": {},
+      "Nutrition": {},
+      "Oral and Dental Care": {},
+      "Pediatrics": {},
+      "Pharmacy": {},
+      "Public Health": {},
+      "Reproductive Health": {},
+      "Substance Abuse": {},
+      "Vision Care": {},
+      "Women's Health": {}
+   },
+   "Travel and Exploration": {
+      "Air Travel": {},
+      "Bus and Rail": {},
+      "Car Rental and Taxi Services": {},
+      "Carpooling and Ridesharing": {},
+      "Cruises and Charters": {},
+      "Hotels and Accommodations": {},
+      "Luggage and Travel Accessories": {},
+      "Specialty Travel": {},
+      "Tourist Destinations": {},
+      "Travel Agencies and Services": {},
+      "Travel Guides and Travelogues": {}
+   },
+   "Law and Justice": {
+      "Government": {},
+      "Legal": {},
+      "Military": {},
+      "Public Safety": {},
+      "Social Services": {}
+   },
+   "Media and Communication": {
+      "News": {},
+      "Reference": {}
+   },
+   "Sports and Recreation": {
+      "College Sports": {},
+      "Combat Sports": {},
+      "Extreme Sports": {},
+      "Fantasy Sports": {},
+      "Individual Sports": {},
+      "Live Sporting Events": {},
+      "Motor Sports": {},
+      "Sporting Goods": {},
+      "Sports Coaching and Training": {},
+      "Sports News": {},
+      "Team Sports": {},
+      "Water Sports": {},
+      "Winter Sports": {},
+      "World Sports Competitions": {}
+   }
+}
 
-
-classifier("The #crypto market is heating up and opportunities are abound. Are you in it to win it?", ["Art and lifestyle", "Science and Technology", "Economy and Politics", "Life, Nature and Environment"])
-classifier("""Chewbacca is a pretty nice cat with hairs in its ears""", ["Art and entertainement", "Lifestyle and Traditions", "Science and Research", "Technology and Innovation", "Economy and Finance", "Politics and Society", "Nature and Environment", "Business and Industry"])
-classifier("""Chewbacca is a pretty nice cat with hairs in its ears""", ["Nature", "Environment"])
-classifier("""Chewbacca is a pretty nice cat with hairs in its ears""", ["Animals", "Plants", "Minerals"])
-
-
-classifier("""vile putinist propoganda ruzzian""", ["Art and entertainement", "Lifestyle and Traditions", "Science and Research", "Technology and Innovation", "Economy and Finance", "Politics and Society", "Nature and Environment", "Business and Industry", "Education and Learning", "Religion and Spirituality", "Health and Wellness", "Travel and Exploration", "Law and Justice", "Media and Communication", "Sports and Recreation"])
