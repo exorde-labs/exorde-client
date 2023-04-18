@@ -1,152 +1,196 @@
 {
-   "Arts and Entertainment": {
-      "Celebrities and Entertainment News": {},
-      "Comics and Animation": {},
-      "Entertainment Industry": {},
-      "Events and Listings": {},
-      "Fun and Trivia": {},
-      "Humor": {},
-      "Movies": {},
-      "Music and Audio": {},
-      "Offbeat": {},
-      "Online Media": {},
-      "Performing Arts": {},
-      "TV and Video": {},
-      "Visual Art and Design": {}
+   "Arts and Entertainment":{
+      "Celebrities and Entertainment News":{
+      },
+      "Entertainment Industry":{
+      },
+      "Events and Listings":{
+      },
+      "Humor":{
+      },
+      "Movies":{
+      },
+      "Music and Audio":{
+      },
+      "TV and Video":{
+      }
    },
-   "Lifestyle and Traditions": {},
-   "Science and Research": {
-      "Astronomy": {},
-      "Biological Sciences": {},
-      "Chemistry": {},
-      "Computer Science": {},
-      "Earth Sciences": {},
-      "Ecology and Environment": {},
-      "Engineering and Technology": {},
-      "Mathematics": {},
-      "Physics": {},
-      "Scientific Equipment": {},
-      "Scientific Institutions": {}
+   "Lifestyle and Traditions":{
+      "Hobbies and Leisure":{
+      },
+      "Home and Garden":{
+      }
    },
-   "Technology and Innovation": {},
-   "Economy and Finance": {
-      "Accounting and Auditing": {},
-      "Banking": {},
-      "Credit and Lending": {},
-      "Currencies and Foreign Exchange": {},
-      "Financial Planning": {},
-      "Grants and Financial Assistance": {},
-      "Insurance": {},
-      "Investing": {},
-      "Retirement and Pension": {},
-      "Cryptocurrency": {}
+   "Science and Research":{
+      "Astronomy":{
+      },
+      "Biological Sciences":{
+      },
+      "Chemistry":{
+      },
+      "Computer Science":{
+      },
+      "Ecology and Environment":{
+      },
+      "Engineering and Technology":{
+      },
+      "Mathematics":{
+      },
+      "Physics":{
+      },
+      "Scientific Institutions":{
+      }
    },
-   "Politics and Society": {},
-   "Nature and Environment": {},
-   "Business and Industry": {
-      "Advertising and Marketing": {},
-      "Aerospace and Defense": {},
-      "Agriculture and Forestry": {},
-      "Automotive Industry": {},
-      "Business Education": {},
-      "Business Finance": {},
-      "Business News": {},
-      "Business Operations": {},
-      "Business Services": {},
-      "Chemicals Industry": {},
-      "Construction and Maintenance": {},
-      "Energy and Utilities": {},
-      "Enterprise Technology": {},
-      "Entertainment Industry": {},
-      "Hospitality Industry": {},
-      "Industrial Materials and Equipment": {},
-      "Manufacturing": {},
-      "Metals and Mining": {},
-      "Pharmaceuticals and Biotech": {},
-      "Printing and Publishing": {},
-      "Professional and Trade Associations": {},
-      "Retail Trade": {},
-      "Small Business": {},
-      "Textiles and Nonwovens": {},
-      "Transportation and Logistics": {}
+   "Technology and Innovation":{
+      "Artificial Intelligence":{
+      },
+      "Computers and Electronics":{
+      },
+      "Internet and Telecom":{
+      },
+      "Cryptocurrency":{
+      },
+      "Digital assets and Protocol":{
+      }
    },
-   "Education and Learning": {
-      "Education": {},
-      "Jobs": {}
+   "Economy and Finance":{
+      "Banking":{
+      },
+      "Currencies and Foreign Exchange":{
+      },
+      "Insurance":{
+      },
+      "Real Estate":{
+      },
+      "Investing and Trading":{
+         "Commodities":{
+         },
+         "Derivatives":{
+         },
+         "Market and Industry Indices":{
+         },
+         "ETF funds":{
+         }
+      },
+      "Retirement and Pension":{
+      },
+      "Cryptocurrency":{
+      }
    },
-   "Religion and Spirituality": {},
-   "Health and Wellness": {
-      "Aging and Geriatrics": {},
-      "Alternative and Natural Medicine": {},
-      "Health Conditions": {},
-      "Health Education and Medical Training": {},
-      "Health Foundations and Medical Research": {},
-      "Health News": {},
-      "Medical Devices and Equipment": {},
-      "Medical Facilities and Services": {},
-      "Medical Literature and Resources": {},
-      "Men's Health": {},
-      "Mental Health": {},
-      "Nursing": {},
-      "Nutrition": {},
-      "Oral and Dental Care": {},
-      "Pediatrics": {},
-      "Pharmacy": {},
-      "Public Health": {},
-      "Reproductive Health": {},
-      "Substance Abuse": {},
-      "Vision Care": {},
-      "Women's Health": {}
+   "Politics and Society":{
+      "Politics":{
+      },
+      "Campaigns and Elections":{
+      },
+      "Politicians":{
+      },
+      "Country and State":{
+      }
    },
-   "Travel and Exploration": {
-      "Air Travel": {},
-      "Bus and Rail": {},
-      "Car Rental and Taxi Services": {},
-      "Carpooling and Ridesharing": {},
-      "Cruises and Charters": {},
-      "Hotels and Accommodations": {},
-      "Luggage and Travel Accessories": {},
-      "Specialty Travel": {},
-      "Tourist Destinations": {},
-      "Travel Agencies and Services": {},
-      "Travel Guides and Travelogues": {}
+   "Nature and Environment":{
+      "Earth Sciences":{
+      },
+      "Green technology":{
+      },
+      "Ecology and Environment":{
+      },
+      "Pets and Animals":{
+      }
    },
-   "Law and Justice": {
-      "Government": {},
-      "Legal": {},
-      "Military": {},
-      "Public Safety": {},
-      "Social Services": {}
+   "Business and Industry":{
+      "Advertising and Marketing":{
+      },
+      "Aerospace and Defense":{
+      },
+      "Agriculture and Forestry":{
+      },
+      "Automotive Industry":{
+      },
+      "Business Finance":{
+      },
+      "Energy and Utilities":{
+      },
+      "Metals and Mining":{
+      },
+      "Pharmaceuticals and Biotech":{
+      }
    },
-   "Media and Communication": {
-      "Broadcast and Network News": {},
-      "Business News": {},
-      "Celebrities and Entertainment News": {},
-      "Gossip and Tabloid News": {},
-      "Health News": {},
-      "Journalism and News Industry": {},
-      "Local News": {},
-      "Newspapers": {},
-      "Politics": {},
-      "Sports News": {},
-      "Technology News": {},
-      "Weather": {},
-      "World News": {}
+   "Education and Learning":{
+      "Education":{
+      },
+      "Jobs":{
+      }
    },
-   "Sports and Recreation": {
-      "College Sports": {},
-      "Combat Sports": {},
-      "Extreme Sports": {},
-      "Fantasy Sports": {},
-      "Individual Sports": {},
-      "Live Sporting Events": {},
-      "Motor Sports": {},
-      "Sporting Goods": {},
-      "Sports Coaching and Training": {},
-      "Sports News": {},
-      "Team Sports": {},
-      "Water Sports": {},
-      "Winter Sports": {},
-      "World Sports Competitions": {}
+   "Religion and Spirituality":{
+      "Religion and Belief":{
+      },
+      "Meditation and Spirit":{
+      }
+   },
+   "Health and Wellness":{
+      "Alternative and Natural Medicine":{
+      },
+      "Health Conditions":{
+      },
+      "Health News":{
+      },
+      "Mental Health":{
+      },
+      "Nutrition":{
+      },
+      "Pediatrics":{
+      },
+      "Pharmacy":{
+      },
+      "Public Health":{
+      },
+      "Substance Abuse":{
+      }
+   },
+   "Travel and Exploration":{
+      "Air Travel":{
+      },
+      "Bus and Rail":{
+      },
+      "Carpooling and Ridesharing":{
+      },
+      "Tourist Destinations":{
+      },
+      "Travel Agencies and Services":{
+      }
+   },
+   "Law and Justice":{
+      "Government":{
+      },
+      "Legal":{
+      },
+      "Military":{
+      },
+      "Public Safety":{
+      },
+      "Social Services":{
+      }
+   },
+   "Media and Communication":{
+      "News":{
+      },
+      "Reference":{
+      }
+   },
+   "Sports and Recreation":{
+      "Combat Sports":{
+      },
+      "Individual Sports":{
+      },
+      "Motor Sports":{
+      },
+      "Sports Coaching and Training":{
+      },
+      "Sports News":{
+      },
+      "Winter Sports":{
+      },
+      "World Sports Competitions":{
+      }
    }
 }
