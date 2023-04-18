@@ -101,7 +101,6 @@ def zero_shot(texts, labeldict, path = None, depth = 0, max_depth = None):
     """
     
     keys = list(labeldict.keys())
-    texts = [preprocess_text(x) for x in texts]
     output=classifier(texts, keys, multi_label=False, max_length=32)
     labels = [output[x]["labels"][0] for x in range(len(output))]
     return labels
