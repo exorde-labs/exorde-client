@@ -10,6 +10,7 @@ import json
 import numpy as np
 import os
 import pandas as pd
+import re
 import requests
 from sentence_transformers import SentenceTransformer
 import spacy
@@ -100,12 +101,39 @@ def zero_shot(texts, labeldict, path = None, depth = 0, max_depth = None):
     """
     
     keys = list(labeldict.keys())
-    
+    texts = [preprocess_text(x) for x in texts]
     output=classifier(texts, keys, multi_label=False, max_length=32)
     labels = [output[x]["labels"][0] for x in range(len(output))]
     return labels
 
-        
+def preprocess_text(text: str, remove_stopwords: bool) -> str:
+    """This utility function sanitizes a string by:
+    - removing links
+    - removing special characters
+    - removing numbers
+    - removing stopwords
+    - transforming in lowercase
+    - removing excessive whitespaces
+    Args:
+        text (str): the input text you want to clean
+        remove_stopwords (bool): whether or not to remove stopwords
+    Returns:
+        str: the cleaned text
+    """
+    def contains_only_special_chars(s):
+        pattern = r'^[^\w\s]+$'
+        return bool(re.match(pattern, s))
+    
+    def preprocess(text):
+        new_text = [wrd for wrd in text.split(" ") if  wrd.startswith("@") == False and wrd.startswith("http") == False] 
+        return " ".join(new_text)
+    text = text.replace("#", "")
+    text = preprocess(text)
+    text = text.lower().strip()
+    
+    if(contains_only_special_chars(text)):
+        text = ""
+    return text
 
 def get_entities(text):
     doc = nlp(text)
