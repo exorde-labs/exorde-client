@@ -276,6 +276,10 @@ async def is_reveal_period_active(batch_id, DataSpotting):
     return await DataSpotting.functions.revealPeriodActive(batch_id).call()
 
 
+async def is_reveal_period_over(batch_id, DataSpotting):
+    return await DataSpotting.functions.revealPeriodOver(batch_id).call()
+
+
 async def reveal_spot_check(batch_id, file_cid, vote, seed, DataSpotting):
     return await DataSpotting.revealSpotCheck(batch_id, file_cid, vote, seed).call()
 
