@@ -78,11 +78,12 @@ class TokenAndPositionEmbedding(tf.keras.layers.Layer):
 ### FUNCTIONS DEFINITION
 
 # This method below should be called before the freshness test.
+# Requires no empty string // no None text
 # Order:
 #     - Spotting
 #     - Zero-shot classification
 #     - Freshness test (does the item has been posted less thant 5 minutes ago ?)
-def zero_shot(text, labeldict, path = None, depth = 0, max_depth = None):   
+def zero_shot(texts, labeldict, path = None, depth = 0, max_depth = None):   
     
     """
         Perform zero-shot classification on the input text using a pre-trained language model.
@@ -98,26 +99,13 @@ def zero_shot(text, labeldict, path = None, depth = 0, max_depth = None):
         - path (list): A list containing the path of labels from the root to the predicted label. If the label hierarchy was not explored fully and the max_depth parameter was set, the path may not be complete.
     """
     
-    try:
-        if(path == None):
-            path = []
-        depth += 1
+    keys = list(labeldict.keys())
+    
+    output=classifier(texts, keys, multi_label=False, max_length=32)
+    labels = [output[x]["labels"][0] for x in range(len(output))]
+    return labels
+
         
-        keys = list(labeldict.keys())
-        
-        output=classifier(text, keys, multi_label=False, max_length=32)
-        class_idx = np.argmax(output["scores"])
-        label = output["labels"][class_idx]
-        path.append(label)
-        if((depth == max_depth) or (len(labeldict[label]) == 0)):
-            return path[-1]
-        else:
-            if((len(labeldict[label]) != 0) and (max_depth == None or depth < max_depth)):
-                return zero_shot(text, labeldict[label], path, depth, max_depth)
-    except Exception as e:
-        print(e)
-        path.append(None)
-    return path[-1]
 
 def get_entities(text):
     doc = nlp(text)
@@ -185,8 +173,8 @@ def tag(documents, keep):
 
 
 # ### TEST ZONE
-# test = """Bitcoin hit 30.000$ last night! """
-# field = zero_shot(test, labels, max_depth=1)
+# test = ["""Bitcoin hit 30.000$ last night! """, "I like having a mojtio with my breakfast"]
+# field = zero_shot(test, labels, max_depth=1) ==> ['Economy and Finance', 'Lifestyle and Traditions']
 # print(field)
 
 
