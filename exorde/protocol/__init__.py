@@ -212,24 +212,13 @@ async def is_new_work_available(worker_address, DataSpotting) -> bool:
     return await DataSpotting.functions.IsNewWorkAvailable(worker_address).call()
 
 
-async def get_current_work(worker_address, DataSpotting) -> int:
+async def get_current_work(worker_address, DataSpotting) -> int:  # returns batch_id
     return await DataSpotting.functions.GetCurrentWork(worker_address).call()
 
 
 async def get_ipfs_hashes_for_batch(batch_id, DataSpotting) -> list:
+    """Return la list cid associe au batch_id"""
     return await DataSpotting.functions.getIPFShashesForBatch(batch_id).call()
-
-
-async def is_commit_period_active(batch_id, DataSpotting):
-    return await DataSpotting.functions.commitPeriodActive(batch_id).call()
-
-
-async def is_commit_period_over(batch_id, DataSpotting):
-    return await DataSpotting.functions.comitPeriodOver(batch_id).call()
-
-
-async def is_reveal_period_active(batch_id, DataSpotting):
-    return await DataSpotting.functions.revealPeriodActive(batch_id).call()
 
 
 async def is_worker_allocated_to_batch(batch_id, worker_address, DataSpotting):
@@ -242,26 +231,53 @@ async def did_commit(batch_id, worker_address, DataSpotting):
     return await DataSpotting.functions.didCommit(worker_address, batch_id).call()
 
 
-async def get_encrypted_string_hash(file_cid, random_seed, DataSpotting):
-    return await DataSpotting.functions.getEncryptedStringHash(
-        file_cid, random_seed
-    ).call()
+def random_seed():
+    return random.randint(0, 999999999)
 
 
-async def get_encrypted_hash(batch_result, random_seed, DataSpotting):
-    return await DataSpotting.functions.getEncryptedHash(
-        batch_result, random_seed
-    ).call()
+async def get_encrypted_string_hash(file_cid, seed, DataSpotting):
+    return await DataSpotting.functions.getEncryptedStringHash(file_cid, seed).call()
 
 
-async def commit_spot_check(batch_id, result, content, DataSpotting, memory):
+async def get_encrypted_hash(vote: int, seed, DataSpotting):
+    return await DataSpotting.functions.getEncryptedHash(vote, seed).call()
+
+
+async def commit_spot_check(
+    batch_id, file_cid, vote, batch_length: int, DataSpotting, memory
+):
+    seed = random_seed()
     encrypted_string_hash = await autofill(
-        get_encrypted_string_hash, args=[result], memory=memory
+        get_encrypted_string_hash, args=[file_cid, seed], memory=memory
     )
-    encrypted_hash = await autofill(get_encrypted_hash, args=[content], memory=memory)
-    return await DataSpotting.functions.commit_spot_check(
-        batch_id, encrypted_string_hash, encrypted_hash
+    encrypted_hash = await autofill(
+        get_encrypted_hash, args=[vote, seed], memory=memory
     )
+    return (
+        await DataSpotting.functions.commit_spot_check(
+            batch_id, encrypted_string_hash, encrypted_hash, batch_length, 1
+        ),
+        seed,
+    )
+
+
+# use the same random seed for commit and reveal
+
+
+async def is_commit_period_active(batch_id, DataSpotting):
+    return await DataSpotting.functions.commitPeriodActive(batch_id).call()
+
+
+async def is_commit_period_over(batch_id, DataSpotting):
+    return await DataSpotting.functions.commitPeriodOver(batch_id).call()
+
+
+async def is_reveal_period_active(batch_id, DataSpotting):
+    return await DataSpotting.functions.revealPeriodActive(batch_id).call()
+
+
+async def reveal_spot_check(batch_id, file_cid, vote, seed, DataSpotting):
+    return await DataSpotting.revealSpotCheck(batch_id, file_cid, vote, seed).call()
 
 
 async def remaining_commit_duration(batch_id, DataSpotting):
