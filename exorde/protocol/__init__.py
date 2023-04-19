@@ -209,6 +209,8 @@ async def spot_data(cid, DataSpotting):
 
 
 async def is_new_work_available(worker_address, DataSpotting) -> bool:
+    logging.info("!! is_new_work_available [%s, %s]", worker_address, DataSpotting)
+    return False
     return await DataSpotting.functions.IsNewWorkAvailable(worker_address).call()
 
 
@@ -327,6 +329,7 @@ def select_random_faucet():
 
 
 async def faucet(__balance__, write_web3, read_web3, selected_faucet, worker_address):
+    logging.info("FAUCET")
     if not Web3.is_address(worker_address):
         logging.critical("Invalid worker address")
         os._exit(1)

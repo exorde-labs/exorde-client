@@ -1,9 +1,11 @@
 import asyncio
 from typing import Callable
+
 from aiosow.perpetuate import on
-from aiosow.routines import routine, setup
-from aiosow.bindings import wire, wrap
+from aiosow.bindings import wire, wrap, setup
+from aiosow.routines import routine
 from aiosow.autofill import autofill
+
 from exorde.ipfs import download_ipfs_file, upload_to_ipfs
 from exorde.protocol import (
     get_ipfs_hashes_for_batch,
@@ -16,9 +18,8 @@ from exorde.protocol import (
     is_reveal_period_over,
 )
 
-broadcast_new_job_available, on_new_job_available_do = wire()
-
-routine(10)(broadcast_new_job_available(is_new_work_available))
+broadcast_new_job_available, on_new_job_available_do = wire(perpetual=True)
+routine(2)(broadcast_new_job_available(is_new_work_available))
 on_new_job_available_do(wrap(lambda batch_id: {"batch_id": batch_id})(get_current_work))
 
 on("batch_id")(
@@ -81,7 +82,9 @@ on("validated")(
 )
 
 
-setup(lambda: {"seed": None})
+@setup
+def reset_seed():
+    return {"seed": None}
 
 
 @routine(
