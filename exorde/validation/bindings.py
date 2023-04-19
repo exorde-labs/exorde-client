@@ -4,7 +4,6 @@ from aiosow.perpetuate import on
 from aiosow.routines import routine, setup
 from aiosow.bindings import wire, wrap
 from aiosow.autofill import autofill
-from web3.middleware import validation
 from exorde.ipfs import download_ipfs_file, upload_to_ipfs
 from exorde.protocol import (
     get_ipfs_hashes_for_batch,

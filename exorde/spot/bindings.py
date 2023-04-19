@@ -9,14 +9,14 @@ a88aaaa    dP. .dP .d8888b. 88d888b. .d888b88 .d8888b.
   Supported composition for EXD mining.
 """
 
-import logging, os
-from aiosow.bindings import setup, call_limit
+import logging
+from aiosow.bindings import setup, call_limit, wire
 from aiosow.perpetuate import on
+from aiosow.autofill import autofill
 
 from exorde.twitter.bindings import on_formated_tweet_do
 
-# from exorde.translation.bindings import on_translated_do, translate
-from exorde.xyake.bindings import on_keywords_extracted_do, populate_keywords
+from typing import Callable
 from exorde.ipfs.bindings import push_to_ipfs, on_new_cid_do
 from exorde.protocol.bindings import commit_current_cid
 from exorde.spot import (
@@ -29,21 +29,36 @@ from exorde.spot import (
 )
 
 
-@setup
-def print_pid():
-    logging.info("pid is %s", os.getpid())
+SPOTTING_PROCCESES: list[Callable] = []
 
 
-# setup the routine consumer
+def spotting(function: Callable):
+    SPOTTING_PROCCESES.append(function)
+    return function
+
+
 setup(reset_cids)
 
-## sources
 
-# on_formated_tweet_do(translate)
-# on_formated_tweet_do(populate_keywords)
-# on_translated_do(populate_keywords)
-# on_keywords_extracted_do(push_to_stack)
-on_formated_tweet_do(push_to_stack)
+spotting_ran_when, on_spotting_done_do = wire(perpetual=True)
+
+
+@on_formated_tweet_do
+@spotting_ran_when
+async def run_spotting(item: dict, memory):
+    for process in SPOTTING_PROCCESES:
+        item = await autofill(
+            process,
+            args=[
+                item,
+            ],
+            memory=memory,
+        )
+    return item
+
+
+on_spotting_done_do(push_to_stack)
+
 
 on("stack")(call_limit(1)(log_stack_len))
 on("stack")(consume_stack)
