@@ -1,4 +1,5 @@
 import asyncio
+from typing import Callable
 from aiosow.perpetuate import on
 from aiosow.routines import routine, setup
 from aiosow.bindings import wire, wrap
@@ -39,6 +40,20 @@ async def merge_validation_files(validation_files):
     return [entity for file in validation_files for entity in file["Content"]]
 
 
+VALIDATORS = []
+VALIDATORS_VOTES = []
+
+
+def validator(function: Callable):
+    VALIDATORS.append(function)
+    return function
+
+
+def validator_vote(function: Callable):
+    VALIDATORS_VOTES.append(function)
+    return function
+
+
 @wrap(
     lambda validated, vote, length: {
         "validated": validated,
@@ -46,8 +61,15 @@ async def merge_validation_files(validation_files):
         "length": length,
     }
 )
-def run_validation(items):
-    return (items, 1, len(items))
+async def run_validation(items, memory):
+    """Runs validators_vote AFTER validtors."""
+    result = items
+    for validator in VALIDATORS:
+        result = await autofill(validator, args=[result], memory=memory)
+    vote = 1  # by default without validtor in place, the vote is 1
+    for validator_vote in VALIDATORS_VOTES:
+        vote = validator_vote(items)
+    return (result, vote, len(result))
 
 
 on("validation_hashes")(wrap(lambda files: {"validation_files": files})(download_files))
