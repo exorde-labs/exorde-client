@@ -1,7 +1,7 @@
 import logging, os
 
 # from exorde.spot.bindings import spotting
-# from exorde.validation.bindings import validator, validator_vote
+from exorde.validation.bindings import validator, validator_vote
 from exorde.protocol import bindings as __bindings__
 
 # from exorde.translation.bindings import translate

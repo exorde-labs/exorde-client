@@ -1,5 +1,15 @@
 import logging
-from aiosow.bindings import setup, wrap, on, option, expect, chain, alias, until_success
+from aiosow.bindings import (
+    setup,
+    wrap,
+    on,
+    option,
+    expect,
+    chain,
+    alias,
+    until_success,
+    delay,
+)
 from aiosow.routines import routine
 
 from exorde.protocol import (
@@ -21,6 +31,7 @@ from exorde.protocol import (
     estimate_gas,
     faucet,
     log_current_rep,
+    register,
 )
 
 option("user_address", help="Ethereum wallet address", default=None)
@@ -36,7 +47,7 @@ setup(init_gas_cache)
 setup(check_provided_user_address)
 setup(wrap(lambda value: {"balance": value})(get_balance))
 alias("selected_faucet")(select_random_faucet)
-on("balance", condition=lambda value: value == 0)(until_success(faucet))
+on("balance", condition=lambda value: value == 0)(until_success(delay(1)(faucet)))
 # retrieve contracts and abi
 on("configuration")(contracts_and_abi_cnf)
 
@@ -54,6 +65,8 @@ push_new_transaction = wrap(lambda transaction: {"transaction": transaction})
 commit_current_cid = push_new_transaction(
     chain(spot_data, build_transaction, estimate_gas, sign_transaction)
 )
+
+setup(chain(register, build_transaction))
 
 on("transaction")(
     lambda transaction: logging.debug(f"Current transaction: {transaction}")

@@ -208,13 +208,18 @@ async def spot_data(cid, DataSpotting):
         logging.error("Error calling SpotData")
 
 
+def register(DataSpotting):
+    return DataSpotting.functions.RegisterWorker()
+
+
 async def is_new_work_available(worker_address, DataSpotting) -> bool:
-    logging.info("!! is_new_work_available [%s, %s]", worker_address, DataSpotting)
-    return False
-    return await DataSpotting.functions.IsNewWorkAvailable(worker_address).call()
+    result = await DataSpotting.functions.IsNewWorkAvailable(worker_address).call()
+    logging.debug("is_new_work_available => %s", result)
+    return result
 
 
 async def get_current_work(worker_address, DataSpotting) -> int:  # returns batch_id
+    logging.info("get_current_work [%s, %s]", worker_address, DataSpotting)
     return await DataSpotting.functions.GetCurrentWork(worker_address).call()
 
 
