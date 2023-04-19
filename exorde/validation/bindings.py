@@ -69,6 +69,8 @@ async def run_validation(items, memory):
     vote = 1  # by default without validtor in place, the vote is 1
     for validator_vote in VALIDATORS_VOTES:
         vote = validator_vote(items)
+        if vote == 0:
+            break
     return (result, vote, len(result))
 
 
@@ -84,7 +86,7 @@ setup(lambda: {"seed": None})
 
 
 @routine(
-    2, condition=lambda validation_cid, commited: commited == False and validation_cid
+    5, condition=lambda validation_cid, commited: commited == False and validation_cid
 )
 async def commit_validation(
     batch_id, validation_cid, vote, length, DataSpotting, memory
@@ -98,7 +100,7 @@ async def commit_validation(
         return {"validation_cid": None, "commited": False}
 
 
-@routine(2, condition=lambda seed: seed != None)
+@routine(5, condition=lambda seed: seed != None)
 async def reveal_spot_check(batch_id, validation_cid, vote, seed, DataSpotting):
     if is_reveal_period_active(batch_id, DataSpotting):
         await reveal_spot_check(batch_id, validation_cid, vote, seed, DataSpotting)
