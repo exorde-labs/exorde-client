@@ -61,7 +61,7 @@ def validator_vote(function: Callable):
     }
 )
 async def run_validation(items, memory):
-    """Runs validators_vote AFTER validtors."""
+    """Runs validators_vote AFTER validators."""
     result = items
     for validator in VALIDATORS:
         result = await autofill(validator, args=[result], memory=memory)
@@ -94,7 +94,7 @@ async def commit_validation(
         __transaction__, seed = await commit_spot_check(
             batch_id, validation_cid, vote, length, DataSpotting, memory
         )
-        return {"seed": seed}
+        return {"seed": seed, "commited": True}
     elif is_commit_period_over(batch_id, DataSpotting):
         return {"validation_cid": None, "commited": False}
 
