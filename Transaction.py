@@ -13,10 +13,52 @@ try:
 except Exception as e:
     print("w3 middleware error: ",e)
 
-default_gas_amount = 1_200_000
-gas_cap_min = 1_200_000
 
+last_timestamp_check = 0
+
+default_gas_amount = 2_000_000
+base_gas_price = 100_000 # 100000 wei or 0.0001
 default_gas_price = 100_000 # 100000 wei or 0.0001
+gas_cap_min_testnet = 0
+gas_cap_min_mainnet = 0
+
+
+def download_json(url, timeout=10):
+    try:
+        response = requests.get(url, timeout=timeout)
+        response.raise_for_status()
+        return json.loads(response.text)
+    except requests.exceptions.RequestException as e:
+        print(f"Error while downloading JSON: {e}")
+        return None
+
+def get_gas_caps():
+    global last_timestamp_check
+    global gas_cap_min_testnet
+    global gas_cap_min_mainnet
+    global default_gas_price
+    current_timestamp = time.time()
+
+    if current_timestamp - last_timestamp_check >= 3600:
+        if detailed_validation_printing_enabled:
+            print("Fetching latest GAS values...")
+        url = "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/transaction_params.json"
+        data = download_json(url)
+        if data:
+            gas_cap_min_testnet = int(data.get("gas_cap_min_testnet", default_gas_amount))
+            gas_cap_min_mainnet = int(data.get("gas_cap_min_mainnet", default_gas_amount))
+            gas_price_ = int(data.get("gas_price", base_gas_price))
+            if gas_price_ > 100_000 and gas_price_ < 1_000_000:
+                default_gas_price = gas_price_
+            last_timestamp_check = current_timestamp
+    else:
+        if detailed_validation_printing_enabled:
+            print("Fetching cached GAS values...")        
+    if gas_cap_min_testnet == 0 or gas_cap_min_mainnet == 0:
+        return default_gas_amount, default_gas_amount, base_gas_price
+    else:
+        return gas_cap_min_testnet, gas_cap_min_mainnet, default_gas_price
+    
 
 class ContractManager():
     
@@ -160,6 +202,12 @@ class TransactionManager():
     def SendTransactions(self):
         
         while True:
+            
+            # PARAMETERS UPDATE
+            
+            gas_cap_min_testnet, gas_cap_min_mainnet, default_gas_price  = get_gas_caps()
+
+            # ROUTINE
             if(self.waitingRoom_VIP.qsize() == 0 and self.waitingRoom.qsize() == 0):
                 time.sleep(3)
                 pass
@@ -203,7 +251,7 @@ class TransactionManager():
                                     gas = max(gas_cap_min, cached_used_gas)
 
                                 increment_tx[0]["gas"] = int(round(int(gas),0))
-                                increment_tx[0]["gasPrice"] = int(default_gas_price)
+                                increment_tx[0]["gasPrice"] = int(default_gas_price+3) # priority
 
                                 if detailed_validation_printing_enabled:
                                     print("[TRANSACTION MANAGER] Gas = ",increment_tx[0]["gas"])
