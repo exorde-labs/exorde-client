@@ -59,7 +59,6 @@ def validator_vote(function: Callable):
 
 async def run_validation(items, memory):
     """Runs validators_vote AFTER validators."""
-    print("RUN VALIDATION", items)
     result = items
     for validator in VALIDATORS:
         result = await autofill(validator, args=[result], memory=memory)
