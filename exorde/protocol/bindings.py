@@ -8,7 +8,6 @@ from aiosow.bindings import (
     chain,
     alias,
     until_success,
-    delay,
 )
 from aiosow.routines import routine
 
@@ -35,7 +34,7 @@ from exorde.protocol import (
 )
 
 option("user_address", help="Ethereum wallet address", default=None)
-routine(5 * 60)(log_current_rep)
+routine(20)(log_current_rep)
 # instanciate workers
 setup(
     wrap(lambda acct: {"worker_address": acct.address, "worker_key": acct.key})(
@@ -44,10 +43,15 @@ setup(
 )
 setup(configuration)
 setup(init_gas_cache)
-setup(check_provided_user_address)
+setup(
+    wrap(lambda is_valid: {"user_address_is_valid": is_valid})(
+        check_provided_user_address
+    )
+)
 setup(wrap(lambda value: {"balance": value})(get_balance))
 alias("selected_faucet")(select_random_faucet)
-on("balance", condition=lambda value: value == 0)(until_success(delay(1)(faucet)))
+setup(register)
+on("balance", condition=lambda value: value == 0)(until_success()(faucet))
 # retrieve contracts and abi
 on("configuration")(contracts_and_abi_cnf)
 
@@ -58,7 +62,7 @@ on("configuration")(read_web3)
 # instanciate contracts
 on("read_web3")(contracts)
 
-get_nonce = expect(read_web3, retries=2)(nonce)
+get_nonce = expect(read_web3)(nonce)
 alias("nonce")(get_nonce)
 
 push_new_transaction = wrap(lambda transaction: {"transaction": transaction})
@@ -66,7 +70,6 @@ commit_current_cid = push_new_transaction(
     chain(spot_data, build_transaction, estimate_gas, sign_transaction)
 )
 
-setup(chain(register, build_transaction))
 
 on("transaction")(
     lambda transaction: logging.debug(f"Current transaction: {transaction}")

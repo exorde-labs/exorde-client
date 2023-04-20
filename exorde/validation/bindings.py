@@ -1,4 +1,4 @@
-import asyncio
+import asyncio, logging
 from typing import Callable
 
 from aiosow.perpetuate import on
@@ -9,8 +9,7 @@ from aiosow.autofill import autofill
 from exorde.ipfs import download_ipfs_file, upload_to_ipfs
 from exorde.protocol import (
     get_ipfs_hashes_for_batch,
-    is_new_work_available,
-    get_current_work,
+    get_current_work as get_current_work_implementation,
     commit_spot_check,
     is_commit_period_active,
     is_commit_period_over,
@@ -18,11 +17,13 @@ from exorde.protocol import (
     is_reveal_period_over,
 )
 
-broadcast_new_job_available, on_new_job_available_do = wire(perpetual=True)
-routine(2)(broadcast_new_job_available(is_new_work_available))
-on_new_job_available_do(wrap(lambda batch_id: {"batch_id": batch_id})(get_current_work))
+get_current_work = wrap(lambda batch_id: {"batch_id": batch_id})(
+    get_current_work_implementation
+)
 
-on("batch_id")(
+setup(lambda: {"batch_id": 0})
+routine(2, condition=lambda batch_id: not batch_id)(get_current_work)
+on("batch_id", condition=lambda batch_id: int(batch_id))(
     wrap(lambda hashes: {"validation_hashes": hashes})(get_ipfs_hashes_for_batch)
 )
 
@@ -32,12 +33,14 @@ async def download_files(hashes, memory):
         autofill(download_ipfs_file, args=[hash], memory=memory) for hash in hashes
     ]
     files = await asyncio.gather(*tasks)
-    return files
+    return [file for file in files if file]
 
 
 @wrap(lambda result: {"merged_validation_file": result})
 async def merge_validation_files(validation_files):
-    return [entity for file in validation_files for entity in file["Content"]]
+    return {
+        "Content": [entity for file in validation_files for entity in file["Content"]]
+    }
 
 
 VALIDATORS = []
@@ -54,15 +57,9 @@ def validator_vote(function: Callable):
     return function
 
 
-@wrap(
-    lambda validated, vote, length: {
-        "validated": validated,
-        "vote": vote,
-        "length": length,
-    }
-)
 async def run_validation(items, memory):
     """Runs validators_vote AFTER validators."""
+    print("RUN VALIDATION", items)
     result = items
     for validator in VALIDATORS:
         result = await autofill(validator, args=[result], memory=memory)
@@ -71,14 +68,16 @@ async def run_validation(items, memory):
         vote = validator_vote(items)
         if vote == 0:
             break
-    return (result, vote, len(result))
+    return {"validated": result, "vote": vote, "length": len(result)}
 
 
 on("validation_hashes")(wrap(lambda files: {"validation_files": files})(download_files))
 on("validation_files")(merge_validation_files)
 on("merged_validation_file")(run_validation)
 on("validated")(
-    wrap(lambda cid: {"validation_cid": cid, "commited": False})(upload_to_ipfs)
+    wrap(lambda cid: {"validation_cid": cid, "commited": False, "batch_id": 0})(
+        upload_to_ipfs
+    )
 )
 
 

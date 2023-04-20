@@ -11,7 +11,6 @@ from exorde.ipfs import (
 # setup an aiohttp session for ipfs upload
 setup(wrap(lambda session: {"session": session})(create_session))
 setup(wrap(lambda schema: {"ipfs_schema": schema})(load_json_schema))
-alias("ipfs_path")(lambda: "http://ipfs-api.exorde.network/add")
 
 
 def spot_block(entities):
