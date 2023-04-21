@@ -12,7 +12,7 @@ async def launch_browser():
             "--remote-debugging-port=9222",
         ]
     )
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(0.5)
 
 
 @alias("page_websocket_url")

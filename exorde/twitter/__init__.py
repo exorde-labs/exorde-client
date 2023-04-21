@@ -1,8 +1,8 @@
 from dateutil import parser
 
 
-def generate_twitter_url() -> str:
-    return "https://twitter.com/search?q=BTC&src=typed_query&f=live"
+def generate_twitter_url(keyword) -> str:
+    return f"https://twitter.com/search?q={keyword}&src=typed_query&f=live"
 
 
 twitter_to_exorde_format = lambda data: {
