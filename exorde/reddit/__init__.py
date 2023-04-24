@@ -22,7 +22,6 @@ async def generate_reddit_url(keyword):
                 if not "/r/popular" in url
             ]
             result = f"https://www.reddit.com{random.choice(urls)}"
-            print(result)
             return result
 
 
