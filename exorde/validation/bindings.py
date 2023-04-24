@@ -21,7 +21,12 @@ get_current_work = wrap(lambda batch_id: {"batch_id": batch_id})(
     get_current_work_implementation
 )
 
-setup(lambda: {"batch_id": 0})
+
+@setup
+def reset_batch_id():
+    return {"batch_id": 0}
+
+
 routine(2, condition=lambda batch_id: not batch_id)(get_current_work)
 on("batch_id", condition=lambda batch_id: int(batch_id))(
     wrap(lambda hashes: {"validation_hashes": hashes})(get_ipfs_hashes_for_batch)

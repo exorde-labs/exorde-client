@@ -1,4 +1,4 @@
-from aiosow.bindings import setup, alias, wrap, wire
+from aiosow.bindings import setup, wrap, wire
 
 from exorde.ipfs import (
     load_json_schema,
