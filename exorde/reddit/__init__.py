@@ -21,7 +21,7 @@ async def generate_reddit_url(keyword):
                 for url in tree.xpath('//a[contains(@href, "/r/")]//@href')
                 if not "/r/popular" in url
             ]
-            result = f"https://www.reddit.com{random.choice(urls)}/new"
+            result = f"https://old.reddit.com{random.choice(urls)}/new"
             return result
 
 
