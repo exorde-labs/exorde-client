@@ -1,14 +1,13 @@
 from aiosow.bindings import setup, alias
 import aiohttp, random
+from dateutil import parser
 from lxml import html
 
 
-@setup
 def set_keyword():
     return {"keyword": "BTC"}
 
 
-@setup
 async def generate_reddit_url(keyword):
     async with aiohttp.ClientSession() as session:
         async with session.get(
@@ -21,7 +20,7 @@ async def generate_reddit_url(keyword):
                 for url in tree.xpath('//a[contains(@href, "/r/")]//@href')
                 if not "/r/popular" in url
             ]
-            result = f"https://old.reddit.com{random.choice(urls)}/new"
+            result = f"https://old.reddit.com{random.choice(urls)}new"
             return result
 
 
@@ -30,3 +29,46 @@ async def scrap_reddit_url(reddit_url):
         async with session.get(reddit_url) as response:
             html_content = await response.text()
             tree = html.fromstring(html_content)
+            posts = tree.xpath("//div[contains(@class, 'entry')]")
+            organized = []
+            for post in posts:
+                title = post.xpath("div/p/a")[0].text
+                url = post.xpath("div/p/a")[0].get("href")
+                username = post.xpath("div/p/a")[1].text
+                time = post.xpath("div/p/time")[0].get("datetime")
+                try:
+                    comments = int(post.xpath("div/ul/li/a")[0].text.split(" ")[0])
+                except:
+                    comments = 0
+                organized.append(
+                    {
+                        "entities": [],
+                        "item": {
+                            "Author": username,
+                            "Content": title,
+                            "Controversial": False,
+                            "CreationDateTime": parser.parse(time).isoformat(),
+                            "Description": "",
+                            "DomainName": "twitter.com",
+                            "Language": "en",
+                            "Reference": "",
+                            "Title": "",
+                            "Url": url,
+                            "internal_id": None,
+                            "internal_parent_id": None,
+                            "mediaType": "",
+                            # "source": data['source'], # new
+                            # "nbQuotes": data['quote_count'], # new
+                            "nbComments": comments,
+                            "nbLiked": 0,
+                            "nbShared": 0,
+                            # "isQuote": data['is_quote_status'] # new
+                        },
+                        "keyword": "",
+                        "links": [],
+                        "medias": [],
+                        "spotterCountry": "",
+                        "tokenOfInterest": [],
+                    }
+                )
+            return organized
