@@ -12,8 +12,6 @@ option(
     default="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36",
     help="User-Agent used by playwright",
 )
-option("tabs", default=1, help="Amount of tabs open")
-option("tab_lifetime", default=120, help="Lifetime of open tabs in seconds")
 
 
 @setup
@@ -49,7 +47,7 @@ option(
     "no_spotting",
     action="store_true",
     default=False,
-    help="Wether it should run spotting",
+    help="Won't run spotting",
 )
 
 
@@ -79,7 +77,7 @@ option(
     "no_validation",
     action="store_true",
     default=False,
-    help="Wether it should run validation",
+    help="Won't run validation",
 )
 
 

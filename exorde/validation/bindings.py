@@ -1,8 +1,8 @@
-import asyncio, logging
+import asyncio
 from typing import Callable
 
 from aiosow.perpetuate import on
-from aiosow.bindings import wire, wrap, setup
+from aiosow.bindings import wrap, setup
 from aiosow.routines import routine
 from aiosow.autofill import autofill
 
