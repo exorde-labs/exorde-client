@@ -84,7 +84,7 @@ class TokenAndPositionEmbedding(tf.keras.layers.Layer):
 #     - Spotting
 #     - Zero-shot classification
 #     - Freshness test (does the item has been posted less thant 5 minutes ago ?)
-def zero_shot(texts, labeldict, path = None, depth = 0, max_depth = None):   
+def zero_shot(texts, labeldict, max_depth = None, depth = 0):   
     
     """
         Perform zero-shot classification on the input text using a pre-trained language model.
@@ -103,7 +103,27 @@ def zero_shot(texts, labeldict, path = None, depth = 0, max_depth = None):
     keys = list(labeldict.keys())
     output=classifier(texts, keys, multi_label=False, max_length=32)
     labels = [output[x]["labels"][0] for x in range(len(output))]
-    return labels
+    depth += 1
+    if(depth == max_depth):
+        _labels = labels
+        return labels
+    else:
+        _labels = dict()
+        for lab in labels:
+            keys = list(labeldict[lab].keys())
+            output=classifier(texts, keys, multi_label=False, max_length=32)
+            _out = list()
+            for i in range(len(output)):
+                
+                scores = [(x, y) for x, y in zip(output[i]["labels"], output[i]["scores"])]
+                _out.append(scores)
+
+            # _labs = [output[x]["labels"] for x in range(len(output))]
+            # _scores = [output[x]["scores"] for x in range(len(output))]
+            
+            print(_out)
+            _labels[lab] = _out
+    return _labels
 
 def preprocess_text(text: str, remove_stopwords: bool) -> str:
     """This utility function sanitizes a string by:
@@ -200,7 +220,7 @@ def tag(documents, keep):
 
 
 # ### TEST ZONE
-# test = ["""Bitcoin hit 30.000$ last night! """, "I like having a mojtio with my breakfast"]
+# test = ["""Bitcoin hit 30.000$ last night! """, "I like having a mojito with my breakfast"]
 # field = zero_shot(test, labels, max_depth=1) ==> ['Economy and Finance', 'Lifestyle and Traditions']
 # print(field)
 
