@@ -121,7 +121,6 @@ def zero_shot(texts, labeldict, max_depth = None, depth = 0):
             # _labs = [output[x]["labels"] for x in range(len(output))]
             # _scores = [output[x]["scores"] for x in range(len(output))]
             
-            print(_out)
             _labels[lab] = _out
     return _labels
 
