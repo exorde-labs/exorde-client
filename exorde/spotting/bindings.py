@@ -8,7 +8,7 @@ from exorde.formated import on_formated_data_do
 from typing import Callable
 from exorde.ipfs.bindings import push_to_ipfs, on_new_cid_do
 from exorde.protocol.bindings import commit_current_cid
-from exorde.spot import (
+from exorde.spotting import (
     push_to_stack,
     log_stack_len,
     consume_stack,
