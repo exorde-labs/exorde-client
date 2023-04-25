@@ -1,11 +1,6 @@
-from aiosow.bindings import setup, alias
 import aiohttp, random
 from dateutil import parser
 from lxml import html
-
-
-def set_keyword():
-    return {"keyword": "BTC"}
 
 
 async def generate_reddit_url(keyword):
@@ -30,7 +25,6 @@ async def scrap_reddit_url(reddit_url):
             html_content = await response.text()
             tree = html.fromstring(html_content)
             posts = tree.xpath("//div[contains(@class, 'entry')]")
-            organized = []
             for post in posts:
                 title = post.xpath("div/p/a")[0].text
                 url = post.xpath("div/p/a")[0].get("href")
@@ -40,7 +34,7 @@ async def scrap_reddit_url(reddit_url):
                     comments = int(post.xpath("div/ul/li/a")[0].text.split(" ")[0])
                 except:
                     comments = 0
-                organized.append(
+                yield (
                     {
                         "entities": [],
                         "item": {
@@ -71,4 +65,3 @@ async def scrap_reddit_url(reddit_url):
                         "tokenOfInterest": [],
                     }
                 )
-            return organized

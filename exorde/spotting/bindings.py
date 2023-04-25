@@ -1,20 +1,9 @@
-"""
-88888888b                                  dP
-88                                         88
-a88aaaa    dP. .dP .d8888b. 88d888b. .d888b88 .d8888b.
-88         `8bd8'  88'  `88 88'  `88 88'  `88 88ooood8 '
-88         .d88b.  88.  .88 88       88.  .88 88.  ...
-88888888P dP'  `dP `88888P' dP       `88888P8 `88888P'  S
-  
-  Supported composition for EXD mining.
-"""
-
 import logging
 from aiosow.bindings import setup, call_limit, wire
 from aiosow.perpetuate import on
 from aiosow.autofill import autofill
 
-from exorde.twitter.bindings import on_formated_tweet_do
+from exorde.formated import on_formated_data_do
 
 from typing import Callable
 from exorde.ipfs.bindings import push_to_ipfs, on_new_cid_do
@@ -43,7 +32,7 @@ setup(reset_cids)
 spotting_ran_when, on_spotting_done_do = wire(perpetual=True)
 
 
-@on_formated_tweet_do
+@on_formated_data_do
 @spotting_ran_when
 async def run_spotting(item: dict, memory):
     for process in SPOTTING_PROCCESES:

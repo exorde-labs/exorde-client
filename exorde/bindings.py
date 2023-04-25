@@ -1,3 +1,15 @@
+"""
+--------------------------------------------------------
+88888888b                                  dP
+88                                         88
+a88aaaa    dP. .dP .d8888b. 88d888b. .d888b88 .d8888b.
+88         `8bd8'  88'  `88 88'  `88 88'  `88 88ooood8 '
+88         .d88b.  88.  .88 88       88.  .88 88.  ...
+88888888P dP'  `dP `88888P' dP       `88888P8 `88888P'  S
+--------------composition for EXD mining-----------------
+"""
+
+
 import logging, os, random, aiohttp
 from aiosow.bindings import setup, wrap, alias, option
 
@@ -60,7 +72,7 @@ option(
 @setup
 def init_spotting(no_spotting):
     if not no_spotting:
-        from exorde.spot.bindings import spotting
+        from exorde.spotting.bindings import spotting
         from exorde.translation.bindings import translate
         from exorde.xyake.bindings import populate_keywords
 
@@ -94,10 +106,12 @@ def init_validation(no_validation):
         from exorde.protocol import bindings as __bindings__
 
         # equivalent to `validator(filter_something)`
-        @validator
         def filter_something(items):
             return items
 
-        @validator_vote
-        def vote_something(items):
+        validator(filter_something)
+
+        def vote_something(__items__):
             return 1
+
+        validator_vote(vote_something)

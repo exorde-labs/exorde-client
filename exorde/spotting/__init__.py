@@ -4,9 +4,6 @@ import logging
 from collections import deque
 from datetime import datetime, timedelta, timezone
 
-# 2. on('stack', condition: lambda stack: len(stack) >= 100)
-# 3. build transaction & push to transaction manager
-
 
 def push_to_stack(value, stack):
     if datetime.fromisoformat(value["item"]["CreationDateTime"]) - datetime.now(
