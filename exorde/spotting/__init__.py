@@ -5,19 +5,19 @@ from collections import deque
 from datetime import datetime, timedelta, timezone
 
 
+def init_stack():
+    return {"stack": deque(maxlen=100)}
+
+
 def push_to_stack(value, stack):
     if datetime.fromisoformat(value["item"]["CreationDateTime"]) - datetime.now(
         timezone.utc
     ) > timedelta(seconds=180):
         return {}
-    if stack and value not in stack:
+    if value not in stack:
         stack.append(value)
         # technicaly the stack is already updated here
         # we return to trigger the ONS events
-        return {"stack": stack}
-    elif not stack:
-        stack = deque(maxlen=100)
-        stack.append(value)
         return {"stack": stack}
     else:
         # if we had keyword we could weight in the duplicates in keyword choice
