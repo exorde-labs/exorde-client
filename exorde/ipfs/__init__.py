@@ -1,4 +1,4 @@
-import os, json, jsonschema, itertools, logging, aiohttp, sys
+import os, json, jsonschema, itertools, logging, aiohttp
 from aiohttp import ClientSession
 
 
@@ -26,9 +26,9 @@ async def upload_to_ipfs(value, ipfs_path="http://ipfs-api.exorde.network/add"):
                 return response
             else:
                 content = await resp.text()
-                raise Exception(
-                    f"Failed to upload to IPFS ({resp.status}) -> {content}"
-                )
+                logging.error(json.dumps(value))
+                logging.error(json.dumps(content, indent=4))
+                raise Exception(f"Failed to upload to IPFS ({resp.status})")
 
 
 async def validate_batch_schema(value, ipfs_schema):
