@@ -15,21 +15,28 @@ from aiosow.bindings import setup, wrap, alias, option
 from aiosow.routines import routine
 
 option(
-    "no_headless",
+    "--no_headless",
     action="store_true",
     default=False,
     help="Wether it should run in headless mode",
 )
 option(
-    "user_agent",
+    "--user_agent",
     default="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36",
     help="User-Agent used",
 )
-option("tabs", default=1, help="Amount of tabs open")
-option("tab_lifetime", default=60, help="Time passed on each page")
+option("--tabs", default=1, help="Amount of tabs open")
+option("--tab_lifetime", default=60, help="Time passed on each page")
 
-option("twitter_username", default=None, help="Twitter username")
-option("twitter_password", default=None, help="Twitter password")
+option("--twitter_username", default=None, help="Twitter username")
+option("--twitter_password", default=None, help="Twitter password")
+
+option(
+    "-m",
+    "--main-address",
+    help="Main Ethereum Address, which will get all REP & EXDT for this local worker contribution. Exorde Reputation is non-transferable. Correct usage example: -m 0x0F67059ea5c125104E46B46769184dB6DC405C42",
+    required=True,
+)
 
 
 @setup
@@ -75,7 +82,7 @@ Spotting processes are expressed as functions that take and return 1 item
 """
 
 option(
-    "no_spotting",
+    "--no_spotting",
     action="store_true",
     default=False,
     help="Won't run spotting",
@@ -85,7 +92,10 @@ SOURCES = ("reddit", "twitter")
 
 for source in SOURCES:
     option(
-        f"no_{source}", action="store_true", default=False, help=f"Won't scrap {source}"
+        f"--no_{source}",
+        action="store_true",
+        default=False,
+        help=f"Won't scrap {source}",
     )
 
 
@@ -116,7 +126,7 @@ the batch, the vote fails and the batch is not accepted.
 """
 
 option(
-    "no_validation",
+    "--no_validation",
     action="store_true",
     default=False,
     help="Won't run validation",
