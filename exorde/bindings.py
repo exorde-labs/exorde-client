@@ -11,7 +11,7 @@ a88aaaa    dP. .dP .d8888b. 88d888b. .d888b88 .d8888b.
 
 
 import logging, os, random, aiohttp, importlib
-from aiosow.bindings import setup, wrap, alias, option
+from aiosow.bindings import setup, wrap, alias, option, on
 from aiosow.routines import routine
 
 option(
@@ -69,6 +69,9 @@ async def fetch_runtime_configuration():
             "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/runtime.json"
         ) as response:
             return await response.json()
+
+
+on("remote_kill")(lambda: sys.exit())
 
 
 @setup
