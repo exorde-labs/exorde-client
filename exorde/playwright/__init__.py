@@ -8,8 +8,8 @@ element identifier and can be accessed trough an index (l[index]) ;
 identifying and updating a single element is a chore, this is because our
 find function which is used in oversight etc... doesn't integrate these.
 """
-
-import random
+from pathlib import Path
+import random, os, json
 import logging
 
 from playwright_stealth import stealth_async
@@ -26,10 +26,16 @@ async def setup_playwright(
     """Initialize Playwright and install it if required"""
     logging.debug("setup playwright")
     cookies = None
+    cookiefile = os.path.join(
+        Path(os.path.expanduser("~")).resolve(), ".config", "exorde", "cookies.json"
+    )
     if playwright:
         for page in pages:
             await pages[page]["page"].close()
         cookies = await context.cookies()
+        with open(cookiefile, "w") as f:
+            json.dump(cookies, f)
+
         await context.close()
         await browser.close()
         await playwright.stop()
@@ -37,6 +43,12 @@ async def setup_playwright(
     subprocess.run(["playwright", "install", "chromium"])
     browser = await pwright.chromium.launch(headless=not no_headless)
     context = await browser.new_context(user_agent=user_agent)
+    if not cookies:
+        try:
+            with open(cookiefile, "r") as f:
+                cookies = json.load(f)
+        except:
+            pass
     if cookies:
         await context.add_cookies(cookies)
     return {
