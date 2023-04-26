@@ -3,7 +3,6 @@ from aiosow.bindings import (
     setup,
     wrap,
     on,
-    option,
     expect,
     chain,
     alias,
@@ -33,7 +32,6 @@ from exorde.protocol import (
     register,
 )
 
-option("user_address", help="Ethereum wallet address", default=None)
 routine(20)(log_current_rep)
 # instanciate workers
 setup(
@@ -43,11 +41,7 @@ setup(
 )
 setup(configuration)
 setup(init_gas_cache)
-setup(
-    wrap(lambda is_valid: {"user_address_is_valid": is_valid})(
-        check_provided_user_address
-    )
-)
+
 setup(wrap(lambda value: {"balance": value})(get_balance))
 alias("selected_faucet")(select_random_faucet)
 setup(register)
