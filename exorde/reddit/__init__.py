@@ -28,6 +28,7 @@ async def scrap_reddit_url(reddit_url):
             for post in posts:
                 title = post.xpath("div/p/a")[0].text
                 url = post.xpath("div/p/a")[0].get("href")
+                url = f"https://reddit.com{url}" if url[0] == "/" else url
                 username = post.xpath("div/p/a")[1].text
                 time = post.xpath("div/p/time")[0].get("datetime")
                 try:
@@ -46,15 +47,15 @@ async def scrap_reddit_url(reddit_url):
                         "Language": "en",
                         "Reference": "",
                         "Title": title,
-                        "Url": f"https://reddit.com{url}" if url[0] == "/" else url,
-                        "internal_id": None,
+                        "Url": url,
+                        "internal_id": url,
                         "internal_parent_id": None,
                         "mediaType": "",
                         # "source": data['source'], # new
                         # "nbQuotes": data['quote_count'], # new
                         "nbComments": comments,
-                        "nbLiked": "0",
-                        "nbShared": "0",
+                        "nbLiked": 0,
+                        "nbShared": 0,
                         # "isQuote": data['is_quote_status'] # new
                     },
                     "keyword": "",

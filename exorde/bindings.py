@@ -25,6 +25,10 @@ option(
     help="User-Agent used",
 )
 option("tabs", default=1, help="Amount of tabs open")
+option("tab_lifetime", default=60, help="Time passed on each page")
+
+option("twitter_username", default=None, help="Twitter username")
+option("twitter_password", default=None, help="Twitter password")
 
 
 @setup

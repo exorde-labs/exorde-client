@@ -1,4 +1,4 @@
-import os, json, jsonschema, itertools, logging, aiohttp
+import os, json, jsonschema, itertools, logging, aiohttp, sys
 from aiohttp import ClientSession
 
 

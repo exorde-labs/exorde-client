@@ -41,12 +41,9 @@ async def behaved_typing(input, content, behavior):
         await asyncio.sleep(behavior())
 
 
-option("twitter_username", default=None, help="Twitter username")
-option("twitter_password", default=None, help="Twitter password")
-
-
 async def authenticate_twitter(page, twitter_username, twitter_password):
     logging.info("authenticating with twitter")
+    print(twitter_username, twitter_password)
     email_input = page.locator(
         '//*[@id="layers"]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div/div/div/div[5]/label/div/div[2]/div/input'
     )
