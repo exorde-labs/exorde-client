@@ -25,9 +25,11 @@ async def setup_playwright(
 ):
     """Initialize Playwright and install it if required"""
     logging.debug("setup playwright")
+    cookies = None
     if playwright:
         for page in pages:
             await pages[page]["page"].close()
+        cookies = await context.cookies()
         await context.close()
         await browser.close()
         await playwright.stop()
@@ -35,6 +37,8 @@ async def setup_playwright(
     subprocess.run(["playwright", "install", "chromium"])
     browser = await pwright.chromium.launch(headless=not no_headless)
     context = await browser.new_context(user_agent=user_agent)
+    if cookies:
+        await context.add_cookies(cookies)
     return {
         "playwright": pwright,
         "browser": browser,
