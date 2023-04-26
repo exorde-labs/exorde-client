@@ -1,4 +1,4 @@
-import os, json, jsonschema, itertools, logging
+import os, json, jsonschema, itertools, logging, aiohttp
 from aiohttp import ClientSession
 
 
@@ -13,9 +13,6 @@ async def load_json_schema():
         return json.load(f)
 
 
-import aiohttp
-
-
 async def upload_to_ipfs(value, ipfs_path="http://ipfs-api.exorde.network/add"):
     async with aiohttp.ClientSession() as session:
         async with session.post(
@@ -24,6 +21,7 @@ async def upload_to_ipfs(value, ipfs_path="http://ipfs-api.exorde.network/add"):
             headers={"Content-Type": "application/json"},
         ) as resp:
             if resp.status == 200:
+                logging.debug("Upload to ipfs succeeded")
                 response = await resp.json()
                 return response
             else:

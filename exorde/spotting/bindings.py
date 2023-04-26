@@ -9,6 +9,7 @@ from typing import Callable
 from exorde.ipfs.bindings import push_to_ipfs, on_new_cid_do
 from exorde.protocol.bindings import commit_current_cid
 from exorde.spotting import (
+    init_stack,
     push_to_stack,
     log_stack_len,
     consume_stack,
@@ -26,6 +27,7 @@ def spotting(function: Callable):
     return function
 
 
+setup(init_stack)
 setup(reset_cids)
 
 

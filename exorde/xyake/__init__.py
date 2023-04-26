@@ -43,7 +43,7 @@ def populate_keywords(item):
             # combine both list without potential duplicates
             yake_keywords.extend(x for x in keywords_set_2 if x not in yake_keywords)
             # set tokenOfInterests to this list
-            item["tokenOfInterests"] = set(yake_keywords)
+            item["tokenOfInterest"] = list(set(yake_keywords))
         except:
             logging.error(f"Could not extract keywords for item {item}")
     return item

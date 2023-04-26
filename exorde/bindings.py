@@ -10,7 +10,7 @@ a88aaaa    dP. .dP .d8888b. 88d888b. .d888b88 .d8888b.
 """
 
 
-import logging, os, random, aiohttp
+import logging, os, random, aiohttp, importlib
 from aiosow.bindings import setup, wrap, alias, option
 
 option(
@@ -22,7 +22,7 @@ option(
 option(
     "user_agent",
     default="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36",
-    help="User-Agent used by playwright",
+    help="User-Agent used",
 )
 option("tabs", default=1, help="Amount of tabs open")
 
@@ -68,13 +68,24 @@ option(
     help="Won't run spotting",
 )
 
+SOURCES = ("reddit", "twitter")
+
+for source in SOURCES:
+    option(
+        f"no_{source}", action="store_true", default=False, help=f"Won't scrap {source}"
+    )
+
 
 @setup
-def init_spotting(no_spotting):
+def init_spotting(no_spotting, memory):
     if not no_spotting:
         from exorde.spotting.bindings import spotting
         from exorde.translation.bindings import translate
         from exorde.xyake.bindings import populate_keywords
+
+        for source in SOURCES:
+            if not memory[f"no_{source}"]:
+                importlib.import_module(f"exorde.{source}.bindings")
 
         spotting(translate)
         spotting(populate_keywords)

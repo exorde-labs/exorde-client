@@ -7,4 +7,4 @@ alias("reddit_url")(generate_reddit_url)
 setup(scrap_reddit_url)
 
 get_reddit_post = infinite_generator(lambda: True)(scrap_reddit_url)
-routine(1)(broadcast_formated_when(get_reddit_post))
+routine(0.2, perpetuate=False)(broadcast_formated_when(get_reddit_post))

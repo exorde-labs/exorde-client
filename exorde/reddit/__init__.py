@@ -34,34 +34,32 @@ async def scrap_reddit_url(reddit_url):
                     comments = int(post.xpath("div/ul/li/a")[0].text.split(" ")[0])
                 except:
                     comments = 0
-                yield (
-                    {
-                        "entities": [],
-                        "item": {
-                            "Author": username,
-                            "Content": title,
-                            "Controversial": False,
-                            "CreationDateTime": parser.parse(time).isoformat(),
-                            "Description": "",
-                            "DomainName": "twitter.com",
-                            "Language": "en",
-                            "Reference": "",
-                            "Title": "",
-                            "Url": url,
-                            "internal_id": None,
-                            "internal_parent_id": None,
-                            "mediaType": "",
-                            # "source": data['source'], # new
-                            # "nbQuotes": data['quote_count'], # new
-                            "nbComments": comments,
-                            "nbLiked": 0,
-                            "nbShared": 0,
-                            # "isQuote": data['is_quote_status'] # new
-                        },
-                        "keyword": "",
-                        "links": [],
-                        "medias": [],
-                        "spotterCountry": "",
-                        "tokenOfInterest": [],
-                    }
-                )
+                yield {
+                    "entities": [],
+                    "item": {
+                        "Author": username,
+                        "Content": "",
+                        "Controversial": False,
+                        "CreationDateTime": parser.parse(time).isoformat(),
+                        "Description": "",
+                        "DomainName": "reddit.com",
+                        "Language": "en",
+                        "Reference": "",
+                        "Title": title,
+                        "Url": f"https://reddit.com{url}" if url[0] == "/" else url,
+                        "internal_id": None,
+                        "internal_parent_id": None,
+                        "mediaType": "",
+                        # "source": data['source'], # new
+                        # "nbQuotes": data['quote_count'], # new
+                        "nbComments": comments,
+                        "nbLiked": "0",
+                        "nbShared": "0",
+                        # "isQuote": data['is_quote_status'] # new
+                    },
+                    "keyword": "",
+                    "links": [],
+                    "medias": [],
+                    "spotterCountry": "",
+                    "tokenOfInterest": [],
+                }
