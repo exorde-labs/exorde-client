@@ -10,7 +10,7 @@ a88aaaa    dP. .dP .d8888b. 88d888b. .d888b88 .d8888b.
 """
 
 
-import logging, os, random, aiohttp, importlib
+import logging, os, random, aiohttp, importlib, json
 from aiosow.bindings import setup, wrap, alias, option, on
 from aiosow.routines import routine
 
@@ -35,7 +35,7 @@ option(
     "-m",
     "--main_address",
     help="Main Ethereum Address, which will get all REP & EXDT for this local worker contribution. Exorde Reputation is non-transferable. Correct usage example: -m 0x0F67059ea5c125104E46B46769184dB6DC405C42",
-    required=True,
+    required=False,
 )
 option(
     "--no_main_address",
@@ -51,8 +51,8 @@ import sys
 @setup
 def check_user_address(main_address, no_main_address):
     if not no_main_address:
-        if not check_erc_address_validity(main_address):
-            logging.error("Valid main-address is mandatory")
+        if not main_address and not check_erc_address_validity(main_address):
+            logging.info("Valid main-address is mandatory")
             sys.exit()
 
 
@@ -68,10 +68,18 @@ async def fetch_runtime_configuration():
         async with session.get(
             "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/runtime.json"
         ) as response:
-            return await response.json()
+            response = await response.text()
+            return json.loads(response)
 
 
-on("remote_kill")(lambda: sys.exit())
+def exit_like_a_gentlmen():
+    logging.info(
+        "We would like to inform you that the Exorde protocol is SHUTTING DOWN !"
+    )
+    sys.exit()
+
+
+on("remote_kill", condition=lambda online: online)(exit_like_a_gentlmen)
 
 
 @setup
@@ -157,6 +165,10 @@ option(
 
 @setup
 def init_validation(no_validation, remote_kill):
+    print("no_validation >", not no_validation)
+    print("remote_kill >", not remote_kill)
     if not no_validation and not remote_kill:
         from exorde.validation import validators as __validators__
         from exorde.protocol import bindings as __bindings__
+
+        print("yooo")
