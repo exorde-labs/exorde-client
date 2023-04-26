@@ -163,16 +163,6 @@ def check_erc_address_validity(erc_address):
     return Web3.is_address(erc_address)
 
 
-# erc_address = Web3.to_checksum_address(erc_address)
-def check_provided_user_address(user_address):
-    if not check_erc_address_validity(user_address):
-        logging.critical("Invalid user address")
-        return False
-    else:
-        logging.info("User address %s is valid : %s", user_address)
-        return True
-
-
 async def send_raw_transaction(transaction, write_web3, read_web3, worker_address):
     try:
         previous_nonce = await read_web3.eth.get_transaction_count(worker_address)

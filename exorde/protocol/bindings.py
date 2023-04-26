@@ -1,4 +1,4 @@
-import logging
+import logging, sys
 from aiosow.bindings import (
     setup,
     wrap,
@@ -11,7 +11,7 @@ from aiosow.bindings import (
 from aiosow.routines import routine
 
 from exorde.protocol import (
-    check_provided_user_address,
+    check_erc_address_validity,
     get_balance,
     select_random_faucet,
     sign_transaction,
@@ -31,6 +31,15 @@ from exorde.protocol import (
     log_current_rep,
     register,
 )
+
+
+@setup
+def check_user_address(main_address, no_main_address):
+    if not no_main_address:
+        if not main_address and not check_erc_address_validity(main_address):
+            logging.info("Valid main-address is mandatory")
+            sys.exit()
+
 
 routine(20)(log_current_rep)
 # instanciate workers

@@ -10,7 +10,7 @@ a88aaaa    dP. .dP .d8888b. 88d888b. .d888b88 .d8888b.
 """
 
 
-import logging, os, random, aiohttp, importlib, json
+import logging, os, random, aiohttp, importlib, json, sys
 from aiosow.bindings import setup, wrap, alias, option, on
 from aiosow.routines import routine
 
@@ -43,17 +43,6 @@ option(
     action="store_true",
     help="Bypass mandatory main_address",
 )
-
-from exorde.protocol import check_erc_address_validity
-import sys
-
-
-@setup
-def check_user_address(main_address, no_main_address):
-    if not no_main_address:
-        if not main_address and not check_erc_address_validity(main_address):
-            logging.info("Valid main-address is mandatory")
-            sys.exit()
 
 
 @setup
