@@ -12,6 +12,7 @@ a88aaaa    dP. .dP .d8888b. 88d888b. .d888b88 .d8888b.
 
 import logging, os, random, aiohttp, importlib
 from aiosow.bindings import setup, wrap, alias, option
+from aiosow.routines import routine
 
 option(
     "no_headless",
@@ -34,6 +35,14 @@ option("twitter_password", default=None, help="Twitter password")
 @setup
 def run_forever():
     return {"run_forever": True}
+
+
+@setup
+@routine(60 * 5)
+async def fetch_runtime_configuration():
+    async with aiohttp.ClientSession() as session:
+        async with session.get("") as response:
+            return await response.json()
 
 
 @setup
