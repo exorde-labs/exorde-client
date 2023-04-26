@@ -158,16 +158,5 @@ option(
 @setup
 def init_validation(no_validation, remote_kill):
     if not no_validation and not remote_kill:
-        from exorde.validation.bindings import validator, validator_vote
+        from exorde.validation import validators as __validators__
         from exorde.protocol import bindings as __bindings__
-
-        # equivalent to `validator(filter_something)`
-        def filter_something(items):
-            return items
-
-        validator(filter_something)
-
-        def vote_something(__items__):
-            return 1
-
-        validator_vote(vote_something)
