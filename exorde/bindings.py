@@ -154,10 +154,6 @@ option(
 
 @setup
 def init_validation(no_validation, remote_kill):
-    print("no_validation >", not no_validation)
-    print("remote_kill >", not remote_kill)
     if not no_validation and not remote_kill:
         from exorde.validation import validators as __validators__
         from exorde.protocol import bindings as __bindings__
-
-        print("yooo")
