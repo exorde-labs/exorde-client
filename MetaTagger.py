@@ -27,7 +27,7 @@ with warnings.catch_warnings():
 ### VARIABLE INSTANTIATION
 
 device = torch.cuda.current_device() if torch.cuda.is_available() else -1
-classifier = pipeline("zero-shot-classification", model="MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli", device=device, batch_size=16, return_all_scores=False, max_length=64)
+classifier = pipeline("zero-shot-classification", model="MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli", device=device, batch_size=16, top_k=None, max_length=64)
 labels =  requests.get("https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/cateogry_tree.json").json()
 mappings = {
     "Gender":{0:"Female", 1:"Male"},
@@ -102,7 +102,7 @@ def zero_shot(texts, labeldict, max_depth = None, depth = 0):
     
     keys = list(labeldict.keys())
     output=classifier(texts, keys, multi_label=False, max_length=32)
-    labels = [output[x]["labels"][0] for x in range(len(output))]
+    labels = [output["labels"][0]]
     depth += 1
     if(depth == max_depth):
         _labels = labels
@@ -113,9 +113,9 @@ def zero_shot(texts, labeldict, max_depth = None, depth = 0):
             keys = list(labeldict[lab].keys())
             output=classifier(texts, keys, multi_label=False, max_length=32)
             _out = list()
-            for i in range(len(output)):
+            for i in range(len(output["labels"])):
                 
-                scores = [(x, y) for x, y in zip(output[i]["labels"], output[i]["scores"])]
+                scores = (output["labels"][i], output["scores"][i])
                 _out.append(scores)
 
             # _labs = [output[x]["labels"] for x in range(len(output))]
@@ -164,7 +164,7 @@ def predict(text, pipe, tag):
         result.append((mappings[tag][i], preds[i]))
     return result
 
-def tag(documents, keep):
+def tag(documents):
 
     tmp = pd.DataFrame()
     
@@ -172,20 +172,31 @@ def tag(documents, keep):
     
     model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
     tmp["Embeddings"] = tmp["Translation"].swifter.apply(lambda x: model.encode(x))
+    #tmp["Embeddings"] = model.encode(tmp["Translation"])
     
-    pipe = pipeline("text-classification", model="djsull/kobigbird-spam-multi-label", device=device, return_all_scores=True)
+    pipe = pipeline("text-classification", model="djsull/kobigbird-spam-multi-label", device=device, top_k=None)
     tmp["Advertising"] = tmp["Translation"].swifter.apply(lambda x: tuple(pipe(x)[0]))
     
-    if(len(keep) > 0):
-        tmp = tmp[tmp["Advertising"].isin(keep)]
+    # if(len(keep) > 0):
+    #     tmp = tmp[tmp["Advertising"].isin(keep)]
     
     tmp["Entities"] = tmp["Translation"].swifter.apply(lambda x: get_entities(x))
     
-    pipe = pipeline("text-classification", model="j-hartmann/emotion-english-distilroberta-base", device=device, return_all_scores=True)
+    pipe = pipeline("text-classification", model="j-hartmann/emotion-english-distilroberta-base", device=device, top_k=None)
     tmp["Emotion"] = pipe(list(tmp["Translation"]),batch_size=250, )
     
-    pipe = pipeline("text-classification", model="cardiffnlp/twitter-roberta-base-irony", device=device, return_all_scores=True)
+    pipe = pipeline("text-classification", model="cardiffnlp/twitter-roberta-base-irony", device=device, top_k=None)
     tmp["Irony"] = tmp["Translation"].swifter.apply(lambda x: tuple(pipe(x)[0]))
+    
+    pipe = pipeline("text-classification", model="salesken/query_wellformedness_score", device=device, top_k=None)
+    tmp["LanguageScore"] = tmp["Translation"].swifter.apply(lambda x: round(pipe(x)[0][0]["score"], 2))
+    
+    pipe = pipeline("text-classification", model="marieke93/MiniLM-evidence-types", device=device, top_k=None)
+    tmp["TextType"] = tmp["Translation"].swifter.apply(lambda x: tuple(pipe(x)[0]))
+    
+    pipe = pipeline("text-classification", model="alimazhar-110/website_classification", device=device, top_k=None)
+    tmp["SourceType"] = tmp["Translation"].swifter.apply(lambda x: tuple(pipe(x)[0]))
+
     
     
     ### HOMEMADE MODELS
