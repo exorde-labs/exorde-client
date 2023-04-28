@@ -160,9 +160,9 @@ def contracts(read_w3, abi_cnf, contracts_cnf, configuration):
         raise e
 
 
-def worker_address():
+def worker_address(worker_name):
     """Generates an ERC address and key"""
-    keys_file = Path.home() / ".config" / "exorde" / "keys.json"
+    keys_file = Path.home() / ".config" / "exorde" / f"{worker_name}.json"
     if keys_file.exists():
         with open(keys_file, "r") as f:
             keys = json.load(f)

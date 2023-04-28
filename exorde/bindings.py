@@ -43,6 +43,12 @@ option(
     action="store_true",
     help="Bypass mandatory main_address",
 )
+option(
+    "-wn",
+    "--worker_name",
+    default="keys",
+    help="Worker name which will be used to store the keys at .config/exorde",
+)
 
 
 @setup
