@@ -8,6 +8,7 @@ from aiosow.autofill import autofill
 
 from exorde.ipfs import download_ipfs_file, upload_to_ipfs
 from exorde.protocol import (
+    estimate_gas,
     get_ipfs_hashes_for_batch,
     get_current_work as get_current_work_implementation,
     commit_spot_check,
@@ -15,6 +16,7 @@ from exorde.protocol import (
     is_commit_period_over,
     is_reveal_period_active,
     is_reveal_period_over,
+    send_raw_transaction,
 )
 
 get_current_work = wrap(lambda batch_id: {"batch_id": batch_id})(
@@ -96,13 +98,21 @@ def reset_seed():
     5, condition=lambda validation_cid, commited: commited == False and validation_cid
 )
 async def commit_validation(
-    batch_id, validation_cid, vote, length, DataSpotting, memory
+    batch_id, validation_cid, vote, length, DataSpotting, memory, worker_key, read_web3
 ):
     if is_commit_period_active(batch_id, DataSpotting):
-        __transaction__, seed = await commit_spot_check(
+        transaction, seed = await commit_spot_check(
             batch_id, validation_cid, vote, length, DataSpotting, memory
         )
-        return {"seed": seed, "commited": True}
+        signed_transaction = read_web3.eth.account.sign_transaction(
+            transaction, worker_key
+        )
+        estimated_transaction = await autofill(
+            estimate_gas, args=[signed_transaction], memory=memory
+        )
+        while memory["commit"] != None:
+            await asyncio.sleep(1)
+        return {"seed": seed, "commited": True, "transaction": estimated_transaction}
     elif is_commit_period_over(batch_id, DataSpotting):
         return {"validation_cid": None, "commited": False}
 
