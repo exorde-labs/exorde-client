@@ -1,6 +1,9 @@
 import os, ast
 from setuptools import setup, find_packages
 
+with open("README.md", "r") as f:
+    long_description = f.read()
+
 
 def extract_install_requires(path):
     install_requires = set()
@@ -45,6 +48,7 @@ def extract_install_requires(path):
 setup(
     name="exorde",
     version="0.1.0",
+    description="Exorde CLI",
     packages=find_packages(include=["exorde"]),
     include_package_data=True,
     license="MIT",
@@ -54,4 +58,6 @@ setup(
         ],
     },
     install_requires=extract_install_requires("./exorde"),
+    long_description=long_description,
+    long_description_content_type="text/markdown",
 )

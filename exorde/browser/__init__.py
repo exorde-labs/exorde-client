@@ -1,10 +1,8 @@
 import json, asyncio, subprocess, time
 from aiohttp import ClientSession
-from aiosow.bindings import alias, setup
 from aiosow.autofill import autofill
 
 
-@setup
 async def launch_browser():
     subprocess.Popen(
         [
@@ -12,10 +10,9 @@ async def launch_browser():
             "--remote-debugging-port=9222",
         ]
     )
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(0.5)
 
 
-@alias("page_websocket_url")
 async def get_page_websocket_url():
     async with ClientSession() as session:
         async with session.get("http://localhost:9222/json/list") as response:
@@ -24,7 +21,6 @@ async def get_page_websocket_url():
             return tab_info["webSocketDebuggerUrl"]
 
 
-@setup
 async def create_websocket_client(page_websocket_url):
     websocket_session = ClientSession()
     websocket = await websocket_session.ws_connect(page_websocket_url)
@@ -35,7 +31,6 @@ async def send_command(command: dict, page_websocket):
     await page_websocket.send_str(json.dumps(command))
 
 
-@setup
 async def enable_network(page_websocket):
     await send_command(
         {"id": 1, "method": "Network.enable", "params": {}}, page_websocket
@@ -152,6 +147,5 @@ async def listen_page_websocket(page_websocket, memory):
         await handle_message(message.data, page_websocket, memory)
 
 
-@setup
 async def run_websocket_client(memory):
     return autofill(listen_page_websocket, args=[], memory=memory)
