@@ -46,7 +46,7 @@ async def download_files(hashes, memory):
 @wrap(lambda result: {"merged_validation_file": result})
 async def merge_validation_files(validation_files):
     return {
-        "Validation-Content": [
+        "ValidationContent": [
             entity for file in validation_files for entity in file["Content"]
         ]
     }
