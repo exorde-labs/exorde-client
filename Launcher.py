@@ -3,7 +3,6 @@
 03/04/2023
 Exorde Testnet v1.3.5c
 A great year ahead, with the best community
-<3
 
 @author: florent, mathias
 Exorde Labs
