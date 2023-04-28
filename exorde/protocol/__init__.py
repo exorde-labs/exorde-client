@@ -1,6 +1,6 @@
 from typing import Union
 
-import os, json
+import os, json, sys
 import logging
 import asyncio
 import random
@@ -16,6 +16,54 @@ from web3.middleware.async_cache import (
 )
 from eth_account import Account
 from web3 import AsyncWeb3, AsyncHTTPProvider, Web3
+
+
+def check_erc_address_validity(erc_address):
+    """check validity"""
+    logging.info("check_erc_address_validity(%s)", erc_address)
+    return Web3.is_address(erc_address)
+
+
+async def check_user_address(
+    main_address, no_main_address, AddressManager, write_web3, read_web3, worker_address
+):
+    if not no_main_address:
+        if not main_address and not check_erc_address_validity(main_address):
+            logging.info("Valid main-address is mandatory (see -h, use -m)")
+            sys.exit()
+        else:
+            main_wallet_ = write_web3.to_checksum_address(main_address)
+            nonce = await read_web3.eth.get_transaction_count(worker_address)
+            transaction = await AddressManager.functions.ClaimMaster(
+                main_wallet_
+            ).build_transaction(
+                {
+                    "from": worker_address,
+                    "gasPrice": 100_000,
+                    "nonce": nonce,
+                }
+            )
+            signed_transaction = read_web3.eth.account.sign_transaction(
+                transaction, main_address
+            )
+            transaction_hash = await write_web3.eth.send_raw_transaction(
+                signed_transaction.rawTransaction
+            )
+            logging.info("Waiting for transaction confirmation")
+            for i in range(10):
+                sleep_time = i * 1.5 + 1
+                logging.debug(f"Waiting {sleep_time} seconds for claim_master")
+                await asyncio.sleep(sleep_time)
+                # wait for new nounce by reading proxy
+                current_nounce = await read_web3.eth.get_transaction_count(
+                    worker_address
+                )
+                if current_nounce > nonce:
+                    # found a new transaction because account nounce has increased
+                    break
+            await read_web3.eth.wait_for_transaction_receipt(
+                transaction_hash, timeout=120, poll_latency=20
+            )
 
 
 def load_yaml(path):
@@ -106,19 +154,6 @@ def contracts(read_w3, abi_cnf, contracts_cnf, configuration):
         raise e
 
 
-async def claim_master(user_address, user_key, AddressManager, read_web3, write_web3):
-    current_nonce = await read_web3.eth.get_transaction_count(user_address)
-    transaction = AddressManager.ClaimMaster().buildTransaction(
-        {
-            "from": user_address,
-            "gasPrice": 500_000,
-            "nonce": current_nonce,
-        }
-    )
-    transaction = read_web3.eth.account.sign_transaction(transaction, user_key)
-    await write_web3.eth.send_raw_transaction(transaction)
-
-
 def worker_address():
     """Generates an ERC address and key"""
     keys_file = Path.home() / ".config" / "exorde" / "keys.json"
@@ -155,12 +190,6 @@ async def log_current_rep(worker_address):
             logging.info(
                 f"Current rep = {round(leaderboard.get(worker_address, 0), 4)}"
             )
-
-
-def check_erc_address_validity(erc_address):
-    """check validity"""
-    logging.info("check_erc_address_validity(%s)", erc_address)
-    return Web3.is_address(erc_address)
 
 
 async def send_raw_transaction(transaction, write_web3, read_web3, worker_address):

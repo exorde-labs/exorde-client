@@ -46,11 +46,6 @@ option(
 
 
 @setup
-def run_forever():
-    return {"run_forever": True}
-
-
-@setup
 @routine(60 * 5)
 async def fetch_runtime_configuration():
     async with aiohttp.ClientSession() as session:

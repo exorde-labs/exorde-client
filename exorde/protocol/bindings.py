@@ -1,4 +1,4 @@
-import logging, sys
+import logging
 from aiosow.bindings import (
     setup,
     wrap,
@@ -11,7 +11,7 @@ from aiosow.bindings import (
 from aiosow.routines import routine
 
 from exorde.protocol import (
-    check_erc_address_validity,
+    check_user_address,
     get_balance,
     select_random_faucet,
     sign_transaction,
@@ -33,14 +33,6 @@ from exorde.protocol import (
 )
 
 
-@setup
-def check_user_address(main_address, no_main_address):
-    if not no_main_address:
-        if not main_address and not check_erc_address_validity(main_address):
-            logging.info("Valid main-address is mandatory")
-            sys.exit()
-
-
 routine(20)(log_current_rep)
 # instanciate workers
 setup(
@@ -54,6 +46,7 @@ setup(init_gas_cache)
 setup(wrap(lambda value: {"balance": value})(get_balance))
 alias("selected_faucet")(select_random_faucet)
 setup(register)
+setup(check_user_address)
 on("balance", condition=lambda value: value == 0)(until_success()(faucet))
 # retrieve contracts and abi
 on("configuration")(contracts_and_abi_cnf)
