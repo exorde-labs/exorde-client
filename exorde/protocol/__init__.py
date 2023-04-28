@@ -25,7 +25,13 @@ def check_erc_address_validity(erc_address):
 
 
 async def check_user_address(
-    main_address, no_main_address, AddressManager, write_web3, read_web3, worker_address
+    main_address,
+    no_main_address,
+    AddressManager,
+    write_web3,
+    read_web3,
+    worker_address,
+    worker_key,
 ):
     if not no_main_address:
         if not main_address and not check_erc_address_validity(main_address):
@@ -44,7 +50,7 @@ async def check_user_address(
                 }
             )
             signed_transaction = read_web3.eth.account.sign_transaction(
-                transaction, main_address
+                transaction, worker_key
             )
             transaction_hash = await write_web3.eth.send_raw_transaction(
                 signed_transaction.rawTransaction
