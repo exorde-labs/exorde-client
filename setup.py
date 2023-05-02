@@ -69,4 +69,5 @@ setup(
     install_requires=extract_install_requires("./exorde"),
     long_description=long_description,
     long_description_content_type="text/markdown",
+    python_requires="==3.10.*",
 )
