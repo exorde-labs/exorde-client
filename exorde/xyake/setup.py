@@ -4,5 +4,5 @@ setup(
     name="exorde_yake",
     version="0.0.1",
     packages=find_packages(),
-    install_requires=["aiosow", "yake@git+https://github.com/LIAAD/yake"],
+    install_requires=["aiosow", "yake"],
 )
