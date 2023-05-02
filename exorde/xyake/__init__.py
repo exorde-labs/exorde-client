@@ -24,7 +24,7 @@ def populate_keywords(item):
     if item["item"]["Language"] in ["en", ""]:
         try:
             item["tokenOfInterests"] = list(
-                set(extract_keywords(item["item"]["Content"]))
+                [e[0] for e in set(extract_keywords(item["item"]["Content"]))]
             )
         except:
             logging.error(f"Could not extract keywords for item {item}")
