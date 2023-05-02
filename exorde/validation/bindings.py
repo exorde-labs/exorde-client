@@ -1,4 +1,4 @@
-import asyncio
+import asyncio, logging
 from typing import Callable
 
 from aiosow.perpetuate import on
@@ -16,7 +16,6 @@ from exorde.protocol import (
     is_commit_period_over,
     is_reveal_period_active,
     is_reveal_period_over,
-    send_raw_transaction,
 )
 
 get_current_work = wrap(lambda batch_id: {"batch_id": batch_id})(
@@ -45,6 +44,7 @@ async def download_files(hashes, memory):
 
 @wrap(lambda result: {"merged_validation_file": result})
 async def merge_validation_files(validation_files):
+    logging.debug(validation_files)
     return {
         "ValidationContent": [
             entity for file in validation_files for entity in file["Content"]
