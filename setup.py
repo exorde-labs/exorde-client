@@ -57,6 +57,7 @@ setup(
             "exorde.xyake",
             "exorde.reddit",
             "exorde.twitter",
+            "exorde.ipfs",
         ]
     ),
     include_package_data=True,
