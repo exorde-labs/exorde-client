@@ -2,11 +2,7 @@ FROM python:3.10.11
 
 COPY . /exorde
 
-RUN pip3.10 install /exorde
-
-# RUN pip3.10 --no-cache install exorde==0.1.1
-
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends \
   libnss3 \
   libglib2.0-0 \
   libfontconfig1 \
@@ -55,7 +51,15 @@ RUN apt-get update && apt-get install -y \
   libxtst-dev \
   zlib1g-dev \
   xvfb \
-  libgbm1
+  libgbm1 \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
+
+
+RUN pip3.10 install --no-cache /exorde
+
+# RUN pip3.10 --no-cache install exorde==0.1.1
+
 
 ENTRYPOINT ["exorde"]
 CMD ["-h"]
