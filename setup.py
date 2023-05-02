@@ -47,9 +47,18 @@ def extract_install_requires(path):
 
 setup(
     name="exorde",
-    version="0.1.0",
+    version="0.1.1",
     description="Exorde CLI",
-    packages=find_packages(include=["exorde"]),
+    packages=find_packages(
+        include=[
+            "exorde",
+            "exorde.spotting",
+            "exorde.validation",
+            "exorde.xyake",
+            "exorde.reddit",
+            "exorde.twitter",
+        ]
+    ),
     include_package_data=True,
     license="MIT",
     entry_points={

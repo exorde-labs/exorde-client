@@ -8,3 +8,5 @@ cli
 keygen.py
 main_address.key
 Makefile
+build
+dist
