@@ -52,13 +52,15 @@ setup(
     packages=find_packages(
         include=[
             "exorde",
+            "exorde.ipfs",
+            "exorde.playwright",
+            "exorde.protocol",
+            "exorde.reddit",
             "exorde.spotting",
+            "exorde.translation",
+            "exorde.twitter",
             "exorde.validation",
             "exorde.xyake",
-            "exorde.reddit",
-            "exorde.twitter",
-            "exorde.ipfs",
-            "exorde.protocol",
         ]
     ),
     include_package_data=True,
