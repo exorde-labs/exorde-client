@@ -51,11 +51,14 @@ async def run_spotting(item: dict, memory):
 on_spotting_done_do(push_to_stack)
 
 
-on("stack")(call_limit(1)(log_stack_len))
+# on("stack")(call_limit(1)(log_stack_len))
 on("stack")(consume_stack)
-on("batch_to_consume", condition=lambda value, transaction: value and not transaction)(
-    push_to_ipfs
-)
+on(
+    "batch_to_consume",
+    condition=lambda value, transaction, batch_id: value
+    and not transaction
+    and not batch_id,
+)(push_to_ipfs)
 on_new_cid_do(push_new_cid)
 on("cids", condition=lambda cids: len(cids))(
     lambda __cids__: logging.info(f"A batch has been uploaded to IPFS")
