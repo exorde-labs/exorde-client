@@ -204,7 +204,7 @@ async def send_raw_transaction(transaction, write_web3, read_web3, worker_addres
         transaction_hash = await write_web3.eth.send_raw_transaction(
             transaction.rawTransaction
         )
-        logging.info("A transaction has been sent")
+        logging.debug("%s has been sent", transaction)
         logging.info("Waiting for transaction confirmation")
         for i in range(10):
             sleep_time = i * 1.5 + 1
@@ -222,7 +222,7 @@ async def send_raw_transaction(transaction, write_web3, read_web3, worker_addres
         )
     except Exception as e:
         logging.error(f"Error sending transaction : {e}")
-        raise (e)
+        return {"batch_id": 0, "transaction": None}
     logging.info("A transaction has been confirmed")
     return {"transaction": None, "current_cid_commit": None}
 
@@ -303,10 +303,22 @@ async def is_new_work_available(worker_address, DataSpotting) -> bool:
     return result
 
 
-async def get_current_work(worker_address, DataSpotting) -> int:  # returns batch_id
-    logging.info("get_current_work [%s, %s]", worker_address, DataSpotting)
-    result = await DataSpotting.functions.GetCurrentWork(worker_address).call()
-    return result
+from typing import Tuple
+
+
+async def get_current_work(
+    worker_address, DataSpotting, previous_batch_id
+) -> Tuple[int, int]:  # returns batch_id
+    logging.info("scanning for new job")
+    if await DataSpotting.functions.IsNewWorkAvailable(worker_address).call():
+        result = await DataSpotting.functions.GetCurrentWork(worker_address).call()
+        if result > previous_batch_id:
+            logging.info("new job available, id=%s", result)
+            return (result, previous_batch_id)
+        else:
+            return (0, previous_batch_id)
+    else:
+        return (0, previous_batch_id)
 
 
 async def get_ipfs_hashes_for_batch(batch_id, DataSpotting) -> list:
@@ -329,6 +341,8 @@ def random_seed():
 
 
 async def get_encrypted_string_hash(file_cid, seed, DataSpotting):
+    assert isinstance(file_cid, str)
+    assert isinstance(seed, int)
     return await DataSpotting.functions.getEncryptedStringHash(file_cid, seed).call()
 
 
@@ -347,8 +361,12 @@ async def commit_spot_check(
         get_encrypted_hash, args=[vote, seed], memory=memory
     )
     return (
-        await DataSpotting.functions.commit_spot_check(
-            batch_id, encrypted_string_hash, encrypted_hash, batch_length, 1
+        DataSpotting.functions.commitSpotCheck(
+            batch_id,
+            encrypted_string_hash,
+            encrypted_hash,
+            batch_length,
+            "1",  # last parameter is success / failure indicator
         ),
         seed,
     )
@@ -374,7 +392,7 @@ async def is_reveal_period_over(batch_id, DataSpotting):
 
 
 async def reveal_spot_check(batch_id, file_cid, vote, seed, DataSpotting):
-    return await DataSpotting.revealSpotCheck(batch_id, file_cid, vote, seed).call()
+    return DataSpotting.functions.revealSpotCheck(batch_id, file_cid, vote, seed)
 
 
 async def remaining_commit_duration(batch_id, DataSpotting):

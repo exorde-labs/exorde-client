@@ -16,16 +16,21 @@ from exorde.protocol import (
     is_commit_period_over,
     is_reveal_period_active,
     is_reveal_period_over,
+    reveal_spot_check as do_reveal_spot_check,
 )
 
-get_current_work = wrap(lambda batch_id: {"batch_id": batch_id})(
-    get_current_work_implementation
-)
+
+get_current_work = wrap(
+    lambda result: {
+        "batch_id": result[0],
+        "previous_batch_id": result[0] if result[0] != 0 else result[1],
+    }
+)(get_current_work_implementation)
 
 
 @setup
 def reset_batch_id():
-    return {"batch_id": 0}
+    return {"batch_id": 0, "previous_batch_id": 0}
 
 
 routine(2, condition=lambda batch_id: not batch_id)(get_current_work)
@@ -66,26 +71,25 @@ def validator_vote(function: Callable):
     return function
 
 
-async def run_validation(items, memory):
+async def run_validation(batch, memory):
     """Runs validators_vote AFTER validators."""
-    result = items
+    items = batch["ValidationContent"]
     for validator in VALIDATORS:
-        result = await autofill(validator, args=[result], memory=memory)
+        items = await autofill(validator, args=[items], memory=memory)
     vote = 1  # by default without validtor in place, the vote is 1
     for validator_vote in VALIDATORS_VOTES:
         vote = validator_vote(items)
         if vote == 0:
             break
-    return {"validated": result, "vote": vote, "length": len(result)}
+    batch["ValidationContent"] = items
+    return {"validated": batch, "vote": vote, "length": len(items)}
 
 
 on("validation_hashes")(wrap(lambda files: {"validation_files": files})(download_files))
 on("validation_files")(merge_validation_files)
 on("merged_validation_file")(run_validation)
 on("validated")(
-    wrap(lambda cid: {"validation_cid": cid, "commited": False, "batch_id": 0})(
-        upload_to_ipfs
-    )
+    wrap(lambda cid: {"validation_cid": cid["cid"], "commited": False})(upload_to_ipfs)
 )
 
 
@@ -98,29 +102,73 @@ def reset_seed():
     5, condition=lambda validation_cid, commited: commited == False and validation_cid
 )
 async def commit_validation(
-    batch_id, validation_cid, vote, length, DataSpotting, memory, worker_key, read_web3
+    batch_id,
+    validation_cid,
+    vote,
+    length,
+    DataSpotting,
+    memory,
+    worker_key,
+    read_web3,
+    nonce,
+    worker_address,
 ):
-    if is_commit_period_active(batch_id, DataSpotting):
+    if await is_commit_period_active(batch_id, DataSpotting):
         transaction, seed = await commit_spot_check(
             batch_id, validation_cid, vote, length, DataSpotting, memory
         )
-        signed_transaction = read_web3.eth.account.sign_transaction(
-            transaction, worker_key
+        transaction = await transaction.build_transaction(
+            {"from": worker_address, "gasPrice": 100_000, "nonce": nonce}
         )
         estimated_transaction = await autofill(
-            estimate_gas, args=[signed_transaction], memory=memory
+            estimate_gas, args=[transaction], memory=memory
         )
-        while memory["commit"] != None:
-            await asyncio.sleep(1)
-        return {"seed": seed, "commited": True, "transaction": estimated_transaction}
-    elif is_commit_period_over(batch_id, DataSpotting):
-        return {"validation_cid": None, "commited": False}
+        signed_transaction = read_web3.eth.account.sign_transaction(
+            estimated_transaction, worker_key
+        )
+
+        return {
+            "seed": seed,
+            "commited": True,
+            "transaction": signed_transaction,
+        }
+    elif await is_commit_period_over(batch_id, DataSpotting):
+        return {"validation_cid": None, "commited": False, "batch_id": 0}
 
 
 @routine(5, condition=lambda seed: seed != None)
-async def reveal_spot_check(batch_id, validation_cid, vote, seed, DataSpotting):
-    if is_reveal_period_active(batch_id, DataSpotting):
-        await reveal_spot_check(batch_id, validation_cid, vote, seed, DataSpotting)
-        return {"seed": None, "validation_cid": None, "commited": False}
-    elif is_reveal_period_over(batch_id, DataSpotting):
+async def reveal_spot_check(
+    batch_id,
+    validation_cid,
+    vote,
+    seed,
+    DataSpotting,
+    worker_address,
+    nonce,
+    memory,
+    read_web3,
+    worker_key,
+):
+    if await is_reveal_period_active(batch_id, DataSpotting):
+        transaction = await do_reveal_spot_check(
+            batch_id, validation_cid, vote, seed, DataSpotting
+        )
+
+        transaction = await transaction.build_transaction(
+            {"from": worker_address, "gasPrice": 100_000, "nonce": nonce}
+        )
+        estimated_transaction = await autofill(
+            estimate_gas, args=[transaction], memory=memory
+        )
+        signed_transaction = read_web3.eth.account.sign_transaction(
+            estimated_transaction, worker_key
+        )
+        return {
+            "seed": None,
+            "validation_cid": None,
+            "commited": False,
+            "batch_id": 0,
+            "transaction": signed_transaction,
+        }
+    elif await is_reveal_period_over(batch_id, DataSpotting):
         return {"seed": None}
