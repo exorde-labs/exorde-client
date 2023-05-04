@@ -139,24 +139,29 @@ def zero_shot(texts, labeldict, classifier, max_depth=None, depth=0):
         _labels = labels
         return labels
     else:
-        _labels = dict()
-        for lab in labels:
-            keys = list(labeldict[lab].keys())
+        outputs = list()
+        
+        for _t, _lab in zip(texts, labels):
+            # _labels = dict()
+            # for lab in _lab:
+            keys = list(labeldict[_lab].keys())
             output = classifier(texts, keys, multi_label=False, max_length=32)
             _out = list()
-            for i in range(len(output["labels"])):
-                scores = (output["labels"][i], output["scores"][i])
-                _out.append(scores)
+            for x in range(len(output)):
+                for i in range(len(output[x]["labels"])):
+                    scores = (output[x]["labels"][i], output[x]["scores"][i])
+                    _out.append(scores)
 
             # _labs = [output[x]["labels"] for x in range(len(output))]
             # _scores = [output[x]["scores"] for x in range(len(output))]
-
-            _labels[lab] = _out
-    return _labels
+    
+            outputs.append(_out)
+    return outputs
 
 
 def zero_shotter(item, labels, classifier):
-    result = zero_shot([item], labels, classifier)
+    result = zero_shot(item, labels, classifier)
+    print(result)
 
 
 def preprocess_text(text: str, remove_stopwords: bool) -> str:
