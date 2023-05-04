@@ -133,7 +133,7 @@ def zero_shot(texts, labeldict, classifier, max_depth=None, depth=0):
 
     keys = list(labeldict.keys())
     output = classifier(texts, keys, multi_label=False, max_length=32)
-    labels = [output["labels"][0]]
+    labels = [output[x]["labels"][0] for x in range(len(output))]
     depth += 1
     if depth == max_depth:
         _labels = labels
@@ -153,6 +153,10 @@ def zero_shot(texts, labeldict, classifier, max_depth=None, depth=0):
 
             _labels[lab] = _out
     return _labels
+
+
+def zero_shotter(item, labels, classifier):
+    result = zero_shot([item], labels, classifier)
 
 
 def preprocess_text(text: str, remove_stopwords: bool) -> str:
@@ -347,6 +351,16 @@ def tag(documents, nlp, device, mappings):
 
     return tmp
 
+
+if __name__ == "__main__":
+    init = meta_tagger_initialization()
+
+    text = """
+    Kevin McCarthy has quietly implemented a pay raise for members that could be $30,000+ per person. It circumvents the Constitution by instead reimbursing their rent, utilities, & meals.
+
+    While complaining about the debt and voting to cut veterans’ benefits.
+    """
+    zero_shotter(text, init["labels"], init["classifier"])
 
 # ### TEST ZONE
 # test = ["""Bitcoin hit 30.000$ last night! """, "I like having a mojito with my breakfast"]
