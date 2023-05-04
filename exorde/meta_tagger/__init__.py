@@ -280,7 +280,7 @@ def meta_tagger_initialization():
         nlp = spacy.load("en_core_web_trf")
     except:
         os.system(
-            "python -m spacy download en_core_web_sm"
+            "python -m spacy download en_core_web_trf"
         )  # Download the model if not present
         nlp = spacy.load("en_core_web_trf")
     return {
