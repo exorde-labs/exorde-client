@@ -25,42 +25,6 @@ with warnings.catch_warnings():
     warnings.simplefilter("ignore")
 
 
-### VARIABLE INSTANTIATION
-
-
-def meta_tagger_initialization():
-    device = torch.cuda.current_device() if torch.cuda.is_available() else -1
-    classifier = pipeline(
-        "zero-shot-classification",
-        model="MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli",
-        device=device,
-        batch_size=16,
-        top_k=None,
-        max_length=64,
-    )
-    labels = requests.get(
-        "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/cateogry_tree.json"
-    ).json()
-    mappings = {
-        "Gender": {0: "Female", 1: "Male"},
-        "Age": {0: "<20", 1: "20<30", 2: "30<40", 3: ">=40"},
-        "HateSpeech": {0: "Hate speech", 1: "Offensive", 2: "None"},
-    }
-    try:
-        nlp = spacy.load("en_core_web_trf")
-    except:
-        os.system(
-            "python -m spacy download en_core_web_sm"
-        )  # Download the model if not present
-        nlp = spacy.load("en_core_web_trf")
-    return {
-        "device": device,
-        "classifier": classifier,
-        "labels": labels,
-        "mappings": mappings,
-        "nlp": nlp,
-    }
-
 
 ### REQUIRED CLASSES (j'ai enlevé autant de classes que possible mais celles-ci sont nécessaires x)
 
@@ -213,161 +177,146 @@ def predict(text, pipe, tag, mappings):
     return result
 
 
+##########################################################
 def tag(documents, nlp, device, mappings):
+    """
+    Analyzes and tags a list of text documents using various NLP models and techniques.
+    
+    The function processes the input documents using pre-trained models for tasks such as
+    sentence embeddings, text classification, sentiment analysis, and custom models for age,
+    gender, and hate speech detection. It returns a list of dictionaries containing the
+    processed data for each input document.
+    
+    Args:
+        documents (list): A list of text documents (strings) to be analyzed and tagged.
+        nlp: model
+        device: device
+        mappings: labels
+    
+    Returns:
+        list: A list of dictionaries, where each dictionary represents a single input text and
+              contains various processed data like embeddings, text classifications, sentiment, etc.,
+              as key-value pairs.
+    """
+    # Create an empty DataFrame
     tmp = pd.DataFrame()
-
+    
+    # Add the original text documents
     tmp["Translation"] = documents
-
-    model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
-    tmp["Embeddings"] = tmp["Translation"].swifter.apply(lambda x: model.encode(x))
-    # tmp["Embeddings"] = model.encode(tmp["Translation"])
-
-    pipe = pipeline(
-        "text-classification",
-        model="djsull/kobigbird-spam-multi-label",
-        device=device,
-        top_k=None,
-    )
-    tmp["Advertising"] = tmp["Translation"].swifter.apply(lambda x: tuple(pipe(x)[0]))
-
-    # if(len(keep) > 0):
-    #     tmp = tmp[tmp["Advertising"].isin(keep)]
-
-    tmp["Entities"] = tmp["Translation"].swifter.apply(lambda x: get_entities(x, nlp))
-
-    pipe = pipeline(
-        "text-classification",
-        model="j-hartmann/emotion-english-distilroberta-base",
-        device=device,
-        top_k=None,
-    )
-    tmp["Emotion"] = pipe(
-        list(tmp["Translation"]),
-        batch_size=250,
-    )
-
-    pipe = pipeline(
-        "text-classification",
-        model="cardiffnlp/twitter-roberta-base-irony",
-        device=device,
-        top_k=None,
-    )
-    tmp["Irony"] = tmp["Translation"].swifter.apply(lambda x: tuple(pipe(x)[0]))
-
-    pipe = pipeline(
-        "text-classification",
-        model="salesken/query_wellformedness_score",
-        device=device,
-        top_k=None,
-    )
-    tmp["LanguageScore"] = tmp["Translation"].swifter.apply(
-        lambda x: round(pipe(x)[0][0]["score"], 2)
-    )
-
-    pipe = pipeline(
-        "text-classification",
-        model="marieke93/MiniLM-evidence-types",
-        device=device,
-        top_k=None,
-    )
-    tmp["TextType"] = tmp["Translation"].swifter.apply(lambda x: tuple(pipe(x)[0]))
-
-    pipe = pipeline(
-        "text-classification",
-        model="alimazhar-110/website_classification",
-        device=device,
-        top_k=None,
-    )
-    tmp["SourceType"] = tmp["Translation"].swifter.apply(lambda x: tuple(pipe(x)[0]))
-
-    ### HOMEMADE MODELS
-    tokenizer = AutoTokenizer.from_pretrained("bert-large-uncased")
-    embedded = [
-        np.array(
-            tokenizer.encode_plus(
-                x,
-                add_special_tokens=True,
-                max_length=512,
-                truncation=True,
-                pad_to_max_length=True,
-                return_attention_mask=False,
-                return_tensors="tf",
-            )["input_ids"][0]
-        ).reshape(1, -1)
-        for x in list(tmp["Translation"])
+    
+    # Compute sentence embeddings
+    model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+    tmp["Embeddings"] = tmp["Translation"].apply(lambda x: model.encode(x))
+    
+    # Text classification pipelines
+    text_classification_models = [
+        ("Advertising", "djsull/kobigbird-spam-multi-label"),
+        ("Emotion", "j-hartmann/emotion-english-distilroberta-base"),
+        ("Irony", "cardiffnlp/twitter-roberta-base-irony"),
+        ("LanguageScore", "salesken/query_wellformedness_score"),
+        ("TextType", "marieke93/MiniLM-evidence-types"),
+        ("SourceType", "alimazhar-110/website_classification"),
     ]
-    tmp["Embedded"] = embedded
-
-    tmp_emoji_lexicon = hf_hub_download(
-        repo_id="ExordeLabs/SentimentDetection", filename="emoji_unic_lexicon.json"
-    )
-    tmp_loughran_dict = hf_hub_download(
-        repo_id="ExordeLabs/SentimentDetection", filename="loughran_dict.json"
-    )
-    with open(tmp_emoji_lexicon) as f:
+    for col_name, model_name in text_classification_models:
+        pipe = pipeline("text-classification", model=model_name)
+        tmp[col_name] = tmp["Translation"].apply(lambda x: tuple(pipe(x)[0]))
+    del pipe # free ram for latest pipe
+    
+    # Tokenization for custom models
+    tokenizer = AutoTokenizer.from_pretrained("bert-large-uncased")
+    tmp["Embedded"] = tmp["Translation"].apply(lambda x: np.array(tokenizer.encode_plus(x, add_special_tokens=True, max_length=512, truncation=True, pad_to_max_length=True, return_attention_mask=False, return_tensors='tf')["input_ids"][0]).reshape(1, -1))
+    
+    # Sentiment analysis using VADER
+    emoji_lexicon = hf_hub_download(repo_id="ExordeLabs/SentimentDetection", filename="emoji_unic_lexicon.json")
+    loughran_dict = hf_hub_download(repo_id="ExordeLabs/SentimentDetection", filename="loughran_dict.json")
+    with open(emoji_lexicon) as f:
         unic_emoji_dict = json.load(f)
-    with open(tmp_loughran_dict) as f:
+    with open(loughran_dict) as f:
         Loughran_dict = json.load(f)
-    pipe = SentimentIntensityAnalyzer()
-    pipe.lexicon.update(Loughran_dict)
-    pipe.lexicon.update(unic_emoji_dict)
-    tmp["Sentiment"] = tmp["Translation"].swifter.apply(
-        lambda x: pipe.polarity_scores(x)["compound"]
-    )
+    sentiment_analyzer = SentimentIntensityAnalyzer()
+    sentiment_analyzer.lexicon.update(Loughran_dict)
+    sentiment_analyzer.lexicon.update(unic_emoji_dict)
+    tmp["Sentiment"] = tmp["Translation"].apply(lambda x: sentiment_analyzer.polarity_scores(x)['compound'])
+    
+    # Custom model pipelines
+    custom_model_data = [
+        ("Age", "ExordeLabs/AgeDetection", "ageDetection.h5"),
+        ("Gender", "ExordeLabs/GenderDetection", "genderDetection.h5"),
+        ("HateSpeech", "ExordeLabs/HateSpeechDetection", "hateSpeechDetection.h5"),
+    ]
 
-    tmp_fileName = hf_hub_download(
-        repo_id="ExordeLabs/AgeDetection", filename="ageDetection.h5"
-    )
-    pipe = tf.keras.models.load_model(
-        tmp_fileName,
-        custom_objects={
-            "TokenAndPositionEmbedding": TokenAndPositionEmbedding,
-            "TransformerBlock": TransformerBlock,
-        },
-    )
-    tmp["Age"] = tmp["Embedded"].swifter.apply(
-        lambda x: predict(x, pipe, "Age", mappings)
-    )
+    for col_name, repo_id, file_name in custom_model_data:
+        model_file = hf_hub_download(repo_id=repo_id, filename=file_name)
+        custom_model = tf.keras.models.load_model(model_file, custom_objects={"TokenAndPositionEmbedding": TokenAndPositionEmbedding, "TransformerBlock": TransformerBlock})
+        tmp[col_name] = tmp["Embedded"].apply(lambda x: predict(x, custom_model, col_name, mappings))
+    del custom_model # free ram for latest custom_model
 
-    tmp_fileName = hf_hub_download(
-        repo_id="ExordeLabs/GenderDetection", filename="genderDetection.h5"
-    )
-    pipe = tf.keras.models.load_model(
-        tmp_fileName,
-        custom_objects={
-            "TokenAndPositionEmbedding": TokenAndPositionEmbedding,
-            "TransformerBlock": TransformerBlock,
-        },
-    )
-    tmp["Gender"] = tmp["Embedded"].swifter.apply(
-        lambda x: predict(x, pipe, "Gender", mappings)
-    )
+    # The output is a list of dictionaries, where each dictionary represents a single input text and contains
+    # various processed data like embeddings, text classifications, sentiment, etc., as key-value pairs.
+    return tmp.to_dict(orient='records')
 
-    tmp_fileName = hf_hub_download(
-        repo_id="ExordeLabs/HateSpeechDetection", filename="hateSpeechDetection.h5"
-    )
-    pipe = tf.keras.models.load_model(
-        tmp_fileName,
-        custom_objects={
-            "TokenAndPositionEmbedding": TokenAndPositionEmbedding,
-            "TransformerBlock": TransformerBlock,
-        },
-    )
 
-    return tmp
+
+### VARIABLE INSTANTIATION
+def meta_tagger_initialization():
+    device = torch.cuda.current_device() if torch.cuda.is_available() else -1
+    classifier = pipeline(
+        "zero-shot-classification",
+        model="MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli",
+        device=device,
+        batch_size=16,
+        top_k=None,
+        max_length=64,
+    )
+    labels = requests.get(
+        "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/cateogry_tree.json"
+    ).json()
+    mappings = {
+        "Gender": {0: "Female", 1: "Male"},
+        "Age": {0: "<20", 1: "20<30", 2: "30<40", 3: ">=40"},
+        "HateSpeech": {0: "Hate speech", 1: "Offensive", 2: "None"},
+    }
+    try:
+        nlp = spacy.load("en_core_web_trf")
+    except:
+        os.system(
+            "python -m spacy download en_core_web_sm"
+        )  # Download the model if not present
+        nlp = spacy.load("en_core_web_trf")
+    return {
+        "device": device,
+        "classifier": classifier,
+        "labels": labels,
+        "mappings": mappings,
+        "nlp": nlp,
+    }
 
 
 if __name__ == "__main__":
     init = meta_tagger_initialization()
 
-    text = """
-    Kevin McCarthy has quietly implemented a pay raise for members that could be $30,000+ per person. It circumvents the Constitution by instead reimbursing their rent, utilities, & meals.
+    # text = """
+    # Kevin McCarthy has quietly implemented a pay raise for members that could be $30,000+ per person. It circumvents the Constitution by instead reimbursing their rent, utilities, & meals.
 
-    While complaining about the debt and voting to cut veterans’ benefits.
-    """
-    zero_shotter(text, init["labels"], init["classifier"])
-
-# ### TEST ZONE
-# test = ["""Bitcoin hit 30.000$ last night! """, "I like having a mojito with my breakfast"]
-# field = zero_shot(test, labels, max_depth=1) ==> ['Economy and Finance', 'Lifestyle and Traditions']
-# print(field)
+    # While complaining about the debt and voting to cut veterans’ benefits.
+    # """
+    # zero_shotter(text, init["labels"], init["classifier"])
+    # field = zero_shot(test, labels, max_depth=1) ==> ['Economy and Finance', 'Lifestyle and Traditions']
+    # print(field)
+    
+    print("testing tag")
+    ### TEST ZONE
+    test =  [
+        "Bitcoin hit 30.000$ last night!",
+        "I like having a mojito with my breakfast",
+        "Apple Inc. reports a 5% increase in revenue this quarter",
+        "Get the best deal on laptops! Save up to 50% on our online store!",
+        "U.S. Federal Reserve announces a 0.25% increase in interest rates",
+        "Introducing our new line of skincare products - rejuvenate your skin!",
+        "Microsoft acquires another startup, expanding its cloud services",
+        "Try our 30-day free trial of premium membership, and enjoy unlimited access!",
+        "Oil prices continue to surge amid geopolitical tensions",
+        "Eager to travel again? Book your dream vacation now with our special discounts!",
+    ]
+    tags = tag(test, init["nlp"], init["device"], init["mappings"]) 
+    print(tags)
