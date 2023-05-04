@@ -220,7 +220,7 @@ def tag(documents, nlp, device, mappings):
     for col_name, model_name in text_classification_models:
         pipe = pipeline("text-classification", model=model_name)
         tmp[col_name] = tmp["Translation"].apply(lambda x: tuple(pipe(x)[0]))
-    del pipe # free ram for latest pipe
+        del pipe # free ram for latest pipe
     
     # Tokenization for custom models
     tokenizer = AutoTokenizer.from_pretrained("bert-large-uncased")
@@ -249,7 +249,7 @@ def tag(documents, nlp, device, mappings):
         model_file = hf_hub_download(repo_id=repo_id, filename=file_name)
         custom_model = tf.keras.models.load_model(model_file, custom_objects={"TokenAndPositionEmbedding": TokenAndPositionEmbedding, "TransformerBlock": TransformerBlock})
         tmp[col_name] = tmp["Embedded"].apply(lambda x: predict(x, custom_model, col_name, mappings))
-    del custom_model # free ram for latest custom_model
+        del custom_model # free ram for latest custom_model
 
     # The output is a list of dictionaries, where each dictionary represents a single input text and contains
     # various processed data like embeddings, text classifications, sentiment, etc., as key-value pairs.
