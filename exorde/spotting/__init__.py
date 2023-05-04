@@ -59,9 +59,14 @@ def batch_applicator(function: Callable) -> Callable:
 
 async def consume_stack(stack, memory):
     batch = [stack.popleft() for _ in range(SIZE)]
+    logging.info("starting batch analysis")
     for batch_applicator in BATCH_APPLICATORS:
         result = await autofill(batch_applicator, args=[batch], memory=memory)
-        batch = zip(batch, result)
+        temp_batch = batch
+        for d, val in zip(batch, result):
+            d.update({"Properties": val})
+        batch = temp_batch
+    logging.info("batch analysis complete")
     return {"batch_to_consume": batch, "stack": stack}
 
 
