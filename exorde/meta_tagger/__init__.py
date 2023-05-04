@@ -218,8 +218,8 @@ def tag(documents, nlp, device, mappings):
         ("SourceType", "alimazhar-110/website_classification"),
     ]
     for col_name, model_name in text_classification_models:
-        pipe = pipeline("text-classification", model=model_name)
-        tmp[col_name] = tmp["Translation"].apply(lambda x: tuple(pipe(x)[0]))
+        pipe = pipeline("text-classification", model=model_name, top_k = None, device=device)
+        tmp[col_name] = tmp["Translation"].apply(lambda x: [(y["label"], y["score"]) for y in pipe(x)[0]])
         del pipe # free ram for latest pipe
     
     # Tokenization for custom models
