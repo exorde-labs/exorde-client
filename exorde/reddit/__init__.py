@@ -3,7 +3,7 @@ from dateutil import parser
 from lxml import html
 
 
-async def generate_reddit_url(keyword):
+async def generate_reddit_url(keyword: str):
     async with aiohttp.ClientSession() as session:
         async with session.get(
             f"https://www.reddit.com/search/?q={keyword}&type=sr"
@@ -19,7 +19,7 @@ async def generate_reddit_url(keyword):
             return result
 
 
-async def scrap_reddit_url(reddit_url):
+async def scrap_reddit_url(reddit_url: str):
     async with aiohttp.ClientSession() as session:
         async with session.get(reddit_url) as response:
             html_content = await response.text()
