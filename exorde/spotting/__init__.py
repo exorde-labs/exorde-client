@@ -48,12 +48,18 @@ def log_stack_len(stack):
 
 
 SIZE = 100
+BATCH_APPLICATORS = []
+
+
+def batch_applicator(function: Callable) -> Callable:
+    BATCH_APPLICATORS.append(function)
+    return function
 
 
 def consume_stack(stack):
-    if len(stack) < SIZE:
-        return
-    return {"batch_to_consume": [stack.popleft() for _ in range(SIZE)], "stack": stack}
+    batch = [stack.popleft() for _ in range(SIZE)]
+
+    return {"batch_to_consume": batch, "stack": stack}
 
 
 def reset_cids():
