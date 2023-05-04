@@ -26,7 +26,6 @@ def applicator(function: Callable):
 
 async def push_to_stack(value, stack, memory):
     filter_result = True
-    logging.info("push_to_stack")
     for filter_function in FILTERS:
         filter_result = await autofill(filter_function, args=[value], memory=memory)
         if filter_result == False:
@@ -35,6 +34,7 @@ async def push_to_stack(value, stack, memory):
     if filter_result:
         for applicator in APPLICATORS:
             value = await autofill(applicator, args=[value], memory=memory)
+
         stack.append(value)
         # technicaly the stack is already updated here
         # we return to trigger the ONS events
@@ -56,9 +56,12 @@ def batch_applicator(function: Callable) -> Callable:
     return function
 
 
-def consume_stack(stack):
+async def consume_stack(stack, memory):
     batch = [stack.popleft() for _ in range(SIZE)]
-
+    for batch_applicator in BATCH_APPLICATORS:
+        result = await autofill(batch_applicator, args=[batch], memory=memory)
+        batch = zip(batch, result)
+    print(batch)
     return {"batch_to_consume": batch, "stack": stack}
 
 

@@ -4,7 +4,7 @@ Created on Mon Apr 17 09:12:00 2023
 
 @author: flore
 """
-
+from aiosow.bindings import setup
 from huggingface_hub import hf_hub_download
 import json
 import numpy as np
@@ -23,7 +23,6 @@ import warnings
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
-
 
 
 ### REQUIRED CLASSES (j'ai enlevé autant de classes que possible mais celles-ci sont nécessaires x)
@@ -71,6 +70,22 @@ class TokenAndPositionEmbedding(tf.keras.layers.Layer):
         return x + positions
 
 
+from typing import Callable
+from aiosow.bindings import autofill
+
+
+def adapter(resolver: Callable):
+    def _adapter(function: Callable):
+        async def call(items, **kwargs):
+            values = await autofill(resolver, args=[items], **kwargs)
+            result = await autofill(function, args=[values], **kwargs)
+            return result
+
+        return call
+
+    return _adapter
+
+
 ### FUNCTIONS DEFINITION
 
 
@@ -80,6 +95,12 @@ class TokenAndPositionEmbedding(tf.keras.layers.Layer):
 #     - Spotting
 #     - Zero-shot classification
 #     - Freshness test (does the item has been posted less thant 5 minutes ago ?)
+@adapter(
+    lambda items: [
+        a["item"]["Content"] if a["item"]["Content"] else a["item"]["Title"]
+        for a in items
+    ]
+)
 def zero_shot(texts, labeldict, classifier, max_depth=None, depth=0):
     """
     Perform zero-shot classification on the input text using a pre-trained language model.
@@ -94,7 +115,7 @@ def zero_shot(texts, labeldict, classifier, max_depth=None, depth=0):
     Returns:
     - path (list): A list containing the path of labels from the root to the predicted label. If the label hierarchy was not explored fully and the max_depth parameter was set, the path may not be complete.
     """
-
+    print(texts, labeldict, classifier, max_depth, depth)
     keys = list(labeldict.keys())
     output = classifier(texts, keys, multi_label=False, max_length=32)
     labels = [output[x]["labels"][0] for x in range(len(output))]
@@ -104,7 +125,7 @@ def zero_shot(texts, labeldict, classifier, max_depth=None, depth=0):
         return labels
     else:
         outputs = list()
-        
+
         for _t, _lab in zip(texts, labels):
             # _labels = dict()
             # for lab in _lab:
@@ -118,14 +139,9 @@ def zero_shot(texts, labeldict, classifier, max_depth=None, depth=0):
 
             # _labs = [output[x]["labels"] for x in range(len(output))]
             # _scores = [output[x]["scores"] for x in range(len(output))]
-    
+
             outputs.append(_out)
     return outputs
-
-
-def zero_shotter(item, labels, classifier):
-    result = zero_shot(item, labels, classifier)
-    print(result)
 
 
 def preprocess_text(text: str, remove_stopwords: bool) -> str:
@@ -181,18 +197,18 @@ def predict(text, pipe, tag, mappings):
 def tag(documents, nlp, device, mappings):
     """
     Analyzes and tags a list of text documents using various NLP models and techniques.
-    
+
     The function processes the input documents using pre-trained models for tasks such as
     sentence embeddings, text classification, sentiment analysis, and custom models for age,
     gender, and hate speech detection. It returns a list of dictionaries containing the
     processed data for each input document.
-    
+
     Args:
         documents (list): A list of text documents (strings) to be analyzed and tagged.
         nlp: model
         device: device
         mappings: labels
-    
+
     Returns:
         list: A list of dictionaries, where each dictionary represents a single input text and
               contains various processed data like embeddings, text classifications, sentiment, etc.,
@@ -200,14 +216,14 @@ def tag(documents, nlp, device, mappings):
     """
     # Create an empty DataFrame
     tmp = pd.DataFrame()
-    
+
     # Add the original text documents
     tmp["Translation"] = documents
-    
+
     # Compute sentence embeddings
-    model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+    model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
     tmp["Embedding"] = tmp["Translation"].swifter.apply(lambda x: model.encode(x))
-    
+
     # Text classification pipelines
     text_classification_models = [
         ("Advertising", "djsull/kobigbird-spam-multi-label"),
@@ -218,17 +234,37 @@ def tag(documents, nlp, device, mappings):
         ("SourceType", "alimazhar-110/website_classification"),
     ]
     for col_name, model_name in text_classification_models:
-        pipe = pipeline("text-classification", model=model_name, top_k = None, device=device)
-        tmp[col_name] = tmp["Translation"].swifter.apply(lambda x: [(y["label"], y["score"]) for y in pipe(x)[0]])
-        del pipe # free ram for latest pipe
-    
+        pipe = pipeline(
+            "text-classification", model=model_name, top_k=None, device=device
+        )
+        tmp[col_name] = tmp["Translation"].swifter.apply(
+            lambda x: [(y["label"], y["score"]) for y in pipe(x)[0]]
+        )
+        del pipe  # free ram for latest pipe
+
     # Tokenization for custom models
     tokenizer = AutoTokenizer.from_pretrained("bert-large-uncased")
-    tmp["Embedded"] = tmp["Translation"].swifter.apply(lambda x: np.array(tokenizer.encode_plus(x, add_special_tokens=True, max_length=512, truncation=True, pad_to_max_length=True, return_attention_mask=False, return_tensors='tf')["input_ids"][0]).reshape(1, -1))
-    
+    tmp["Embedded"] = tmp["Translation"].swifter.apply(
+        lambda x: np.array(
+            tokenizer.encode_plus(
+                x,
+                add_special_tokens=True,
+                max_length=512,
+                truncation=True,
+                pad_to_max_length=True,
+                return_attention_mask=False,
+                return_tensors="tf",
+            )["input_ids"][0]
+        ).reshape(1, -1)
+    )
+
     # Sentiment analysis using VADER
-    emoji_lexicon = hf_hub_download(repo_id="ExordeLabs/SentimentDetection", filename="emoji_unic_lexicon.json")
-    loughran_dict = hf_hub_download(repo_id="ExordeLabs/SentimentDetection", filename="loughran_dict.json")
+    emoji_lexicon = hf_hub_download(
+        repo_id="ExordeLabs/SentimentDetection", filename="emoji_unic_lexicon.json"
+    )
+    loughran_dict = hf_hub_download(
+        repo_id="ExordeLabs/SentimentDetection", filename="loughran_dict.json"
+    )
     with open(emoji_lexicon) as f:
         unic_emoji_dict = json.load(f)
     with open(loughran_dict) as f:
@@ -236,8 +272,10 @@ def tag(documents, nlp, device, mappings):
     sentiment_analyzer = SentimentIntensityAnalyzer()
     sentiment_analyzer.lexicon.update(Loughran_dict)
     sentiment_analyzer.lexicon.update(unic_emoji_dict)
-    tmp["Sentiment"] = tmp["Translation"].swifter.apply(lambda x: sentiment_analyzer.polarity_scores(x)['compound'])
-    
+    tmp["Sentiment"] = tmp["Translation"].swifter.apply(
+        lambda x: sentiment_analyzer.polarity_scores(x)["compound"]
+    )
+
     # Custom model pipelines
     custom_model_data = [
         ("Age", "ExordeLabs/AgeDetection", "ageDetection.h5"),
@@ -247,17 +285,25 @@ def tag(documents, nlp, device, mappings):
 
     for col_name, repo_id, file_name in custom_model_data:
         model_file = hf_hub_download(repo_id=repo_id, filename=file_name)
-        custom_model = tf.keras.models.load_model(model_file, custom_objects={"TokenAndPositionEmbedding": TokenAndPositionEmbedding, "TransformerBlock": TransformerBlock})
-        tmp[col_name] = tmp["Embedded"].swifter.apply(lambda x: predict(x, custom_model, col_name, mappings))
-        del custom_model # free ram for latest custom_model
+        custom_model = tf.keras.models.load_model(
+            model_file,
+            custom_objects={
+                "TokenAndPositionEmbedding": TokenAndPositionEmbedding,
+                "TransformerBlock": TransformerBlock,
+            },
+        )
+        tmp[col_name] = tmp["Embedded"].swifter.apply(
+            lambda x: predict(x, custom_model, col_name, mappings)
+        )
+        del custom_model  # free ram for latest custom_model
 
     # The output is a list of dictionaries, where each dictionary represents a single input text and contains
     # various processed data like embeddings, text classifications, sentiment, etc., as key-value pairs.
-    return tmp.to_dict(orient='records')
-
+    return tmp.to_dict(orient="records")
 
 
 ### VARIABLE INSTANTIATION
+@setup
 def meta_tagger_initialization():
     device = torch.cuda.current_device() if torch.cuda.is_available() else -1
     classifier = pipeline(
@@ -286,18 +332,19 @@ def meta_tagger_initialization():
     return {
         "device": device,
         "classifier": classifier,
-        "labels": labels,
+        "labeldict": labels,
         "mappings": mappings,
         "nlp": nlp,
+        "max_depth": 2,
     }
-
 
 
 if __name__ == "__main__":
     init = meta_tagger_initialization()
 
     ### TEST ZONE
-    test = ["Bitcoin hit 30.000$ last night!",
+    test = [
+        "Bitcoin hit 30.000$ last night!",
         "I like having a mojito with my breakfast",
         "Apple Inc. reports a 5% increase in revenue this quarter",
         "Get the best deal on laptops! Save up to 50% on our online store!",
@@ -376,29 +423,28 @@ if __name__ == "__main__":
         "Invest in our token today and watch your profits soar to the moon! Don't miss out on this once-in-a-lifetime opportunity.",
         "Our new blockchain-based platform is changing the game for businesses everywhere. Join the revolution now and reap the rewards!",
         "Want to make a quick buck? Our exclusive ICO is the perfect opportunity to get in on the ground floor of the next big thing.",
-        "Looking for a new investment opportunity? Our cutting-edge technology and experienced team make us the perfect choice for your portfolio."
-        ]
+        "Looking for a new investment opportunity? Our cutting-edge technology and experienced team make us the perfect choice for your portfolio.",
+    ]
 
     test = test[:10]
-    print("Nb of text samples = ",len(test))
-    tags = tag(test, init["nlp"], init["device"], init["mappings"]) 
-    field = zero_shot(test, init["labels"], init["classifier"], max_depth=1)
+    print("Nb of text samples = ", len(test))
+    tags = tag(test, init["nlp"], init["device"], init["mappings"])
+    field = zero_shot(test, init["labeldict"], init["classifier"], max_depth=1)
 
     for sample, lbl, tag_ in zip(test, field, tags):
-        print("Input = ",sample)
-        top_gender = max(tag_['Gender'], key=lambda x: x[1])[0]
-        top_age = max(tag_['Age'], key=lambda x: x[1])[0]
-        hatespeech_max = max(tag_['HateSpeech'], key=lambda x: x[1])
-        advertising = max(tag_['Advertising'], key=lambda x: x[1])
-        top_emotion = max(tag_['Emotion'], key=lambda x: x[1])
-        top_irony = max(tag_['Irony'], key=lambda x: x[1])
-        textType = max(tag_['TextType'], key=lambda x: x[1])
-        sourceType = max(tag_['SourceType'], key=lambda x: x[1])
+        print("Input = ", sample)
+        top_gender = max(tag_["Gender"], key=lambda x: x[1])[0]
+        top_age = max(tag_["Age"], key=lambda x: x[1])[0]
+        hatespeech_max = max(tag_["HateSpeech"], key=lambda x: x[1])
+        advertising = max(tag_["Advertising"], key=lambda x: x[1])
+        top_emotion = max(tag_["Emotion"], key=lambda x: x[1])
+        top_irony = max(tag_["Irony"], key=lambda x: x[1])
+        textType = max(tag_["TextType"], key=lambda x: x[1])
+        sourceType = max(tag_["SourceType"], key=lambda x: x[1])
 
-        sentiment  = tag_['Sentiment']
-        languageScore = tag_['LanguageScore']
+        sentiment = tag_["Sentiment"]
+        languageScore = tag_["LanguageScore"]
 
-        
         print(f"\tTopic category:  **{lbl}**")
         print(f"\tTop Gender: {top_gender}")
         print(f"\tTop Age Range: {top_age}")
