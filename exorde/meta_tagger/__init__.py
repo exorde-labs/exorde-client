@@ -112,9 +112,11 @@ def zero_shot(texts, labeldict, classifier, max_depth=None, depth=0):
             output = classifier(texts, keys, multi_label=False, max_length=32)
             _out = list()
             for x in range(len(output)):
+                out = list()
                 for i in range(len(output[x]["labels"])):
                     scores = (output[x]["labels"][i], output[x]["scores"][i])
-                    _out.append(scores)
+                    out.append(scores)
+                _out.append(out)
 
             # _labs = [output[x]["labels"] for x in range(len(output))]
             # _scores = [output[x]["scores"] for x in range(len(output))]
