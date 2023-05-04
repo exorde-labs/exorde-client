@@ -11,7 +11,6 @@ from exorde.protocol.bindings import commit_current_cid
 from exorde.spotting import (
     init_stack,
     push_to_stack,
-    log_stack_len,
     consume_stack,
     reset_cids,
     push_new_cid,
