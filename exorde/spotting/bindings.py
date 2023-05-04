@@ -1,5 +1,5 @@
 import logging
-from aiosow.bindings import setup, call_limit, wire
+from aiosow.bindings import setup, wire
 from aiosow.perpetuate import on
 from aiosow.autofill import autofill
 
@@ -35,18 +35,11 @@ spotting_ran_when, on_spotting_done_do = wire(perpetual=True)
 
 @on_formated_data_do
 @spotting_ran_when
-async def run_spotting(item: dict, memory):
-    for process in SPOTTING_PROCCESES:
-        item = await autofill(
-            process,
-            args=[
-                item,
-            ],
-            memory=memory,
-        )
+async def run_spotting(item: dict):
     return item
 
 
+# on_formated_data_do(push_to_stack)
 on_spotting_done_do(push_to_stack)
 
 

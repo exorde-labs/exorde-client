@@ -1,30 +1,46 @@
 #! python3.10
 
+from typing import Callable
 import logging
 from collections import deque
-from datetime import datetime, timedelta, timezone
+from aiosow.autofill import autofill
 
 
 def init_stack():
     return {"stack": deque(maxlen=100)}
 
 
-def push_to_stack(value, stack):
-    if datetime.fromisoformat(value["item"]["CreationDateTime"]) - datetime.now(
-        timezone.utc
-    ) > timedelta(seconds=180):
-        return {}
-    if value not in stack:
+FILTERS = []
+APPLICATORS = []
+
+
+def filter(function: Callable):
+    FILTERS.append(function)
+    return function
+
+
+def applicator(function: Callable):
+    APPLICATORS.append(function)
+    return function
+
+
+async def push_to_stack(value, stack, memory):
+    filter_result = True
+    logging.info("push_to_stack")
+    for filter_function in FILTERS:
+        filter_result = await autofill(filter_function, args=[value], memory=memory)
+        if filter_result == False:
+            break
+
+    if filter_result:
+        for applicator in APPLICATORS:
+            value = await autofill(applicator, args=[value], memory=memory)
         stack.append(value)
         # technicaly the stack is already updated here
         # we return to trigger the ONS events
         return {"stack": stack}
     else:
-        # if we had keyword we could weight in the duplicates in keyword choice
-        # we could also trigger page roll after a certain amount of duplicates
-        # but we should be able to pass on this option to be able to "monitor"
-        # specific items
-        logging.debug("Duplicate collection")
+        return {}
 
 
 def log_stack_len(stack):
