@@ -5,9 +5,11 @@ import logging
 from collections import deque
 from aiosow.autofill import autofill
 
+SIZE = 25
+
 
 def init_stack():
-    return {"stack": deque(maxlen=100)}
+    return {"stack": deque(maxlen=SIZE)}
 
 
 FILTERS = []
@@ -47,7 +49,6 @@ def log_stack_len(stack):
     logging.info(f"{len(stack)} items in memory")
 
 
-SIZE = 100
 BATCH_APPLICATORS = []
 
 
@@ -61,7 +62,6 @@ async def consume_stack(stack, memory):
     for batch_applicator in BATCH_APPLICATORS:
         result = await autofill(batch_applicator, args=[batch], memory=memory)
         batch = zip(batch, result)
-    print(batch)
     return {"batch_to_consume": batch, "stack": stack}
 
 

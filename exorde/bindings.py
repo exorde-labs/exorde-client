@@ -129,7 +129,7 @@ def init_spotting(no_spotting, remote_kill, memory):
         from exorde.spotting.filters import datetime_filter, unique_filter
         from exorde.translation.bindings import translate
         from exorde.xyake.bindings import populate_keywords
-        from exorde.meta_tagger import zero_shot
+        from exorde.meta_tagger import zero_shot, preprocess
 
         for source in SOURCES:
             if not memory[f"no_{source}"]:
@@ -138,6 +138,7 @@ def init_spotting(no_spotting, remote_kill, memory):
         spotting_filter(datetime_filter)
         spotting_filter(unique_filter)
 
+        spotting_applicator(preprocess)
         spotting_applicator(translate)
         spotting_applicator(populate_keywords)
 

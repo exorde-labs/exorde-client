@@ -74,8 +74,8 @@ from typing import Callable
 from aiosow.bindings import autofill
 
 
-def adapter(resolver: Callable):
-    def _adapter(function: Callable):
+def list_adapter(resolver: Callable):
+    def _list_adapter(function: Callable):
         async def call(items, **kwargs):
             values = await autofill(resolver, args=[items], **kwargs)
             result = await autofill(function, args=[values], **kwargs)
@@ -83,7 +83,7 @@ def adapter(resolver: Callable):
 
         return call
 
-    return _adapter
+    return _list_adapter
 
 
 ### FUNCTIONS DEFINITION
@@ -95,7 +95,7 @@ def adapter(resolver: Callable):
 #     - Spotting
 #     - Zero-shot classification
 #     - Freshness test (does the item has been posted less thant 5 minutes ago ?)
-@adapter(
+@list_adapter(
     lambda items: [
         a["item"]["Content"] if a["item"]["Content"] else a["item"]["Title"]
         for a in items
@@ -115,7 +115,6 @@ def zero_shot(texts, labeldict, classifier, max_depth=None, depth=0):
     Returns:
     - path (list): A list containing the path of labels from the root to the predicted label. If the label hierarchy was not explored fully and the max_depth parameter was set, the path may not be complete.
     """
-    print(texts, labeldict, classifier, max_depth, depth)
     keys = list(labeldict.keys())
     output = classifier(texts, keys, multi_label=False, max_length=32)
     labels = [output[x]["labels"][0] for x in range(len(output))]
@@ -142,6 +141,18 @@ def zero_shot(texts, labeldict, classifier, max_depth=None, depth=0):
 
             outputs.append(_out)
     return outputs
+
+
+def adapter(resolve: Callable) -> Callable:
+    def wrapper(function: Callable) -> Callable:
+        async def caller(item, **kwargs):
+            value = await autofill(resolve, args=[item], **kwargs)
+            result = await autofill(function, args=[value], **kwargs)
+            return result
+
+        return caller
+
+    return wrapper
 
 
 def preprocess_text(text: str, remove_stopwords: bool) -> str:
@@ -178,6 +189,11 @@ def preprocess_text(text: str, remove_stopwords: bool) -> str:
     if contains_only_special_chars(text):
         text = ""
     return text
+
+
+def preprocess(item, remove_stopwords):
+    item["item"]["Content"] = preprocess_text(item["item"]["Content"], remove_stopwords)
+    return item
 
 
 def get_entities(text, nlp):
@@ -336,6 +352,7 @@ def meta_tagger_initialization():
         "mappings": mappings,
         "nlp": nlp,
         "max_depth": 2,
+        "remove_stopwords": False,
     }
 
 

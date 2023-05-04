@@ -44,7 +44,7 @@ on_spotting_done_do(push_to_stack)
 
 
 # on("stack")(call_limit(1)(log_stack_len))
-on("stack", condition=lambda stack: len(stack) == 100)(consume_stack)
+on("stack", condition=lambda stack: len(stack) == 25)(consume_stack)
 on(
     "batch_to_consume",
     condition=lambda value, transaction, batch_id: value
