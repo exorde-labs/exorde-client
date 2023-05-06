@@ -125,11 +125,16 @@ def init_spotting(no_spotting, remote_kill, memory):
         from exorde.spotting import bindings as __bindings__
         from exorde.spotting import applicator as spotting_applicator
         from exorde.spotting import filter as spotting_filter
-        from exorde.spotting import batch_applicator as spotting_batch_applicator
-        from exorde.spotting.filters import datetime_filter, unique_filter
+
+        # from exorde.spotting import batch_applicator as spotting_batch_applicator
+        from exorde.spotting.filters import (
+            datetime_filter,
+            unique_filter,
+            format_assertion,
+        )
         from exorde.translation.bindings import translate
         from exorde.xyake.bindings import populate_keywords
-        from exorde.meta_tagger import zero_shot, preprocess
+        from exorde.meta_tagger import zero_shotter, preprocess
 
         for source in SOURCES:
             if not memory[f"no_{source}"]:
@@ -137,12 +142,12 @@ def init_spotting(no_spotting, remote_kill, memory):
 
         spotting_filter(datetime_filter)
         spotting_filter(unique_filter)
+        spotting_filter(format_assertion)
 
         spotting_applicator(preprocess)
         spotting_applicator(translate)
         spotting_applicator(populate_keywords)
-
-        spotting_batch_applicator(zero_shot)
+        spotting_applicator(zero_shotter)
 
 
 """

@@ -9,7 +9,7 @@ SIZE = 25
 
 
 def init_stack():
-    return {"stack": deque(maxlen=SIZE)}
+    return {"stack": deque(maxlen=SIZE), "processed": [], "processing": False}
 
 
 FILTERS = []
@@ -32,21 +32,31 @@ async def push_to_stack(value, stack, memory):
         filter_result = await autofill(filter_function, args=[value], memory=memory)
         if filter_result == False:
             break
-
     if filter_result:
+        stack.append(value)
+        return {"stack": stack}
+    return {}
+
+
+import json
+
+
+async def pull_to_process(stack, processed, memory):
+    value = stack.pop()
+    memory["processing"] = True
+    memory["stack"] = stack
+    try:
         for applicator in APPLICATORS:
             value = await autofill(applicator, args=[value], memory=memory)
-
-        stack.append(value)
+        logging.info("A new item has been processed")
+        processed.append(value)
         # technicaly the stack is already updated here
         # we return to trigger the ONS events
-        return {"stack": stack}
-    else:
-        return {}
-
-
-def log_stack_len(stack):
-    logging.info(f"{len(stack)} items in memory")
+        return {"processed": processed, "processing": False}
+    except Exception as err:
+        logging.error("An error occured processing an item")
+        logging.error(err)
+        logging.error(json.dumps(value, indent=4))
 
 
 BATCH_APPLICATORS = []
@@ -57,17 +67,15 @@ def batch_applicator(function: Callable) -> Callable:
     return function
 
 
-async def consume_stack(stack, memory):
-    batch = [stack.popleft() for _ in range(SIZE)]
-    logging.info("starting batch analysis")
+async def consume_processed(processed, memory):
+    batch = [processed.pop(0) for _ in range(SIZE)]
     for batch_applicator in BATCH_APPLICATORS:
         result = await autofill(batch_applicator, args=[batch], memory=memory)
         temp_batch = batch
         for d, val in zip(batch, result):
             d.update({"Properties": val})
         batch = temp_batch
-    logging.info("batch analysis complete")
-    return {"batch_to_consume": batch, "stack": stack}
+    return {"batch_to_consume": batch, "processed": processed}
 
 
 def reset_cids():

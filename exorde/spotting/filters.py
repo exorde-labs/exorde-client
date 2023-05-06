@@ -18,3 +18,11 @@ def unique_filter(value, stack):
     if value in stack:
         logging.debug("Duplicate collection")
     return value not in stack
+
+
+def format_assertion(value, stack):
+    try:
+        assert len(value["item"]["Content"]) > 20
+        return True
+    except:
+        return False

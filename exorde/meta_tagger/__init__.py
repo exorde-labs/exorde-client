@@ -20,6 +20,9 @@ import torch
 from transformers import AutoTokenizer, pipeline
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import warnings
+from typing import Callable
+from aiosow.bindings import autofill, make_async
+
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
@@ -70,20 +73,16 @@ class TokenAndPositionEmbedding(tf.keras.layers.Layer):
         return x + positions
 
 
-from typing import Callable
-from aiosow.bindings import autofill
-
-
-def list_adapter(resolver: Callable):
-    def _list_adapter(function: Callable):
-        async def call(items, **kwargs):
-            values = await autofill(resolver, args=[items], **kwargs)
-            result = await autofill(function, args=[values], **kwargs)
+def adapter(resolve: Callable) -> Callable:
+    def wrapper(function: Callable) -> Callable:
+        async def caller(item, **kwargs):
+            value = await autofill(resolve, args=[item], **kwargs)
+            result = await autofill(function, args=[value], **kwargs)
             return result
 
-        return call
+        return caller
 
-    return _list_adapter
+    return wrapper
 
 
 ### FUNCTIONS DEFINITION
@@ -95,12 +94,7 @@ def list_adapter(resolver: Callable):
 #     - Spotting
 #     - Zero-shot classification
 #     - Freshness test (does the item has been posted less thant 5 minutes ago ?)
-@list_adapter(
-    lambda items: [
-        a["item"]["Content"] if a["item"]["Content"] else a["item"]["Title"]
-        for a in items
-    ]
-)
+@make_async
 def zero_shot(texts, labeldict, classifier, max_depth=None, depth=0):
     """
     Perform zero-shot classification on the input text using a pre-trained language model.
@@ -145,16 +139,12 @@ def zero_shot(texts, labeldict, classifier, max_depth=None, depth=0):
     return outputs
 
 
-def adapter(resolve: Callable) -> Callable:
-    def wrapper(function: Callable) -> Callable:
-        async def caller(item, **kwargs):
-            value = await autofill(resolve, args=[item], **kwargs)
-            result = await autofill(function, args=[value], **kwargs)
-            return result
-
-        return caller
-
-    return wrapper
+async def zero_shotter(item, memory):
+    zero_shot_result = await autofill(
+        zero_shot, args=[[item["item"]["Content"]]], memory=memory
+    )
+    item["item"]["Analytics"] = zero_shot_result
+    return item
 
 
 def preprocess_text(text: str, remove_stopwords: bool) -> str:
