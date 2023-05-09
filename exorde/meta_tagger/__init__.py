@@ -94,7 +94,6 @@ def adapter(resolve: Callable) -> Callable:
 #     - Spotting
 #     - Zero-shot classification
 #     - Freshness test (does the item has been posted less thant 5 minutes ago ?)
-@make_async
 def zero_shot(texts, labeldict, classifier, max_depth=None, depth=0):
     """
     Perform zero-shot classification on the input text using a pre-trained language model.
@@ -137,14 +136,6 @@ def zero_shot(texts, labeldict, classifier, max_depth=None, depth=0):
 
             outputs.append(_out)
     return outputs
-
-
-async def zero_shotter(item, memory):
-    zero_shot_result = await autofill(
-        zero_shot, args=[[item["item"]["Content"]]], memory=memory
-    )
-    item["item"]["Analytics"] = zero_shot_result
-    return item
 
 
 def preprocess_text(text: str, remove_stopwords: bool) -> str:
@@ -311,7 +302,6 @@ def tag(documents, nlp, device, mappings):
 
 
 ### VARIABLE INSTANTIATION
-@setup
 def meta_tagger_initialization():
     device = torch.cuda.current_device() if torch.cuda.is_available() else -1
     classifier = pipeline(
