@@ -187,15 +187,13 @@ def worker_address(worker_name):
     return acct
 
 
-async def log_current_rep(worker_address):
+async def log_current_rep(main_address):
     async with aiohttp.ClientSession() as session:
         async with session.get(
             "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/Stats/leaderboard.json"
         ) as response:
             leaderboard = json.loads(await response.text())
-            logging.info(
-                f"Current rep = {round(leaderboard.get(worker_address, 0), 4)}"
-            )
+            logging.info(f"Current rep = {round(leaderboard.get(main_address, 0), 4)}")
 
 
 async def send_raw_transaction(transaction, write_web3, read_web3, worker_address):
@@ -407,9 +405,9 @@ async def init_gas_cache():
     return {"gas_cache": {}}
 
 
-async def get_balance(read_web3, worker_address):
+async def get_balance(read_web3, main_address):
     try:
-        return await read_web3.eth.get_balance(worker_address)
+        return await read_web3.eth.get_balance(main_address)
     except Exception as e:
         logging.error(e)
         return 0
