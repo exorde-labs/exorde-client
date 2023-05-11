@@ -15,7 +15,7 @@ jobs:
       - name: Delete previous schema
         run: rm -rf ./models/schema.json
       - name: debug
-        run: ls exorde
+        run: ls exorde/models
       - name: Run command
         run: python3 models/__init__.py 
       - name: Display schema
