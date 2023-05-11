@@ -1,0 +1,16 @@
+name: Generate the json-schema from the models 
+
+on:
+  push:
+    branches: '**'
+
+jobs:
+  run-command:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install package
+        run: pip install -e ./exorde/models
+      - name: Run command
+        run: aiosow models print_schema

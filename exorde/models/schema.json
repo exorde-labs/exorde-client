@@ -1,0 +1,70 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "content": {
+            "type": "string"
+        },
+        "author": {
+            "type": "string"
+        },
+        "controversial": {
+            "type": "string",
+            "enum": [
+                "UNKNOWN",
+                "TRUE",
+                "FALSE"
+            ]
+        },
+        "creation_date_time": {
+            "type": "string",
+            "pattern": "^([\\+-]?\\d{4}(?!\\d{2}\\b))((-?)((0[1-9]|1[0-2])(\\3([12]\\d|0[1-9]|3[01]))?|W([0-4]\\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\\d|[12]\\d{2}|3([0-5]\\d|6[1-6])))([T\\s]((([01]\\d|2[0-3])((:?)[0-5]\\d)?|24\\:?00)([\\.,]\\d+(?!:))?)?(\\17[0-5]\\d([\\.,]\\d+)?)?([zZ]|([\\+-])([01]\\d|2[0-3]):?([0-5]\\d)?)?)?)?$"
+        },
+        "description": {
+            "type": "string"
+        },
+        "language": {
+            "type": "string"
+        },
+        "title": {
+            "type": "string"
+        },
+        "url": {
+            "type": "string",
+            "pattern": "^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\\.)+[a-zA-Z]{2,}"
+        },
+        "internal_id": {
+            "type": "string"
+        },
+        "internal_parent_id": {
+            "type": "string"
+        },
+        "media_type": {
+            "type": "string",
+            "enum": [
+                "VIDEO",
+                "AUDIO",
+                "POST",
+                "COMMENT"
+            ]
+        },
+        "nb_comments": {
+            "type": "integer"
+        },
+        "nb_likes": {
+            "type": "integer"
+        },
+        "nb_shared": {
+            "type": "integer"
+        },
+        "top_keywords": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "spotterCountry": {
+            "type": "string"
+        }
+    }
+}

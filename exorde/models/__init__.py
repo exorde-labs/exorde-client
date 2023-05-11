@@ -46,10 +46,13 @@ class Item(JsonSchema):
     spotterCountry = StringField()
 
 
+def print_schema(__memory__):
+    print(json.dumps(Item().schema(), indent=4))
+
+
 # comments are different items
 
 if __name__ == "__main__":
     e = Item()
     e.author = "foo"
     print(e.author)
-    print(json.dumps(e.schema(), indent=4))
