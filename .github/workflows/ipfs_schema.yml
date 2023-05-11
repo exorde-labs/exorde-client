@@ -14,7 +14,9 @@ jobs:
         run: pip install -e ./exorde/models
       - name: Delete previous schema
         run: rm -rf ./models/schema.json
+      - name: debug
+        run: ls ; pwd
       - name: Run command
-        run: python3 ./models/__init__.py 
+        run: python3 models/__init__.py 
       - name: Display schema
         run: cat ./models/schema.json
