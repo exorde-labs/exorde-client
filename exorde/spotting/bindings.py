@@ -1,5 +1,5 @@
 import logging
-from aiosow.bindings import setup, call_limit, wire
+from aiosow.bindings import setup, wire
 from aiosow.perpetuate import on
 from aiosow.autofill import autofill
 

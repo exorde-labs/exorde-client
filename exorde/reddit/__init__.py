@@ -3,7 +3,7 @@ from dateutil import parser
 from lxml import html
 
 
-async def generate_reddit_url(keyword: str):
+async def generate_subreddit_url(keyword: str):
     async with aiohttp.ClientSession() as session:
         async with session.get(
             f"https://www.reddit.com/search/?q={keyword}&type=sr"
@@ -19,9 +19,15 @@ async def generate_reddit_url(keyword: str):
             return result
 
 
-async def scrap_reddit_url(reddit_url: str):
+async def scrap_reddit_url(reddit_item: dict, session):
+    async with session.get(reddit_item["item"]["Url"] + ".json") as response:
+        post_content = await response.json()
+    return reddit_item
+
+
+async def scrap_subreddit_url(subreddit_url: str):
     async with aiohttp.ClientSession() as session:
-        async with session.get(reddit_url) as response:
+        async with session.get(subreddit_url) as response:
             html_content = await response.text()
             tree = html.fromstring(html_content)
             posts = tree.xpath("//div[contains(@class, 'entry')]")
@@ -35,32 +41,35 @@ async def scrap_reddit_url(reddit_url: str):
                     comments = int(post.xpath("div/ul/li/a")[0].text.split(" ")[0])
                 except:
                     comments = 0
-                yield {
-                    "entities": [],
-                    "item": {
-                        "Author": username,
-                        "Content": "",
-                        "Controversial": False,
-                        "CreationDateTime": parser.parse(time).isoformat(),
-                        "Description": "",
-                        "DomainName": "reddit.com",
-                        "Language": "en",
-                        "Reference": "",
-                        "Title": title,
-                        "Url": url,
-                        "internal_id": url,
-                        "internal_parent_id": None,
-                        "mediaType": "",
-                        # "source": data['source'], # new
-                        # "nbQuotes": data['quote_count'], # new
-                        "nbComments": comments,
-                        "nbLiked": 0,
-                        "nbShared": 0,
-                        # "isQuote": data['is_quote_status'] # new
+                yield await scrap_reddit_url(
+                    {
+                        "entities": [],
+                        "item": {
+                            "Author": username,
+                            "Content": "",
+                            "Controversial": False,
+                            "CreationDateTime": parser.parse(time).isoformat(),
+                            "Description": "",
+                            "DomainName": "reddit.com",
+                            "Language": "en",
+                            "Reference": "",
+                            "Title": title,
+                            "Url": url,
+                            "internal_id": url,
+                            "internal_parent_id": None,
+                            "mediaType": "",
+                            # "source": data['source'], # new
+                            # "nbQuotes": data['quote_count'], # new
+                            "nbComments": comments,
+                            "nbLiked": 0,
+                            "nbShared": 0,
+                            # "isQuote": data['is_quote_status'] # new
+                        },
+                        "keyword": "",
+                        "links": [],
+                        "medias": [],
+                        "spotterCountry": "",
+                        "tokenOfInterest": [],
                     },
-                    "keyword": "",
-                    "links": [],
-                    "medias": [],
-                    "spotterCountry": "",
-                    "tokenOfInterest": [],
-                }
+                    session,
+                )
