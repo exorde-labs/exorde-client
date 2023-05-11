@@ -14,9 +14,10 @@ jobs:
         run: pip install -e ./exorde/models ; rm -rf ./exorde/models/schema.json ; python3 exorde/models/__init__.py  >> exorde/models/schema.json
       - name: Display schema
         run: cat exorde/models/schema.json
-      - name: Push schema to repository
-        uses: EndBug/add-and-commit@v7
-        with:
-          message: "Update schema file"
-          directory: "exorde/models"
-          branch: "${{ github.ref }}"
+      - name: Commit changes
+        run: |
+          git add exorde/models/schema.json
+          git config --global user.email "patrick@exordelabs.com"
+          git config --global user.name "Patrick Borowy"
+          git commit -m 'Automated update of README.md' || echo 'nothing to commit'
+          git push https://${{github.actor}}:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git HEAD:${{ github.ref }} || echo "no change to push" ; 
