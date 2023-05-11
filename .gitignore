@@ -11,3 +11,4 @@ Makefile
 build
 dist
 schemator
+exorde/models/schema.json
