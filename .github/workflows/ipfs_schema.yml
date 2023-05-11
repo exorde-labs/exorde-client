@@ -12,5 +12,9 @@ jobs:
         uses: actions/checkout@v2
       - name: Install package
         run: pip install -e ./exorde/models
+      - name: Delete previous schema
+        run: rm ./models/schema.json
       - name: Run command
-        run: aiosow models print_schema
+        run: python3.11 ./models/__init__.py >> ./models/schema.json 
+      - name: Display schema
+        run: cat ./models/schema.json

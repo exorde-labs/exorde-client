@@ -61,6 +61,7 @@ setup(
             "exorde.twitter",
             "exorde.validation",
             "exorde.xyake",
+            "exorde.models",
         ]
     ),
     include_package_data=True,
