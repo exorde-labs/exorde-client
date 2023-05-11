@@ -13,4 +13,4 @@ jobs:
       - name: Generate Schema
         run: pip install -e ./exorde/models ; rm -rf ./exorde/models/schema.json ; python3 exorde/models/__init__.py  >> exorde/models/schema.json
       - name: Display schema
-        run: cat ./models/schema.json
+        run: cat exorde/models/schema.json
