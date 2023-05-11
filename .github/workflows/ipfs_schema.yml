@@ -13,7 +13,7 @@ jobs:
       - name: Install package
         run: pip install -e ./exorde/models
       - name: Delete previous schema
-        run: rm ./models/schema.json
+        run: rm -rf ./models/schema.json
       - name: Run command
         run: python3.11 ./models/__init__.py >> ./models/schema.json 
       - name: Display schema
