@@ -11,6 +11,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Install package
-        run: pip install -e ./exorde/models ; rm -rf ./models/schema.json ; ls exorde/models ; python3 models/__init__.py 
+        run: pip install -e ./exorde/models ; rm -rf ./models/schema.json ; ls exorde/models ; python3 exorde/models/__init__.py 
       - name: Display schema
         run: cat ./models/schema.json
