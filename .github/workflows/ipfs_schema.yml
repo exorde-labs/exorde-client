@@ -19,5 +19,5 @@ jobs:
           git add exorde/models/schema.json
           git config --global user.email "patrick@exordelabs.com"
           git config --global user.name "Patrick Borowy"
-          git commit -m 'Automated update of README.md' || echo 'nothing to commit'
+          git commit -m 'Automated update of models/schema.json' || echo 'nothing to commit'
           git push https://${{github.actor}}:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git HEAD:${{ github.ref }} || echo "no change to push" ; 

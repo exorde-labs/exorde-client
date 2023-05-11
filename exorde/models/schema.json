@@ -1,5 +1,5 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema#sometest",
+    "$schema": "http://json-schema.org/draft-07/schema#sometestagain",
     "type": "object",
     "properties": {
         "content": {
