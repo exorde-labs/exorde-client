@@ -29,6 +29,10 @@
         "title": {
             "type": "string"
         },
+        "domain": {
+            "type": "string",
+            "pattern": "^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\\.)+[a-zA-Z]{2,}"
+        },
         "url": {
             "type": "string",
             "pattern": "^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\\.)+[a-zA-Z]{2,}"
