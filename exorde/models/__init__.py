@@ -33,6 +33,7 @@ class Item(JsonSchema):
     description = StringField()
     language = StringField()  # weak, maybe enum ?
     title = StringField()
+    domain = UrlField()
     url = UrlField()
     internal_id = StringField()
     internal_parent_id = StringField()
