@@ -4,7 +4,6 @@ Created on Mon Apr 17 09:12:00 2023
 
 @author: flore
 """
-from aiosow.bindings import setup
 from huggingface_hub import hf_hub_download
 import json
 import numpy as np
@@ -21,14 +20,10 @@ from transformers import AutoTokenizer, pipeline
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import warnings
 from typing import Callable
-from aiosow.bindings import autofill, make_async
 
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
-
-
-### REQUIRED CLASSES (j'ai enlevé autant de classes que possible mais celles-ci sont nécessaires x)
 
 
 class TransformerBlock(tf.keras.layers.Layer):
@@ -71,18 +66,6 @@ class TokenAndPositionEmbedding(tf.keras.layers.Layer):
         positions = self.pos_emb(positions)
         x = self.token_emb(x)
         return x + positions
-
-
-def adapter(resolve: Callable) -> Callable:
-    def wrapper(function: Callable) -> Callable:
-        async def caller(item, **kwargs):
-            value = await autofill(resolve, args=[item], **kwargs)
-            result = await autofill(function, args=[value], **kwargs)
-            return result
-
-        return caller
-
-    return wrapper
 
 
 ### FUNCTIONS DEFINITION
