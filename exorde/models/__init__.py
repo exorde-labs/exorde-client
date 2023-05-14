@@ -1,12 +1,12 @@
 from enum import Enum
 import json
 
-from schemator import (
+from jschemator import (
     ArrayField,
     DateTimeField,
     EnumField,
     IntegerField,
-    JsonSchema,
+    Schema,
     StringField,
     UrlField,
 )
@@ -25,10 +25,10 @@ class Trivalent(Enum):
     FALSE = "FALSE"
 
 
-class Item(JsonSchema):
+class Item(Schema):
     content = StringField()
     author = StringField()  # sha1 du username
-    controversial = EnumField(Trivalent)
+    # controversial = EnumField(Trivalent)
     creation_date_time = DateTimeField()
     description = StringField()
     language = StringField()  # weak, maybe enum ?
@@ -48,7 +48,7 @@ class Item(JsonSchema):
 
 
 def print_schema():
-    print(json.dumps(Item().schema(), indent=4))
+    print(json.dumps(Item().json_schema(), indent=4))
 
 
 # comments are different items

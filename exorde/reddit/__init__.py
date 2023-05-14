@@ -1,6 +1,7 @@
 import aiohttp, random
-from dateutil import parser
 from lxml import html
+from exorde.models import Item
+from typing import AsyncGenerator
 
 
 async def generate_subreddit_url(keyword: str):
@@ -19,57 +20,28 @@ async def generate_subreddit_url(keyword: str):
             return result
 
 
-async def scrap_reddit_url(reddit_item: dict, session):
-    async with session.get(reddit_item["item"]["Url"] + ".json") as response:
-        post_content = await response.json()
-    return reddit_item
+# t3 -> t3['data'] (post)
+# t1 -> t1['data']['replies'] -> listing (comment)
+# listing -> listing['data']['children'] -> [t1, ...] | [t3, ...]
+
+
+async def scrap_reddit_url(url: str) -> AsyncGenerator[Item, None]:
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url + ".json") as response:
+            [post, comments] = await response.json()
+            print(post)
+            print(comments)
+            item = Item()
+            yield item
 
 
 async def scrap_subreddit_url(subreddit_url: str):
     async with aiohttp.ClientSession() as session:
         async with session.get(subreddit_url) as response:
             html_content = await response.text()
-            tree = html.fromstring(html_content)
-            posts = tree.xpath("//div[contains(@class, 'entry')]")
-            for post in posts:
-                title = post.xpath("div/p/a")[0].text
-                url = post.xpath("div/p/a")[0].get("href")
-                url = f"https://reddit.com{url}" if url[0] == "/" else url
-                username = post.xpath("div/p/a")[1].text
-                time = post.xpath("div/p/time")[0].get("datetime")
-                try:
-                    comments = int(post.xpath("div/ul/li/a")[0].text.split(" ")[0])
-                except:
-                    comments = 0
-                yield await scrap_reddit_url(
-                    {
-                        "entities": [],
-                        "item": {
-                            "Author": username,
-                            "Content": "",
-                            "Controversial": False,
-                            "CreationDateTime": parser.parse(time).isoformat(),
-                            "Description": "",
-                            "DomainName": "reddit.com",
-                            "Language": "en",
-                            "Reference": "",
-                            "Title": title,
-                            "Url": url,
-                            "internal_id": url,
-                            "internal_parent_id": None,
-                            "mediaType": "",
-                            # "source": data['source'], # new
-                            # "nbQuotes": data['quote_count'], # new
-                            "nbComments": comments,
-                            "nbLiked": 0,
-                            "nbShared": 0,
-                            # "isQuote": data['is_quote_status'] # new
-                        },
-                        "keyword": "",
-                        "links": [],
-                        "medias": [],
-                        "spotterCountry": "",
-                        "tokenOfInterest": [],
-                    },
-                    session,
-                )
+            html_tree = html.fromstring(html_content)
+            for post in html_tree.xpath("//div[contains(@class, 'entry')]"):
+                async for item in scrap_reddit_url(
+                    post.xpath("div/p/a")[0].get("href")
+                ):
+                    yield item
