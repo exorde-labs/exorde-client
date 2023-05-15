@@ -26,6 +26,8 @@ class Trivalent(Enum):
 
 
 class Item(Schema):
+    """Posts & Comments both are independants Items"""
+
     content = StringField()
     author = StringField()  # sha1 du username
     # controversial = EnumField(Trivalent)
@@ -48,10 +50,5 @@ class Item(Schema):
 
 
 def print_schema():
+    print(isinstance(Item().json_schema(), str))
     print(json.dumps(Item().json_schema(), indent=4))
-
-
-# comments are different items
-
-if __name__ == "__main__":
-    print_schema()

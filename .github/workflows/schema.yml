@@ -11,7 +11,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Generate Schema
-        run: pip install -e ./exorde/exorde_models ; rm -rf ./exorde/exorde_models/schema.json ; python3 exorde_models/__init__.py  >> exorde/exorde_models/schema.json
+        run: pip install -e ./exorde/exorde_models ; rm -rf ./exorde/exorde_models/schema.json ; exorde_models  >> exorde/exorde_models/schema.json
       - name: Display schema
         run: cat exorde/exorde_models/schema.json
       - name: Commit changes
