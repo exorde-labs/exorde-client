@@ -50,5 +50,4 @@ class Item(Schema):
 
 
 def print_schema():
-    print(isinstance(Item().json_schema(), str))
     print(json.dumps(Item().json_schema(), indent=4))
