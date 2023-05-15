@@ -16,7 +16,9 @@ async def test_result_of_tag_should_be_json_serializable():
     """Result requires to be serialiable to pass trough the network."""
     test_content = SAMPLE[1:]
     result = await autofill(tag, args=[test_content], memory=CONFIG)
-    json.dumps(result)
+    tag_result = json.dumps(result)
+    with open("tag-result.json", "w") as f:
+        f.write(tag_result)
 
 
 @pytest.mark.asyncio
@@ -24,4 +26,6 @@ async def test_result_of_zero_shot_should_be_json_serializable():
     """Result requires to be serialiable to pass trough the network."""
     test_content = SAMPLE[1:]
     result = await autofill(zero_shot, args=[test_content], memory=CONFIG)
-    json.dumps(result)
+    zero_shot_result = json.dumps(result)
+    with open("zero_shot-result.json", "w") as f:
+        f.write(zero_shot_result)
