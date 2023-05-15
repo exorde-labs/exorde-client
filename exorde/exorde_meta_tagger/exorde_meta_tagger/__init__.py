@@ -79,7 +79,7 @@ class TokenAndPositionEmbedding(tf.keras.layers.Layer):
 #     - Spotting
 #     - Zero-shot classification
 #     - Freshness test (does the item has been posted less thant 5 minutes ago ?)
-def zero_shot(texts, labeldict, classifier, max_depth=None, depth=3):
+def zero_shot(texts, labeldict, classifier, max_depth=None, depth=0):
     """
     Perform zero-shot classification on the input text using a pre-trained language model.
 
@@ -93,6 +93,7 @@ def zero_shot(texts, labeldict, classifier, max_depth=None, depth=3):
     Returns:
     - path (list): A list containing the path of labels from the root to the predicted label. If the label hierarchy was not explored fully and the max_depth parameter was set, the path may not be complete.
     """
+
     keys = list(labeldict.keys())
     output = classifier(texts, keys, multi_label=False, max_length=32)
     labels = [output[x]["labels"][0] for x in range(len(output))]
@@ -101,26 +102,24 @@ def zero_shot(texts, labeldict, classifier, max_depth=None, depth=3):
         _labels = labels
         return labels
     else:
-        outputs = list()
-
-        for _t, _lab in zip(texts, labels):
+        #outputs = list()
+        
+        #for _t, _lab in zip(texts, labels):
             # _labels = dict()
             # for lab in _lab:
-            keys = list(labeldict[_lab].keys())
-            output = classifier(texts, keys, multi_label=False, max_length=32)
-            _out = list()
-            for x in range(len(output)):
-                out = list()
-                for i in range(len(output[x]["labels"])):
-                    scores = (output[x]["labels"][i], output[x]["scores"][i])
-                    out.append(scores)
-                _out.append(out)
+        keys = list(labeldict[labels[0]].keys())
+        output = classifier(texts, keys, multi_label=False, max_length=32)
+        _out = list()
+        for x in range(len(output)):
+            for i in range(len(output[x]["labels"])):
+                scores = (output[x]["labels"][i], output[x]["scores"][i])
+                _out.append(scores)
 
             # _labs = [output[x]["labels"] for x in range(len(output))]
             # _scores = [output[x]["scores"] for x in range(len(output))]
-
-            outputs.append(_out)
-    return outputs
+    
+            #outputs.append(_out)
+    return _out
 
 
 def preprocess_text(text: str, remove_stopwords: bool) -> str:
