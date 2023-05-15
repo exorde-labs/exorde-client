@@ -175,7 +175,7 @@ def predict(text, pipe, tag, mappings):
     preds = pipe.predict(text, verbose=0)[0]
     result = []
     for i in range(len(preds)):
-        result.append((mappings[tag][i], preds[i]))
+        result.append((mappings[tag][i], float(preds[i])))
     return result
 
 
@@ -183,18 +183,18 @@ def predict(text, pipe, tag, mappings):
 def tag(documents, nlp, device, mappings):
     """
     Analyzes and tags a list of text documents using various NLP models and techniques.
-
+    
     The function processes the input documents using pre-trained models for tasks such as
     sentence embeddings, text classification, sentiment analysis, and custom models for age,
     gender, and hate speech detection. It returns a list of dictionaries containing the
     processed data for each input document.
-
+    
     Args:
         documents (list): A list of text documents (strings) to be analyzed and tagged.
         nlp: model
         device: device
         mappings: labels
-
+    
     Returns:
         list: A list of dictionaries, where each dictionary represents a single input text and
               contains various processed data like embeddings, text classifications, sentiment, etc.,
@@ -202,16 +202,14 @@ def tag(documents, nlp, device, mappings):
     """
     # Create an empty DataFrame
     tmp = pd.DataFrame()
-
+    
     # Add the original text documents
     tmp["Translation"] = documents
-
+    
     # Compute sentence embeddings
-    model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
-    tmp["Embedding"] = tmp["Translation"].swifter.apply(
-        lambda x: model.encode(x)
-    )
-
+    model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+    tmp["Embedding"] = tmp["Translation"].swifter.apply(lambda x: list(model.encode(x).astype(float)))
+    
     # Text classification pipelines
     text_classification_models = [
         ("Advertising", "djsull/kobigbird-spam-multi-label"),
@@ -222,38 +220,17 @@ def tag(documents, nlp, device, mappings):
         ("SourceType", "alimazhar-110/website_classification"),
     ]
     for col_name, model_name in text_classification_models:
-        pipe = pipeline(
-            "text-classification", model=model_name, top_k=None, device=device
-        )
-        tmp[col_name] = tmp["Translation"].swifter.apply(
-            lambda x: [(y["label"], y["score"]) for y in pipe(x)[0]]
-        )
-        del pipe  # free ram for latest pipe
-
+        pipe = pipeline("text-classification", model=model_name, top_k = None, device=device)
+        tmp[col_name] = tmp["Translation"].swifter.apply(lambda x: [(y["label"], float(y["score"])) for y in pipe(x)[0]])
+        del pipe # free ram for latest pipe
+    
     # Tokenization for custom models
     tokenizer = AutoTokenizer.from_pretrained("bert-large-uncased")
-    tmp["Embedded"] = tmp["Translation"].swifter.apply(
-        lambda x: np.array(
-            tokenizer.encode_plus(
-                x,
-                add_special_tokens=True,
-                max_length=512,
-                truncation=True,
-                pad_to_max_length=True,
-                return_attention_mask=False,
-                return_tensors="tf",
-            )["input_ids"][0]
-        ).reshape(1, -1)
-    )
-
+    tmp["Embedded"] = tmp["Translation"].swifter.apply(lambda x: np.array(tokenizer.encode_plus(x, add_special_tokens=True, max_length=512, truncation=True, pad_to_max_length=True, return_attention_mask=False, return_tensors='tf')["input_ids"][0]).reshape(1, -1))
+    
     # Sentiment analysis using VADER
-    emoji_lexicon = hf_hub_download(
-        repo_id="ExordeLabs/SentimentDetection",
-        filename="emoji_unic_lexicon.json",
-    )
-    loughran_dict = hf_hub_download(
-        repo_id="ExordeLabs/SentimentDetection", filename="loughran_dict.json"
-    )
+    emoji_lexicon = hf_hub_download(repo_id="ExordeLabs/SentimentDetection", filename="emoji_unic_lexicon.json")
+    loughran_dict = hf_hub_download(repo_id="ExordeLabs/SentimentDetection", filename="loughran_dict.json")
     with open(emoji_lexicon) as f:
         unic_emoji_dict = json.load(f)
     with open(loughran_dict) as f:
@@ -261,38 +238,25 @@ def tag(documents, nlp, device, mappings):
     sentiment_analyzer = SentimentIntensityAnalyzer()
     sentiment_analyzer.lexicon.update(Loughran_dict)
     sentiment_analyzer.lexicon.update(unic_emoji_dict)
-    tmp["Sentiment"] = tmp["Translation"].swifter.apply(
-        lambda x: sentiment_analyzer.polarity_scores(x)["compound"]
-    )
-
+    tmp["Sentiment"] = tmp["Translation"].swifter.apply(lambda x: float(sentiment_analyzer.polarity_scores(x)['compound']))
+    
     # Custom model pipelines
     custom_model_data = [
         ("Age", "ExordeLabs/AgeDetection", "ageDetection.h5"),
         ("Gender", "ExordeLabs/GenderDetection", "genderDetection.h5"),
-        (
-            "HateSpeech",
-            "ExordeLabs/HateSpeechDetection",
-            "hateSpeechDetection.h5",
-        ),
+        ("HateSpeech", "ExordeLabs/HateSpeechDetection", "hateSpeechDetection.h5"),
     ]
 
     for col_name, repo_id, file_name in custom_model_data:
         model_file = hf_hub_download(repo_id=repo_id, filename=file_name)
-        custom_model = tf.keras.models.load_model(
-            model_file,
-            custom_objects={
-                "TokenAndPositionEmbedding": TokenAndPositionEmbedding,
-                "TransformerBlock": TransformerBlock,
-            },
-        )
-        tmp[col_name] = tmp["Embedded"].swifter.apply(
-            lambda x: predict(x, custom_model, col_name, mappings)
-        )
-        del custom_model  # free ram for latest custom_model
+        custom_model = tf.keras.models.load_model(model_file, custom_objects={"TokenAndPositionEmbedding": TokenAndPositionEmbedding, "TransformerBlock": TransformerBlock})
+        tmp[col_name] = tmp["Embedded"].swifter.apply(lambda x: predict(x, custom_model, col_name, mappings))
+        del custom_model # free ram for latest custom_model
 
+    del tmp["Embedded"]
     # The output is a list of dictionaries, where each dictionary represents a single input text and contains
     # various processed data like embeddings, text classifications, sentiment, etc., as key-value pairs.
-    return tmp.to_json() #tmp.to_dict(orient="records") #if needed in records pandas dict format for analysis
+    return tmp.to_dict(orient='records')
 
 
 ### VARIABLE INSTANTIATION
