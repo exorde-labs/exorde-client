@@ -1,3 +1,4 @@
+False
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "object",
@@ -7,14 +8,6 @@
         },
         "author": {
             "type": "string"
-        },
-        "controversial": {
-            "type": "string",
-            "enum": [
-                "UNKNOWN",
-                "TRUE",
-                "FALSE"
-            ]
         },
         "creation_date_time": {
             "type": "string",
