@@ -292,7 +292,7 @@ def tag(documents, nlp, device, mappings):
 
     # The output is a list of dictionaries, where each dictionary represents a single input text and contains
     # various processed data like embeddings, text classifications, sentiment, etc., as key-value pairs.
-    return tmp.to_dict(orient="records")
+    return tmp.to_json() #tmp.to_dict(orient="records") #if needed in records pandas dict format for analysis
 
 
 ### VARIABLE INSTANTIATION
@@ -341,33 +341,34 @@ if __name__ == "__main__":
     print("Nb of text samples = ", len(test))
     tags = tag(test, init["nlp"], init["device"], init["mappings"])
     field = zero_shot(test, init["labeldict"], init["classifier"], max_depth=1)
+    
+#     # doesn't work if in json string format
+#     for sample, lbl, tag_ in zip(test, field, tags):
+#         print("Input = ", sample)
+#         top_gender = max(tag_["Gender"], key=lambda x: x[1])[0]
+#         top_age = max(tag_["Age"], key=lambda x: x[1])[0]
+#         hatespeech_max = max(tag_["HateSpeech"], key=lambda x: x[1])
+#         advertising = max(tag_["Advertising"], key=lambda x: x[1])
+#         top_emotion = max(tag_["Emotion"], key=lambda x: x[1])
+#         top_irony = max(tag_["Irony"], key=lambda x: x[1])
+#         textType = max(tag_["TextType"], key=lambda x: x[1])
+#         sourceType = max(tag_["SourceType"], key=lambda x: x[1])
 
-    for sample, lbl, tag_ in zip(test, field, tags):
-        print("Input = ", sample)
-        top_gender = max(tag_["Gender"], key=lambda x: x[1])[0]
-        top_age = max(tag_["Age"], key=lambda x: x[1])[0]
-        hatespeech_max = max(tag_["HateSpeech"], key=lambda x: x[1])
-        advertising = max(tag_["Advertising"], key=lambda x: x[1])
-        top_emotion = max(tag_["Emotion"], key=lambda x: x[1])
-        top_irony = max(tag_["Irony"], key=lambda x: x[1])
-        textType = max(tag_["TextType"], key=lambda x: x[1])
-        sourceType = max(tag_["SourceType"], key=lambda x: x[1])
+#         sentiment = tag_["Sentiment"]
+#         languageScore = tag_["LanguageScore"]
 
-        sentiment = tag_["Sentiment"]
-        languageScore = tag_["LanguageScore"]
-
-        print(f"\tTopic category:  **{lbl}**")
-        print(f"\tTop Gender: {top_gender}")
-        print(f"\tTop Age Range: {top_age}")
-        print(f"\tSentiment: {sentiment}")
-        print(f"\tHateSpeech: {hatespeech_max}")
-        print(f"\tAdvertising: {advertising}")
-        print(f"\tTop emotion: {top_emotion}")
-        print(f"\tIrony: {top_irony}")
-        print(f"\tText type: {textType}")
-        print(f"\tLanguage Score: {languageScore}")
-        print(f"\tSource type: {sourceType}")
-        print()
+#         print(f"\tTopic category:  **{lbl}**")
+#         print(f"\tTop Gender: {top_gender}")
+#         print(f"\tTop Age Range: {top_age}")
+#         print(f"\tSentiment: {sentiment}")
+#         print(f"\tHateSpeech: {hatespeech_max}")
+#         print(f"\tAdvertising: {advertising}")
+#         print(f"\tTop emotion: {top_emotion}")
+#         print(f"\tIrony: {top_irony}")
+#         print(f"\tText type: {textType}")
+#         print(f"\tLanguage Score: {languageScore}")
+#         print(f"\tSource type: {sourceType}")
+#         print()
 
     dump_to_json_file(tags, "tags.json")
     dump_to_json_file(field, "field.json")
