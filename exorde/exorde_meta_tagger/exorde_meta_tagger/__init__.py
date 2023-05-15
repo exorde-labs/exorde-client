@@ -58,7 +58,9 @@ class TokenAndPositionEmbedding(tf.keras.layers.Layer):
         self.token_emb = tf.keras.layers.Embedding(
             input_dim=vocab_size, output_dim=embed_dim
         )
-        self.pos_emb = tf.keras.layers.Embedding(input_dim=maxlen, output_dim=embed_dim)
+        self.pos_emb = tf.keras.layers.Embedding(
+            input_dim=maxlen, output_dim=embed_dim
+        )
 
     def call(self, x):
         maxlen = tf.shape(x)[-1]
@@ -158,7 +160,9 @@ def preprocess_text(text: str, remove_stopwords: bool) -> str:
 
 
 def preprocess(item, remove_stopwords):
-    item["item"]["Content"] = preprocess_text(item["item"]["Content"], remove_stopwords)
+    item["item"]["Content"] = preprocess_text(
+        item["item"]["Content"], remove_stopwords
+    )
     return item
 
 
@@ -204,7 +208,9 @@ def tag(documents, nlp, device, mappings):
 
     # Compute sentence embeddings
     model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
-    tmp["Embedding"] = tmp["Translation"].swifter.apply(lambda x: model.encode(x))
+    tmp["Embedding"] = tmp["Translation"].swifter.apply(
+        lambda x: model.encode(x)
+    )
 
     # Text classification pipelines
     text_classification_models = [
@@ -242,7 +248,8 @@ def tag(documents, nlp, device, mappings):
 
     # Sentiment analysis using VADER
     emoji_lexicon = hf_hub_download(
-        repo_id="ExordeLabs/SentimentDetection", filename="emoji_unic_lexicon.json"
+        repo_id="ExordeLabs/SentimentDetection",
+        filename="emoji_unic_lexicon.json",
     )
     loughran_dict = hf_hub_download(
         repo_id="ExordeLabs/SentimentDetection", filename="loughran_dict.json"
@@ -262,7 +269,11 @@ def tag(documents, nlp, device, mappings):
     custom_model_data = [
         ("Age", "ExordeLabs/AgeDetection", "ageDetection.h5"),
         ("Gender", "ExordeLabs/GenderDetection", "genderDetection.h5"),
-        ("HateSpeech", "ExordeLabs/HateSpeechDetection", "hateSpeechDetection.h5"),
+        (
+            "HateSpeech",
+            "ExordeLabs/HateSpeechDetection",
+            "hateSpeechDetection.h5",
+        ),
     ]
 
     for col_name, repo_id, file_name in custom_model_data:
@@ -319,6 +330,21 @@ def meta_tagger_initialization():
         "max_depth": 2,
         "remove_stopwords": False,
     }
+
+
+import json
+
+
+def dump_to_json_file(data, path):
+    """
+    Takes a Python object and a file path, and writes the JSON representation of the object to the file.
+    """
+    try:
+        with open(path, "w") as f:
+            json.dump(data, f)
+    except TypeError:
+        # If the object cannot be serialized to JSON, raise an exception
+        raise ValueError("Cannot serialize object to JSON")
 
 
 if __name__ == "__main__":
@@ -408,7 +434,7 @@ if __name__ == "__main__":
         "Looking for a new investment opportunity? Our cutting-edge technology and experienced team make us the perfect choice for your portfolio.",
     ]
 
-    test = test[:10]
+    test = test[:1]
     print("Nb of text samples = ", len(test))
     tags = tag(test, init["nlp"], init["device"], init["mappings"])
     field = zero_shot(test, init["labeldict"], init["classifier"], max_depth=1)
@@ -439,3 +465,6 @@ if __name__ == "__main__":
         print(f"\tLanguage Score: {languageScore}")
         print(f"\tSource type: {sourceType}")
         print()
+
+    dump_to_json_file(tags, "tags.json")
+    dump_to_json_file(field, "field.json")
