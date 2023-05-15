@@ -1,12 +1,12 @@
 from enum import Enum
 import json
 
-from jschemator import (
+from jschemator import Schema
+from jschemator.fields import (
     ArrayField,
     DateTimeField,
     EnumField,
     IntegerField,
-    Schema,
     StringField,
     UrlField,
 )

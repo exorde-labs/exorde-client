@@ -1,6 +1,6 @@
 import aiohttp, random
 from lxml import html
-from exorde.models import Item
+from exorde_models import Item
 from typing import AsyncGenerator
 
 
