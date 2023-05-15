@@ -1,7 +1,6 @@
 import logging
 from aiosow.bindings import setup, wire
 from aiosow.perpetuate import on
-from aiosow.autofill import autofill
 
 from exorde.formated import on_formated_data_do
 
@@ -11,10 +10,11 @@ from exorde.protocol.bindings import commit_current_cid
 from exorde.spotting import (
     init_stack,
     push_to_stack,
-    consume_stack,
+    consume_processed,
     reset_cids,
     push_new_cid,
     choose_cid_to_commit,
+    pull_to_process,
 )
 
 
@@ -35,23 +35,23 @@ spotting_ran_when, on_spotting_done_do = wire(perpetual=True)
 
 @on_formated_data_do
 @spotting_ran_when
-async def run_spotting(item: dict, memory):
-    for process in SPOTTING_PROCCESES:
-        item = await autofill(
-            process,
-            args=[
-                item,
-            ],
-            memory=memory,
-        )
+async def run_spotting(item: dict):
     return item
 
 
+# on_formated_data_do(push_to_stack)
 on_spotting_done_do(push_to_stack)
 
 
+on(
+    "stack",
+    condition=lambda stack, processing, running: len(stack) >= 1
+    and not processing
+    and running,
+)(pull_to_process)
 # on("stack")(call_limit(1)(log_stack_len))
-on("stack")(consume_stack)
+on("processed", condition=lambda processed: len(processed) == 25)(consume_processed)
+on("processed", lambda processed: logging.info("processed: %d", len(processed)))
 on(
     "batch_to_consume",
     condition=lambda value, transaction, batch_id: value

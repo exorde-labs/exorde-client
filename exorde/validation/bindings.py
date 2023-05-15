@@ -59,6 +59,7 @@ async def merge_validation_files(validation_files):
 
 VALIDATORS = []
 VALIDATORS_VOTES = []
+BATCH_APPLICATORS = []
 
 
 def validator(function: Callable):
@@ -71,6 +72,10 @@ def validator_vote(function: Callable):
     return function
 
 
+def batch_applicator(function: Callable):
+    BATCH_APPLICATORS.append(function)
+
+
 async def run_validation(batch, memory):
     """Runs validators_vote AFTER validators."""
     items = batch["ValidationContent"]
@@ -81,6 +86,7 @@ async def run_validation(batch, memory):
         vote = validator_vote(items)
         if vote == 0:
             break
+
     batch["ValidationContent"] = items
     return {"validated": batch, "vote": vote, "length": len(items)}
 

@@ -23,7 +23,7 @@ extract_keywords = lambda text: kw_extractor.extract_keywords(text)
 def populate_keywords(item):
     if item["item"]["Language"] in ["en", ""]:
         try:
-            item["tokenOfInterests"] = list(
+            item["tokenOfInterest"] = list(
                 [e[0] for e in set(extract_keywords(item["item"]["Content"]))]
             )
         except:
