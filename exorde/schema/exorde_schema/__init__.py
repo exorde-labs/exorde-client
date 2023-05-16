@@ -152,7 +152,9 @@ class Item(Schema):
     collected_at = DateTimeField(
         description="ISO8601/RFC3339 Date of collection of the item"
     )
-    collection_client_version = StringField()
+    collection_client_version = StringField(
+        description="Version identifier of client that collected the item."
+    )
 
 
 def print_schema():
