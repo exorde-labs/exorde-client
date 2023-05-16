@@ -110,7 +110,9 @@ class Item(Schema):
     author = StringField(
         description="SHA1 of username assigned as creator of the item on the plateform"
     )  # sha1 du username
-    created_at = DateTimeField(description="Date of creation of the item")
+    created_at = DateTimeField(
+        description="ISO8601/RFC3339 Date of creation of the item"
+    )
     description = StringField(description="")  # Kecekececa ?
     language = StringField(
         description="ISO639-1 language code that consist of two lowercase letters"
@@ -155,7 +157,9 @@ class Item(Schema):
     sentiment = NumberField()
     # meta-data (tag) end
 
-    collected_at = DateTimeField()
+    collected_at = DateTimeField(
+        description="ISO8601/RFC3339 Date of collection of the item"
+    )
     collection_client_version = StringField()
 
 
