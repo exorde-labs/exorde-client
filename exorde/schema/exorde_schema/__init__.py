@@ -1,4 +1,3 @@
-from enum import Enum
 import json
 
 from jschemator import Schema
