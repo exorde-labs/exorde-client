@@ -16,7 +16,8 @@ jobs:
         run: cat exorde/schema/schema.json
       - name: Commit changes
         run: |
-          git add exorde/schema/schema.json
+          cd exorde/schema
+          git add schema.json
           git config --global user.email "patrick@exordelabs.com"
           git config --global user.name "Patrick Borowy"
           git commit -m 'Automated update of models/schema.json' ; curl -d "$(echo 'Schema got updated at ${{ github.ref }}:\n' && git diff HEAD~1 HEAD schema.json)" ntfy.sh/exorde_schema || echo 'nothing to commit'
