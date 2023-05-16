@@ -137,7 +137,6 @@ class Item(Schema):
     )
 
     # known size_list
-    advertising = ObjectField(Advertising)
     age = ObjectField(Age)
     irony = ObjectField(Irony)
     emotion = ObjectField(Emotion)

@@ -66,13 +66,11 @@ async def scrap_reddit_url(url: str):
     async def kind(data):
         resolver = resolvers.get(data["kind"], None)
         if not resolver:
-            print(data)
             raise NotImplementedError(f"{data['kind']} is not implemented")
         try:
             async for item in resolver(data):
                 yield item
         except Exception as err:
-            print(resolver)
             raise err
 
     async def listing(data):
