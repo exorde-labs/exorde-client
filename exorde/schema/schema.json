@@ -116,17 +116,6 @@
                 }
             }
         },
-        "hate": {
-            "type": "object",
-            "properties": {
-                "offensive": {
-                    "type": "number"
-                },
-                "none": {
-                    "type": "number"
-                }
-            }
-        },
         "irony": {
             "type": "object",
             "properties": {
