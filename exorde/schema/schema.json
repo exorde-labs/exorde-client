@@ -7,6 +7,15 @@
             "description": "Text body of the item",
             "type": "string"
         },
+        "summary": {
+            "description": "Short version of the content",
+            "type": "string"
+        },
+        "picture": {
+            "description": "Image linked to the item",
+            "type": "string",
+            "pattern": "^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\\.)+[a-zA-Z]{2,}"
+        },
         "author": {
             "description": "SHA1 of username assigned as creator of the item on the plateform",
             "type": "string"
