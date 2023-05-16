@@ -105,14 +105,14 @@ class Item(Schema):
     summary = StringField(description="Short version of the content")
     picture = UrlField(description="Image linked to the item")
     author = StringField(
-        description="SHA1 of username assigned as creator of the item on the plateform"
-    )  # sha1 du username
+        description="SHA1 encoding of the username assigned as creator of the item on it source plateform"
+    ) 
     created_at = DateTimeField(
         description="ISO8601/RFC3339 Date of creation of the item"
     )
     language = StringField(
         description="ISO639-1 language code that consist of two lowercase letters"
-    )  # weak, maybe enum ?
+    )  
     title = StringField(description="Headline of the item")
     domain = UrlField(
         description="Domain name on which the item was retrieved"
@@ -124,31 +124,51 @@ class Item(Schema):
     external_parent_id = StringField(
         description="Identifier used by source of parent item"
     )
-
     # classification = zero_shot
     classification = ArrayField(
-        ArrayField(Compose(StringField(), NumberField()))
+        description="Probable categorization(s) of the post in a pre-determined set of general topics (list of objects with weights for each topic)",
+        ObjectField(Compose(StringField(), NumberField()))
     )
-    top_keywords = ArrayField(StringField())  # yake
-    # meta-data (tag)
-    translation = StringField()
-    embedding = ArrayField(NumberField())
+    top_keywords = ArrayField(
+        description="The main keywords extracted from the content field", 
+        StringField())  # yake
+    
+    # meta-data (tagger)
+    translation = StringField(
+        description="The content translated in English language")
+    
+    embedding = ArrayField(
+        description="Vector/numerical representation of the translated content (field: translation), produced by a NLP encoder model", 
+        NumberField())
 
     language_score = ArrayField(
+        description="Readability score of the text", 
         ArrayField(Compose(StringField(), NumberField()))
     )
 
     # known size_list
-    age = ObjectField(Age)
-    irony = ObjectField(Irony)
-    emotion = ObjectField(Emotion)
-    text_type = ObjectField(TextType)
-    source_type = ObjectField(SourceType)
-    gender = ObjectField(Gender)
-    # known size_list
+    age = ObjectField(
+        description="Probable age range of the author",
+        Age)
+    irony = ObjectField(
+        description="Measure of how much a post is ironic (in %)",
+        Irony)
+    emotion = ObjectField(
+        description="Emotion classification of the post, using the go-emotion standard of 28 precise emotions",
+        Emotion)
+    text_type = ObjectField(
+        description="Type (category) of the post (article, etc)",
+        TextType)
+    source_type = ObjectField(
+        description="Type (category) of the source that has produced the post",
+        SourceType)
+    gender = ObjectField(
+        description="Probable gender (female or male) of the author",
+        Gender)
 
     # unknown size list
-    sentiment = NumberField()
+    sentiment = NumberField(
+        description="Measure of post sentiment from negative to positive (-1 = negative, +1 = positive, 0 = neutral)")
     # meta-data (tag) end
 
     collected_at = DateTimeField(
