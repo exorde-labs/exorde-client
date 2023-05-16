@@ -98,11 +98,6 @@ class Gender(Schema):
     male = NumberField()
 
 
-class Hate(Schema):
-    offensive = NumberField()
-    none = NumberField()
-
-
 class Item(Schema):
     """Posts & Comments both are independants Items"""
 
@@ -145,7 +140,6 @@ class Item(Schema):
     # known size_list
     advertising = ObjectField(Advertising)
     age = ObjectField(Age)
-    hate = ObjectField(Hate)
     irony = ObjectField(Irony)
     emotion = ObjectField(Emotion)
     text_type = ObjectField(TextType)
