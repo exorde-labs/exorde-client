@@ -2,7 +2,7 @@
 Aiosow drivers for meta_tagger
 """
 from aiosow.autofill import autofill, make_async
-from exorde.meta_tagger import (
+from exorde_meta_tagger import (
     zero_shot as zero_shot_implementation,
     tag as tag_implementation,
 )

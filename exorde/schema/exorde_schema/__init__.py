@@ -33,6 +33,7 @@ class Item(Schema):
     classification = ArrayField(
         ArrayField(Compose(StringField(), NumberField()))
     )
+    top_keywords = ArrayField(StringField())  # yake
     # meta-data (tag)
     translation = StringField()
     embedding = ArrayField(NumberField())
@@ -48,7 +49,6 @@ class Item(Schema):
     age = ArrayField(ArrayField(Compose(StringField(), NumberField())))
     gender = ArrayField(ArrayField(Compose(StringField(), NumberField())))
     hate = ArrayField(ArrayField(Compose(StringField(), NumberField())))
-
     # meta-data (tag) end
 
     collection_datetime = DateTimeField()

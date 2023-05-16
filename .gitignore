@@ -12,3 +12,5 @@ build
 dist
 schemator
 exorde/models/schema.json
+tag-result.json
+zero_shot-result.json
