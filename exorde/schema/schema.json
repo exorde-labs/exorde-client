@@ -1,14 +1,18 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://github.com/exorde-labs/exorde/repo/tree/v0.0.1/exorde/schema/schema.json",
     "type": "object",
     "properties": {
         "content": {
+            "description": "Text body of the item",
             "type": "string"
         },
         "author": {
+            "description": "SHA1 of username assigned as creator of the item on the plateform",
             "type": "string"
         },
-        "creation_datetime": {
+        "created_at": {
+            "description": "Date of creation of the item",
             "type": "string",
             "pattern": "^([\\+-]?\\d{4}(?!\\d{2}\\b))((-?)((0[1-9]|1[0-2])(\\3([12]\\d|0[1-9]|3[01]))?|W([0-4]\\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\\d|[12]\\d{2}|3([0-5]\\d|6[1-6])))([T\\s]((([01]\\d|2[0-3])((:?)[0-5]\\d)?|24\\:?00)([\\.,]\\d+(?!:))?)?(\\17[0-5]\\d([\\.,]\\d+)?)?([zZ]|([\\+-])([01]\\d|2[0-3]):?([0-5]\\d)?)?)?)?$"
         },
@@ -16,33 +20,30 @@
             "type": "string"
         },
         "language": {
+            "description": "ISO639-1 language code that consist of two lowercase letters",
             "type": "string"
         },
         "title": {
+            "description": "Headline of the item",
             "type": "string"
         },
         "domain": {
+            "description": "Domain name on which the item was retrieved",
             "type": "string",
             "pattern": "^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\\.)+[a-zA-Z]{2,}"
         },
         "url": {
+            "description": "Uniform-Resource-Locator that identifies the location of the item",
             "type": "string",
             "pattern": "^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\\.)+[a-zA-Z]{2,}"
         },
-        "internal_id": {
+        "external_id": {
+            "description": "Identifier used by source",
             "type": "string"
         },
-        "internal_parent_id": {
+        "external_parent_id": {
+            "description": "Identifier used by source of parent item",
             "type": "string"
-        },
-        "nb_comments": {
-            "type": "integer"
-        },
-        "nb_likes": {
-            "type": "integer"
-        },
-        "nb_shared": {
-            "type": "integer"
         },
         "classification": {
             "type": "array",
@@ -73,48 +74,6 @@
                 "type": "number"
             }
         },
-        "advertising": {
-            "type": "array",
-            "items": {
-                "type": "array",
-                "items": [
-                    {
-                        "type": "string"
-                    },
-                    {
-                        "type": "number"
-                    }
-                ]
-            }
-        },
-        "emotion": {
-            "type": "array",
-            "items": {
-                "type": "array",
-                "items": [
-                    {
-                        "type": "string"
-                    },
-                    {
-                        "type": "number"
-                    }
-                ]
-            }
-        },
-        "irony": {
-            "type": "array",
-            "items": {
-                "type": "array",
-                "items": [
-                    {
-                        "type": "string"
-                    },
-                    {
-                        "type": "number"
-                    }
-                ]
-            }
-        },
         "language_score": {
             "type": "array",
             "items": {
@@ -129,80 +88,233 @@
                 ]
             }
         },
+        "advertising": {
+            "type": "object",
+            "properties": {
+                "advertise": {
+                    "type": "number"
+                },
+                "recommend": {
+                    "type": "number"
+                }
+            }
+        },
+        "age": {
+            "type": "object",
+            "properties": {
+                "below_twenty": {
+                    "type": "number"
+                },
+                "twenty_thirty": {
+                    "type": "number"
+                },
+                "thirty_forty": {
+                    "type": "number"
+                },
+                "forty_more": {
+                    "type": "number"
+                }
+            }
+        },
+        "hate": {
+            "type": "object",
+            "properties": {
+                "offensive": {
+                    "type": "number"
+                },
+                "none": {
+                    "type": "number"
+                }
+            }
+        },
+        "irony": {
+            "type": "object",
+            "properties": {
+                "non_irony": {
+                    "type": "number"
+                },
+                "irony": {
+                    "type": "number"
+                }
+            }
+        },
+        "emotion": {
+            "type": "object",
+            "properties": {
+                "love": {
+                    "type": "number"
+                },
+                "admiration": {
+                    "type": "number"
+                },
+                "joy": {
+                    "type": "number"
+                },
+                "approval": {
+                    "type": "number"
+                },
+                "caring": {
+                    "type": "number"
+                },
+                "excitement": {
+                    "type": "number"
+                },
+                "gratitude": {
+                    "type": "number"
+                },
+                "desire": {
+                    "type": "number"
+                },
+                "anger": {
+                    "type": "number"
+                },
+                "optimism": {
+                    "type": "number"
+                },
+                "disapproval": {
+                    "type": "number"
+                },
+                "grief": {
+                    "type": "number"
+                },
+                "annoyance": {
+                    "type": "number"
+                },
+                "pride": {
+                    "type": "number"
+                },
+                "curiosity": {
+                    "type": "number"
+                },
+                "neutral": {
+                    "type": "number"
+                },
+                "disgust": {
+                    "type": "number"
+                },
+                "disappointment": {
+                    "type": "number"
+                },
+                "realization": {
+                    "type": "number"
+                },
+                "fear": {
+                    "type": "number"
+                },
+                "relief": {
+                    "type": "number"
+                },
+                "confusion": {
+                    "type": "number"
+                },
+                "remorse": {
+                    "type": "number"
+                },
+                "embarrassement": {
+                    "type": "number"
+                },
+                "suprise": {
+                    "type": "number"
+                },
+                "sadness": {
+                    "type": "number"
+                },
+                "nervousness": {
+                    "type": "number"
+                }
+            }
+        },
         "text_type": {
-            "type": "array",
-            "items": {
-                "type": "array",
-                "items": [
-                    {
-                        "type": "string"
-                    },
-                    {
-                        "type": "number"
-                    }
-                ]
+            "type": "object",
+            "properties": {
+                "assumption": {
+                    "type": "number"
+                },
+                "anecdote": {
+                    "type": "number"
+                },
+                "none": {
+                    "type": "number"
+                },
+                "definition": {
+                    "type": "number"
+                },
+                "testimony": {
+                    "type": "number"
+                },
+                "other": {
+                    "type": "number"
+                },
+                "study": {
+                    "type": "number"
+                }
             }
         },
         "source_type": {
-            "type": "array",
-            "items": {
-                "type": "array",
-                "items": [
-                    {
-                        "type": "string"
-                    },
-                    {
-                        "type": "number"
-                    }
-                ]
+            "type": "object",
+            "properties": {
+                "social": {
+                    "type": "number"
+                },
+                "computers": {
+                    "type": "number"
+                },
+                "games": {
+                    "type": "number"
+                },
+                "business": {
+                    "type": "number"
+                },
+                "streaming": {
+                    "type": "number"
+                },
+                "ecommerce": {
+                    "type": "number"
+                },
+                "forums": {
+                    "type": "number"
+                },
+                "photography": {
+                    "type": "number"
+                },
+                "travel": {
+                    "type": "number"
+                },
+                "adult": {
+                    "type": "number"
+                },
+                "law": {
+                    "type": "number"
+                },
+                "sports": {
+                    "type": "number"
+                },
+                "education": {
+                    "type": "number"
+                },
+                "food": {
+                    "type": "number"
+                },
+                "health": {
+                    "type": "number"
+                }
+            }
+        },
+        "gender": {
+            "type": "object",
+            "properties": {
+                "female": {
+                    "type": "number"
+                },
+                "male": {
+                    "type": "number"
+                }
             }
         },
         "sentiment": {
             "type": "number"
         },
-        "age": {
-            "type": "array",
-            "items": {
-                "type": "array",
-                "items": [
-                    {
-                        "type": "string"
-                    },
-                    {
-                        "type": "number"
-                    }
-                ]
-            }
-        },
-        "gender": {
-            "type": "array",
-            "items": {
-                "type": "array",
-                "items": [
-                    {
-                        "type": "string"
-                    },
-                    {
-                        "type": "number"
-                    }
-                ]
-            }
-        },
-        "hate": {
-            "type": "array",
-            "items": {
-                "type": "array",
-                "items": [
-                    {
-                        "type": "string"
-                    },
-                    {
-                        "type": "number"
-                    }
-                ]
-            }
-        },
-        "collection_datetime": {
+        "collected_at": {
             "type": "string",
             "pattern": "^([\\+-]?\\d{4}(?!\\d{2}\\b))((-?)((0[1-9]|1[0-2])(\\3([12]\\d|0[1-9]|3[01]))?|W([0-4]\\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\\d|[12]\\d{2}|3([0-5]\\d|6[1-6])))([T\\s]((([01]\\d|2[0-3])((:?)[0-5]\\d)?|24\\:?00)([\\.,]\\d+(?!:))?)?(\\17[0-5]\\d([\\.,]\\d+)?)?([zZ]|([\\+-])([01]\\d|2[0-3]):?([0-5]\\d)?)?)?)?$"
         },
