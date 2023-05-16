@@ -108,7 +108,6 @@ class Item(Schema):
     created_at = DateTimeField(
         description="ISO8601/RFC3339 Date of creation of the item"
     )
-    description = StringField(description="")  # Kecekececa ?
     language = StringField(
         description="ISO639-1 language code that consist of two lowercase letters"
     )  # weak, maybe enum ?
