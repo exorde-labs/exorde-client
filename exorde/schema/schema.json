@@ -58,6 +58,12 @@
                 ]
             }
         },
+        "top_keywords": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
         "translation": {
             "type": "string"
         },
