@@ -97,6 +97,9 @@ class Gender(Schema):
     female = NumberField()
     male = NumberField()
 
+class Classification(Schema):
+    topic = StringField()
+    weight = NumberField()
 
 class Item(Schema):
     """Posts & Comments both are independants Items"""
@@ -126,8 +129,8 @@ class Item(Schema):
     )
     # classification = zero_shot
     classification = ArrayField(
-        description="Probable categorization(s) of the post in a pre-determined set of general topics (list of objects with weights for each topic)",
-        ObjectField(Compose(StringField(), NumberField()))
+        description="Probable categorization(s) of the post in a pre-determined set of general topics (list of objects with float associated for each topic, expressing their likelihood)",
+        ObjectField(Classification)
     )
     top_keywords = ArrayField(
         description="The main keywords extracted from the content field", 
