@@ -1,3 +1,5 @@
+import json
+
 from jschemator import Schema
 from jschemator.fields import (
     ArrayField,
