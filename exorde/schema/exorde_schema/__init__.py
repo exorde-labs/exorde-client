@@ -102,6 +102,8 @@ class Item(Schema):
     """Posts & Comments both are independants Items"""
 
     content = StringField(description="Text body of the item")
+    summary = StringField(description="Short version of the content")
+    picture = UrlField(description="Image linked to the item")
     author = StringField(
         description="SHA1 of username assigned as creator of the item on the plateform"
     )  # sha1 du username
