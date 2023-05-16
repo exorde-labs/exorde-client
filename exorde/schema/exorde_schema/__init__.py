@@ -156,7 +156,7 @@ class Item(Schema):
         description="Probable age range of the author")
     irony = ObjectField(
         Irony,    
-        description="Measure of how much a post is ironic (in %)",)
+        description="Measure of how much a post is ironic (in %)")
     emotion = ObjectField(
         Emotion,
         description="Emotion classification of the post, using the go-emotion standard of 28 precise emotions")
