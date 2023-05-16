@@ -85,17 +85,6 @@
                 ]
             }
         },
-        "advertising": {
-            "type": "object",
-            "properties": {
-                "advertise": {
-                    "type": "number"
-                },
-                "recommend": {
-                    "type": "number"
-                }
-            }
-        },
         "age": {
             "type": "object",
             "properties": {
