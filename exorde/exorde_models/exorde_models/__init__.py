@@ -5,24 +5,12 @@ from jschemator import Schema
 from jschemator.fields import (
     ArrayField,
     DateTimeField,
-    EnumField,
     IntegerField,
+    NumberField,
     StringField,
     UrlField,
+    Compose,
 )
-
-
-class MediaType(Enum):
-    VIDEO = "VIDEO"
-    AUDIO = "AUDIO"
-    POST = "POST"
-    COMMENT = "COMMENT"
-
-
-class Trivalent(Enum):
-    UNKNOWN = "UNKNOWN"
-    TRUE = "TRUE"
-    FALSE = "FALSE"
 
 
 class Item(Schema):
@@ -30,8 +18,7 @@ class Item(Schema):
 
     content = StringField()
     author = StringField()  # sha1 du username
-    # controversial = EnumField(Trivalent)
-    creation_date_time = DateTimeField()
+    creation_datetime = DateTimeField()
     description = StringField()
     language = StringField()  # weak, maybe enum ?
     title = StringField()
@@ -39,15 +26,35 @@ class Item(Schema):
     url = UrlField()
     internal_id = StringField()
     internal_parent_id = StringField()
-    media_type = EnumField(MediaType)
     nb_comments = IntegerField()
     nb_likes = IntegerField()
     nb_shared = IntegerField()
+
     # classification = zero_shot
-    # metadata = tag
-    top_keywords = ArrayField(StringField())
-    spotterCountry = StringField()
+    classification = ArrayField(
+        ArrayField(Compose(StringField(), NumberField()))
+    )
+    # meta-data (tag)
+    translation = StringField()
+    embedding = ArrayField(NumberField())
+    advertising = ArrayField(ArrayField(Compose(StringField(), NumberField())))
+    emotion = ArrayField(ArrayField(Compose(StringField(), NumberField())))
+    irony = ArrayField(ArrayField(Compose(StringField(), NumberField())))
+    language_score = ArrayField(
+        ArrayField(Compose(StringField(), NumberField()))
+    )
+    text_type = ArrayField(ArrayField(Compose(StringField(), NumberField())))
+    source_type = ArrayField(ArrayField(Compose(StringField(), NumberField())))
+    sentiment = NumberField()
+    age = ArrayField(ArrayField(Compose(StringField(), NumberField())))
+    gender = ArrayField(ArrayField(Compose(StringField(), NumberField())))
+    hate = ArrayField(ArrayField(Compose(StringField(), NumberField())))
+
+    # meta-data (tag) end
+
+    collection_datetime = DateTimeField()
+    collection_client_version = StringField()
 
 
 def print_schema():
-    print(json.dumps(Item().json_schema(), indent=4))
+    print(json.dumps(Item(**{"$id": "foo"}).json_schema(), indent=4))
