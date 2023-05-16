@@ -36,7 +36,7 @@ async def scrap_reddit_url(url: str):
         yield Item(
             content=content["selftext"],
             author=content["author"],
-            creation_datetime=content["created_utc"],  # resolve date
+            creation_datetime=content["created_utc"],  # todo: resolve date
             title=content["title"],
             domain="reddit.com",
             url=content["url"],
@@ -51,7 +51,7 @@ async def scrap_reddit_url(url: str):
         yield Item(
             content=content["body"],
             author=content["author"],
-            creation_datetime=content["created_utc"],  # resolve date
+            creation_datetime=content["created_utc"],  # todo: resolve date
             domain="reddit.com",
             url="reddit.com" + content["permalink"],
             internal_id=content["id"],
