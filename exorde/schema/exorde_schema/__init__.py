@@ -129,45 +129,46 @@ class Item(Schema):
     )
     # classification = zero_shot
     classification = ArrayField(
-        description="Probable categorization(s) of the post in a pre-determined set of general topics (list of objects with float associated for each topic, expressing their likelihood)",
-        ObjectField(Classification)
+        ObjectField(Classification),        
+        description="Probable categorization(s) of the post in a pre-determined set of general topics (list of objects with float associated for each topic, expressing their likelihood)"
     )
     top_keywords = ArrayField(
-        description="The main keywords extracted from the content field", 
-        StringField())  # yake
+        StringField(),
+        description="The main keywords extracted from the content field")  # yake-generated
     
     # meta-data (tagger)
     translation = StringField(
         description="The content translated in English language")
     
     embedding = ArrayField(
-        description="Vector/numerical representation of the translated content (field: translation), produced by a NLP encoder model", 
-        NumberField())
+        NumberField(),    
+        description="Vector/numerical representation of the translated content (field: translation), produced by a NLP encoder model"
+    )
 
     language_score = ArrayField(
-        description="Readability score of the text", 
-        ArrayField(Compose(StringField(), NumberField()))
+        ArrayField(Compose(StringField(), NumberField()),                  
+        description="Readability score of the text", )
     )
 
     # known size_list
     age = ObjectField(
-        description="Probable age range of the author",
-        Age)
+        Age,
+        description="Probable age range of the author")
     irony = ObjectField(
-        description="Measure of how much a post is ironic (in %)",
-        Irony)
+        Irony,    
+        description="Measure of how much a post is ironic (in %)",)
     emotion = ObjectField(
-        description="Emotion classification of the post, using the go-emotion standard of 28 precise emotions",
-        Emotion)
+        Emotion,
+        description="Emotion classification of the post, using the go-emotion standard of 28 precise emotions")
     text_type = ObjectField(
-        description="Type (category) of the post (article, etc)",
-        TextType)
+        TextType,    
+        description="Type (category) of the post (article, etc)")
     source_type = ObjectField(
-        description="Type (category) of the source that has produced the post",
-        SourceType)
+        SourceType,    
+        description="Type (category) of the source that has produced the post")
     gender = ObjectField(
-        description="Probable gender (female or male) of the author",
-        Gender)
+        Gender,    
+        description="Probable gender (female or male) of the author")
 
     # unknown size list
     sentiment = NumberField(
