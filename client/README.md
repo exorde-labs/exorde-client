@@ -7,6 +7,7 @@ Exorde maintains a [web3](https://ethereum.org/en/web3/) protocol which aim is t
 - [API](https://exorde.io/)
 
 ### Requierements
+- at least 8 GB of virtual memory
 
 ### Installation
 
