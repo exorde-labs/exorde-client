@@ -9,13 +9,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkouthttps://github.com/exorde-labs/exorde/blob/mangle/data_hub/schema/schema.json@v2
       - name: Generate Schema
         run: pip install -e ./schema ; rm -rf ./schema/schema.json ; exorde_schema  >> schema/schema.json
       - name: Update README.md
         run: |
-          rm schema/README.md
-          cat schema/.MODEL.md >> schema/README.md
+          rm -rf schema/README.md
+          cat schema/MODEL.md >> schema/README.md
           echo '```' >> schema/README.md
           cat schema/schema.json >> schema/README.md
           echo '```' >> schema/README.md
