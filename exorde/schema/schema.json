@@ -100,6 +100,7 @@
             }
         },
         "age": {
+            "description": "Probable age range of the author",
             "type": "object",
             "properties": {
                 "below_twenty": {
@@ -117,6 +118,7 @@
             }
         },
         "irony": {
+            "description": "Measure of how much a post is ironic (in %)",
             "type": "object",
             "properties": {
                 "non_irony": {
@@ -128,6 +130,7 @@
             }
         },
         "emotion": {
+            "description": "Emotion classification of the post, using the go-emotion standard of 28 precise emotions",
             "type": "object",
             "properties": {
                 "love": {
@@ -214,6 +217,7 @@
             }
         },
         "text_type": {
+            "description": "Type (category) of the post (article, etc)",
             "type": "object",
             "properties": {
                 "assumption": {
@@ -240,6 +244,7 @@
             }
         },
         "source_type": {
+            "description": "Type (category) of the source that has produced the post",
             "type": "object",
             "properties": {
                 "social": {
@@ -290,6 +295,7 @@
             }
         },
         "gender": {
+            "description": "Probable gender (female or male) of the author",
             "type": "object",
             "properties": {
                 "female": {
