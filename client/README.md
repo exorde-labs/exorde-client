@@ -8,7 +8,7 @@ Exorde maintains a [web3](https://ethereum.org/en/web3/) protocol which aim is t
 
 ### Requierements
 - at least 8 GB of virtual memory
-- python3.10
+- python 3.10
 
 ### Installation
 
