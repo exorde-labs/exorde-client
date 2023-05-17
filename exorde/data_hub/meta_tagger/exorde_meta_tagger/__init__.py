@@ -213,7 +213,6 @@ def tag(documents, nlp, device, mappings):
 
     # Text classification pipelines
     text_classification_models = [
-        ("Advertising", "djsull/kobigbird-spam-multi-label"),
         ("Emotion", "SamLowe/roberta-base-go_emotions"),
         ("Irony", "cardiffnlp/twitter-roberta-base-irony"),
         ("LanguageScore", "salesken/query_wellformedness_score"),
@@ -268,11 +267,11 @@ def tag(documents, nlp, device, mappings):
     custom_model_data = [
         ("Age", "ExordeLabs/AgeDetection", "ageDetection.h5"),
         ("Gender", "ExordeLabs/GenderDetection", "genderDetection.h5"),
-        (
-            "HateSpeech",
-            "ExordeLabs/HateSpeechDetection",
-            "hateSpeechDetection.h5",
-        ),
+        # (
+        #     "HateSpeech",
+        #     "ExordeLabs/HateSpeechDetection",
+        #     "hateSpeechDetection.h5",
+        # ),
     ]
 
     for col_name, repo_id, file_name in custom_model_data:
@@ -312,7 +311,7 @@ def meta_tagger_initialization():
     mappings = {
         "Gender": {0: "Female", 1: "Male"},
         "Age": {0: "<20", 1: "20<30", 2: "30<40", 3: ">=40"},
-        "HateSpeech": {0: "Hate speech", 1: "Offensive", 2: "None"},
+        # "HateSpeech": {0: "Hate speech", 1: "Offensive", 2: "None"},
     }
     try:
         nlp = spacy.load("en_core_web_trf")

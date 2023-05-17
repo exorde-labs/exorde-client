@@ -97,6 +97,9 @@ class Gender(Schema):
     female = NumberField()
     male = NumberField()
 
+class Classification(Schema):
+    topic = StringField()
+    weight = NumberField()
 
 class Item(Schema):
     """Posts & Comments both are independants Items"""
@@ -105,14 +108,14 @@ class Item(Schema):
     summary = StringField(description="Short version of the content")
     picture = UrlField(description="Image linked to the item")
     author = StringField(
-        description="SHA1 of username assigned as creator of the item on the plateform"
-    )  # sha1 du username
+        description="SHA1 encoding of the username assigned as creator of the item on it source plateform"
+    ) 
     created_at = DateTimeField(
         description="ISO8601/RFC3339 Date of creation of the item"
     )
     language = StringField(
         description="ISO639-1 language code that consist of two lowercase letters"
-    )  # weak, maybe enum ?
+    )  
     title = StringField(description="Headline of the item")
     domain = UrlField(
         description="Domain name on which the item was retrieved"
@@ -124,31 +127,52 @@ class Item(Schema):
     external_parent_id = StringField(
         description="Identifier used by source of parent item"
     )
-
     # classification = zero_shot
     classification = ArrayField(
-        ArrayField(Compose(StringField(), NumberField()))
+        ObjectField(Classification),        
+        description="Probable categorization(s) of the post in a pre-determined set of general topics (list of objects with float associated for each topic, expressing their likelihood)"
     )
-    top_keywords = ArrayField(StringField())  # yake
-    # meta-data (tag)
-    translation = StringField()
-    embedding = ArrayField(NumberField())
+    top_keywords = ArrayField(
+        StringField(),
+        description="The main keywords extracted from the content field")  # yake-generated
+    
+    # meta-data (tagger)
+    translation = StringField(
+        description="The content translated in English language")
+    
+    embedding = ArrayField(
+        NumberField(),    
+        description="Vector/numerical representation of the translated content (field: translation), produced by a NLP encoder model"
+    )
 
     language_score = ArrayField(
-        ArrayField(Compose(StringField(), NumberField()))
+        ArrayField(Compose(StringField(), NumberField()),                  
+        description="Readability score of the text", )
     )
 
     # known size_list
-    age = ObjectField(Age)
-    irony = ObjectField(Irony)
-    emotion = ObjectField(Emotion)
-    text_type = ObjectField(TextType)
-    source_type = ObjectField(SourceType)
-    gender = ObjectField(Gender)
-    # known size_list
+    age = ObjectField(
+        Age,
+        description="Probable age range of the author")
+    irony = ObjectField(
+        Irony,    
+        description="Measure of how much a post is ironic (in %)")
+    emotion = ObjectField(
+        Emotion,
+        description="Emotion classification of the post, using the go-emotion standard of 28 precise emotions")
+    text_type = ObjectField(
+        TextType,    
+        description="Type (category) of the post (article, etc)")
+    source_type = ObjectField(
+        SourceType,    
+        description="Type (category) of the source that has produced the post")
+    gender = ObjectField(
+        Gender,    
+        description="Probable gender (female or male) of the author")
 
     # unknown size list
-    sentiment = NumberField()
+    sentiment = NumberField(
+        description="Measure of post sentiment from negative to positive (-1 = negative, +1 = positive, 0 = neutral)")
     # meta-data (tag) end
 
     collected_at = DateTimeField(

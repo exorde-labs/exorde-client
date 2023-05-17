@@ -7,8 +7,17 @@
             "description": "Text body of the item",
             "type": "string"
         },
+        "summary": {
+            "description": "Short version of the content",
+            "type": "string"
+        },
+        "picture": {
+            "description": "Image linked to the item",
+            "type": "string",
+            "pattern": "^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\\.)+[a-zA-Z]{2,}"
+        },
         "author": {
-            "description": "SHA1 of username assigned as creator of the item on the plateform",
+            "description": "SHA1 encoding of the username assigned as creator of the item on it source plateform",
             "type": "string"
         },
         "created_at": {
@@ -43,29 +52,33 @@
             "type": "string"
         },
         "classification": {
+            "description": "Probable categorization(s) of the post in a pre-determined set of general topics (list of objects with float associated for each topic, expressing their likelihood)",
             "type": "array",
             "items": {
-                "type": "array",
-                "items": [
-                    {
+                "type": "object",
+                "properties": {
+                    "topic": {
                         "type": "string"
                     },
-                    {
+                    "weight": {
                         "type": "number"
                     }
-                ]
+                }
             }
         },
         "top_keywords": {
+            "description": "The main keywords extracted from the content field",
             "type": "array",
             "items": {
                 "type": "string"
             }
         },
         "translation": {
+            "description": "The content translated in English language",
             "type": "string"
         },
         "embedding": {
+            "description": "Vector/numerical representation of the translated content (field: translation), produced by a NLP encoder model",
             "type": "array",
             "items": {
                 "type": "number"
@@ -74,6 +87,7 @@
         "language_score": {
             "type": "array",
             "items": {
+                "description": "Readability score of the text",
                 "type": "array",
                 "items": [
                     {
@@ -86,6 +100,7 @@
             }
         },
         "age": {
+            "description": "Probable age range of the author",
             "type": "object",
             "properties": {
                 "below_twenty": {
@@ -103,6 +118,7 @@
             }
         },
         "irony": {
+            "description": "Measure of how much a post is ironic (in %)",
             "type": "object",
             "properties": {
                 "non_irony": {
@@ -114,6 +130,7 @@
             }
         },
         "emotion": {
+            "description": "Emotion classification of the post, using the go-emotion standard of 28 precise emotions",
             "type": "object",
             "properties": {
                 "love": {
@@ -200,6 +217,7 @@
             }
         },
         "text_type": {
+            "description": "Type (category) of the post (article, etc)",
             "type": "object",
             "properties": {
                 "assumption": {
@@ -226,6 +244,7 @@
             }
         },
         "source_type": {
+            "description": "Type (category) of the source that has produced the post",
             "type": "object",
             "properties": {
                 "social": {
@@ -276,6 +295,7 @@
             }
         },
         "gender": {
+            "description": "Probable gender (female or male) of the author",
             "type": "object",
             "properties": {
                 "female": {
@@ -287,6 +307,7 @@
             }
         },
         "sentiment": {
+            "description": "Measure of post sentiment from negative to positive (-1 = negative, +1 = positive, 0 = neutral)",
             "type": "number"
         },
         "collected_at": {
