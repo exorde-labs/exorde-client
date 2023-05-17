@@ -1,5 +1,6 @@
 #! python3.10
 
+import json
 from typing import Callable
 import logging
 from collections import deque
@@ -29,16 +30,15 @@ def applicator(function: Callable):
 async def push_to_stack(value, stack, memory):
     filter_result = True
     for filter_function in FILTERS:
-        filter_result = await autofill(filter_function, args=[value], memory=memory)
+        filter_result = await autofill(
+            filter_function, args=[value], memory=memory
+        )
         if filter_result == False:
             break
     if filter_result:
         stack.append(value)
         return {"stack": stack}
     return {}
-
-
-import json
 
 
 async def pull_to_process(stack, processed, memory):
