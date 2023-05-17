@@ -3,7 +3,7 @@
 - Items describe entities such as links, videos, posts, comments, full definition is below :
 
 
-```
+```json
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$id": "https://github.com/exorde-labs/exorde/repo/tree/v0.0.1/exorde/schema/schema.json",
