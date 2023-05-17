@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkouthttps://github.com/exorde-labs/exorde/blob/mangle/data_hub/schema/schema.json@v2
+        uses: actions/checkout@v2
       - name: Generate Schema
         run: pip install -e ./schema ; rm -rf ./schema/schema.json ; exorde_schema  >> schema/schema.json
       - name: Update README.md
