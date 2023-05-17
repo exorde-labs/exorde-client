@@ -1,7 +1,6 @@
-Welcome to exorde scraping package
+<img src="https://img.shields.io/badge/how%20to-scrap-blue?style=for-the-badge" />
 
-This package allows scrapping of different sources into a [unified format]().
+Exorde maintain and publish several packages on pip which allow scrapping.
 
-## Contribution
-
-You can contribute to this package directly by creating a pull-request.
+- Every package use a [unified format](../schema)
+- Each source has it's own package
