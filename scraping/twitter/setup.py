@@ -4,5 +4,5 @@ setup(
     name="exorde_twitter",
     version="0.0.1",
     packages=find_packages(),
-    install_requires=["aiosow", "exorde_playwright"],
+    install_requires=[],
 )

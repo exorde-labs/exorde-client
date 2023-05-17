@@ -1,6 +1,5 @@
 import asyncio, logging, random
 from dateutil import parser
-from aiosow.bindings import option
 
 
 def generate_twitter_url(keyword) -> str:
@@ -20,7 +19,9 @@ random_habit_value = lambda habit, variation: habit + random.uniform(
 )
 
 # Define a function that returns a lambda function to generate a random value around the habit with the specified variation
-randomize = lambda habit, variation: lambda: random_habit_value(habit, variation)
+randomize = lambda habit, variation: lambda: random_habit_value(
+    habit, variation
+)
 
 # Define lambda functions to use the random habit value
 expert_typing_speed = randomize(0.08, 0.02)
@@ -46,7 +47,9 @@ async def authenticate_twitter(page, twitter_username, twitter_password):
     email_input = page.locator(
         '//*[@id="layers"]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div/div/div/div[5]/label/div/div[2]/div/input'
     )
-    await behaved_typing(email_input, twitter_username, random.choice(typing_behaviors))
+    await behaved_typing(
+        email_input, twitter_username, random.choice(typing_behaviors)
+    )
     next_button = page.locator(
         '//*[@id="layers"]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div/div/div/div[6]/div'
     )
