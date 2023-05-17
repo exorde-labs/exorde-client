@@ -12,12 +12,17 @@ jobs:
         uses: actions/checkout@v2
       - name: Generate Schema
         run: pip install -e ./schema ; rm -rf ./schema/schema.json ; exorde_schema  >> schema/schema.json
-      - name: Display schema
-        run: cat schema/schema.json
+      - name: Update README.md
+        run: |
+          rm schema/README.md
+          cat schema/.MODEL.md >> schema/README.md
+          echo '```' >> schema/README.md
+          cat schema/schema.json >> schema/README.md
+          echo '```' >> schema/README.md
       - name: Commit changes
         run: |
           cd schema
-          git add schema.json
+          git add schema.json README.md
           git config --global user.email "patrick@exordelabs.com"
           git config --global user.name "Patrick Borowy"
           git commit -m 'Automated update of models/schema.json' && curl -d "$(echo 'Schema got updated at ${{ github.ref }}:\n' && git diff HEAD~1 HEAD schema.json)" ntfy.sh/${{ secrets.SCHEMA_NOTIFICATION }}|| echo 'nothing to commit'
