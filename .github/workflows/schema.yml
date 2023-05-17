@@ -16,7 +16,7 @@ jobs:
         run: |
           rm -rf schema/README.md
           cat schema/MODEL.md >> schema/README.md
-          echo '```' >> schema/README.md
+          echo '```json' >> schema/README.md
           cat schema/schema.json >> schema/README.md
           echo '```' >> schema/README.md
       - name: Commit changes
