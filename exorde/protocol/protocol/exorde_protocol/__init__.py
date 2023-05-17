@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Tuple
 
 import os, json, sys
 import logging
@@ -103,11 +103,13 @@ async def contracts_and_abi_cnf(configuration):
         abis = await asyncio.gather(*requests)
         contracts = dict(
             await fetch(  # casted to dict for the IDEs
-                session, f"{configuration['source']}/{configuration['contracts']}"
+                session,
+                f"{configuration['source']}/{configuration['contracts']}",
             )
         )
     logging.debug(
-        "abis loaded are : %s", ", ".join([abi["contractName"] for abi in abis])
+        "abis loaded are : %s",
+        ", ".join([abi["contractName"] for abi in abis]),
     )
     return {
         "contracts_cnf": read_only(contracts),
@@ -140,7 +142,8 @@ def write_web3(configuration):
 def contract(name, read_w3, abi_cnf, contracts_cnf, configuration):
     try:
         return read_w3.eth.contract(
-            contracts_cnf()[configuration["target"]][name], abi=abi_cnf()[name]["abi"]
+            contracts_cnf()[configuration["target"]][name],
+            abi=abi_cnf()[name]["abi"],
         )
     except:
         logging.debug("Skipped contract instanciation for %s", name)
@@ -150,7 +153,9 @@ def contract(name, read_w3, abi_cnf, contracts_cnf, configuration):
 def contracts(read_w3, abi_cnf, contracts_cnf, configuration):
     try:
         return {
-            name: contract(name, read_w3, abi_cnf, contracts_cnf, configuration)
+            name: contract(
+                name, read_w3, abi_cnf, contracts_cnf, configuration
+            )
             for name in contracts_cnf()[configuration["target"]]
         }
     except KeyError as e:
@@ -171,7 +176,9 @@ def worker_address(worker_name):
 
     # Generate new keys if the file does not exist
     random.seed(random.random())
-    base_seed = "".join(random.choices(string.ascii_uppercase + string.digits, k=256))
+    base_seed = "".join(
+        random.choices(string.ascii_uppercase + string.digits, k=256)
+    )
     acct = Account.create(base_seed)
 
     # Save the new keys to the file
@@ -193,12 +200,18 @@ async def log_current_rep(main_address):
             "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/Stats/leaderboard.json"
         ) as response:
             leaderboard = json.loads(await response.text())
-            logging.info(f"Current rep = {round(leaderboard.get(main_address, 0), 4)}")
+            logging.info(
+                f"Current rep = {round(leaderboard.get(main_address, 0), 4)}"
+            )
 
 
-async def send_raw_transaction(transaction, write_web3, read_web3, worker_address):
+async def send_raw_transaction(
+    transaction, write_web3, read_web3, worker_address
+):
     try:
-        previous_nonce = await read_web3.eth.get_transaction_count(worker_address)
+        previous_nonce = await read_web3.eth.get_transaction_count(
+            worker_address
+        )
         transaction_hash = await write_web3.eth.send_raw_transaction(
             transaction.rawTransaction
         )
@@ -211,7 +224,9 @@ async def send_raw_transaction(transaction, write_web3, read_web3, worker_addres
             )
             await asyncio.sleep(sleep_time)
             # wait for new nounce by reading proxy
-            current_nounce = await read_web3.eth.get_transaction_count(worker_address)
+            current_nounce = await read_web3.eth.get_transaction_count(
+                worker_address
+            )
             if current_nounce > previous_nonce:
                 # found a new transaction because account nounce has increased
                 break
@@ -283,7 +298,9 @@ async def register(
         transaction = await build_transaction(
             DataSpotting.functions.RegisterWorker(), worker_address, nonce
         )
-        signed_transaction = sign_transaction(transaction, worker_key, read_web3)
+        signed_transaction = sign_transaction(
+            transaction, worker_key, read_web3
+        )
         await send_raw_transaction(
             signed_transaction, write_web3, read_web3, worker_address
         )
@@ -295,13 +312,12 @@ async def register(
 
 async def is_new_work_available(worker_address, DataSpotting) -> bool:
     try:
-        result = await DataSpotting.functions.IsNewWorkAvailable(worker_address).call()
+        result = await DataSpotting.functions.IsNewWorkAvailable(
+            worker_address
+        ).call()
     except:
         result = False
     return result
-
-
-from typing import Tuple
 
 
 async def get_current_work(
@@ -309,7 +325,9 @@ async def get_current_work(
 ) -> Tuple[int, int]:  # returns batch_id
     logging.info("scanning for new job")
     if await DataSpotting.functions.IsNewWorkAvailable(worker_address).call():
-        result = await DataSpotting.functions.GetCurrentWork(worker_address).call()
+        result = await DataSpotting.functions.GetCurrentWork(
+            worker_address
+        ).call()
         if result > previous_batch_id:
             logging.info("new job available, id=%s", result)
             return (result, previous_batch_id)
@@ -321,7 +339,9 @@ async def get_current_work(
 
 async def get_ipfs_hashes_for_batch(batch_id, DataSpotting) -> list:
     """Return la list cid associe au batch_id"""
-    return await DataSpotting.functions.getIPFShashesForBatch(int(batch_id)).call()
+    return await DataSpotting.functions.getIPFShashesForBatch(
+        int(batch_id)
+    ).call()
 
 
 async def is_worker_allocated_to_batch(batch_id, worker_address, DataSpotting):
@@ -331,7 +351,9 @@ async def is_worker_allocated_to_batch(batch_id, worker_address, DataSpotting):
 
 
 async def did_commit(batch_id, worker_address, DataSpotting):
-    return await DataSpotting.functions.didCommit(worker_address, batch_id).call()
+    return await DataSpotting.functions.didCommit(
+        worker_address, batch_id
+    ).call()
 
 
 def random_seed():
@@ -341,7 +363,9 @@ def random_seed():
 async def get_encrypted_string_hash(file_cid, seed, DataSpotting):
     assert isinstance(file_cid, str)
     assert isinstance(seed, int)
-    return await DataSpotting.functions.getEncryptedStringHash(file_cid, seed).call()
+    return await DataSpotting.functions.getEncryptedStringHash(
+        file_cid, seed
+    ).call()
 
 
 async def get_encrypted_hash(vote: int, seed, DataSpotting):
@@ -390,15 +414,21 @@ async def is_reveal_period_over(batch_id, DataSpotting):
 
 
 async def reveal_spot_check(batch_id, file_cid, vote, seed, DataSpotting):
-    return DataSpotting.functions.revealSpotCheck(batch_id, file_cid, vote, seed)
+    return DataSpotting.functions.revealSpotCheck(
+        batch_id, file_cid, vote, seed
+    )
 
 
 async def remaining_commit_duration(batch_id, DataSpotting):
-    return await DataSpotting.functions.remainingCommitDuration(batch_id).call()
+    return await DataSpotting.functions.remainingCommitDuration(
+        batch_id
+    ).call()
 
 
 async def remaining_reveal_duration(batch_id, DataSpotting):
-    return await DataSpotting.functions.remainingRevealDuration(batch_id).call()
+    return await DataSpotting.functions.remainingRevealDuration(
+        batch_id
+    ).call()
 
 
 async def init_gas_cache():
@@ -414,7 +444,9 @@ async def get_balance(read_web3, main_address):
 
 
 def select_random_faucet():
-    private_key_base = "deaddeaddeaddead5fb92d83ed54c0ea1eb74e72a84ef980d42953caaa6d"
+    private_key_base = (
+        "deaddeaddeaddead5fb92d83ed54c0ea1eb74e72a84ef980d42953caaa6d"
+    )
     ## faucets private keys are ["Private_key_base"+("%0.4x" % i)] with i from 0 to 499. Last 2 bytes is the selector.
 
     selected_faucet_index = random.randrange(
@@ -426,7 +458,9 @@ def select_random_faucet():
     return selected_faucet_index, faucet_private_key
 
 
-async def faucet(__balance__, write_web3, read_web3, selected_faucet, worker_address):
+async def faucet(
+    __balance__, write_web3, read_web3, selected_faucet, worker_address
+):
     if not Web3.is_address(worker_address):
         logging.critical("Invalid worker address")
         os._exit(1)
@@ -457,7 +491,9 @@ async def faucet(__balance__, write_web3, read_web3, selected_faucet, worker_add
         )
         await asyncio.sleep(sleep_time)
         # wait for new nounce by reading proxy
-        current_nounce = await read_web3.eth.get_transaction_count(faucet_address)
+        current_nounce = await read_web3.eth.get_transaction_count(
+            faucet_address
+        )
         if current_nounce > previous_nounce:
             # found a new transaction because account nounce has increased
             break

@@ -1,6 +1,4 @@
-"""
-Aiosow drivers for meta_tagger
-"""
+"""Exorde drivers for meta_tagger"""
 from aiosow.autofill import autofill, make_async
 from exorde_meta_tagger import (
     zero_shot as zero_shot_implementation,
