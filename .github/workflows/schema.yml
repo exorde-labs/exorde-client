@@ -11,12 +11,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Generate Schema
-        run: pip install -e ./exorde/data_hub/schema ; rm -rf ./exorde/data_hub/schema/schema.json ; exorde_schema  >> exorde/data_hub/schema/schema.json
+        run: pip install -e ./data_hub/schema ; rm -rf ./data_hub/schema/schema.json ; exorde_schema  >> data_hub/schema/schema.json
       - name: Display schema
-        run: cat exorde/schema/schema.json
+        run: cat data_hub/schema/schema.json
       - name: Commit changes
         run: |
-          cd exorde/data_hub/schema
+          cd data_hub/schema
           git add schema.json
           git config --global user.email "patrick@exordelabs.com"
           git config --global user.name "Patrick Borowy"
