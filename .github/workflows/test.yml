@@ -1,9 +1,12 @@
-name: Package install test
+name: Package installation test
 
 on:
   push:
     branches: '**'
-
+    paths:
+      - 'client/setup.py'
+      - 'data_hub/setup.py'
+      - 'schema/setup.py'
 
 jobs:
   build:
