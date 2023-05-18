@@ -13,6 +13,7 @@ Exorde maintains a [web3](https://ethereum.org/en/web3/) protocol which aim is t
 ### Installation
 
 #### [pip](https://pypi.org/)
+[![Package install test](https://github.com/exorde-labs/exorde/actions/workflows/test.yml/badge.svg)](https://github.com/exorde-labs/exorde/actions/workflows/test.yml)
 ```bash
 pip3.10 install exorde
 ```
