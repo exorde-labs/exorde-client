@@ -17,6 +17,7 @@ setup(
         "torch==1.13.0",
         "vaderSentiment==3.3.2",
         "yake",
+        "fasttext-wheel",
         "fasttext-langdetect",
         "argostranslate",
     ],
