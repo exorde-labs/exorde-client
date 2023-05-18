@@ -7,7 +7,8 @@ setup(
     license="MIT",
     packages=find_packages(include=["meta_tagger", "translation", "xyake"]),
     install_requires=[
-        "fasttext-langdetect",
+        "fasttext==0.9.2",
+        "fasttext-langdetect==1.0.5",
         # "huggingface_hub==0.13.3",
         # "pandas==1.5.3",
         # "sentence-transformers==2.2.2",
