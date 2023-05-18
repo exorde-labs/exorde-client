@@ -13,10 +13,14 @@ def install_translation_modules():
     i = 0
     for pkg in available_packages:
         i += 1
-        logging.info(f" - installing translation module ({i}/{length}) : ({str(pkg)})")
+        logging.info(
+            f" - installing translation module ({i}/{length}) : ({str(pkg)})"
+        )
 
         # cast used until this is merged https://github.com/argosopentech/argos-translate/pull/329
-        package.install_from_path(cast(package.AvailablePackage, pkg).download())
+        package.install_from_path(
+            cast(package.AvailablePackage, pkg).download()
+        )
 
 
 from_lang = lambda from_code, installed_languages: list(
