@@ -84,11 +84,15 @@ async def fetch_lines_from_url() -> list:
                 lines = content.split("\n")
                 return lines
             else:
-                logging.error(f"Failed to fetch file, status code: {resp.status}")
+                logging.error(
+                    f"Failed to fetch file, status code: {resp.status}"
+                )
                 return []
 
 
-alias("keyword")(lambda keywords_list: random.choice(keywords_list).replace(" ", "%20"))
+alias("keyword")(
+    lambda keywords_list: random.choice(keywords_list).replace(" ", "%20")
+)
 
 
 @setup
@@ -122,12 +126,12 @@ for source in SOURCES:
 @setup
 def init_spotting(no_spotting, remote_kill, memory):
     if not no_spotting and not remote_kill:
-        from exorde.spotting import bindings as __bindings__
-        from exorde.spotting import applicator as spotting_applicator
-        from exorde.spotting import filter as spotting_filter
+        from exorde.protocol.spotting import bindings as __bindings__
+        from exorde.protocol.spotting import applicator as spotting_applicator
+        from exorde.protocol.spotting import filter as spotting_filter
 
         # from exorde.spotting import batch_applicator as spotting_batch_applicator
-        from exorde.spotting.filters import (
+        from exorde.protocol.spotting.filters import (
             datetime_filter,
             unique_filter,
             format_assertion,
@@ -175,8 +179,10 @@ option(
 @setup
 def init_validation(no_validation, remote_kill):
     if not no_validation and not remote_kill:
-        from exorde.validation.bindings import validator as validation_validator
-        from exorde.protocol import bindings as __bindings__
+        from exorde.protocol.validation.bindings import (
+            validator as validation_validator,
+        )
+        from exorde.protocol.base import bindings as __bindings__
         from exorde.meta_tagger.drivers import tag
         from exorde.meta_tagger import meta_tagger_initialization
 

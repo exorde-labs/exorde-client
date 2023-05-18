@@ -1,6 +1,6 @@
 from aiosow.bindings import setup, wrap, wire
 
-from exorde.ipfs import (
+from exorde.protocol.ipfs import (
     load_json_schema,
     # validate_batch_schema,
     upload_to_ipfs,

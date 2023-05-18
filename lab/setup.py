@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="exorde_data_hub",
+    name="exorde_lab",
     version="0.1.1",
     description="Exorde data hub tools",
     license="MIT",

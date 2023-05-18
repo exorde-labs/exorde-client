@@ -6,8 +6,8 @@ from aiosow.bindings import wrap, setup
 from aiosow.routines import routine
 from aiosow.autofill import autofill
 
-from exorde.ipfs import download_ipfs_file, upload_to_ipfs
-from exorde.protocol import (
+from exorde.protocol.ipfs import download_ipfs_file, upload_to_ipfs
+from exorde.protocol.base import (
     estimate_gas,
     get_ipfs_hashes_for_batch,
     get_current_work as get_current_work_implementation,
@@ -35,13 +35,16 @@ def reset_batch_id():
 
 routine(2, condition=lambda batch_id: not batch_id)(get_current_work)
 on("batch_id", condition=lambda batch_id: int(batch_id))(
-    wrap(lambda hashes: {"validation_hashes": hashes})(get_ipfs_hashes_for_batch)
+    wrap(lambda hashes: {"validation_hashes": hashes})(
+        get_ipfs_hashes_for_batch
+    )
 )
 
 
 async def download_files(hashes, memory):
     tasks = [
-        autofill(download_ipfs_file, args=[hash], memory=memory) for hash in hashes
+        autofill(download_ipfs_file, args=[hash], memory=memory)
+        for hash in hashes
     ]
     files = await asyncio.gather(*tasks)
     return [file for file in files if file]
@@ -91,11 +94,15 @@ async def run_validation(batch, memory):
     return {"validated": batch, "vote": vote, "length": len(items)}
 
 
-on("validation_hashes")(wrap(lambda files: {"validation_files": files})(download_files))
+on("validation_hashes")(
+    wrap(lambda files: {"validation_files": files})(download_files)
+)
 on("validation_files")(merge_validation_files)
 on("merged_validation_file")(run_validation)
 on("validated")(
-    wrap(lambda cid: {"validation_cid": cid["cid"], "commited": False})(upload_to_ipfs)
+    wrap(lambda cid: {"validation_cid": cid["cid"], "commited": False})(
+        upload_to_ipfs
+    )
 )
 
 
@@ -105,7 +112,9 @@ def reset_seed():
 
 
 @routine(
-    5, condition=lambda validation_cid, commited: commited == False and validation_cid
+    5,
+    condition=lambda validation_cid, commited: commited == False
+    and validation_cid,
 )
 async def commit_validation(
     batch_id,

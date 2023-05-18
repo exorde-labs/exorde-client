@@ -1,6 +1,5 @@
 #! python3.10
 
-import json
 from typing import Callable
 import logging
 from collections import deque
@@ -39,6 +38,9 @@ async def push_to_stack(value, stack, memory):
         stack.append(value)
         return {"stack": stack}
     return {}
+
+
+import json
 
 
 async def pull_to_process(stack, processed, memory):

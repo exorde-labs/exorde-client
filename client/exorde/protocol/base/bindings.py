@@ -10,7 +10,7 @@ from aiosow.bindings import (
 )
 from aiosow.routines import routine
 
-from exorde.protocol import (
+from exorde.protocol.base import (
     check_user_address,
     get_balance,
     select_random_faucet,
@@ -36,9 +36,9 @@ from exorde.protocol import (
 routine(20)(log_current_rep)
 # instanciate workers
 setup(
-    wrap(lambda acct: {"worker_address": acct.address, "worker_key": acct.key})(
-        worker_address
-    )
+    wrap(
+        lambda acct: {"worker_address": acct.address, "worker_key": acct.key}
+    )(worker_address)
 )
 setup(configuration)
 setup(init_gas_cache)
