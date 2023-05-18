@@ -7,7 +7,6 @@ setup(
     license="MIT",
     packages=find_packages(include=["meta_tagger", "translation", "xyake"]),
     install_requires=[
-        "pybind11",
         "huggingface_hub==0.13.3",
         "pandas==1.5.3",
         "sentence-transformers==2.2.2",
