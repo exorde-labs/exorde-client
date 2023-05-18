@@ -20,4 +20,5 @@ setup(
         # "yake",
         # "argostranslate",
     ],
+    setup_requires=["pybind11"],
 )
