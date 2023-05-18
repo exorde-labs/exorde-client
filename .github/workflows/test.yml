@@ -21,7 +21,8 @@ jobs:
 
     - name: Install package
       run: |
-        pip3 install pybind11
-        pip3 install -e ./schema
-        pip3 install -e ./data_hub
-        pip3 install -e ./client
+        pip install --upgrade pip
+        pip install pybind11
+        pip install -e ./schema
+        pip install -e ./data_hub
+        pip install -e ./client
