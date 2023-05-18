@@ -1,3 +1,9 @@
+name: Package install test
+
+on:
+  push:
+    branches: '**'
+
 jobs:
   build:
     runs-on: ubuntu-latest
