@@ -3,6 +3,8 @@ name: Generate the json-schema from the models
 on:
   push:
     branches: '**'
+    paths:
+      - 'schema/exorde_schema/__init__.py'
 
 jobs:
   run-command:
