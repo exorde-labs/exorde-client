@@ -5,7 +5,13 @@ setup(
     version="0.1.1",
     description="Exorde data hub tools",
     license="MIT",
-    packages=find_packages(include=["meta_tagger", "translation", "xyake"]),
+    packages=find_packages(
+        include=[
+            "exorde_lab.meta_tagger",
+            "exorde_lab.translation",
+            "exorde_lab.xyake",
+        ]
+    ),
     install_requires=[
         "fasttext==0.9.2",
         "fasttext-langdetect==1.0.5",
