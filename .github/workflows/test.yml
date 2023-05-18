@@ -21,7 +21,7 @@ jobs:
 
     - name: Install package
       run: |
-        sudo apt install gcc python-dev
+        sudo apt install gcc
         pip install --upgrade pip
         pip install pybind11
         pip install -e ./schema
