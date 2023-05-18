@@ -3,10 +3,10 @@ name: Package install test
 on:
   push:
     branches: '**'
-  paths:
-    - 'schema/setup.py'
-    - 'client/setup.py'
-    - 'data_hub/setup.py'
+    paths:
+      - 'schema/setup.py'
+      - 'client/setup.py'
+      - 'data_hub/setup.py'
 
 jobs:
   test:
