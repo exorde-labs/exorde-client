@@ -5,9 +5,9 @@ from aiosow.perpetuate import on
 from exorde.formated import on_formated_data_do
 
 from typing import Callable
-from exorde.ipfs.bindings import push_to_ipfs, on_new_cid_do
-from exorde.protocol.bindings import commit_current_cid
-from exorde.spotting import (
+from exorde.protocol.ipfs.bindings import push_to_ipfs, on_new_cid_do
+from exorde.protocol.base.bindings import commit_current_cid
+from exorde.protocol.spotting import (
     init_stack,
     push_to_stack,
     consume_processed,
@@ -50,8 +50,13 @@ on(
     and running,
 )(pull_to_process)
 # on("stack")(call_limit(1)(log_stack_len))
-on("processed", condition=lambda processed: len(processed) == 25)(consume_processed)
-on("processed", lambda processed: logging.info("processed: %d", len(processed)))
+on("processed", condition=lambda processed: len(processed) == 25)(
+    consume_processed
+)
+on(
+    "processed",
+    lambda processed: logging.info("processed: %d", len(processed)),
+)
 on(
     "batch_to_consume",
     condition=lambda value, transaction, batch_id: value

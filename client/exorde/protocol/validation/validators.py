@@ -1,4 +1,4 @@
-from exorde.validation.bindings import validator, validator_vote
+from exorde.protocol.validation.bindings import validator, validator_vote
 
 
 "Validators are expressed as function that take and return a list of items"
