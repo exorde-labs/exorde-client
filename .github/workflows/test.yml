@@ -23,7 +23,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         sudo apt update
-        sudo apt install -y python-pybind11
+        sudo apt install -y pybind11-dev
         pip install -e ./schema
         pip install -e ./data_hub
         pip install -e ./client
