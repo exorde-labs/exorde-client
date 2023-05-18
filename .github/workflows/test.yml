@@ -22,7 +22,8 @@ jobs:
     - name: Install package
       run: |
         python -m pip install --upgrade pip
-        apt-get install -y python-pybind11
+        sudo apt update
+        sudo apt install -y python-pybind11
         pip install -e ./schema
         pip install -e ./data_hub
         pip install -e ./client
