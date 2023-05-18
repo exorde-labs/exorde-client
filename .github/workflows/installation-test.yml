@@ -5,7 +5,7 @@ on:
     branches: '**'
     paths:
       - 'client/setup.py'
-      - 'data_hub/setup.py'
+      - 'lab/setup.py'
       - 'schema/setup.py'
 
 jobs:
@@ -38,8 +38,8 @@ jobs:
       - name: Install schema
         run: python3.10 -m pip install -e ./schema
 
-      - name: Install data_hub
-        run: python3.10 -m pip install -e ./data_hub
+      - name: Install lab
+        run: python3.10 -m pip install -e ./lab
 
       - name: Install client
         run: python3.10 -m pip install -e ./client
