@@ -29,14 +29,11 @@ jobs:
       - name: Install pybind11
         run: python3.10 -m pip install pybind11
 
-      - name: Install fasttext
-        run: python3.10 -m pip install fasttext-langdetect 
-
       - name: Install schema
-        run: pip install -e ./schema
+        run: python3.10 -m pip install -e ./schema
 
       - name: Install data_hub
-        run: pip install -e ./data_hub
+        run: python3.10 -m pip install -e ./data_hub
 
       - name: Install client
-        run: pip install -e ./client
+        run: python3.10 -m pip install -e ./client
