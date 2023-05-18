@@ -1,4 +1,4 @@
-name: Generate the json-schema from the models 
+name: Generate json-schema
 
 on:
   push:
