@@ -21,5 +21,9 @@ The python module would then be availble at
 from exorde_scrapping import reddit
 ```
 
-## Usage
+## Unified Usage Interface
 
+Every valid exorde_scraping module must provide :
+```python
+  query(keyword:string) -> AsyncGenerator -> Item
+```
