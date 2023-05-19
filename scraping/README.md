@@ -2,7 +2,7 @@
 
 Exorde maintain and publish a modular and unified interface for scraping from different sources.
 
-- each source has it's own package listed in this repository
+- each source has it's own package listed in [modules](./modules)
 - every package has a unified usage interface
 - each return the same [Item](../schema) class
 
