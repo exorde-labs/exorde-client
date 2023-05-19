@@ -96,30 +96,39 @@ def zero_shot(texts, labeldict, classifier, max_depth=None, depth=0):
 
     keys = list(labeldict.keys())
     output = classifier(texts, keys, multi_label=False, max_length=32)
-    labels = [output[x]["labels"][0] for x in range(len(output))]
+    
+    labels_list = list()
+    
+    for i in range(len(texts)):
+        labels = [output[i]["labels"][x] for x in range(len(output[i]["labels"])) if output[i]["scores"][x] > 0.1]
+        labels_list.append(labels)
+        
     depth += 1
     if depth == max_depth:
         _labels = labels
         return labels
     else:
-        # outputs = list()
-
-        # for _t, _lab in zip(texts, labels):
-        # _labels = dict()
-        # for lab in _lab:
-        keys = list(labeldict[labels[0]].keys())
-        output = classifier(texts, keys, multi_label=False, max_length=32)
-        _out = list()
-        for x in range(len(output)):
-            for i in range(len(output[x]["labels"])):
-                scores = (output[x]["labels"][i], output[x]["scores"][i])
-                _out.append(scores)
-
-            # _labs = [output[x]["labels"] for x in range(len(output))]
-            # _scores = [output[x]["scores"] for x in range(len(output))]
-
-            # outputs.append(_out)
-    return _out
+        output_list = list()
+        
+        for _t, item in zip(texts, labels_list):
+            outputs = dict()
+            
+            for _lab in item:
+                # _labels = dict()
+                # for lab in _lab:
+                keys = list(labeldict[_lab].keys())
+                output = classifier(texts, keys, multi_label=False, max_length=32)
+                _out = dict()
+                for x in range(len(output)):
+                    for i in range(len(output[x]["labels"])):
+                        if(output[x]["scores"][i] > 0.1):
+                            _out[output[x]["labels"][i]] = output[x]["scores"][i]    
+                # _labs = [output[x]["labels"] for x in range(len(output))]
+                # _scores = [output[x]["scores"] for x in range(len(output))]
+        
+                outputs[_lab] = _out
+            output_list.append(outputs)
+    return output_list
 
 
 def preprocess_text(text: str, remove_stopwords: bool) -> str:
