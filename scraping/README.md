@@ -27,3 +27,13 @@ Every valid exorde_scraping module must provide :
 ```python
   query(keyword:string) -> AsyncGenerator -> Item
 ```
+
+## Usage Example
+
+```python
+
+from exorde_scrapping.reddit import query as reddit_query
+
+post = await reddit_query("BTC")()
+
+```
