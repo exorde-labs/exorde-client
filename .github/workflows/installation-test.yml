@@ -4,9 +4,9 @@ on:
   push:
     branches: '**'
     paths:
-      - 'client/setup.py'
+      - 'exorde/setup.py'
       - 'lab/setup.py'
-      - 'schema/setup.py'
+      - 'data/setup.py'
 
 jobs:
   build:
@@ -36,10 +36,10 @@ jobs:
         run: python3.10 -m pip install pybind11
 
       - name: Install schema
-        run: python3.10 -m pip install -e ./schema
+        run: python3.10 -m pip install -e ./data
 
       - name: Install lab
         run: python3.10 -m pip install -e ./lab
 
       - name: Install client
-        run: python3.10 -m pip install -e ./client
+        run: python3.10 -m pip install -e ./exorde
