@@ -10,7 +10,7 @@ Exorde maintains a [web3](https://ethereum.org/en/web3/) protocol which aim is t
 - at least 8 GB of virtual memory
 - python 3.10
 
-### Installation
+### Distribution
 
 #### [pip](https://pypi.org/)
 - Our [instalation test](https://github.com/exorde-labs/exorde/blob/mangle/.github/workflows/test.yml) is an example of installation using ubuntu. 
