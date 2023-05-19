@@ -36,6 +36,5 @@ from exorde_scrapping.reddit import query as reddit_query
 
 post = await reddit_query("BTC")()
 
+post.content => "Blabla..."
 ```
-
-Items are described in [exorde_schema](../schema/exorde_schema/__init__.py)
