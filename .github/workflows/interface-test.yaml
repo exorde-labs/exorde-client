@@ -1,4 +1,4 @@
-name: Package installation test
+name: Data Unified Interface Test
 
 on:
   push:
