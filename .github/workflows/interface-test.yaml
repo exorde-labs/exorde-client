@@ -30,4 +30,4 @@ jobs:
           python3.10 -m pip install ./data/scraping/reddit
 
       - name: Test unified interface
-        run: pytest tests
+        run: cd data && pytest tests
