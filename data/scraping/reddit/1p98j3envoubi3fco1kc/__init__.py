@@ -1,7 +1,7 @@
 import aiohttp, random
 from lxml import html
 
-from exorde_schema import Item
+from exorde_data import Item
 
 # from typing import AsyncGenerator
 
@@ -98,3 +98,12 @@ async def scrap_subreddit_url(subreddit_url: str):
                     post.xpath("div/p/a")[0].get("href")
                 ):
                     yield item
+
+
+async def test_generator():
+    yield 1
+
+
+def query(keyword):
+    return None
+    return test_generator
