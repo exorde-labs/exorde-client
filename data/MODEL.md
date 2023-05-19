@@ -41,6 +41,6 @@ post.content => "Blabla..."
 
 
 ## Unified item schema
-- [schema](https://github.com/exorde-labs/exorde/schema/schema.json) is expressed using [jschemator](https://github.com/exorde-labs/jschemator) and generated from this [expression](./exorde_data/__init__.yml)
+- [schema](https://github.com/exorde-labs/exorde/schema/schema.json) is expressed using [jschemator](https://github.com/exorde-labs/jschemator) and generated from this [expression](./exorde_data/__init__.py)
 - Items describe entities such as links, videos, posts, comments.
 - The item description is valid both for scraping & analysis, therefor the schema also contains the attributes that would be retrieved trough [lab](../lab) processing.
