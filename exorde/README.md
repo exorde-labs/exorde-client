@@ -16,7 +16,7 @@ Exorde maintains a [web3](https://ethereum.org/en/web3/) protocol which aim is t
 - Our [instalation test](https://github.com/exorde-labs/exorde/blob/mangle/.github/workflows/test.yml) is an example of installation using ubuntu. 
 - On github workflows, the process of installation took around 5 minutes.
 
-[![Package install test](https://github.com/exorde-labs/exorde/actions/workflows/test.yml/badge.svg)](https://github.com/exorde-labs/exorde/actions/workflows/test.yml)
+[![Package installation test](https://github.com/exorde-labs/exorde/actions/workflows/installation-test.yml/badge.svg)](https://github.com/exorde-labs/exorde/actions/workflows/installation-test.yml)
 ```bash
 pip3.10 install exorde
 ```
