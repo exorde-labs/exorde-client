@@ -112,19 +112,11 @@ option(
     help="Won't run spotting",
 )
 
-SOURCES = ("reddit", "twitter")
-
-for source in SOURCES:
-    option(
-        f"--no_{source}",
-        action="store_true",
-        default=False,
-        help=f"Won't scrap {source}",
-    )
+option("--source", nargs="+", help="Scraping module to be used")
 
 
 @setup
-def init_spotting(no_spotting, remote_kill, memory):
+def init_spotting(no_spotting, remote_kill, source, memory):
     if not no_spotting and not remote_kill:
         from exorde.protocol.spotting import bindings as __bindings__
         from exorde.protocol.spotting import applicator as spotting_applicator
@@ -144,9 +136,8 @@ def init_spotting(no_spotting, remote_kill, memory):
         )
         from exorde.drivers.meta_tagger import zero_shot
 
-        for source in SOURCES:
-            if not memory[f"no_{source}"]:
-                importlib.import_module(f"exorde.{source}.bindings")
+        for source in source:
+            importlib.import_module(f"{source}.bindings")
 
         setup(meta_tagger_initialization)
 
