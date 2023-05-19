@@ -186,7 +186,10 @@ class Item(Schema):
         description="ISO8601/RFC3339 Date of collection of the item"
     )
     collection_client_version = StringField(
-        description="Version identifier of client that collected the item."
+        description="Client identifier with version of client that collected the item."
+    )
+    collection_module = StringField(
+        description="The module that scraped the item."
     )
 
 
