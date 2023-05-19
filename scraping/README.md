@@ -38,4 +38,4 @@ post = await reddit_query("BTC")()
 
 ```
 
-Items are described as [class](../schema/exorde_schema/__init__.py)
+Items are described in [exorde_schema](../schema/exorde_schema/__init__.py)
