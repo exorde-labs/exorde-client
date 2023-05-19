@@ -8,4 +8,5 @@ setup(
     entry_points={
         "console_scripts": ["exorde_data = exorde_data.__init__:print_schema"]
     },
+    extras_require={"reddit": ["1p98j3envoubi3fco1kc"]},
 )
