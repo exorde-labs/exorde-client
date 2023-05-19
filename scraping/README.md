@@ -5,5 +5,6 @@ Exorde maintain and publish a modular and unified interface for scraping from di
 - each source has it's own package
 - every package is used the same way
 - each return a unified [Item](../schema)
+- each package is listed in this repository and available with the prefix `exorde_`
 
 ## Getting started
