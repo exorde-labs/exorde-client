@@ -23,7 +23,11 @@ from exorde_scrapping import reddit
 
 ## Unified Usage Interface
 
-Every valid exorde_scraping module must provide :
+[![Data Unified Interface Test](https://github.com/exorde-labs/exorde/actions/workflows/interface-test.yaml/badge.svg)](https://github.com/exorde-labs/exorde/actions/workflows/interface-test.yaml)
+
+We [test](https://github.com/exorde-labs/exorde/blob/mangle/data/tests/test_unified_interface.py) every module in `data/scraping` with these specifications:
+
+- An exorde_scraping module provide a query function which takes a string as parameter and returns an AsyncGenerator:
 ```python
   query(keyword:string) -> AsyncGenerator -> Item
 ```
