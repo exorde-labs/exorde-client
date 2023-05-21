@@ -21,9 +21,10 @@ The python module would then be availble at
 from exorde_scrapping import reddit
 ```
 
-## Unified Usage Interface
 
-[![Data Unified Interface Test](https://github.com/exorde-labs/exorde/actions/workflows/interface-test.yaml/badge.svg)](https://github.com/exorde-labs/exorde/actions/workflows/interface-test.yaml)
+## ![https://github.com/exorde-labs/exorde/actions/workflows/interface-test.yaml](https://github.com/exorde-labs/exorde/actions/workflows/interface-test.yaml/badge.svg)
+
+
 
 We [test](tests/test_unified_interface.py) every module in `data/scraping` with these specifications:
 
@@ -32,7 +33,7 @@ We [test](tests/test_unified_interface.py) every module in `data/scraping` with 
   query(keyword:string) -> AsyncGenerator -> Item
 ```
 
-## Usage Example
+- **Example**
 
 ```python
 
