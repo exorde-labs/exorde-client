@@ -30,6 +30,8 @@ jobs:
           cd ./data/scraping
           for package_dir in */; do
             cd $(package_dir)
+            pwd
+            ls
             python3.10 -m pip install .
             cd ..
           done
