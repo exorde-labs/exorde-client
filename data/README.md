@@ -25,9 +25,9 @@ from exorde_scrapping import reddit
 
 [![Data Unified Interface Test](https://github.com/exorde-labs/exorde/actions/workflows/interface-test.yaml/badge.svg)](https://github.com/exorde-labs/exorde/actions/workflows/interface-test.yaml)
 
-We [test](https://github.com/exorde-labs/exorde/blob/mangle/data/tests/test_unified_interface.py) every module in `data/scraping` with these specifications:
+We [test](tests/test_unified_interface.py) every module in `data/scraping` with these specifications:
 
-- An exorde_scraping module provide a query function which takes a string as parameter and returns an AsyncGenerator:
+- An exorde_scraping module provide a query function which takes a string as parameter and returns an AsyncGenerator. The AsyncGenerator returns Items.
 ```python
   query(keyword:string) -> AsyncGenerator -> Item
 ```
