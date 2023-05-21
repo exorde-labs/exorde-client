@@ -25,7 +25,6 @@ def discover_packages(folder_path):
         setup_file = os.path.abspath(
             os.path.join("scraping/" + folder, "setup.py")
         )
-        print(folder)
         package_name = get_package_name(setup_file)
         result.append((folder, package_name))
     return result

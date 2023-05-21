@@ -105,5 +105,4 @@ async def test_generator():
 
 
 def query(keyword):
-    return None
     return test_generator
