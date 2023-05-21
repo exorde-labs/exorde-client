@@ -27,7 +27,7 @@ jobs:
         run: |
           python3.10 -m pip install ./data
           python3.10 -m pip install ./data["dev"]
-          for package_dir in data/scraping/; do
+          for package_dir in data/scraping/*; do
             echo "$package_dir"
             python3.10 -m pip install "$package_dir"
           done
