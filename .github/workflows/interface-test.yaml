@@ -27,13 +27,9 @@ jobs:
         run: |
           python3.10 -m pip install ./data
           python3.10 -m pip install ./data["dev"]
-          cd ./data/scraping
-          for package_dir in */; do
-            cd $(package_dir)
-            pwd
-            ls
-            python3.10 -m pip install .
-            cd ..
+          for package_dir in data/scraping/; do
+            package_dir = ${package_dir%/} # remove trailing slash
+            python3.10 -m pip install "$package_dir"
           done
 
       - name: Test unified interface
