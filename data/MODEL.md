@@ -31,7 +31,7 @@ We [test](tests/test_unified_interface.py) every module in `data/scraping` with 
 - An exorde_scraping module provide a query function which takes an URL and returns an AsyncGenerator.
 - The AsyncGenerator returns Items as defind below.
 ```python
-  query(url:string) -> AsyncGenerator -> Item
+query(url: string) -> AsyncGenerator[Item, None]
 ```
 
 ## Unified item schema
