@@ -28,22 +28,11 @@ from exorde_scrapping import reddit
 
 We [test](tests/test_unified_interface.py) every module in `data/scraping` with these specifications:
 
-- An exorde_scraping module provide a query function which takes a string as parameter and returns an AsyncGenerator. The AsyncGenerator returns Items.
+- An exorde_scraping module provide a query function which returns an AsyncGenerator.
+- The AsyncGenerator returns Items as defind below.
 ```python
-  query(keyword:string) -> AsyncGenerator -> Item
+  query(*args, **kwargs) -> AsyncGenerator -> Item
 ```
-
-- **Example**
-
-```python
-
-from exorde_scrapping.reddit import query as reddit_query
-
-post = await reddit_query("BTC")()
-
-post.content => "Blabla..."
-```
-
 
 ## Unified item schema
 - [json-schema](https://github.com/exorde-labs/exorde/schema/schema.json) is defined in a dango-like interface using [jschemator](https://github.com/exorde-labs/jschemator) and generated from this [expression](./exorde_data/__init__.py)
