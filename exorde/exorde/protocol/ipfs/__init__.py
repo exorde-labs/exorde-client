@@ -1,19 +1,9 @@
-import os, json, jsonschema, itertools, logging, aiohttp
+import json, itertools, logging, aiohttp
 from aiohttp import ClientSession
 
 
 def create_session(*__args__, **__kwargs__):
     return ClientSession()
-
-
-async def load_json_schema():
-    with open(
-        os.path.abspath(
-            os.path.join(os.path.dirname(__file__), "schema.json")
-        ),
-        "r",
-    ) as f:
-        return json.load(f)
 
 
 async def upload_to_ipfs(
@@ -34,14 +24,6 @@ async def upload_to_ipfs(
                 logging.error(json.dumps(value))
                 logging.error(json.dumps(content, indent=4))
                 raise Exception(f"Failed to upload to IPFS ({resp.status})")
-
-
-async def validate_batch_schema(value, ipfs_schema):
-    try:
-        jsonschema.validate(instance=value, schema=ipfs_schema)
-    except Exception as error:
-        raise (error)
-    return value
 
 
 def rotate_gateways():

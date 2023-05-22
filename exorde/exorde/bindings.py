@@ -116,7 +116,7 @@ option("--source", nargs="+", help="Scraping module to be used")
 
 
 @setup
-def init_spotting(no_spotting, remote_kill, source, memory):
+def init_spotting(no_spotting, remote_kill, memory):
     if not no_spotting and not remote_kill:
         from exorde.protocol.spotting import bindings as __bindings__
         from exorde.protocol.spotting import applicator as spotting_applicator
@@ -136,8 +136,7 @@ def init_spotting(no_spotting, remote_kill, source, memory):
         )
         from exorde.drivers.meta_tagger import zero_shot
 
-        for source in source:
-            importlib.import_module(f"{source}.bindings")
+        from exorde import scraping
 
         setup(meta_tagger_initialization)
 

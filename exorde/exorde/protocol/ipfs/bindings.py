@@ -1,7 +1,6 @@
 from aiosow.bindings import setup, wrap, wire
 
 from exorde.protocol.ipfs import (
-    load_json_schema,
     # validate_batch_schema,
     upload_to_ipfs,
     create_session,
@@ -10,7 +9,6 @@ from exorde.protocol.ipfs import (
 
 # setup an aiohttp session for ipfs upload
 setup(wrap(lambda session: {"session": session})(create_session))
-setup(wrap(lambda schema: {"ipfs_schema": schema})(load_json_schema))
 
 
 def spot_block(entities):
