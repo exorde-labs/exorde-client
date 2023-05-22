@@ -1,4 +1,5 @@
 from jschemator import Schema
+from enum import Enum
 from jschemator.fields import (
     ArrayField,
     DateTimeField,
@@ -7,6 +8,7 @@ from jschemator.fields import (
     UrlField,
     Compose,
     ObjectField,
+    EnumField,
 )
 
 
