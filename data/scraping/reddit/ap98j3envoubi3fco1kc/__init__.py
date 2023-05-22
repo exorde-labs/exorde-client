@@ -1,9 +1,8 @@
 import aiohttp, random
 from lxml import html
+from typing import AsyncGenerator
 
 from exorde_data import Item
-
-# from typing import AsyncGenerator
 
 
 async def generate_subreddit_url(keyword: str):
@@ -22,15 +21,10 @@ async def generate_subreddit_url(keyword: str):
             return result
 
 
-# t3 -> t3['data'] (post)
-# t1 -> t1['data']['replies'] -> listing (comment)
-# listing -> listing['data']['children'] -> [t1, ...] | [t3, ...]
-
-
-async def scrap_reddit_url(url: str):
+async def scrap_post(url: str) -> AsyncGenerator[Item, None]:
     resolvers = {}
 
-    async def post(data):
+    async def post(data) -> AsyncGenerator[Item, None]:
         """t3"""
         content = data["data"]
         yield Item(
@@ -45,7 +39,7 @@ async def scrap_reddit_url(url: str):
             nb_likes=content["ups"],
         )
 
-    async def comment(data):
+    async def comment(data) -> AsyncGenerator[Item, None]:
         """t1"""
         content = data["data"]
         yield Item(
@@ -63,7 +57,7 @@ async def scrap_reddit_url(url: str):
         for __item__ in []:
             yield Item()
 
-    async def kind(data):
+    async def kind(data) -> AsyncGenerator[Item, None]:
         resolver = resolvers.get(data["kind"], None)
         if not resolver:
             raise NotImplementedError(f"{data['kind']} is not implemented")
@@ -73,7 +67,7 @@ async def scrap_reddit_url(url: str):
         except Exception as err:
             raise err
 
-    async def listing(data):
+    async def listing(data) -> AsyncGenerator[Item, None]:
         for item_data in data["data"]["children"]:
             async for item in kind(item_data):
                 yield item
@@ -84,25 +78,29 @@ async def scrap_reddit_url(url: str):
             [post, comments] = await response.json()
             async for result in kind(post):
                 yield result
-            async for comment in kind(comments):
-                yield comment
+            async for commentary in kind(comments):
+                yield commentary
 
 
-async def scrap_subreddit_url(subreddit_url: str):
+async def scrap_subreddit(subreddit_url: str) -> AsyncGenerator[Item, None]:
     async with aiohttp.ClientSession() as session:
         async with session.get(subreddit_url) as response:
             html_content = await response.text()
             html_tree = html.fromstring(html_content)
             for post in html_tree.xpath("//div[contains(@class, 'entry')]"):
-                async for item in scrap_reddit_url(
+                async for item in scrap_post(
                     post.xpath("div/p/a")[0].get("href")
                 ):
                     yield item
 
 
-async def test_generator():
-    yield 1
-
-
-def query(keyword):
-    return test_generator
+async def query(url: str) -> AsyncGenerator[Item, None]:
+    if "www.reddit.com" not in url:
+        raise ValueError("Not a reddit URL")
+    parameters = url.split("www.reddit.com")[1].split("/")[1:]
+    if "comments" in parameters:
+        async for result in scrap_post(url):
+            yield result
+    else:
+        async for result in scrap_subreddit(url):
+            yield result

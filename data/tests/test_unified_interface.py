@@ -46,5 +46,5 @@ def test_package_functions(package_name):
     ), "f`{name}.query` should take a positonal argument"
 
     assert inspect.isasyncgenfunction(
-        module.query("test")
-    ), f"`{name}.query` should return an async-generator"
+        module.query
+    ), f"`{name}.query` should be an async-generator"
