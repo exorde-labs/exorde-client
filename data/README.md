@@ -28,16 +28,17 @@ from exorde_scrapping import reddit
 
 We [test](tests/test_unified_interface.py) every module in `data/scraping` with these specifications:
 
-- An exorde_scraping module provide a query function which returns an AsyncGenerator.
+- An exorde_scraping module provide a query function which takes an URL and returns an AsyncGenerator.
 - The AsyncGenerator returns Items as defind below.
 ```python
-  query(*args, **kwargs) -> AsyncGenerator -> Item
+  query(url:string) -> AsyncGenerator -> Item
 ```
 
 ## Unified item schema
-- [json-schema](https://github.com/exorde-labs/exorde/schema/schema.json) is defined in a dango-like interface using [jschemator](https://github.com/exorde-labs/jschemator) and generated from this [expression](./exorde_data/__init__.py)
 - Items describe entities such as links, videos, posts, comments.
 - The item description is valid both for scraping & analysis, therefor the schema also contains the attributes that would be retrieved trough [lab](../lab) processing.
+- The [json-schema](https://github.com/exorde-labs/exorde/schema/schema.json) is generated from this [expression](./exorde_data/__init__.py)
+
 ```json
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
