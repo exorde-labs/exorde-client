@@ -2,10 +2,12 @@ from datetime import datetime, timedelta, timezone
 import logging
 
 
-def datetime_filter(value, __stack__):
-    if datetime.fromisoformat(value["item"]["CreationDateTime"]) - datetime.now(
+def datetime_filter(value, expiration_delta, __stack__):
+    if not value.created_at:
+        return False
+    if datetime.fromisoformat(value.created_at) - datetime.now(
         timezone.utc
-    ) > timedelta(seconds=180):
+    ) > timedelta(seconds=expiration_delta):
         return False
     return True
 
@@ -20,7 +22,7 @@ def unique_filter(value, stack):
     return value not in stack
 
 
-def format_assertion(value, stack):
+def format_assertion(value, __stack__):
     try:
         assert len(value["item"]["Content"]) > 20
         return True

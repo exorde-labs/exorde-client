@@ -1,6 +1,8 @@
 import aiohttp
 from lxml import html
 from typing import AsyncGenerator
+import pytz
+import datetime
 
 from exorde_data import Item
 
@@ -14,7 +16,9 @@ async def scrap_post(url: str) -> AsyncGenerator[Item, None]:
         yield Item(
             content=content["selftext"],
             author=content["author"],
-            creation_datetime=content["created_utc"],  # todo: resolve date
+            created_at=datetime.datetime.fromtimestamp(
+                content["created_utc"], pytz.timezone("UTC")
+            ).isoformat(),
             title=content["title"],
             domain="reddit.com",
             url=content["url"],
