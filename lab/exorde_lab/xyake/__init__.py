@@ -21,11 +21,11 @@ extract_keywords = lambda text: kw_extractor.extract_keywords(text)
 
 
 def populate_keywords(item):
-    if item["item"]["Language"] in ["en", ""]:
-        try:
-            item["tokenOfInterest"] = list(
-                [e[0] for e in set(extract_keywords(item["item"]["Content"]))]
-            )
-        except:
-            logging.error(f"Could not extract keywords for item {item}")
+    content = item.translation if item.translation else item.content
+    try:
+        item["tokenOfInterest"] = list(
+            [e[0] for e in set(extract_keywords(content))]
+        )
+    except:
+        logging.error(f"Could not extract keywords for item {item}")
     return item
