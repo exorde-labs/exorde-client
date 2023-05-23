@@ -20,6 +20,7 @@ from transformers import AutoTokenizer, pipeline
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import warnings
 from typing import Callable
+from exorde_data import Item
 
 
 with warnings.catch_warnings():
@@ -79,7 +80,7 @@ class TokenAndPositionEmbedding(tf.keras.layers.Layer):
 #     - Spotting
 #     - Zero-shot classification
 #     - Freshness test (does the item has been posted less thant 5 minutes ago ?)
-def zero_shot(texts, labeldict, classifier, max_depth=None, depth=0):
+def zero_shot(item, labeldict, classifier, max_depth=None, depth=0):
     """
     Perform zero-shot classification on the input text using a pre-trained language model.
 
@@ -93,7 +94,8 @@ def zero_shot(texts, labeldict, classifier, max_depth=None, depth=0):
     Returns:
     - path (list): A list containing the path of labels from the root to the predicted label. If the label hierarchy was not explored fully and the max_depth parameter was set, the path may not be complete.
     """
-
+    text_ = item.content
+    texts = [text_]
     keys = list(labeldict.keys())
     output = classifier(texts, keys, multi_label=False, max_length=32)
     
@@ -128,7 +130,8 @@ def zero_shot(texts, labeldict, classifier, max_depth=None, depth=0):
         
                 outputs[_lab] = _out
             output_list.append(outputs)
-    return output_list
+    item.classification = output_list
+    return item
 
 
 def preprocess_text(text: str, remove_stopwords: bool) -> str:
@@ -188,7 +191,7 @@ def predict(text, pipe, tag, mappings):
 
 
 ##########################################################
-def tag(documents, nlp, device, mappings):
+def tag(items, nlp, device, mappings):
     """
     Analyzes and tags a list of text documents using various NLP models and techniques.
 
@@ -208,6 +211,11 @@ def tag(documents, nlp, device, mappings):
               contains various processed data like embeddings, text classifications, sentiment, etc.,
               as key-value pairs.
     """
+    
+    text_ = items.content
+    #get text content attribute from all items
+    documents = [items.content for item in items]
+
     # Create an empty DataFrame
     tmp = pd.DataFrame()
 
@@ -300,7 +308,19 @@ def tag(documents, nlp, device, mappings):
     del tmp["Embedded"]
     # The output is a list of dictionaries, where each dictionary represents a single input text and contains
     # various processed data like embeddings, text classifications, sentiment, etc., as key-value pairs.
-    return tmp.to_dict(orient="records")
+    # Update the items with processed data
+    tmp = tmp.to_dict(orient="records")
+    for i, item in enumerate(items):
+        item.translation = tmp[i]["Translation"]
+        item.embedding = tmp[i]["Embedding"]
+        item.sentiment = tmp[i]["Sentiment"]
+        item.emotion = tmp[i]["Emotion"]
+        item.irony = tmp[i]["Irony"]
+        item.language_score = tmp[i]["LanguageScore"]
+        item.text_type  = tmp[i]["TextType"]
+        item.source_type  = tmp[i]["SourceType"]
+
+    return items
 
 
 ### VARIABLE INSTANTIATION
