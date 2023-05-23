@@ -112,10 +112,10 @@ def zero_shot(item, labeldict, classifier, max_depth=None, depth=0):
     else:
         output_list = list()
         
-        for _t, item in zip(texts, labels_list):
+        for _t, item_ in zip(texts, labels_list):
             outputs = dict()
             
-            for _lab in item:
+            for _lab in item_:
                 # _labels = dict()
                 # for lab in _lab:
                 keys = list(labeldict[_lab].keys())
@@ -130,7 +130,8 @@ def zero_shot(item, labeldict, classifier, max_depth=None, depth=0):
         
                 outputs[_lab] = _out
             output_list.append(outputs)
-    item.classification = output_list
+    # fill the classification field with the output
+    item.classification  = output_list
     return item
 
 
@@ -212,9 +213,8 @@ def tag(items, nlp, device, mappings):
               as key-value pairs.
     """
     
-    text_ = items.content
     #get text content attribute from all items
-    documents = [items.content for item in items]
+    documents = [item.content for item in items]
 
     # Create an empty DataFrame
     tmp = pd.DataFrame()
@@ -315,13 +315,14 @@ def tag(items, nlp, device, mappings):
         item.embedding = tmp[i]["Embedding"]
         item.sentiment = tmp[i]["Sentiment"]
         item.emotion = tmp[i]["Emotion"]
+        item.age = tmp[i]["Age"]
+        item.gender = tmp[i]["Gender"]
         item.irony = tmp[i]["Irony"]
         item.language_score = tmp[i]["LanguageScore"]
         item.text_type  = tmp[i]["TextType"]
         item.source_type  = tmp[i]["SourceType"]
 
     return items
-
 
 ### VARIABLE INSTANTIATION
 def meta_tagger_initialization():
