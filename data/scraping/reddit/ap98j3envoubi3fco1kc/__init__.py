@@ -1,24 +1,8 @@
-import aiohttp, random
+import aiohttp
 from lxml import html
 from typing import AsyncGenerator
 
 from exorde_data import Item
-
-
-async def generate_subreddit_url(keyword: str):
-    async with aiohttp.ClientSession() as session:
-        async with session.get(
-            f"https://www.reddit.com/search/?q={keyword}&type=sr"
-        ) as response:
-            html_content = await response.text()
-            tree = html.fromstring(html_content)
-            urls = [
-                url
-                for url in tree.xpath('//a[contains(@href, "/r/")]//@href')
-                if not "/r/popular" in url
-            ]
-            result = f"https://old.reddit.com{random.choice(urls)}new"
-            return result
 
 
 async def scrap_post(url: str) -> AsyncGenerator[Item, None]:

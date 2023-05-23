@@ -73,29 +73,6 @@ on("remote_kill", condition=lambda online: online)(exit_like_a_gentlmen)
 
 
 @setup
-@wrap(lambda keywords_list: {"keywords_list": keywords_list})
-async def fetch_lines_from_url() -> list:
-    async with aiohttp.ClientSession() as session:
-        async with session.get(
-            "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/keywords.txt"
-        ) as resp:
-            if resp.status == 200:
-                content = await resp.text()
-                lines = content.split("\n")
-                return lines
-            else:
-                logging.error(
-                    f"Failed to fetch file, status code: {resp.status}"
-                )
-                return []
-
-
-alias("keyword")(
-    lambda keywords_list: random.choice(keywords_list).replace(" ", "%20")
-)
-
-
-@setup
 def print_pid():
     logging.info("pid is %s", os.getpid())
 
@@ -121,6 +98,7 @@ def init_spotting(no_spotting, remote_kill, memory):
         from exorde.protocol.spotting import bindings as __bindings__
         from exorde.protocol.spotting import applicator as spotting_applicator
         from exorde.protocol.spotting import filter as spotting_filter
+        from exorde import keywords as __keywords__
 
         # from exorde.spotting import batch_applicator as spotting_batch_applicator
         from exorde.protocol.spotting.filters import (
