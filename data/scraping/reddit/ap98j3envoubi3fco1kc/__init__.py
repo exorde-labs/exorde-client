@@ -73,15 +73,15 @@ async def scrap_subreddit(subreddit_url: str) -> AsyncGenerator[Item, None]:
             html_tree = html.fromstring(html_content)
             for post in html_tree.xpath("//div[contains(@class, 'entry')]"):
                 async for item in scrap_post(
-                    post.xpath("div/p/a")[0].get("href")
+                    post.xpath("div/ul/li/a")[0].get("href")
                 ):
                     yield item
 
 
 async def query(url: str) -> AsyncGenerator[Item, None]:
-    if "www.reddit.com" not in url:
+    if "reddit.com" not in url:
         raise ValueError("Not a reddit URL")
-    parameters = url.split("www.reddit.com")[1].split("/")[1:]
+    parameters = url.split("reddit.com")[1].split("/")[1:]
     if "comments" in parameters:
         async for result in scrap_post(url):
             yield result
