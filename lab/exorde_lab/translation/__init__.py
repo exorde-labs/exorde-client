@@ -37,14 +37,14 @@ detect = lambda text, low_memory: _detect(text, low_memory=low_memory)
 
 
 def translate(item, low_memory, installed_languages):
-    text = item["item"]["Content"]
+    text = item.content
     language = _detect(text, low_memory)
     try:
-        item["item"]["Content"] = translation(
-            language["lang"], "en", installed_languages
-        ).translate(text)
+        if language["lang"] != "en":
+            item.translation = translation(
+                language["lang"], "en", installed_languages
+            ).translate(text)
     except:
-        logging.debug(
-            f"Error translating from {language['lang']} ({item['item']['internal_id']})"
-        )
+        logging.debug(f"Error translating from {language['lang']} ({item})")
+    item.language = language["lang"]
     return item

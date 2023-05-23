@@ -43,7 +43,6 @@ import json
 
 
 async def pull_to_process(stack, processed, memory):
-    print("pull_to_process")
     value = stack.pop()
     memory["processing"] = True
     memory["stack"] = stack
