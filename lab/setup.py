@@ -20,7 +20,7 @@ setup(
         "sentence-transformers==2.2.2",
         "spacy==3.5.1",
         "swifter==1.3.4",
-        "tensorflow==2.11.0",
+        "tensorflow==2.12.0",
         "torch==1.13.0",
         "vaderSentiment==3.3.2",
         "yake==0.4.8",
