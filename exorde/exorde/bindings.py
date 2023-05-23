@@ -10,8 +10,8 @@ a88aaaa    dP. .dP .d8888b. 88d888b. .d888b88 .d8888b.
 """
 
 
-import logging, os, random, aiohttp, importlib, json, sys
-from aiosow.bindings import setup, wrap, alias, option, on
+import logging, os, aiohttp, json, sys
+from aiosow.bindings import setup, option, on
 from aiosow.routines import routine
 
 option(
@@ -113,8 +113,6 @@ def init_spotting(no_spotting, remote_kill, memory):
             preprocess,
         )
         from exorde.drivers.meta_tagger import zero_shot
-
-        from exorde import scraping
 
         setup(meta_tagger_initialization)
 
