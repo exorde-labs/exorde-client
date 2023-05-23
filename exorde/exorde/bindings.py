@@ -52,6 +52,16 @@ option(
 
 
 @setup
+def set_protocol_buffers_python_implementation():
+    os.environ["PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION"] = "python"
+
+
+@setup
+def run_forever():
+    return {"run_forever": True}
+
+
+@setup
 @routine(60 * 5)
 async def fetch_runtime_configuration():
     async with aiohttp.ClientSession() as session:

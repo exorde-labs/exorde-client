@@ -24,10 +24,8 @@ async def generate_reddit_url(keyword: str):
             return result
 
 
-def generate_twitter_url(keyword, live_mode=True):
-    base_url = "https://twitter.com/search?q={}&src=typed_query".format(
-        str(keyword)
-    )
+def generate_twitter_url(keyword: str, live_mode=True):
+    base_url = f"https://twitter.com/search?q={keyword}&src=typed_query"
     if live_mode:
         base_url = base_url + "&f=live"
     return base_url
