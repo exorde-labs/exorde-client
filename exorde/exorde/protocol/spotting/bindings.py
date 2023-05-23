@@ -3,6 +3,7 @@ from aiosow.bindings import setup, wire
 from aiosow.perpetuate import on
 
 from exorde.scraping.bindings import on_formated_data_do
+from exorde_data.models import Item
 
 from typing import Callable
 from exorde.protocol.ipfs.bindings import push_to_ipfs, on_new_cid_do
@@ -35,7 +36,7 @@ spotting_ran_when, on_spotting_done_do = wire(perpetual=True)
 
 @on_formated_data_do
 @spotting_ran_when
-async def run_spotting(item: dict):
+async def run_spotting(item: Item):
     return item
 
 

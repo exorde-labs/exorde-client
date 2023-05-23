@@ -113,8 +113,7 @@ def init_spotting(no_spotting, remote_kill, memory):
         # from exorde.spotting import batch_applicator as spotting_batch_applicator
         from exorde.protocol.spotting.filters import (
             datetime_filter,
-            unique_filter,
-            format_assertion,
+            has_content,
         )
         from exorde_lab.translation.bindings import translate
         from exorde_lab.xyake.bindings import populate_keywords
@@ -127,8 +126,7 @@ def init_spotting(no_spotting, remote_kill, memory):
         setup(meta_tagger_initialization)
 
         spotting_filter(datetime_filter)
-        spotting_filter(unique_filter)
-        spotting_filter(format_assertion)
+        spotting_filter(has_content)
 
         spotting_applicator(preprocess)
         spotting_applicator(translate)

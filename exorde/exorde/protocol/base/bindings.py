@@ -46,7 +46,7 @@ setup(init_gas_cache)
 setup(wrap(lambda value: {"balance": value})(get_balance))
 alias("selected_faucet")(select_random_faucet)
 setup(register)
-setup(check_user_address)
+# setup(check_user_address)
 on("balance", condition=lambda value: value == 0)(until_success()(faucet))
 # retrieve contracts and abi
 on("configuration")(contracts_and_abi_cnf)

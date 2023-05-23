@@ -37,13 +37,13 @@ async def push_to_stack(value, stack, memory):
     if filter_result:
         stack.append(value)
         return {"stack": stack}
-    return {}
 
 
 import json
 
 
 async def pull_to_process(stack, processed, memory):
+    print("pull_to_process")
     value = stack.pop()
     memory["processing"] = True
     memory["stack"] = stack

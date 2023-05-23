@@ -98,40 +98,48 @@ def zero_shot(item, labeldict, classifier, max_depth=None, depth=0):
     texts = [text_]
     keys = list(labeldict.keys())
     output = classifier(texts, keys, multi_label=False, max_length=32)
-    
+
     labels_list = list()
-    
+
     for i in range(len(texts)):
-        labels = [output[i]["labels"][x] for x in range(len(output[i]["labels"])) if output[i]["scores"][x] > 0.1]
+        labels = [
+            output[i]["labels"][x]
+            for x in range(len(output[i]["labels"]))
+            if output[i]["scores"][x] > 0.1
+        ]
         labels_list.append(labels)
-        
+
     depth += 1
     if depth == max_depth:
         _labels = labels
         return labels
     else:
         output_list = list()
-        
+
         for _t, item_ in zip(texts, labels_list):
             outputs = dict()
-            
+
             for _lab in item_:
                 # _labels = dict()
                 # for lab in _lab:
                 keys = list(labeldict[_lab].keys())
-                output = classifier(texts, keys, multi_label=False, max_length=32)
+                output = classifier(
+                    texts, keys, multi_label=False, max_length=32
+                )
                 _out = dict()
                 for x in range(len(output)):
                     for i in range(len(output[x]["labels"])):
-                        if(output[x]["scores"][i] > 0.1):
-                            _out[output[x]["labels"][i]] = output[x]["scores"][i]    
+                        if output[x]["scores"][i] > 0.1:
+                            _out[output[x]["labels"][i]] = output[x]["scores"][
+                                i
+                            ]
                 # _labs = [output[x]["labels"] for x in range(len(output))]
                 # _scores = [output[x]["scores"] for x in range(len(output))]
-        
+
                 outputs[_lab] = _out
             output_list.append(outputs)
     # fill the classification field with the output
-    item.classification  = output_list
+    item.classification = output_list
     return item
 
 
@@ -172,9 +180,7 @@ def preprocess_text(text: str, remove_stopwords: bool) -> str:
 
 
 def preprocess(item, remove_stopwords):
-    item["item"]["Content"] = preprocess_text(
-        item["item"]["Content"], remove_stopwords
-    )
+    item.content = preprocess_text(item.content, remove_stopwords)
     return item
 
 
@@ -212,8 +218,8 @@ def tag(items, nlp, device, mappings):
               contains various processed data like embeddings, text classifications, sentiment, etc.,
               as key-value pairs.
     """
-    
-    #get text content attribute from all items
+
+    # get text content attribute from all items
     documents = [item.content for item in items]
 
     # Create an empty DataFrame
@@ -319,10 +325,11 @@ def tag(items, nlp, device, mappings):
         item.gender = tmp[i]["Gender"]
         item.irony = tmp[i]["Irony"]
         item.language_score = tmp[i]["LanguageScore"]
-        item.text_type  = tmp[i]["TextType"]
-        item.source_type  = tmp[i]["SourceType"]
+        item.text_type = tmp[i]["TextType"]
+        item.source_type = tmp[i]["SourceType"]
 
     return items
+
 
 ### VARIABLE INSTANTIATION
 def meta_tagger_initialization():
