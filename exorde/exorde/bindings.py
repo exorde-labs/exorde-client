@@ -103,16 +103,16 @@ option("--source", nargs="+", help="Scraping module to be used")
 
 
 @setup
-def init_spotting(no_spotting, remote_kill):
+def init_spotting(no_spotting, remote_kill, memory):
     if not no_spotting and not remote_kill:
         from exorde.protocol.spotting import bindings as __bindings__
-        from exorde.protocol.spotting import applicator as spotting_applicator
+        from exorde.protocol.spotting import (
+            applicator as spotting_applicator,
+            batch_applicator as spotting_batch_applicator,
+        )
         from exorde.protocol.spotting import filter as spotting_filter
         from exorde import keywords as __keywords__
 
-        from exorde.protocol.spotting import (
-            batch_applicator as spotting_batch_applicator,
-        )
         from exorde.protocol.spotting.filters import (
             datetime_filter,
             has_content,

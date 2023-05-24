@@ -221,7 +221,6 @@ def tag(items, nlp, device, mappings):
               contains various processed data like embeddings, text classifications, sentiment, etc.,
               as key-value pairs.
     """
-
     # get text content attribute from all items
     documents = [item.content for item in items]
 

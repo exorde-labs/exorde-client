@@ -16,9 +16,11 @@ async def scrap_post(url: str) -> AsyncGenerator[Item, None]:
         yield Item(
             content=content["selftext"],
             author=content["author"],
-            created_at=datetime.datetime.fromtimestamp(
-                content["created_utc"], pytz.timezone("UTC")
-            ).isoformat(),
+            created_at=str(
+                datetime.datetime.fromtimestamp(
+                    content["created_utc"], pytz.timezone("UTC")
+                ).isoformat()
+            ),
             title=content["title"],
             domain="reddit.com",
             url=content["url"],
@@ -33,7 +35,11 @@ async def scrap_post(url: str) -> AsyncGenerator[Item, None]:
         yield Item(
             content=content["body"],
             author=content["author"],
-            creation_datetime=content["created_utc"],  # todo: resolve date
+            created_at=str(
+                datetime.datetime.fromtimestamp(
+                    content["created_utc"], pytz.timezone("UTC")
+                ).isoformat()
+            ),
             domain="reddit.com",
             url="reddit.com" + content["permalink"],
             internal_id=content["id"],

@@ -53,7 +53,7 @@ async def pull_to_process(stack, processed, memory):
         logging.info(f"+ new processed item \t {len(processed)} / 25")
         # technicaly the stack is already updated here
         # we return to trigger the ONS events
-        return {"processed": processed, "processing": False}
+        return {"processed": processed, "processing": False, "stack": stack}
     except Exception as err:
         logging.error("An error occured processing an item")
         logging.error(err)
@@ -74,8 +74,13 @@ async def consume_processed(processed, memory):
     for batch_applicator in BATCH_APPLICATORS:
         batch = await autofill(batch_applicator, args=[batch], memory=memory)
     logging.info("...batch applicators ok")
-    print(batch)
-    return {"batch_to_consume": batch, "processed": processed}
+    formated_batch = json.dumps(
+        {"kind": "SPOTTING", "items": batch},
+        indent=4,
+    )
+    with open("OUTPUT.json", "w") as file:
+        file.write(formated_batch)
+    return {"batch_to_consume": formated_batch, "processed": processed}
 
 
 def reset_cids():

@@ -3,7 +3,6 @@ from aiosow.bindings import setup, wire
 from aiosow.perpetuate import on
 
 from exorde.scraping.bindings import on_formated_data_do
-from exorde_data.models import Item
 
 from typing import Callable
 from exorde.protocol.ipfs.bindings import push_to_ipfs, on_new_cid_do
@@ -34,14 +33,7 @@ setup(reset_cids)
 spotting_ran_when, on_spotting_done_do = wire(perpetual=True)
 
 
-@on_formated_data_do
-@spotting_ran_when
-async def run_spotting(item: Item):
-    return item
-
-
-# on_formated_data_do(push_to_stack)
-on_spotting_done_do(push_to_stack)
+on_formated_data_do(push_to_stack)
 
 
 on(
@@ -50,7 +42,7 @@ on(
     and not processing
     and running,
 )(pull_to_process)
-# on("processed")(lambda processed: f"{len(processed)} processed items")
+on("processed")(lambda processed: f"{len(processed)} processed items")
 # idk why this line does not trigger
 on("processed", condition=lambda processed: len(processed) == 25)(
     consume_processed
