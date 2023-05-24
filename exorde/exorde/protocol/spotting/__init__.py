@@ -49,8 +49,8 @@ async def pull_to_process(stack, processed, memory):
     try:
         for applicator in APPLICATORS:
             value = await autofill(applicator, args=[value], memory=memory)
-        logging.info("A new item has been processed")
         processed.append(value)
+        logging.info(f"+ new processed item \t {len(processed)} / 25")
         # technicaly the stack is already updated here
         # we return to trigger the ONS events
         return {"processed": processed, "processing": False}
@@ -70,12 +70,11 @@ def batch_applicator(function: Callable) -> Callable:
 
 async def consume_processed(processed, memory):
     batch = [processed.pop(0) for _ in range(SIZE)]
+    logging.info("applying batch applicators...")
     for batch_applicator in BATCH_APPLICATORS:
-        result = await autofill(batch_applicator, args=[batch], memory=memory)
-        temp_batch = batch
-        for d, val in zip(batch, result):
-            d.update({"Properties": val})
-        batch = temp_batch
+        batch = await autofill(batch_applicator, args=[batch], memory=memory)
+    logging.info("...batch applicators ok")
+    print(batch)
     return {"batch_to_consume": batch, "processed": processed}
 
 

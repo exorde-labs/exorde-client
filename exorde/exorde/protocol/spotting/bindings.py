@@ -50,7 +50,8 @@ on(
     and not processing
     and running,
 )(pull_to_process)
-# on("stack")(call_limit(1)(log_stack_len))
+# on("processed")(lambda processed: f"{len(processed)} processed items")
+# idk why this line does not trigger
 on("processed", condition=lambda processed: len(processed) == 25)(
     consume_processed
 )

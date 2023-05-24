@@ -12,7 +12,7 @@ async def upload_to_ipfs(
     async with aiohttp.ClientSession() as session:
         async with session.post(
             ipfs_path,
-            data=json.dumps(value),
+            data=json.dumps(value.to_dict()),
             headers={"Content-Type": "application/json"},
         ) as resp:
             if resp.status == 200:
@@ -21,7 +21,6 @@ async def upload_to_ipfs(
                 return response
             else:
                 content = await resp.text()
-                logging.error(json.dumps(value))
                 logging.error(json.dumps(content, indent=4))
                 raise Exception(f"Failed to upload to IPFS ({resp.status})")
 
