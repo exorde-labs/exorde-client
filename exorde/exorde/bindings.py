@@ -11,7 +11,7 @@ a88aaaa    dP. .dP .d8888b. 88d888b. .d888b88 .d8888b.
 
 
 import logging, os, aiohttp, json, sys
-from aiosow.bindings import setup, option, on
+from aiosow.bindings import setup, option, on, make_async
 from aiosow.routines import routine
 
 option(
@@ -121,7 +121,7 @@ def init_spotting(no_spotting, remote_kill, memory):
             meta_tagger_initialization,
             preprocess,
         )
-        from exorde.drivers.meta_tagger import zero_shot
+        from exorde_lab.meta_tagger import zero_shot
 
         setup(meta_tagger_initialization)
 
@@ -131,7 +131,7 @@ def init_spotting(no_spotting, remote_kill, memory):
         spotting_applicator(preprocess)
         spotting_applicator(translate)
         spotting_applicator(populate_keywords)
-        spotting_applicator(zero_shot)
+        spotting_applicator(make_async(zero_shot))
 
 
 """
