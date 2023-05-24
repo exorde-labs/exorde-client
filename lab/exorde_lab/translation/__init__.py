@@ -44,6 +44,8 @@ def translate(item, low_memory, installed_languages):
             item.translation = translation(
                 language["lang"], "en", installed_languages
             ).translate(text)
+        else:
+            item.translation = item.content
     except:
         logging.debug(f"Error translating from {language['lang']} ({item})")
     item.language = language["lang"]
