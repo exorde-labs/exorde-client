@@ -26,9 +26,10 @@ env/bin/exorde -h
 env/bin/exorde -m <main-address> --no_validation
 env/bin/exorde -m <main-address> --no_spotting
 ```
-:warning: Running spotting and validation at the same time is not recomanded.
+:warning: Running spotting and validation at the same time is not recommended.
 
-#### [pip](https://pypi.org/) ⚠️ NOT YET AVAILABLE
+#### ~~[pip](https://pypi.org/)~~
+:warning: NOT AVAILABLE YET
 - Our [instalation test](https://github.com/exorde-labs/exorde/blob/mangle/.github/workflows/test.yml) is an example of installation using ubuntu. 
 - On github workflows, the process of installation took around 5 minutes.
 
