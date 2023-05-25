@@ -246,7 +246,7 @@ def tag(items, nlp, device, mappings):
     ]
     for col_name, model_name in text_classification_models:
         pipe = pipeline(
-            "text-classification", model=model_name, top_k=None, device=device
+            "text-classification", model=model_name, top_k=None, device=device, max_length=512, padding=True
         )
         tmp[col_name] = tmp["Translation"].swifter.apply(
             lambda x: [(y["label"], float(y["score"])) for y in pipe(x)[0]]
