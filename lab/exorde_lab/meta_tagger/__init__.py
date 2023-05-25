@@ -337,7 +337,7 @@ def tag(items, nlp, device, mappings):
             else:
                 for k in range(len(tmp[i][_k])):
                     if(hasattr(item, k)):
-                       setattr(item._k, _k.lower(), tmp[i][_k][k][1])
+                       setattr(item._k.lower(), _k.lower(), tmp[i][_k][k][1])
                        
         #item.translation = tmp[i]["Translation"]
         #item.embedding = tmp[i]["Embedding"]
