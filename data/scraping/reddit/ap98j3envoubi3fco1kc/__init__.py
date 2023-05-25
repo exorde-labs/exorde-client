@@ -16,7 +16,7 @@ async def scrap_post(url: str) -> AsyncGenerator[Item, None]:
         content = data["data"]
         yield Item(
             content=content["selftext"],
-            author=hashlib.sha256(
+            author=hashlib.sha1(
                 bytes(content["author"], encoding="utf-8")
             ).hexdigest(),
             created_at=str(
