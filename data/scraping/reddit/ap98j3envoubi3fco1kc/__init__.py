@@ -3,6 +3,7 @@ from lxml import html
 from typing import AsyncGenerator
 import pytz
 import datetime
+import hashlib
 
 from exorde_data import Item
 
@@ -15,7 +16,9 @@ async def scrap_post(url: str) -> AsyncGenerator[Item, None]:
         content = data["data"]
         yield Item(
             content=content["selftext"],
-            author=content["author"],
+            author=hashlib.sha256(
+                bytes(content["author"], encoding="utf-8")
+            ).hexdigest(),
             created_at=str(
                 datetime.datetime.fromtimestamp(
                     content["created_utc"], pytz.timezone("UTC")
