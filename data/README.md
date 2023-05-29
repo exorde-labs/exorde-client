@@ -49,26 +49,24 @@ query(url: str) -> AsyncGenerator[Item, None]
             "description": "Text body of the item",
             "type": "string"
         },
+        "translation": {
+            "description": "The content translated in English language",
+            "type": "string"
+        },
+        "language": {
+            "description": "ISO639-1 language code that consists of two lowercase letters",
+            "type": "string"
+        },
         "summary": {
             "description": "Short version of the content",
             "type": "string"
         },
         "picture": {
             "description": "Image linked to the item",
-            "type": "string",
-            "pattern": "^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\\.)+[a-zA-Z]{2,}"
-        },
-        "author": {
-            "description": "SHA1 encoding of the username assigned as creator of the item on it source plateform",
             "type": "string"
         },
-        "created_at": {
-            "description": "ISO8601/RFC3339 Date of creation of the item",
-            "type": "string",
-            "pattern": "^([\\+-]?\\d{4}(?!\\d{2}\\b))((-?)((0[1-9]|1[0-2])(\\3([12]\\d|0[1-9]|3[01]))?|W([0-4]\\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\\d|[12]\\d{2}|3([0-5]\\d|6[1-6])))([T\\s]((([01]\\d|2[0-3])((:?)[0-5]\\d)?|24\\:?00)([\\.,]\\d+(?!:))?)?(\\17[0-5]\\d([\\.,]\\d+)?)?([zZ]|([\\+-])([01]\\d|2[0-3]):?([0-5]\\d)?)?)?)?$"
-        },
-        "language": {
-            "description": "ISO639-1 language code that consist of two lowercase letters",
+        "author": {
+            "description": "SHA1 encoding of the username assigned as creator of the item on its source platform",
             "type": "string"
         },
         "title": {
@@ -77,21 +75,31 @@ query(url: str) -> AsyncGenerator[Item, None]
         },
         "domain": {
             "description": "Domain name on which the item was retrieved",
-            "type": "string",
-            "pattern": "^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\\.)+[a-zA-Z]{2,}"
+            "type": "string"
         },
         "url": {
             "description": "Uniform-Resource-Locator that identifies the location of the item",
-            "type": "string",
-            "pattern": "^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\\.)+[a-zA-Z]{2,}"
-        },
-        "external_id": {
-            "description": "Identifier used by source",
             "type": "string"
         },
-        "external_parent_id": {
-            "description": "Identifier used by source of parent item",
+        "created_at": {
+            "description": "ISO8601/RFC3339 Date of creation of the item",
             "type": "string"
+        },
+        "collected_at": {
+            "description": "ISO8601/RFC3339 Date of collection of the item",
+            "type": "string"
+        },
+        "collection_client_version": {
+            "description": "Client identifier with version of the client that collected the item.",
+            "type": "string"
+        },
+        "collection_module": {
+            "description": "The module that scraped the item.",
+            "type": "string"
+        },
+        "sentiment": {
+            "description": "Measure of post sentiment from negative to positive (-1 = negative, +1 = positive, 0 = neutral)",
+            "type": "number"
         },
         "classification": {
             "description": "Probable categorization(s) of the post in a pre-determined set of general topics (list of objects with float associated for each topic, expressing their likelihood)",
@@ -100,24 +108,19 @@ query(url: str) -> AsyncGenerator[Item, None]
                 "type": "object",
                 "properties": {
                     "topic": {
+                        "description": "",
                         "type": "string"
                     },
                     "weight": {
+                        "description": "",
                         "type": "number"
                     }
-                }
+                },
+                "required": [
+                    "topic",
+                    "weight"
+                ]
             }
-        },
-        "top_keywords": {
-            "description": "The main keywords extracted from the content field",
-            "type": "array",
-            "items": {
-                "type": "string"
-            }
-        },
-        "translation": {
-            "description": "The content translated in English language",
-            "type": "string"
         },
         "embedding": {
             "description": "Vector/numerical representation of the translated content (field: translation), produced by a NLP encoder model",
@@ -126,53 +129,136 @@ query(url: str) -> AsyncGenerator[Item, None]
                 "type": "number"
             }
         },
-        "language_score": {
-            "type": "array",
-            "items": {
-                "description": "Readability score of the text",
-                "type": "array",
-                "items": [
-                    {
-                        "type": "string"
-                    },
-                    {
-                        "type": "number"
-                    }
-                ]
-            }
+        "top_keywords": {
+            "description": "The main keywords extracted from the content field",
+            "type": "string"
         },
-        "age": {
-            "description": "Probable age range of the author",
+        "langage_score": {
+            "description": "Readability score of the text",
+            "type": "number"
+        },
+        "gender": {
+            "description": "Probable gender (female or male) of the author",
             "type": "object",
             "properties": {
-                "below_twenty": {
+                "male": {
                     "type": "number"
                 },
-                "twenty_thirty": {
-                    "type": "number"
-                },
-                "thirty_forty": {
-                    "type": "number"
-                },
-                "forty_more": {
+                "female": {
                     "type": "number"
                 }
-            }
+            },
+            "required": [
+                "male",
+                "female"
+            ]
         },
-        "irony": {
-            "description": "Measure of how much a post is ironic (in %)",
+        "source_type": {
+            "description": "Category of the source that has produced the post",
             "type": "object",
             "properties": {
-                "non_irony": {
+                "social": {
                     "type": "number"
                 },
-                "irony": {
+                "computers": {
+                    "type": "number"
+                },
+                "games": {
+                    "type": "number"
+                },
+                "business": {
+                    "type": "number"
+                },
+                "streaming": {
+                    "type": "number"
+                },
+                "ecommerce": {
+                    "type": "number"
+                },
+                "forums": {
+                    "type": "number"
+                },
+                "photography": {
+                    "type": "number"
+                },
+                "travel": {
+                    "type": "number"
+                },
+                "adult": {
+                    "type": "number"
+                },
+                "law": {
+                    "type": "number"
+                },
+                "sports": {
+                    "type": "number"
+                },
+                "education": {
+                    "type": "number"
+                },
+                "food": {
+                    "type": "number"
+                },
+                "health": {
                     "type": "number"
                 }
-            }
+            },
+            "required": [
+                "social",
+                "computers",
+                "games",
+                "business",
+                "streaming",
+                "ecommerce",
+                "forums",
+                "photography",
+                "travel",
+                "adult",
+                "law",
+                "sports",
+                "education",
+                "food",
+                "health"
+            ]
+        },
+        "text_type": {
+            "description": "Type (category) of the post (article, etc)",
+            "type": "object",
+            "properties": {
+                "assumption": {
+                    "type": "number"
+                },
+                "anecdote": {
+                    "type": "number"
+                },
+                "none": {
+                    "type": "number"
+                },
+                "definition": {
+                    "type": "number"
+                },
+                "testimony": {
+                    "type": "number"
+                },
+                "other": {
+                    "type": "number"
+                },
+                "study": {
+                    "type": "number"
+                }
+            },
+            "required": [
+                "assumption",
+                "anecdote",
+                "none",
+                "definition",
+                "testimony",
+                "other",
+                "study"
+            ]
         },
         "emotion": {
-            "description": "Emotion classification of the post, using the go-emotion standard of 28 precise emotions",
+            "description": "",
             "type": "object",
             "properties": {
                 "love": {
@@ -256,115 +342,78 @@ query(url: str) -> AsyncGenerator[Item, None]
                 "nervousness": {
                     "type": "number"
                 }
-            }
+            },
+            "required": [
+                "love",
+                "admiration",
+                "joy",
+                "approval",
+                "caring",
+                "excitement",
+                "gratitude",
+                "desire",
+                "anger",
+                "optimism",
+                "disapproval",
+                "grief",
+                "annoyance",
+                "pride",
+                "curiosity",
+                "neutral",
+                "disgust",
+                "disappointment",
+                "realization",
+                "fear",
+                "relief",
+                "confusion",
+                "remorse",
+                "embarrassement",
+                "suprise",
+                "sadness",
+                "nervousness"
+            ]
         },
-        "text_type": {
-            "description": "Type (category) of the post (article, etc)",
+        "irony": {
+            "description": "Measure of how much a post is ironic (in %)",
             "type": "object",
             "properties": {
-                "assumption": {
+                "irony": {
                     "type": "number"
                 },
-                "anecdote": {
-                    "type": "number"
-                },
-                "none": {
-                    "type": "number"
-                },
-                "definition": {
-                    "type": "number"
-                },
-                "testimony": {
-                    "type": "number"
-                },
-                "other": {
-                    "type": "number"
-                },
-                "study": {
+                "non_irony": {
                     "type": "number"
                 }
-            }
-        },
-        "source_type": {
-            "description": "Type (category) of the source that has produced the post",
-            "type": "object",
-            "properties": {
-                "social": {
-                    "type": "number"
-                },
-                "computers": {
-                    "type": "number"
-                },
-                "games": {
-                    "type": "number"
-                },
-                "business": {
-                    "type": "number"
-                },
-                "streaming": {
-                    "type": "number"
-                },
-                "ecommerce": {
-                    "type": "number"
-                },
-                "forums": {
-                    "type": "number"
-                },
-                "photography": {
-                    "type": "number"
-                },
-                "travel": {
-                    "type": "number"
-                },
-                "adult": {
-                    "type": "number"
-                },
-                "law": {
-                    "type": "number"
-                },
-                "sports": {
-                    "type": "number"
-                },
-                "education": {
-                    "type": "number"
-                },
-                "food": {
-                    "type": "number"
-                },
-                "health": {
-                    "type": "number"
-                }
-            }
-        },
-        "gender": {
-            "description": "Probable gender (female or male) of the author",
-            "type": "object",
-            "properties": {
-                "female": {
-                    "type": "number"
-                },
-                "male": {
-                    "type": "number"
-                }
-            }
-        },
-        "sentiment": {
-            "description": "Measure of post sentiment from negative to positive (-1 = negative, +1 = positive, 0 = neutral)",
-            "type": "number"
-        },
-        "collected_at": {
-            "description": "ISO8601/RFC3339 Date of collection of the item",
-            "type": "string",
-            "pattern": "^([\\+-]?\\d{4}(?!\\d{2}\\b))((-?)((0[1-9]|1[0-2])(\\3([12]\\d|0[1-9]|3[01]))?|W([0-4]\\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\\d|[12]\\d{2}|3([0-5]\\d|6[1-6])))([T\\s]((([01]\\d|2[0-3])((:?)[0-5]\\d)?|24\\:?00)([\\.,]\\d+(?!:))?)?(\\17[0-5]\\d([\\.,]\\d+)?)?([zZ]|([\\+-])([01]\\d|2[0-3]):?([0-5]\\d)?)?)?)?$"
-        },
-        "collection_client_version": {
-            "description": "Client identifier with version of client that collected the item.",
-            "type": "string"
-        },
-        "collection_module": {
-            "description": "The module that scraped the item.",
-            "type": "string"
+            },
+            "required": [
+                "irony",
+                "non_irony"
+            ]
         }
-    }
+    },
+    "required": [
+        "content",
+        "translation",
+        "language",
+        "summary",
+        "picture",
+        "author",
+        "title",
+        "domain",
+        "url",
+        "created_at",
+        "collected_at",
+        "collection_client_version",
+        "collection_module",
+        "sentiment",
+        "classification",
+        "embedding",
+        "top_keywords",
+        "langage_score",
+        "gender",
+        "source_type",
+        "text_type",
+        "emotion",
+        "irony"
+    ]
 }
 ```
