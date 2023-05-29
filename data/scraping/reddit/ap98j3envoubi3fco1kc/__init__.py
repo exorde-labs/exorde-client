@@ -5,7 +5,18 @@ import pytz
 import datetime
 import hashlib
 
-from exorde_data import Item
+from exorde_data import (
+    Item,
+    Content,
+    Author,
+    CreatedAt,
+    Title,
+    Url,
+    Domain,
+    CollectedAt,
+    CollectionModule,
+    CollectionClientVersion,
+)
 
 
 async def scrap_post(url: str) -> AsyncGenerator[Item, None]:
@@ -15,39 +26,48 @@ async def scrap_post(url: str) -> AsyncGenerator[Item, None]:
         """t3"""
         content = data["data"]
         yield Item(
-            content=content["selftext"],
-            author=hashlib.sha1(
-                bytes(content["author"], encoding="utf-8")
-            ).hexdigest(),
-            created_at=str(
-                datetime.datetime.fromtimestamp(
-                    content["created_utc"], pytz.timezone("UTC")
-                ).isoformat()
+            content=Content(content["selftext"]),
+            author=Author(
+                hashlib.sha1(
+                    bytes(content["author"], encoding="utf-8")
+                ).hexdigest()
             ),
-            title=content["title"],
-            domain="reddit.com",
-            url=content["url"],
-            internal_id=content["id"],
-            nb_comments=content["num_comments"],
-            nb_likes=content["ups"],
+            created_at=CreatedAt(
+                str(
+                    datetime.datetime.fromtimestamp(
+                        content["created_utc"], pytz.timezone("UTC")
+                    ).isoformat()
+                )
+            ),
+            collected_at=CollectedAt(
+                str(datetime.datetime.now(pytz.timezone("UTC")).isoformat())
+            ),
+            title=Title(content["title"]),
+            domain=Domain("reddit.com"),
+            url=Url(content["url"]),
+            # nb_comments=content["num_comments"],
+            # nb_likes=content["ups"],
         )
 
     async def comment(data) -> AsyncGenerator[Item, None]:
         """t1"""
         content = data["data"]
         yield Item(
-            content=content["body"],
-            author=content["author"],
-            created_at=str(
-                datetime.datetime.fromtimestamp(
-                    content["created_utc"], pytz.timezone("UTC")
-                ).isoformat()
+            content=Content(content["body"]),
+            author=Author(content["author"]),
+            collected_at=CollectedAt(
+                str(datetime.datetime.now(pytz.timezone("UTC")).isoformat())
             ),
-            domain="reddit.com",
-            url="reddit.com" + content["permalink"],
-            internal_id=content["id"],
-            internal_parent_id=content["link_id"],
-            nb_likes=content["ups"],
+            created_at=CreatedAt(
+                str(
+                    datetime.datetime.fromtimestamp(
+                        content["created_utc"], pytz.timezone("UTC")
+                    ).isoformat()
+                )
+            ),
+            domain=Domain("reddit.com"),
+            url=Url("reddit.com" + content["permalink"]),
+            # nb_likes=content["ups"],
         )
 
     async def more(__data__):

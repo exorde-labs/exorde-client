@@ -1,88 +1,89 @@
 from madtypes import Annotation, Schema
+from typing import Optional
 
 
-class Content(Annotation):
+class Content(str, metaclass=Annotation):
     description = "Text body of the item"
     annotation = str
 
 
-class Summary(Annotation):
+class Summary(str, metaclass=Annotation):
     description = "Short version of the content"
     annotation = str
 
 
-class Picture(Annotation):
+class Picture(str, metaclass=Annotation):
     description = "Image linked to the item"
     annotation = str
 
 
-class Author(Annotation):
+class Author(str, metaclass=Annotation):
     description = "SHA1 encoding of the username assigned as creator of the item on its source platform"
     annotation = str
 
 
-class CreatedAt(Annotation):
+class CreatedAt(str, metaclass=Annotation):
     description = "ISO8601/RFC3339 Date of creation of the item"
     annotation = str
 
 
-class Language(Annotation):
+class Language(str, metaclass=Annotation):
     description = (
         "ISO639-1 language code that consists of two lowercase letters"
     )
     annotation = str
 
 
-class Title(Annotation):
+class Title(str, metaclass=Annotation):
     description = "Headline of the item"
     annotation = str
 
 
-class Domain(Annotation):
+class Domain(str, metaclass=Annotation):
     description = "Domain name on which the item was retrieved"
     annotation = str
 
 
-class Url(Annotation):
+class Url(str, metaclass=Annotation):
     description = (
         "Uniform-Resource-Locator that identifies the location of the item"
     )
     annotation = str
 
 
-class Translation(Annotation):
+class Translation(str, metaclass=Annotation):
     description = "The content translated in English language"
     annotation = str
 
 
-class Sentiment(Annotation):
+class Sentiment(str, metaclass=Annotation):
     description = "Measure of post sentiment from negative to positive (-1 = negative, +1 = positive, 0 = neutral)"
     annotation = float
 
 
-class CollectedAt(Annotation):
+class CollectedAt(str, metaclass=Annotation):
     description = "ISO8601/RFC3339 Date of collection of the item"
     annotation = str
 
 
-class CollectionClientVersion(Annotation):
+class CollectionClientVersion(str, metaclass=Annotation):
     description = (
         "Client identifier with version of the client that collected the item."
     )
     annotation = str
 
 
-class CollectionModule(Annotation):
+class CollectionModule(str, metaclass=Annotation):
     description = "The module that scraped the item."
     annotation = str
 
 
-class Topic(Annotation):
+class Topic(str, metaclass=Annotation):
     description = ""
     annotation = str
 
 
-class Weight(Annotation):
+class Weight(str, metaclass=Annotation):
     description = ""
     annotation = float
 
@@ -92,22 +93,22 @@ class Classification(Schema):
     weight: Weight
 
 
-class DescriptedClassification(Annotation):
+class DescriptedClassification(list, metaclass=Annotation):
     description = "Probable categorization(s) of the post in a pre-determined set of general topics (list of objects with float associated for each topic, expressing their likelihood)"
     annotation = list[Classification]
 
 
-class Embedding(Annotation):
+class Embedding(list, metaclass=Annotation):
     description = "Vector/numerical representation of the translated content (field: translation), produced by a NLP encoder model"
     annotation = list[float]
 
 
-class TopKeywords(Annotation):
+class TopKeywords(str, metaclass=Annotation):
     description = "The main keywords extracted from the content field"
     annotation = str
 
 
-class LanguageScore(Annotation):
+class LanguageScore(float, metaclass=Annotation):
     description = "Readability score of the text"
     annotation = float
 
@@ -117,7 +118,7 @@ class Gender(Schema):
     female: float
 
 
-class DescriptedGender(Annotation):
+class DescriptedGender(Gender, metaclass=Annotation):
     description = "Probable gender (female or male) of the author"
     annotation = Gender
 
@@ -140,7 +141,7 @@ class SourceType(Schema):
     health: float
 
 
-class DescriptedSourceType(Annotation):
+class DescriptedSourceType(SourceType, metaclass=Annotation):
     description = "Category of the source that has produced the post"
     annotation = SourceType
 
@@ -155,7 +156,7 @@ class TextType(Schema):
     study: float
 
 
-class DescriptedTextType(Annotation):
+class DescriptedTextType(TextType, metaclass=Annotation):
     description = "Type (category) of the post (article, etc)"
     annotation = TextType
 
@@ -190,7 +191,7 @@ class Emotion(Schema):
     nervousness: float
 
 
-class DescriptedEmotion(Annotation):
+class DescriptedEmotion(Emotion, metaclass=Annotation):
     description = ""
     annotation = Emotion
 
@@ -200,25 +201,25 @@ class Irony(Schema):
     non_irony: float
 
 
-class DescriptedIrony(Annotation):
+class DescriptedIrony(Irony, metaclass=Annotation):
     description = "Measure of how much a post is ironic (in %)"
     annotation = Irony
 
 
 class Item(Schema):
+    translation: Optional[Translation]
+    language: Optional[Language]
+    summary: Optional[Summary]
+    picture: Optional[Picture]
+    title: Optional[Title]
+    author: Optional[Author]
     content: Content
-    translation: Translation
-    language: Language
-    summary: Summary
-    picture: Picture
-    author: Author
-    title: Title
     domain: Domain
     url: Url
     created_at: CreatedAt
-    collected_at: CollectedAt
-    collection_client_version: CollectionClientVersion
-    collection_module: CollectionModule
+
+
+class Analysis(Schema):
     sentiment: Sentiment
     classification: DescriptedClassification
     embedding: Embedding
@@ -229,3 +230,11 @@ class Item(Schema):
     text_type: DescriptedTextType
     emotion: DescriptedEmotion
     irony: DescriptedIrony
+
+
+class Analyzed(Schema):
+    item: Item
+    analysis: Analysis
+    collection_client_version: CollectionClientVersion
+    collection_module: CollectionModule
+    collected_at: CollectedAt
