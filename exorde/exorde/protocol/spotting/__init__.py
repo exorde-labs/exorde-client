@@ -44,6 +44,11 @@ import json
 
 async def pull_to_process(stack, processed, memory):
     value = stack.pop()
+    print("\n")
+    print(value)
+    print("\n")
+    if len(value.content) < 35:
+        return {}
     memory["processing"] = True
     memory["stack"] = stack
     try:
@@ -72,13 +77,21 @@ async def consume_processed(processed, memory):
     batch = [processed.pop(0) for _ in range(SIZE)]
     logging.info("applying batch applicators...")
     for batch_applicator in BATCH_APPLICATORS:
-        batch = await autofill(batch_applicator, args=[batch], memory=memory)
+        try:
+            batch = await autofill(
+                batch_applicator, args=[batch], memory=memory
+            )
+        except Exception as err:
+            logging.error("An exception occured on batch processing")
+            logging.error(err)
+            raise (err)
+
     logging.info("...batch applicators ok")
     formated_batch = json.dumps(
         {"kind": "SPOTTING", "items": batch},
         indent=4,
     )
-    with open("OUTPUT.json", "w") as file:
+    with open("AFTER.json", "w") as file:
         file.write(formated_batch)
     return {"batch_to_consume": formated_batch, "processed": processed}
 

@@ -2,6 +2,7 @@ from typing import AsyncGenerator
 import json
 from importlib import metadata
 from exorde_data.models import Item
+from madtypes import schema
 
 from . import scraping
 
@@ -26,17 +27,23 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
 
 
 def print_schema():
-    print(
-        json.dumps(
-            Item().json_schema(
-                **{
-                    "$schema": "http://json-schema.org/draft-07/schema#",
-                    "$id": f'https://github.com/exorde-labs/exorde/repo/tree/v{metadata.version("exorde_data")}/exorde/schema/schema.json',
-                }
-            ),
-            indent=4,
-        )
+    schem = schema(
+        Item,
+        **{
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "$id": f'https://github.com/exorde-labs/exorde/repo/tree/v{metadata.version("exorde_data")}/exorde/schema/schema.json',
+        },
     )
+    try:
+        print(
+            json.dumps(
+                schem,
+                indent=4,
+            )
+        )
+    except Exception as err:
+        print(err)
+        print(schem)
 
 
 __all__ = ["scraping"]

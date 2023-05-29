@@ -246,7 +246,12 @@ def tag(items, nlp, device, mappings):
     ]
     for col_name, model_name in text_classification_models:
         pipe = pipeline(
-            "text-classification", model=model_name, top_k=None, device=device, max_length=512, padding=True
+            "text-classification",
+            model=model_name,
+            top_k=None,
+            device=device,
+            max_length=512,
+            padding=True,
         )
         tmp[col_name] = tmp["Translation"].swifter.apply(
             lambda x: [(y["label"], float(y["score"])) for y in pipe(x)[0]]
@@ -320,40 +325,42 @@ def tag(items, nlp, device, mappings):
     tmp = tmp.to_dict(orient="records")
     for i, item in enumerate(items):
         for _k in item.keys():
-            if(_k in ["Translation", "Embedding", "Sentiment"]):
+            if _k in ["Translation", "Embedding", "Sentiment"]:
                 setattr(item, _k.lower(), tmp[i][_k])
-            elif(_k == "LanguageScore"):
+            elif _k == "LanguageScore":
                 item.languages_score = tmp[i][_k]
-            elif(_k == "Age"):
+            elif _k == "Age":
                 for j in range(len(tmp[i][_k])):
-                    if(tmp[i][_k][j][0] == "<20"):
+                    if tmp[i][_k][j][0] == "<20":
                         item.age.below_twenty = tmp[i][_k][j][1]
-                    elif(tmp[i][_k][j][0] == "20<30"):
+                    elif tmp[i][_k][j][0] == "20<30":
                         item.age.twenty_thirthy = tmp[i][_k][j][1]
-                    elif(tmp[i][_k][j][0] == "30<40"):
+                    elif tmp[i][_k][j][0] == "30<40":
                         item.age.thirty_forty = tmp[i][_k][j][1]
                     else:
                         item.age.forty_more = tmp[i][_k][j][1]
             else:
                 for k in range(len(tmp[i][_k])):
-                    if(hasattr(item, k)):
-                       setattr(item._k.lower(), _k.lower(), tmp[i][_k][k][1])
-                       
-        #item.translation = tmp[i]["Translation"]
-        #item.embedding = tmp[i]["Embedding"]
-        #item.sentiment = tmp[i]["Sentiment"]
-        #item.emotion = tmp[i]["Emotion"]
-        #item.age.below_twenty = tmp[i]["Age"][0][1]
-        #item.age.twenty_thirthy = tmp[i]["Age"][1][1]
-        #item.age.thirty_forty = tmp[i]["Age"][2][1]
-        #item.age.forty_more = tmp[i]["Age"][3][1]
-        #item.gender.female = tmp[i]["Gender"][0][1]
-        #item.gender.male = tmp[i]["Gender"][1][1]
-        #item.irony.irony = tmp[i]["Irony"][0][1]
-        #item.irony.non_irony = tmp[i]["Irony"][1][1]
-        #item.language_score = tmp[i]["LanguageScore"]  # ??
-        #item.text_type = tmp[i]["TextType"]
-        #item.source_type = tmp[i]["SourceType"]
+                    if hasattr(item, k):
+                        setattr(item._k.lower(), _k.lower(), tmp[i][_k][k][1])
+
+        # item.translation = tmp[i]["Translation"]
+        # item.embedding = tmp[i]["Embedding"]
+        # item.sentiment = tmp[i]["Sentiment"]
+        # item.emotion = tmp[i]["Emotion"]
+        # item.age.below_twenty = tmp[i]["Age"][0][1]
+        # item.age.twenty_thirthy = tmp[i]["Age"][1][1]
+        # item.age.thirty_forty = tmp[i]["Age"][2][1]
+        # item.age.forty_more = tmp[i]["Age"][3][1]
+        # item.gender.female = tmp[i]["Gender"][0][1]
+        # item.gender.male = tmp[i]["Gender"][1][1]
+        # item.irony.irony = tmp[i]["Irony"][0][1]
+        # item.irony.non_irony = tmp[i]["Irony"][1][1]
+        # item.language_score = tmp[i]["LanguageScore"]  # ??
+        # item.text_type = tmp[i]["TextType"]
+        # item.source_type = tmp[i]["SourceType"]
+
+    print("TAG IS OK")
 
     return items
 
