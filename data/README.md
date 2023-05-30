@@ -48,48 +48,57 @@ query(url: str) -> AsyncGenerator[Item, None]
         "item": {
             "type": "object",
             "properties": {
-                "translation": {
-                    "description": "The content translated in English language",
-                    "type": "string"
-                },
                 "language": {
                     "description": "ISO639-1 language code that consists of two lowercase letters",
+                    "type": "string"
+                },
+                "translation": {
+                    "description": "The content translated in English language",
                     "type": "string"
                 },
                 "summary": {
                     "description": "Short version of the content",
                     "type": "string"
                 },
-                "picture": {
-                    "description": "Image linked to the item",
-                    "type": "string"
-                },
                 "title": {
                     "description": "Headline of the item",
-                    "type": "string"
-                },
-                "author": {
-                    "description": "SHA1 encoding of the username assigned as creator of the item on its source platform",
                     "type": "string"
                 },
                 "content": {
                     "description": "Text body of the item",
                     "type": "string"
                 },
+                "picture": {
+                    "description": "Image linked to the item",
+                    "pattern": "^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\\\\.)+[a-zA-Z]{2,}",
+                    "type": "string"
+                },
+                "author": {
+                    "description": "SHA1 encoding of the username assigned as creator of the item on its source platform",
+                    "type": "string"
+                },
+                "external_id": {
+                    "description": "Identifier used by source",
+                    "type": "string"
+                },
+                "external_parent_id": {},
                 "domain": {
                     "description": "Domain name on which the item was retrieved",
                     "type": "string"
                 },
                 "url": {
                     "description": "Uniform-Resource-Locator that identifies the location of the item",
+                    "pattern": "^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\\\\.)+[a-zA-Z]{2,}",
                     "type": "string"
                 },
                 "created_at": {
                     "description": "ISO8601/RFC3339 Date of creation of the item",
+                    "pattern": "^([\\\\+-]?\\\\d{4}(?!\\\\d{2}\\\\b))((-?)((0[1-9]|1[0-2])(\\\\3([12]\\\\d|0[1-9]|3[01]))?|W([0-4]\\\\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\\\\d|[12]\\\\d{2}|3([0-5]\\\\d|6[1-6])))([T\\\\s]((([01]\\\\d|2[0-3])((:?)[0-5]\\\\d)?|24\\\\:?00)([\\\\.,]\\\\d+(?!:))?)?(\\\\17[0-5]\\\\d([\\\\.,]\\\\d+)?)?([zZ]|([\\\\+-])([01]\\\\d|2[0-3]):?([0-5]\\\\d)?)?)?)?$",
                     "type": "string"
                 }
             },
             "required": [
+                "translation",
                 "content",
                 "domain",
                 "url",
@@ -99,6 +108,10 @@ query(url: str) -> AsyncGenerator[Item, None]
         "analysis": {
             "type": "object",
             "properties": {
+                "langage_score": {
+                    "description": "Readability score of the text",
+                    "type": "number"
+                },
                 "sentiment": {
                     "description": "Measure of post sentiment from negative to positive (-1 = negative, +1 = positive, 0 = neutral)",
                     "type": "number"
@@ -133,11 +146,10 @@ query(url: str) -> AsyncGenerator[Item, None]
                 },
                 "top_keywords": {
                     "description": "The main keywords extracted from the content field",
-                    "type": "string"
-                },
-                "langage_score": {
-                    "description": "Readability score of the text",
-                    "type": "number"
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "gender": {
                     "description": "Probable gender (female or male) of the author",
@@ -335,7 +347,7 @@ query(url: str) -> AsyncGenerator[Item, None]
                         "embarrassement": {
                             "type": "number"
                         },
-                        "suprise": {
+                        "surprise": {
                             "type": "number"
                         },
                         "sadness": {
@@ -370,7 +382,7 @@ query(url: str) -> AsyncGenerator[Item, None]
                         "confusion",
                         "remorse",
                         "embarrassement",
-                        "suprise",
+                        "surprise",
                         "sadness",
                         "nervousness"
                     ]
@@ -393,11 +405,11 @@ query(url: str) -> AsyncGenerator[Item, None]
                 }
             },
             "required": [
+                "langage_score",
                 "sentiment",
                 "classification",
                 "embedding",
                 "top_keywords",
-                "langage_score",
                 "gender",
                 "source_type",
                 "text_type",
@@ -415,6 +427,7 @@ query(url: str) -> AsyncGenerator[Item, None]
         },
         "collected_at": {
             "description": "ISO8601/RFC3339 Date of collection of the item",
+            "pattern": "^([\\\\+-]?\\\\d{4}(?!\\\\d{2}\\\\b))((-?)((0[1-9]|1[0-2])(\\\\3([12]\\\\d|0[1-9]|3[01]))?|W([0-4]\\\\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\\\\d|[12]\\\\d{2}|3([0-5]\\\\d|6[1-6])))([T\\\\s]((([01]\\\\d|2[0-3])((:?)[0-5]\\\\d)?|24\\\\:?00)([\\\\.,]\\\\d+(?!:))?)?(\\\\17[0-5]\\\\d([\\\\.,]\\\\d+)?)?([zZ]|([\\\\+-])([01]\\\\d|2[0-3]):?([0-5]\\\\d)?)?)?)?$",
             "type": "string"
         }
     },
