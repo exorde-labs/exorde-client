@@ -15,9 +15,12 @@ class Summary(str, metaclass=Annotation):
 class Picture(str, metaclass=Annotation):
     description = "Image linked to the item"
     annotation = str
+    pattern = r"^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\\.)+[a-zA-Z]{2,}"
 
 
 class Author(str, metaclass=Annotation):
+    """todo : SHA1 format check ?"""
+
     description = "SHA1 encoding of the username assigned as creator of the item on its source platform"
     annotation = str
 
@@ -25,6 +28,7 @@ class Author(str, metaclass=Annotation):
 class CreatedAt(str, metaclass=Annotation):
     description = "ISO8601/RFC3339 Date of creation of the item"
     annotation = str
+    pattern = r"^([\\+-]?\\d{4}(?!\\d{2}\\b))((-?)((0[1-9]|1[0-2])(\\3([12]\\d|0[1-9]|3[01]))?|W([0-4]\\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\\d|[12]\\d{2}|3([0-5]\\d|6[1-6])))([T\\s]((([01]\\d|2[0-3])((:?)[0-5]\\d)?|24\\:?00)([\\.,]\\d+(?!:))?)?(\\17[0-5]\\d([\\.,]\\d+)?)?([zZ]|([\\+-])([01]\\d|2[0-3]):?([0-5]\\d)?)?)?)?$"
 
 
 class Language(str, metaclass=Annotation):
@@ -49,6 +53,7 @@ class Url(str, metaclass=Annotation):
         "Uniform-Resource-Locator that identifies the location of the item"
     )
     annotation = str
+    pattern = r"^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\\.)+[a-zA-Z]{2,}"
 
 
 class Translation(str, metaclass=Annotation):
@@ -64,6 +69,7 @@ class Sentiment(str, metaclass=Annotation):
 class CollectedAt(str, metaclass=Annotation):
     description = "ISO8601/RFC3339 Date of collection of the item"
     annotation = str
+    pattern = r"^([\\+-]?\\d{4}(?!\\d{2}\\b))((-?)((0[1-9]|1[0-2])(\\3([12]\\d|0[1-9]|3[01]))?|W([0-4]\\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\\d|[12]\\d{2}|3([0-5]\\d|6[1-6])))([T\\s]((([01]\\d|2[0-3])((:?)[0-5]\\d)?|24\\:?00)([\\.,]\\d+(?!:))?)?(\\17[0-5]\\d([\\.,]\\d+)?)?([zZ]|([\\+-])([01]\\d|2[0-3]):?([0-5]\\d)?)?)?)?$"
 
 
 class CollectionClientVersion(str, metaclass=Annotation):
@@ -103,9 +109,9 @@ class Embedding(list, metaclass=Annotation):
     annotation = list[float]
 
 
-class TopKeywords(str, metaclass=Annotation):
+class TopKeywords(list, metaclass=Annotation):
     description = "The main keywords extracted from the content field"
-    annotation = str
+    annotation = list[str]
 
 
 class LanguageScore(float, metaclass=Annotation):
@@ -186,7 +192,7 @@ class Emotion(Schema):
     confusion: float
     remorse: float
     embarrassement: float
-    suprise: float
+    surprise: float
     sadness: float
     nervousness: float
 
@@ -206,30 +212,58 @@ class DescriptedIrony(Irony, metaclass=Annotation):
     annotation = Irony
 
 
+# todo:
+# unique items (pas de doublons dans la liste) -> type set
+
+
+class ExternalId(str, metaclass=Annotation):
+    description = "Identifier used by source"
+    annotation = str
+
+
+class ExternalParentId(str, metaclass=Annotation):
+    description = "Identifier of parent item, as used by source"
+
+
 class Item(Schema):
-    translation: Optional[Translation]
-    language: Optional[Language]
-    summary: Optional[Summary]
-    picture: Optional[Picture]
-    title: Optional[Title]
-    author: Optional[Author]
+    """Created by a scraping module, it represent a post, article, comment..."""
+
+    language: Optional[Language]  # content or title
+    translation: Translation  # should be mandatory
+    summary: Optional[Summary]  # <- description or summary available
+    title: Optional[Title]  # titre obligatoire si pas de contenu
     content: Content
+    picture: Optional[Picture]  # illustration picture # URL
+    author: Optional[Author]
+    external_id: Optional[ExternalId]
+    external_parent_id: Optional[ExternalParentId]
     domain: Domain
     url: Url
     created_at: CreatedAt
+    # type: Type # work in progress
+
+    def is_valid(self, **kwargs):
+        """object is valid if we either have content or title"""
+        return (
+            False
+            if not kwargs.get("content", None)
+            and not kwargs.get("title", None)
+            else True
+        )
 
 
 class Analysis(Schema):
+    langage_score: LanguageScore
     sentiment: Sentiment
     classification: DescriptedClassification
     embedding: Embedding
-    top_keywords: TopKeywords
-    langage_score: LanguageScore
+    top_keywords: TopKeywords  # check old schema
     gender: DescriptedGender
     source_type: DescriptedSourceType
     text_type: DescriptedTextType
     emotion: DescriptedEmotion
     irony: DescriptedIrony
+    # age
 
 
 class Analyzed(Schema):

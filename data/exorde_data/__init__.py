@@ -2,7 +2,7 @@ from typing import AsyncGenerator
 import json
 from importlib import metadata
 from exorde_data.models import *
-from madtypes import schema
+from madtypes import json_schema
 
 from . import scraping
 
@@ -30,7 +30,7 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
 
 
 def print_schema():
-    schem = schema(
+    schem = json_schema(
         Analyzed,
         **{
             "$schema": "http://json-schema.org/draft-07/schema#",
