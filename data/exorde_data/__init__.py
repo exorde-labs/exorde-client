@@ -31,7 +31,7 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
 
 def print_schema():
     schem = json_schema(
-        Analyzed,
+        Item,
         **{
             "$schema": "http://json-schema.org/draft-07/schema#",
             "$id": f'https://github.com/exorde-labs/exorde/repo/tree/v{metadata.version("exorde_data")}/exorde/schema/schema.json',
