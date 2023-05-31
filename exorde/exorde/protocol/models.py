@@ -2,7 +2,12 @@ from enum import Enum
 from madtypes import Schema, Annotation
 
 from exorde_data.models import Item as CollectedItem
-from exorde_lab.models import TopKeywords, Translation, Analysis
+from exorde_lab.models import (
+    TopKeywords,
+    Translation,
+    Analysis,
+    DescriptedClassification,
+)
 
 
 class CollectedAt(str, metaclass=Annotation):
@@ -33,6 +38,7 @@ class Item(Schema):
 
     top_keywords: TopKeywords  # yake result
     translation: Translation  # argos_translate
+    classification: DescriptedClassification
     analysis: Analysis
 
     collection_client_version: CollectionClientVersion

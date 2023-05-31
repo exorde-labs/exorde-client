@@ -6,26 +6,6 @@ class Sentiment(str, metaclass=Annotation):
     annotation = float
 
 
-class Topic(str, metaclass=Annotation):
-    description = ""
-    annotation = str
-
-
-class Weight(str, metaclass=Annotation):
-    description = ""
-    annotation = float
-
-
-class Classification(Schema):
-    topic: Topic
-    weight: Weight
-
-
-class DescriptedClassification(list, metaclass=Annotation):
-    description = "Probable categorization(s) of the post in a pre-determined set of general topics (list of objects with float associated for each topic, expressing their likelihood)"
-    annotation = list[Classification]
-
-
 class Embedding(list, metaclass=Annotation):
     description = "Vector/numerical representation of the translated content (field: translation), produced by a NLP encoder model"
     annotation = list[float]
@@ -132,11 +112,9 @@ class DescriptedIrony(Irony, metaclass=Annotation):
 class Analysis(Schema):
     langage_score: LanguageScore
     sentiment: Sentiment
-    classification: DescriptedClassification
     embedding: Embedding
     gender: DescriptedGender
     source_type: DescriptedSourceType
     text_type: DescriptedTextType
     emotion: DescriptedEmotion
     irony: DescriptedIrony
-    # age

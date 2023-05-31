@@ -1,5 +1,13 @@
-from exorde_lab.xyake.models import TopKeywords
+from exorde_lab.keywords.models import TopKeywords
 from exorde_lab.translation.models import Translated, Language, Translation
-from exorde_lab.meta_tagger.models import Analysis
+from exorde_lab.classification.models import DescriptedClassification
+from exorde_lab.analysis.models import Analysis
 
-__all__ = ["TopKeywords", "Translated", "Language", "Translation", "Analysis"]
+__all__ = [
+    "TopKeywords",
+    "Translated",
+    "Language",
+    "Translation",
+    "Analysis",
+    "DescriptedClassification",
+]

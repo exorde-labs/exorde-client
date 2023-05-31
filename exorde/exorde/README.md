@@ -89,6 +89,27 @@ Coming up soon !
                             "translation"
                         ]
                     },
+                    "classification": {
+                        "description": "Probable categorization(s) of the post in a pre-determined set of general topics (list of objects with float associated for each topic, expressing their likelihood)",
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "topic": {
+                                    "description": "",
+                                    "type": "string"
+                                },
+                                "weight": {
+                                    "description": "",
+                                    "type": "number"
+                                }
+                            },
+                            "required": [
+                                "topic",
+                                "weight"
+                            ]
+                        }
+                    },
                     "analysis": {
                         "type": "object",
                         "properties": {
@@ -99,27 +120,6 @@ Coming up soon !
                             "sentiment": {
                                 "description": "Measure of post sentiment from negative to positive (-1 = negative, +1 = positive, 0 = neutral)",
                                 "type": "number"
-                            },
-                            "classification": {
-                                "description": "Probable categorization(s) of the post in a pre-determined set of general topics (list of objects with float associated for each topic, expressing their likelihood)",
-                                "type": "array",
-                                "items": {
-                                    "type": "object",
-                                    "properties": {
-                                        "topic": {
-                                            "description": "",
-                                            "type": "string"
-                                        },
-                                        "weight": {
-                                            "description": "",
-                                            "type": "number"
-                                        }
-                                    },
-                                    "required": [
-                                        "topic",
-                                        "weight"
-                                    ]
-                                }
                             },
                             "embedding": {
                                 "description": "Vector/numerical representation of the translated content (field: translation), produced by a NLP encoder model",
@@ -384,7 +384,6 @@ Coming up soon !
                         "required": [
                             "langage_score",
                             "sentiment",
-                            "classification",
                             "embedding",
                             "gender",
                             "source_type",
@@ -411,6 +410,7 @@ Coming up soon !
                     "item",
                     "top_keywords",
                     "translation",
+                    "classification",
                     "analysis",
                     "collection_client_version",
                     "collection_module",
