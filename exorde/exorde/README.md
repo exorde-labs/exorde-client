@@ -92,23 +92,14 @@ Coming up soon !
                         "properties": {
                             "classification": {
                                 "type": "array",
-                                "items": {
-                                    "type": "object",
-                                    "properties": {
-                                        "topic": {
-                                            "description": "",
-                                            "type": "string"
-                                        },
-                                        "weight": {
-                                            "description": "",
-                                            "type": "number"
-                                        }
+                                "items": [
+                                    {
+                                        "type": "string"
                                     },
-                                    "required": [
-                                        "topic",
-                                        "weight"
-                                    ]
-                                }
+                                    {
+                                        "type": "number"
+                                    }
+                                ]
                             },
                             "langage_score": {
                                 "description": "Readability score of the text",
