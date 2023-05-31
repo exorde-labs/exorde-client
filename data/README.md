@@ -67,7 +67,7 @@ query(url: str) -> AsyncGenerator[Item, None]
                 },
                 "picture": {
                     "description": "Image linked to the item",
-                    "pattern": "^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\\\\.)+[a-zA-Z]{2,}",
+                    "pattern": "^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\\.)+[a-zA-Z]{2,}",
                     "type": "string"
                 },
                 "author": {
@@ -78,14 +78,17 @@ query(url: str) -> AsyncGenerator[Item, None]
                     "description": "Identifier used by source",
                     "type": "string"
                 },
-                "external_parent_id": {},
+                "external_parent_id": {
+                    "description": "Identifier of parent item, as used by source",
+                    "type": "string"
+                },
                 "domain": {
                     "description": "Domain name on which the item was retrieved",
                     "type": "string"
                 },
                 "url": {
                     "description": "Uniform-Resource-Locator that identifies the location of the item",
-                    "pattern": "^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\\\\.)+[a-zA-Z]{2,}",
+                    "pattern": "^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\\.)+[a-zA-Z]{2,}",
                     "type": "string"
                 }
             },
