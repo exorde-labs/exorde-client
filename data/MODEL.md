@@ -38,4 +38,4 @@ query(url: str) -> AsyncGenerator[Item, None]
 - Items describe entities such as links, videos, posts, comments.
 - The item description is valid both for scraping & analysis, therefor the schema also contains the attributes that would be retrieved trough [lab](../lab) processing.
 - The [json-schema](https://github.com/exorde-labs/exorde/schema/schema.json) is generated from this [expression](./exorde_data/__init__.py)
-
+- Both `Content` and `Title` are Optional, HOWEVER, one of them has to be existent for an Item to be valid.
