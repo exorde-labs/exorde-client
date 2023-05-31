@@ -3,6 +3,7 @@
 Coming up soon !
 
 ## Schema used by the protocol
+```json
 {
     "type": "object",
     "properties": {
@@ -419,3 +420,4 @@ Coming up soon !
         "kind"
     ]
 }
+```
