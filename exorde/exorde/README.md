@@ -70,7 +70,8 @@ Coming up soon !
                         "type": "array",
                         "items": {
                             "type": "string"
-                        }
+                        },
+                        "uniqueItems": true
                     },
                     "translation": {
                         "type": "object",
