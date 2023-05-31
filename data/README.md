@@ -98,7 +98,14 @@ query(url: str) -> AsyncGenerator[Item, None]
                 "url"
             ]
         },
-        "analysis": {
+        "top_keywords": {
+            "description": "The main keywords extracted from the content field",
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "translation": {
             "type": "object",
             "properties": {
                 "language": {
@@ -108,7 +115,15 @@ query(url: str) -> AsyncGenerator[Item, None]
                 "translation": {
                     "description": "The content translated in English language",
                     "type": "string"
-                },
+                }
+            },
+            "required": [
+                "translation"
+            ]
+        },
+        "analysis": {
+            "type": "object",
+            "properties": {
                 "langage_score": {
                     "description": "Readability score of the text",
                     "type": "number"
@@ -143,13 +158,6 @@ query(url: str) -> AsyncGenerator[Item, None]
                     "type": "array",
                     "items": {
                         "type": "number"
-                    }
-                },
-                "top_keywords": {
-                    "description": "The main keywords extracted from the content field",
-                    "type": "array",
-                    "items": {
-                        "type": "string"
                     }
                 },
                 "gender": {
@@ -406,12 +414,10 @@ query(url: str) -> AsyncGenerator[Item, None]
                 }
             },
             "required": [
-                "translation",
                 "langage_score",
                 "sentiment",
                 "classification",
                 "embedding",
-                "top_keywords",
                 "gender",
                 "source_type",
                 "text_type",
@@ -435,6 +441,8 @@ query(url: str) -> AsyncGenerator[Item, None]
     },
     "required": [
         "item",
+        "top_keywords",
+        "translation",
         "analysis",
         "collection_client_version",
         "collection_module",

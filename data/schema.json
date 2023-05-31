@@ -56,7 +56,14 @@
                 "url"
             ]
         },
-        "analysis": {
+        "top_keywords": {
+            "description": "The main keywords extracted from the content field",
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "translation": {
             "type": "object",
             "properties": {
                 "language": {
@@ -66,7 +73,15 @@
                 "translation": {
                     "description": "The content translated in English language",
                     "type": "string"
-                },
+                }
+            },
+            "required": [
+                "translation"
+            ]
+        },
+        "analysis": {
+            "type": "object",
+            "properties": {
                 "langage_score": {
                     "description": "Readability score of the text",
                     "type": "number"
@@ -101,13 +116,6 @@
                     "type": "array",
                     "items": {
                         "type": "number"
-                    }
-                },
-                "top_keywords": {
-                    "description": "The main keywords extracted from the content field",
-                    "type": "array",
-                    "items": {
-                        "type": "string"
                     }
                 },
                 "gender": {
@@ -364,12 +372,10 @@
                 }
             },
             "required": [
-                "translation",
                 "langage_score",
                 "sentiment",
                 "classification",
                 "embedding",
-                "top_keywords",
                 "gender",
                 "source_type",
                 "text_type",
@@ -393,6 +399,8 @@
     },
     "required": [
         "item",
+        "top_keywords",
+        "translation",
         "analysis",
         "collection_client_version",
         "collection_module",
