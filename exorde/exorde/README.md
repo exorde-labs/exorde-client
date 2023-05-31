@@ -3,8 +3,6 @@
 Coming up soon !
 
 ## Schema used by the protocol
-
-```json
 {
     "type": "object",
     "properties": {
@@ -89,30 +87,29 @@ Coming up soon !
                             "translation"
                         ]
                     },
-                    "classification": {
-                        "description": "Probable categorization(s) of the post in a pre-determined set of general topics (list of objects with float associated for each topic, expressing their likelihood)",
-                        "type": "array",
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "topic": {
-                                    "description": "",
-                                    "type": "string"
-                                },
-                                "weight": {
-                                    "description": "",
-                                    "type": "number"
-                                }
-                            },
-                            "required": [
-                                "topic",
-                                "weight"
-                            ]
-                        }
-                    },
                     "analysis": {
                         "type": "object",
                         "properties": {
+                            "classification": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "topic": {
+                                            "description": "",
+                                            "type": "string"
+                                        },
+                                        "weight": {
+                                            "description": "",
+                                            "type": "number"
+                                        }
+                                    },
+                                    "required": [
+                                        "topic",
+                                        "weight"
+                                    ]
+                                }
+                            },
                             "langage_score": {
                                 "description": "Readability score of the text",
                                 "type": "number"
@@ -382,6 +379,7 @@ Coming up soon !
                             }
                         },
                         "required": [
+                            "classification",
                             "langage_score",
                             "sentiment",
                             "embedding",
@@ -410,7 +408,6 @@ Coming up soon !
                     "item",
                     "top_keywords",
                     "translation",
-                    "classification",
                     "analysis",
                     "collection_client_version",
                     "collection_module",
@@ -418,11 +415,16 @@ Coming up soon !
                 ]
             }
         },
-        "kind": {}
+        "kind": {
+            "type": "string",
+            "enum": [
+                "SPOTTING",
+                "VALIDATION"
+            ]
+        }
     },
     "required": [
         "items",
         "kind"
     ]
 }
-```
