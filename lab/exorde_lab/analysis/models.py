@@ -109,6 +109,18 @@ class DescriptedIrony(Irony, metaclass=Annotation):
     annotation = Irony
 
 
+class Age(Schema):
+    bellow_twenty: float
+    twenty_thirty: float
+    thirty_forty: float
+    forty_more: float
+
+
+class DescriptedAge(Age, metaclass=Annotation):
+    description = "Measure author's age"
+    annotation = Age
+
+
 class Analysis(Schema):
     langage_score: LanguageScore
     sentiment: Sentiment
@@ -118,3 +130,4 @@ class Analysis(Schema):
     text_type: DescriptedTextType
     emotion: DescriptedEmotion
     irony: DescriptedIrony
+    age: DescriptedAge

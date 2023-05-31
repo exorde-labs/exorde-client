@@ -1,9 +1,7 @@
 from madtypes import Annotation, Schema
 
-# classification: DescriptedClassification
 
-
-class DescriptedClassification(tuple):
+class DescriptedClassification(tuple, metaclass=Annotation):
     description = "label and score of zero_shot"
     annotation = tuple[str, float]
 

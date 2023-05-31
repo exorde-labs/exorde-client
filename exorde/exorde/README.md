@@ -370,6 +370,30 @@ Coming up soon !
                                     "irony",
                                     "non_irony"
                                 ]
+                            },
+                            "age": {
+                                "description": "Measure author's age",
+                                "type": "object",
+                                "properties": {
+                                    "bellow_twenty": {
+                                        "type": "number"
+                                    },
+                                    "twenty_thirty": {
+                                        "type": "number"
+                                    },
+                                    "thirty_forty": {
+                                        "type": "number"
+                                    },
+                                    "forty_more": {
+                                        "type": "number"
+                                    }
+                                },
+                                "required": [
+                                    "bellow_twenty",
+                                    "twenty_thirty",
+                                    "thirty_forty",
+                                    "forty_more"
+                                ]
                             }
                         },
                         "required": [
@@ -381,7 +405,8 @@ Coming up soon !
                             "source_type",
                             "text_type",
                             "emotion",
-                            "irony"
+                            "irony",
+                            "age"
                         ]
                     },
                     "collection_client_version": {
