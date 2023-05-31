@@ -28,7 +28,7 @@ class Author(str, metaclass=Annotation):
 class CreatedAt(str, metaclass=Annotation):
     description = "ISO8601/RFC3339 Date of creation of the item"
     annotation = str
-    pattern = r"^([\\+-]?\\d{4}(?!\\d{2}\\b))((-?)((0[1-9]|1[0-2])(\\3([12]\\d|0[1-9]|3[01]))?|W([0-4]\\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\\d|[12]\\d{2}|3([0-5]\\d|6[1-6])))([T\\s]((([01]\\d|2[0-3])((:?)[0-5]\\d)?|24\\:?00)([\\.,]\\d+(?!:))?)?(\\17[0-5]\\d([\\.,]\\d+)?)?([zZ]|([\\+-])([01]\\d|2[0-3]):?([0-5]\\d)?)?)?)?$"
+    pattern = r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}\.[0-9]{1,6}?Z$"
 
 
 class Language(str, metaclass=Annotation):
@@ -69,7 +69,7 @@ class Sentiment(str, metaclass=Annotation):
 class CollectedAt(str, metaclass=Annotation):
     description = "ISO8601/RFC3339 Date of collection of the item"
     annotation = str
-    pattern = r"^([\\+-]?\\d{4}(?!\\d{2}\\b))((-?)((0[1-9]|1[0-2])(\\3([12]\\d|0[1-9]|3[01]))?|W([0-4]\\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\\d|[12]\\d{2}|3([0-5]\\d|6[1-6])))([T\\s]((([01]\\d|2[0-3])((:?)[0-5]\\d)?|24\\:?00)([\\.,]\\d+(?!:))?)?(\\17[0-5]\\d([\\.,]\\d+)?)?([zZ]|([\\+-])([01]\\d|2[0-3]):?([0-5]\\d)?)?)?)?$"
+    pattern = r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}\.[0-9]{1,6}?Z$"
 
 
 class CollectionClientVersion(str, metaclass=Annotation):
@@ -228,21 +228,19 @@ class ExternalParentId(str, metaclass=Annotation):
 class Item(Schema):
     """Created by a scraping module, it represent a post, article, comment..."""
 
-    language: Optional[Language]  # content or title
-    translation: Translation  # should be mandatory
-    summary: Optional[Summary]  # <- description or summary available
+    created_at: CreatedAt
     title: Optional[Title]  # titre obligatoire si pas de contenu
-    content: Content
+    content: Optional[Content]
+    summary: Optional[Summary]  # <- description or summary available
     picture: Optional[Picture]  # illustration picture # URL
     author: Optional[Author]
     external_id: Optional[ExternalId]
     external_parent_id: Optional[ExternalParentId]
     domain: Domain
     url: Url
-    created_at: CreatedAt
     # type: Type # work in progress
 
-    def is_valid(self, **kwargs):
+    def is_valid(self, **kwargs) -> bool:
         """object is valid if we either have content or title"""
         return (
             False
@@ -253,6 +251,8 @@ class Item(Schema):
 
 
 class Analysis(Schema):
+    language: Optional[Language]  # content or title
+    translation: Translation
     langage_score: LanguageScore
     sentiment: Sentiment
     classification: DescriptedClassification
