@@ -48,16 +48,9 @@ query(url: str) -> AsyncGenerator[Item, None]
         "item": {
             "type": "object",
             "properties": {
-                "language": {
-                    "description": "ISO639-1 language code that consists of two lowercase letters",
-                    "type": "string"
-                },
-                "translation": {
-                    "description": "The content translated in English language",
-                    "type": "string"
-                },
-                "summary": {
-                    "description": "Short version of the content",
+                "created_at": {
+                    "description": "ISO8601/RFC3339 Date of creation of the item",
+                    "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}\\.[0-9]{1,6}?Z$",
                     "type": "string"
                 },
                 "title": {
@@ -66,6 +59,10 @@ query(url: str) -> AsyncGenerator[Item, None]
                 },
                 "content": {
                     "description": "Text body of the item",
+                    "type": "string"
+                },
+                "summary": {
+                    "description": "Short version of the content",
                     "type": "string"
                 },
                 "picture": {
@@ -90,24 +87,25 @@ query(url: str) -> AsyncGenerator[Item, None]
                     "description": "Uniform-Resource-Locator that identifies the location of the item",
                     "pattern": "^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\\\\.)+[a-zA-Z]{2,}",
                     "type": "string"
-                },
-                "created_at": {
-                    "description": "ISO8601/RFC3339 Date of creation of the item",
-                    "pattern": "^([\\\\+-]?\\\\d{4}(?!\\\\d{2}\\\\b))((-?)((0[1-9]|1[0-2])(\\\\3([12]\\\\d|0[1-9]|3[01]))?|W([0-4]\\\\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\\\\d|[12]\\\\d{2}|3([0-5]\\\\d|6[1-6])))([T\\\\s]((([01]\\\\d|2[0-3])((:?)[0-5]\\\\d)?|24\\\\:?00)([\\\\.,]\\\\d+(?!:))?)?(\\\\17[0-5]\\\\d([\\\\.,]\\\\d+)?)?([zZ]|([\\\\+-])([01]\\\\d|2[0-3]):?([0-5]\\\\d)?)?)?)?$",
-                    "type": "string"
                 }
             },
             "required": [
-                "translation",
-                "content",
+                "created_at",
                 "domain",
-                "url",
-                "created_at"
+                "url"
             ]
         },
         "analysis": {
             "type": "object",
             "properties": {
+                "language": {
+                    "description": "ISO639-1 language code that consists of two lowercase letters",
+                    "type": "string"
+                },
+                "translation": {
+                    "description": "The content translated in English language",
+                    "type": "string"
+                },
                 "langage_score": {
                     "description": "Readability score of the text",
                     "type": "number"
@@ -405,6 +403,7 @@ query(url: str) -> AsyncGenerator[Item, None]
                 }
             },
             "required": [
+                "translation",
                 "langage_score",
                 "sentiment",
                 "classification",
@@ -427,7 +426,7 @@ query(url: str) -> AsyncGenerator[Item, None]
         },
         "collected_at": {
             "description": "ISO8601/RFC3339 Date of collection of the item",
-            "pattern": "^([\\\\+-]?\\\\d{4}(?!\\\\d{2}\\\\b))((-?)((0[1-9]|1[0-2])(\\\\3([12]\\\\d|0[1-9]|3[01]))?|W([0-4]\\\\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\\\\d|[12]\\\\d{2}|3([0-5]\\\\d|6[1-6])))([T\\\\s]((([01]\\\\d|2[0-3])((:?)[0-5]\\\\d)?|24\\\\:?00)([\\\\.,]\\\\d+(?!:))?)?(\\\\17[0-5]\\\\d([\\\\.,]\\\\d+)?)?([zZ]|([\\\\+-])([01]\\\\d|2[0-3]):?([0-5]\\\\d)?)?)?)?$",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}\\.[0-9]{1,6}?Z$",
             "type": "string"
         }
     },
