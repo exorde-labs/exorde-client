@@ -6,7 +6,7 @@ from exorde_lab.models import (
     TopKeywords,
     Translation,
     Analysis,
-    DescriptedClassification,
+    Classification,
 )
 
 
@@ -33,13 +33,16 @@ class BatchKindEnum(Enum):
     VALIDATION = "VALIDATION"
 
 
+class ProtocolAnalysis(Classification, Analysis):
+    pass
+
+
 class Item(Schema):
     item: CollectedItem
 
     top_keywords: TopKeywords  # yake result
     translation: Translation  # argos_translate
-    classification: DescriptedClassification
-    analysis: Analysis
+    analysis: ProtocolAnalysis
 
     collection_client_version: CollectionClientVersion
     collection_module: CollectionModule
