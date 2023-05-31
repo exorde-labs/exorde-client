@@ -223,6 +223,7 @@ class ExternalId(str, metaclass=Annotation):
 
 class ExternalParentId(str, metaclass=Annotation):
     description = "Identifier of parent item, as used by source"
+    annotation = str
 
 
 class Item(Schema):
