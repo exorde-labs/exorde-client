@@ -38,7 +38,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Generate Schema
-        run: pip install -e madtypes ; rm -rf ./exorde/exorde/schema.json ; python3 exorde/exorde/protocol/__init__.py  >> exorde/exorde/schema.json
+        run: pip install madtypes ; rm -rf ./exorde/exorde/schema.json ; python3 exorde/exorde/protocol/__init__.py  >> exorde/exorde/schema.json
       - name: Update README.md
         run: |
           rm -rf exorde/exorde/README.md
