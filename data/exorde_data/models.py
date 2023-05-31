@@ -31,13 +31,6 @@ class CreatedAt(str, metaclass=Annotation):
     pattern = r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}\.[0-9]{1,6}?Z$"
 
 
-class Language(str, metaclass=Annotation):
-    description = (
-        "ISO639-1 language code that consists of two lowercase letters"
-    )
-    annotation = str
-
-
 class Title(str, metaclass=Annotation):
     description = "Headline of the item"
     annotation = str
@@ -54,11 +47,6 @@ class Url(str, metaclass=Annotation):
     )
     annotation = str
     pattern = r"^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\.)+[a-zA-Z]{2,}"
-
-
-class Translation(str, metaclass=Annotation):
-    description = "The content translated in English language"
-    annotation = str
 
 
 class Sentiment(str, metaclass=Annotation):
@@ -251,14 +239,28 @@ class Item(Schema):
         )
 
 
-class Analysis(Schema):
+class Translated(str, metaclass=Annotation):
+    description = "The content translated in English language"
+    annotation = str
+
+
+class Language(str, metaclass=Annotation):
+    description = (
+        "ISO639-1 language code that consists of two lowercase letters"
+    )
+    annotation = str
+
+
+class Translation(Schema):
     language: Optional[Language]  # content or title
-    translation: Translation
+    translation: Translated
+
+
+class Analysis(Schema):
     langage_score: LanguageScore
     sentiment: Sentiment
     classification: DescriptedClassification
     embedding: Embedding
-    top_keywords: TopKeywords  # check old schema
     gender: DescriptedGender
     source_type: DescriptedSourceType
     text_type: DescriptedTextType
@@ -269,7 +271,11 @@ class Analysis(Schema):
 
 class Analyzed(Schema):
     item: Item
+
+    top_keywords: TopKeywords
+    translation: Translation
     analysis: Analysis
+
     collection_client_version: CollectionClientVersion
     collection_module: CollectionModule
     collected_at: CollectedAt
