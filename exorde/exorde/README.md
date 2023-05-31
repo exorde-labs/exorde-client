@@ -93,6 +93,7 @@ Coming up soon !
                         "type": "object",
                         "properties": {
                             "classification": {
+                                "description": "label and score of zero_shot",
                                 "type": "array",
                                 "items": [
                                     {
