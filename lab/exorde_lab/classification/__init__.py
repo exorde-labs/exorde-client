@@ -33,29 +33,9 @@ def zero_shot(item, labeldict, classifier, max_depth=None, depth=0):
         return labels
     else:
         output_list = list()
-
-        for _t, item_ in zip(texts, labels_list):
-            outputs = dict()
-
-            for _lab in item_:
-                # _labels = dict()
-                # for lab in _lab:
-                keys = list(labeldict[_lab].keys())
-                output = classifier(
-                    texts, keys, multi_label=False, max_length=32
-                )
-                _out = dict()
-                for x in range(len(output)):
-                    for i in range(len(output[x]["labels"])):
-                        if output[x]["scores"][i] > 0.1:
-                            _out[output[x]["labels"][i]] = output[x]["scores"][
-                                i
-                            ]
-                # _labs = [output[x]["labels"] for x in range(len(output))]
-                # _scores = [output[x]["scores"] for x in range(len(output))]
-
-                outputs[_lab] = _out
-            output_list.append(outputs)
-    # fill the classification field with the output
-    item.classification = output_list
+        keys = list(labeldict[labels_list[0][0]].keys())
+        output = classifier(
+                texts, keys, multi_label=False, max_length=32
+            )
+        item.classification = Classification(Topic(output[0]["labels"][0]), Weight(output[0]["scores"][0]))
     return item
