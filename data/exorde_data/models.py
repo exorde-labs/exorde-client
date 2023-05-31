@@ -15,7 +15,7 @@ class Summary(str, metaclass=Annotation):
 class Picture(str, metaclass=Annotation):
     description = "Image linked to the item"
     annotation = str
-    pattern = r"^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\\.)+[a-zA-Z]{2,}"
+    pattern = r"^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\.)+[a-zA-Z]{2,}"
 
 
 class Author(str, metaclass=Annotation):
@@ -53,7 +53,7 @@ class Url(str, metaclass=Annotation):
         "Uniform-Resource-Locator that identifies the location of the item"
     )
     annotation = str
-    pattern = r"^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\\.)+[a-zA-Z]{2,}"
+    pattern = r"^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\.)+[a-zA-Z]{2,}"
 
 
 class Translation(str, metaclass=Annotation):
