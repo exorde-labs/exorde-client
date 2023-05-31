@@ -15,7 +15,7 @@ setup(
     entry_points={
         "console_scripts": [
             "exorde = exorde.__init__:launch",
-            "ipfs_schema = exorde.protocol.ipfs.schema:print_schema",
+            "exorde_protocol_schema = exorde.protocol:print_schema",
         ],
     },
     install_requires=["web3", "exorde_lab", "aiosow", "aiohttp"],

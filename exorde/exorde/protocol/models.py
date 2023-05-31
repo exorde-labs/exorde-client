@@ -1,3 +1,4 @@
+from enum import Enum
 from madtypes import Schema, Annotation
 
 from exorde_data.models import Item as CollectedItem
@@ -22,6 +23,11 @@ class CollectionModule(str, metaclass=Annotation):
     annotation = str
 
 
+class BatchKindEnum(Enum):
+    SPOTTING = "SPOTTING"
+    VALIDATION = "VALIDATION"
+
+
 class Item(Schema):
     item: CollectedItem
 
@@ -32,3 +38,8 @@ class Item(Schema):
     collection_client_version: CollectionClientVersion
     collection_module: CollectionModule
     collected_at: CollectedAt
+
+
+class Batch(Schema):
+    items: list[Item]
+    kind: BatchKindEnum
