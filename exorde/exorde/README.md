@@ -4,7 +4,6 @@ Coming up soon !
 
 ## Schema used by the protocol
 ```json
-
 {
     "type": "object",
     "properties": {
@@ -61,14 +60,6 @@ Coming up soon !
                             "domain",
                             "url"
                         ]
-                    },
-                    "top_keywords": {
-                        "description": "The main keywords extracted from the content field",
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "uniqueItems": true
                     },
                     "analysis": {
                         "type": "object",
@@ -379,6 +370,14 @@ Coming up soon !
                             "language": {
                                 "description": "ISO639-1 language code that consists of two lowercase letters",
                                 "type": "string"
+                            },
+                            "top_keywords": {
+                                "description": "The main keywords extracted from the content field",
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "uniqueItems": true
                             }
                         },
                         "required": [
@@ -391,7 +390,8 @@ Coming up soon !
                             "text_type",
                             "emotion",
                             "irony",
-                            "age"
+                            "age",
+                            "top_keywords"
                         ]
                     },
                     "collection_client_version": {
@@ -410,7 +410,6 @@ Coming up soon !
                 },
                 "required": [
                     "item",
-                    "top_keywords",
                     "analysis",
                     "collection_client_version",
                     "collection_module",
@@ -431,5 +430,4 @@ Coming up soon !
         "kind"
     ]
 }
-
 ```

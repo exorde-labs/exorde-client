@@ -39,14 +39,15 @@ ProtocolItem = subtract_fields("content")(CollectedItem)
 ProtocolTranslation = subtract_fields("translation")(Translation)
 
 
-class ProtocolAnalysis(Classification, Analysis, ProtocolTranslation):
+class ProtocolAnalysis(
+    Classification, Analysis, ProtocolTranslation, TopKeywords
+):
     pass
 
 
 class Item(Schema):
     item: ProtocolItem
 
-    top_keywords: TopKeywords  # yake result
     analysis: ProtocolAnalysis
 
     collection_client_version: CollectionClientVersion

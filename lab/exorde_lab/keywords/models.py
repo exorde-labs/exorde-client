@@ -1,6 +1,10 @@
-from madtypes import Annotation
+from madtypes import Annotation, Schema
 
 
-class TopKeywords(list, metaclass=Annotation):
+class DescriptedTopKeywords(list, metaclass=Annotation):
     description = "The main keywords extracted from the content field"
     annotation = set[str]
+
+
+class TopKeywords(Schema):
+    top_keywords: DescriptedTopKeywords
