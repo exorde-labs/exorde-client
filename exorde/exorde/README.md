@@ -4,6 +4,7 @@ Coming up soon !
 
 ## Schema used by the protocol
 ```json
+
 {
     "type": "object",
     "properties": {
@@ -22,10 +23,6 @@ Coming up soon !
                             },
                             "title": {
                                 "description": "Headline of the item",
-                                "type": "string"
-                            },
-                            "content": {
-                                "description": "Text body of the item",
                                 "type": "string"
                             },
                             "summary": {
@@ -72,22 +69,6 @@ Coming up soon !
                             "type": "string"
                         },
                         "uniqueItems": true
-                    },
-                    "translation": {
-                        "type": "object",
-                        "properties": {
-                            "language": {
-                                "description": "ISO639-1 language code that consists of two lowercase letters",
-                                "type": "string"
-                            },
-                            "translation": {
-                                "description": "The content translated in English language",
-                                "type": "string"
-                            }
-                        },
-                        "required": [
-                            "translation"
-                        ]
                     },
                     "analysis": {
                         "type": "object",
@@ -394,6 +375,10 @@ Coming up soon !
                                     "thirty_forty",
                                     "forty_more"
                                 ]
+                            },
+                            "language": {
+                                "description": "ISO639-1 language code that consists of two lowercase letters",
+                                "type": "string"
                             }
                         },
                         "required": [
@@ -426,7 +411,6 @@ Coming up soon !
                 "required": [
                     "item",
                     "top_keywords",
-                    "translation",
                     "analysis",
                     "collection_client_version",
                     "collection_module",
@@ -447,4 +431,5 @@ Coming up soon !
         "kind"
     ]
 }
+
 ```

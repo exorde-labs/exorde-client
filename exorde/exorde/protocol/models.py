@@ -33,15 +33,20 @@ class BatchKindEnum(Enum):
     VALIDATION = "VALIDATION"
 
 
-class ProtocolAnalysis(Classification, Analysis):
+from madtypes import subtract_fields
+
+ProtocolItem = subtract_fields("content")(CollectedItem)
+ProtocolTranslation = subtract_fields("translation")(Translation)
+
+
+class ProtocolAnalysis(Classification, Analysis, ProtocolTranslation):
     pass
 
 
 class Item(Schema):
-    item: CollectedItem
+    item: ProtocolItem
 
     top_keywords: TopKeywords  # yake result
-    translation: Translation  # argos_translate
     analysis: ProtocolAnalysis
 
     collection_client_version: CollectionClientVersion
