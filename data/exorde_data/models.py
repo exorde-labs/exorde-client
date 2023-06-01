@@ -28,7 +28,7 @@ class Author(str, metaclass=Annotation):
 class CreatedAt(str, metaclass=Annotation):
     description = "ISO8601/RFC3339 Date of creation of the item"
     annotation = str
-    pattern = r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}\.[0-9]{1,6}?Z$"
+    pattern = r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(.[0-9]{1,6})?Z$"
 
 
 class Title(str, metaclass=Annotation):
