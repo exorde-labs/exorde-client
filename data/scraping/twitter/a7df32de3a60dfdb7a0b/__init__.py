@@ -67,8 +67,8 @@ async def get_sns_tweets(
             "{} since:{}".format(search_keyword, today), mode=mode
         ).get_items()
     except:
-        yield
-        return
+        yield None
+        attempted_tweet_collect = []
 
     for _post in attempted_tweet_collect:
         post = _post.__dict__
