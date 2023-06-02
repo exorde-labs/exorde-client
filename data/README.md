@@ -63,8 +63,8 @@ query(url: str) -> AsyncGenerator[Item, None]
             "type": "string"
         },
         "picture": {
-            "description": "Image linked to the item",
-            "pattern": "^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\\.)+[a-zA-Z]{2,}",
+            "description": "Uniform-Resource-Locator",
+            "pattern": "^https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,32}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)$",
             "type": "string"
         },
         "author": {
@@ -84,8 +84,8 @@ query(url: str) -> AsyncGenerator[Item, None]
             "type": "string"
         },
         "url": {
-            "description": "Uniform-Resource-Locator that identifies the location of the item",
-            "pattern": "^https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,8}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)$",
+            "description": "Uniform-Resource-Locator",
+            "pattern": "^https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,32}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)$",
             "type": "string"
         }
     },
