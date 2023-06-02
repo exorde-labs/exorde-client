@@ -47,7 +47,7 @@ query(url: str) -> AsyncGenerator[Item, None]
     "properties": {
         "created_at": {
             "description": "ISO8601/RFC3339 Date of creation of the item",
-            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}\\.[0-9]{1,6}?Z$",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(.[0-9]{1,6})?Z$",
             "type": "string"
         },
         "title": {
