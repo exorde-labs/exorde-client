@@ -42,11 +42,9 @@ class Domain(str, metaclass=Annotation):
 
 
 class Url(str, metaclass=Annotation):
-    description = (
-        "Uniform-Resource-Locator that identifies the location of the item"
-    )
+    description = "Uniform-Resource-Locator"
     annotation = str
-    pattern = r"^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,8}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$"
+    pattern = r"^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,32}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$"
 
 
 class Sentiment(str, metaclass=Annotation):
@@ -203,7 +201,7 @@ class Item(Schema):
     title: Optional[Title]  # titre obligatoire si pas de contenu
     content: Optional[Content]
     summary: Optional[Summary]  # <- description or summary available
-    picture: Optional[Picture]  # illustration picture # URL
+    picture: Optional[Url]
     author: Optional[Author]
     external_id: Optional[ExternalId]
     external_parent_id: Optional[ExternalParentId]
