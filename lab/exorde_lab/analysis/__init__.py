@@ -52,7 +52,7 @@ class TransformerBlock(tf.keras.layers.Layer):
         return self.layernorm2(out1 + ffn_output)
 
 
-def tag(items, nlp, device, mappings):
+def tag(texts, nlp, device, mappings):
     """
     Analyzes and tags a list of text documents using various NLP models and techniques.
 
@@ -81,7 +81,7 @@ def tag(items, nlp, device, mappings):
         return result
 
     # get text content attribute from all items
-    documents = [item.content for item in items]
+    documents = texts #[item.content for item in items]
 
     # Create an empty DataFrame
     tmp = pd.DataFrame()
@@ -203,98 +203,107 @@ def tag(items, nlp, device, mappings):
     #                if hasattr(item, k):
     #                    setattr(item._k.lower(), _k.lower(), tmp[i][_k][k][1])
                         
+    
     _out = []
     for i in range(len(tmp)):
+        
+        language_score = LanguageScore(tmp[i]["LanguageScore"][0][1])
 
-        language_score = LanguageScore(tmp[i]["LanguageScore"])
         sentiment = Sentiment(tmp[i]["Sentiment"])
+
         embedding = Embedding(tmp[i]["Embedding"])
+
         gender = Gender(male=tmp[i]["Gender"][0][1], female=tmp[i]["Gender"][1][1])
-        sources = {item['label']: item['score'] for item in tmp[i]["SourceType"]}
+        
+        sources = {item[0]: item[1] for item in tmp[i]["SourceType"]}
         sourceType = DescriptedSourceType(SourceType(
-                        social: sources["Social Networking and Messaging"]
-                        computers: sources["Computers and Technology"]
-                        games: sources["Games"]
-                        business: sources["Business/Corporate"]
-                        streaming: sources["Streaming Services"]
-                        ecommerce: sources["E-Commerce"]
-                        forums: sources["Forums"]
-                        photography: sources["Photography"]
-                        travel: sources["Travel"]
-                        adult: sources["Adult"]
-                        law: sources["Law and Government"]
-                        sports: sources["Sports"]
-                        education: sources["Education"]
-                        food: sources["Food"]
-                        health: sources["Health and Fitness"]
-                        news: sources["News"]
+                        social= sources["Social Networking and Messaging"],
+                        computers= sources["Computers and Technology"],
+                        games= sources["Games"],
+                        business= sources["Business/Corporate"],
+                        streaming= sources["Streaming Services"],
+                        ecommerce= sources["E-Commerce"],
+                        forums= sources["Forums"],
+                        photography= sources["Photography"],
+                        travel= sources["Travel"],
+                        adult= sources["Adult"],
+                        law= sources["Law and Government"],
+                        sports= sources["Sports"],
+                        education= sources["Education"],
+                        food= sources["Food"],
+                        health= sources["Health and Fitness"],
+                        news= sources["News"]
                     ))
-        types = {item['label']: item['score'] for item in tmp[i]["TextType"]}
+        types = {item[0]: item[1] for item in tmp[i]["TextType"]}
         textType = DescriptedTextType(TextType(
-                        assumption: types["Assumption"]
-                        anecdote: types["Anecdote"]
-                        none: types["None"]
-                        definition: types["Definition"]
-                        testimony: types["Testimony"]
-                        other: types["Other"]
-                        study: types["Statistics/Study"]
+                        assumption= types["Assumption"],
+                        anecdote= types["Anecdote"],
+                        none= types["None"],
+                        definition= types["Definition"],
+                        testimony= types["Testimony"],
+                        other= types["Other"],
+                        study= types["Statistics/Study"]
                     ))
 
-        emotions = {item['label']: item['score'] for item in tmp[i]["Emotion"]}
+        emotions = {item[0]: item[1] for item in tmp[i]["Emotion"]}
         emotion = DescriptedEmotion(Emotion(
-                        love: emotions["love"]
-                        admiration: emotions["admiration"]
-                        joy: emotions["joy"]
-                        approval: emotions["approval"]
-                        caring: emotions["caring"]
-                        excitement: emotions["excitement"]
-                        gratitude: emotions["gratitude"]
-                        desire: emotions["desire"]
-                        anger: emotions["anger"]
-                        optimism: emotions["optimism"]
-                        disapproval: emotions["disapproval"]
-                        grief: emotions["grief"]
-                        annoyance: emotions["annoyance"]
-                        pride: emotions["pride"]
-                        curiosity: emotions["curiosity"]
-                        neutral: emotions["neutral"]
-                        disgust: emotions["disgust"]
-                        disappointment: emotions["disappointment"]
-                        realization: emotions["realization"]
-                        fear: emotions["fear"]
-                        relief: emotions["relief"]
-                        confusion: emotions["confusion"]
-                        remorse: emotions["remorse"]
-                        embarrassement: emotions["embarrassement"]
-                        surprise: emotions["surprise"]
-                        sadness: emotions["sadness"]
-                        nervousness: emotions["nervousness"]
+                        love= emotions["love"],
+                        admiration= emotions["admiration"],
+                        joy= emotions["joy"],
+                        approval= emotions["approval"],
+                        caring= emotions["caring"],
+                        excitement= emotions["excitement"],
+                        gratitude= emotions["gratitude"],
+                        desire= emotions["desire"],
+                        anger= emotions["anger"],
+                        optimism= emotions["optimism"],
+                        disapproval= emotions["disapproval"],
+                        grief= emotions["grief"],
+                        annoyance= emotions["annoyance"],
+                        pride= emotions["pride"],
+                        curiosity= emotions["curiosity"],
+                        neutral= emotions["neutral"],
+                        disgust= emotions["disgust"],
+                        disappointment= emotions["disappointment"],
+                        realization= emotions["realization"],
+                        fear= emotions["fear"],
+                        relief= emotions["relief"],
+                        confusion= emotions["confusion"],
+                        remorse= emotions["remorse"],
+                        embarrassement= emotions["embarrassment"],
+                        surprise= emotions["surprise"],
+                        sadness= emotions["sadness"],
+                        nervousness= emotions["nervousness"]
                     ))
 
-        ironies = {item['label']: item['score'] for item in tmp[i]["Irony"]}
+        ironies = {item[0]: item[1] for item in tmp[i]["Irony"]}
+
         irony = DescriptedIrony(Irony(
-                    irony = ironies["irony"]
+                    irony = ironies["irony"],
                     non_irony = ironies["non_irony"]
                     ))
-        ages = {item['label']: item['score'] for item in tmp[i]["Age"]}
+
+        ages = {item[0]: item[1] for item in tmp[i]["Age"]}
+
         age = DescriptedAge(Age(
-                        bellow_twenty: ages["<20"]
-                        twenty_thirty: ages["20<30"]
-                        thirty_forty: ages["30<40"]
-                        forty_more: ages[">=40"]
+                        below_twenty= ages["<20"],
+                        twenty_thirty= ages["20<30"],
+                        thirty_forty= ages["30<40"],
+                        forty_more= ages[">=40"]
                     ))
         
         analysis = Analysis(
-            langage_score= language_score
-            sentiment= sentiment
-            embedding= embedding
-            gender= gender
-            source_type= sourceType
-            text_type= textType
-            emotion= emotion
-            irony= irony
+            langage_score= language_score,
+            sentiment= sentiment,
+            embedding= embedding,
+            gender= gender,
+            source_type= sourceType,
+            text_type= textType,
+            emotion= emotion,
+            irony= irony,
             age= age
         )
+
         _out.append(analysis)
 
         # item.translation = tmp[i]["Translation"]
