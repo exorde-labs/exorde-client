@@ -4,9 +4,9 @@ from exorde_lab.analysis.models import LanguageScore, Sentiment, Embedding, Gend
 from exorde_lab.startup import meta_tagger_initialization
 from exorde_data.models import Item, CreatedAt, Title, Content, Domain, Url
 import os
+os.environ["PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION"] = "python"
 
 def test_analysis():
-    os.environ["PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION"] = "python"
     test_item1 = Item(
         created_at=CreatedAt(
             str(datetime.datetime.now(None).isoformat()) + "Z"
