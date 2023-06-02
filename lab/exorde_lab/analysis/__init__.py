@@ -81,8 +81,11 @@ def tag(texts, nlp, device, mappings):
         return result
 
     # get text content attribute from all items
-    documents = texts #[item.content for item in items]
-
+    documents = [item.content for item in texts]
+    print(documents)
+    for doc in documents:
+        assert(isinstance(doc, str))
+        
     # Create an empty DataFrame
     tmp = pd.DataFrame()
 
