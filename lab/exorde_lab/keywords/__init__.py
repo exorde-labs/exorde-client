@@ -1,5 +1,7 @@
-import logging
 import yake
+
+from exorde_data.models import Item
+from .models import TopKeywords
 
 language = "en"
 max_ngram_size = 3
@@ -20,12 +22,8 @@ kw_extractor = yake.KeywordExtractor(
 extract_keywords = lambda text: kw_extractor.extract_keywords(text)
 
 
-def populate_keywords(item):
-    content = item.translation if item.translation else item.content
-    try:
-        item.top_keywords = list(
-            [e[0] for e in set(extract_keywords(content))]
-        )
-    except Exception as e:
-        logging.error(e)
-    return item
+def populate_keywords(item: Item) -> TopKeywords:
+    content: str = item.translation.translation
+    return TopKeywords(
+        top_keywords=[e[0] for e in set(extract_keywords(content))]
+    )
