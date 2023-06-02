@@ -42,6 +42,7 @@ class SourceType(Schema):
     education: float
     food: float
     health: float
+    news: float
 
 
 class DescriptedSourceType(SourceType, metaclass=Annotation):
