@@ -43,7 +43,7 @@
         },
         "url": {
             "description": "Uniform-Resource-Locator that identifies the location of the item",
-            "pattern": "^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\\.)+[a-zA-Z]{2,}",
+            "pattern": "^https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,8}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)$",
             "type": "string"
         }
     },
