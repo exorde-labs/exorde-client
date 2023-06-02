@@ -1,7 +1,7 @@
 from madtypes import Schema, Annotation
 
 
-class Sentiment(str, metaclass=Annotation):
+class Sentiment(float, metaclass=Annotation):
     description = "Measure of post sentiment from negative to positive (-1 = negative, +1 = positive, 0 = neutral)"
     annotation = float
 

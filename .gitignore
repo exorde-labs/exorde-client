@@ -13,6 +13,5 @@ schemator
 tag-result.json
 zero_shot-result.json
 browser
-twitter
 playwright
 .eggs
