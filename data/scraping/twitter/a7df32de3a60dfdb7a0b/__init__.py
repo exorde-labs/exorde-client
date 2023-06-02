@@ -61,10 +61,16 @@ async def get_sns_tweets(
         mode = snscrape.modules.twitter.TwitterSearchScraperMode.LIVE
     else:
         mode = snscrape.modules.twitter.TwitterSearchScraperMode.TOP
+    
+    try:
+        attempted_tweet_collect = snscrape.modules.twitter.TwitterSearchScraper(
+            "{} since:{}".format(search_keyword, today), mode=mode
+        ).get_items()
+    except:
+        yield
+        return
 
-    for _post in snscrape.modules.twitter.TwitterSearchScraper(
-        "{} since:{}".format(search_keyword, today), mode=mode
-    ).get_items():
+    for _post in attempted_tweet_collect:
         post = _post.__dict__
 
         tr_post = dict()
@@ -82,9 +88,12 @@ async def get_sns_tweets(
         )
 
         # Create a new sha1 hash
-        sha1 = hashlib.sha1()
-        # Update the hash with the author string encoded to bytes
-        author = post["user"].displayname
+        sha1 = hashlib.sha1()        
+        # Update the hash with the author string encoded to bytest
+        try:
+            author = post["user"].displayname
+        except:
+            author = "unknown"            
         sha1.update(author.encode())
         # Get the hexadecimal representation of the hash
         author_sha1_hex = sha1.hexdigest()
