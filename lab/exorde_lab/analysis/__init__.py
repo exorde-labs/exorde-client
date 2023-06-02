@@ -7,6 +7,7 @@ from huggingface_hub import hf_hub_download
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import tensorflow as tf
 import swifter
+from .models import LanguageScore, Sentiment, Embedding, Gender, DescriptedSourceType, SourceType, DescriptedTextType, TextType, DescriptedEmotion, Emotion, DescriptedIrony, Irony, DescriptedAge, Age, Analysis
 
 class TokenAndPositionEmbedding(tf.keras.layers.Layer):
     def __init__(self, maxlen, vocab_size, embed_dim, **__kwargs__):
