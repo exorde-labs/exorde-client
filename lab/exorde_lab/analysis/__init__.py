@@ -88,6 +88,10 @@ def tag(texts, nlp, device, mappings):
 
     # Add the original text documents
     tmp["Translation"] = documents
+    
+    assert(tmp["Translation"] is not None)
+    assert(len(tmp["Translation"])>0)
+    print(tmp["Translation"])
 
     # Compute sentence embeddings
     model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
@@ -182,27 +186,7 @@ def tag(texts, nlp, device, mappings):
     # various processed data like embeddings, text classifications, sentiment, etc., as key-value pairs.
     # Update the items with processed data
     tmp = tmp.to_dict(orient="records")
-    #for i, item in enumerate(items):
-    #    for _k in item.keys():
-    #        if _k in ["Translation", "Embedding", "Sentiment"]:
-    #            setattr(item, _k.lower(), tmp[i][_k])
-    #        elif _k == "LanguageScore":
-    #            item.languages_score = tmp[i][_k]
-    #        elif _k == "Age":
-    #            for j in range(len(tmp[i][_k])):
-    #                if tmp[i][_k][j][0] == "<20":
-    #                    item.age.below_twenty = tmp[i][_k][j][1]
-    #                elif tmp[i][_k][j][0] == "20<30":
-    #                    item.age.twenty_thirthy = tmp[i][_k][j][1]
-    #                elif tmp[i][_k][j][0] == "30<40":
-    #                    item.age.thirty_forty = tmp[i][_k][j][1]
-    #                else:
-    #                    item.age.forty_more = tmp[i][_k][j][1]
-    #        else:
-    #            for k in range(len(tmp[i][_k])):
-    #                if hasattr(item, k):
-    #                    setattr(item._k.lower(), _k.lower(), tmp[i][_k][k][1])
-                        
+           
     
     _out = []
     for i in range(len(tmp)):
