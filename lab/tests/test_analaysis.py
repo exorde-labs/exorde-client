@@ -1,10 +1,10 @@
+import os
+os.environ["PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION"] = "python"
 import datetime
 from exorde_lab.analysis import tag
 from exorde_lab.analysis.models import LanguageScore, Sentiment, Embedding, Gender, DescriptedSourceType, SourceType, DescriptedTextType, TextType, DescriptedEmotion, Emotion, DescriptedIrony, Irony, DescriptedAge, Age, Analysis
 from exorde_lab.startup import meta_tagger_initialization
 from exorde_data.models import Item, CreatedAt, Title, Content, Domain, Url
-import os
-os.environ["PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION"] = "python"
 
 def test_analysis():
     test_item1 = Item(
