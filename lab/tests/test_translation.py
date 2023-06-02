@@ -1,4 +1,3 @@
-import pytz
 import datetime
 from exorde_lab.translation import translate
 from exorde_lab.translation.models import Translation
@@ -25,4 +24,4 @@ def test_translate():
     print(translated.translation)
     print(translated.language)
     assert translated.language == "fr"
-    assert 1 == 2
+    assert translated.translation == "This is a wonderful English content"

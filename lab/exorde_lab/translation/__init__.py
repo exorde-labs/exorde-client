@@ -31,10 +31,13 @@ def translate(
         else:
             translated = item.content
         return Translation(
-            language=Language(language["lang"]), translated=translated
+            language=Language(language["lang"]),
+            translation=Translated(translated),
         )
-    except:
-        logging.debug(f"Error translating from {language['lang']} ({item})")
+    except Exception as err:
+        logging.error(
+            f"Error translating from {language['lang']} ({item}) : {err}"
+        )
         return Translation(
             language=Language(language["lang"]),
             translation=Translated(item.content),
