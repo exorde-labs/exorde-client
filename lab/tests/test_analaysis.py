@@ -3,9 +3,10 @@ from exorde_lab.analysis import tag
 from exorde_lab.analysis.models import LanguageScore, Sentiment, Embedding, Gender, DescriptedSourceType, SourceType, DescriptedTextType, TextType, DescriptedEmotion, Emotion, DescriptedIrony, Irony, DescriptedAge, Age, Analysis
 from exorde_lab.startup import meta_tagger_initialization
 from exorde_data.models import Item, CreatedAt, Title, Content, Domain, Url
-
+import os
 
 def test_analysis():
+    os.environ["PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION"] = "python"
     test_item1 = Item(
         created_at=CreatedAt(
             str(datetime.datetime.now(None).isoformat()) + "Z"
