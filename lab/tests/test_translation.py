@@ -4,9 +4,11 @@ from exorde_lab.translation.models import Translation
 from exorde_data.models import Item, CreatedAt, Title, Content, Domain, Url
 
 from argostranslate import translate as _translate
+import os
 
 
 def test_translate():
+    os.environ["PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION"] = "python"
     test_item = Item(
         created_at=CreatedAt(
             str(datetime.datetime.now(None).isoformat()) + "Z"
