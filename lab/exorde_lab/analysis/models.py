@@ -111,7 +111,7 @@ class DescriptedIrony(Irony, metaclass=Annotation):
 
 
 class Age(Schema):
-    bellow_twenty: float
+    below_twenty: float
     twenty_thirty: float
     thirty_forty: float
     forty_more: float
