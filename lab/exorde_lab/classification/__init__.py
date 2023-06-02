@@ -33,14 +33,9 @@ def zero_shot(
         ]
         labels_list.append(labels)
 
-    depth += 1
-    if depth == max_depth:
-        _labels = labels
-        return labels
-    else:
-        keys = list(labeldict[labels_list[0][0]].keys())
-        output = classifier(texts, keys, multi_label=False, max_length=32)
-        return Classification(
-            classification=(output[0]["labels"][0], output[0]["scores"][0])
-        )
-    return item
+    
+    keys = list(labeldict[labels_list[0][0]].keys())
+    output = classifier(texts, keys, multi_label=False, max_length=32)
+    return Classification(
+        classification=(output[0]["labels"][0], output[0]["scores"][0])
+    )
