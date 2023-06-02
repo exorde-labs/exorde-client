@@ -46,7 +46,7 @@ class Url(str, metaclass=Annotation):
         "Uniform-Resource-Locator that identifies the location of the item"
     )
     annotation = str
-    pattern = r"^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\.)+[a-zA-Z]{2,}"
+    pattern = r"^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,8}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$"
 
 
 class Sentiment(str, metaclass=Annotation):

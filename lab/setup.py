@@ -26,5 +26,10 @@ setup(
         "yake==0.4.8",
         "argostranslate==1.8.0",
     ],
+    entry_points={
+        "console_scripts": [
+            "install_translation = exorde_lab.translation.install:install_translation_modules"
+        ]
+    },
     setup_requires=["pybind11"],
 )

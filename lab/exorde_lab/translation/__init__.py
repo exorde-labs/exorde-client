@@ -1,26 +1,5 @@
 import logging
-from argostranslate import package
 from ftlangdetect import detect as _detect
-from typing import cast
-
-
-def install_translation_modules():
-    """Download and install Argos Translate translation packages"""
-    package.update_package_index()
-    available_packages = package.get_available_packages()
-    length = len(available_packages)
-    logging.info(f"{length} translation modules to install")
-    i = 0
-    for pkg in available_packages:
-        i += 1
-        logging.info(
-            f" - installing translation module ({i}/{length}) : ({str(pkg)})"
-        )
-
-        # cast used until this is merged https://github.com/argosopentech/argos-translate/pull/329
-        package.install_from_path(
-            cast(package.AvailablePackage, pkg).download()
-        )
 
 
 from_lang = lambda from_code, installed_languages: list(
@@ -35,18 +14,28 @@ translation = lambda from_code, to_code, installed_languages: from_lang(
 
 detect = lambda text, low_memory: _detect(text, low_memory=low_memory)
 
+from exorde_data.models import Item
+from exorde_lab.translation.models import Translation, Language, Translated
 
-def translate(item, low_memory, installed_languages):
-    text = item.content
+
+def translate(
+    item: Item, installed_languages, low_memory: bool = False
+) -> Translation:
+    text = str(item.content if item.content else item.title)
     language = _detect(text, low_memory)
     try:
         if language["lang"] != "en":
-            item.translation = translation(
+            translated = translation(
                 language["lang"], "en", installed_languages
             ).translate(text)
         else:
-            item.translation = item.content
+            translated = item.content
+        return Translation(
+            language=Language(language["lang"]), translated=translated
+        )
     except:
         logging.debug(f"Error translating from {language['lang']} ({item})")
-    item.language = language["lang"]
-    return item
+        return Translation(
+            language=Language(language["lang"]),
+            translation=Translated(item.content),
+        )
