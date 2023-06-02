@@ -182,26 +182,120 @@ def tag(items, nlp, device, mappings):
     # various processed data like embeddings, text classifications, sentiment, etc., as key-value pairs.
     # Update the items with processed data
     tmp = tmp.to_dict(orient="records")
-    for i, item in enumerate(items):
-        for _k in item.keys():
-            if _k in ["Translation", "Embedding", "Sentiment"]:
-                setattr(item, _k.lower(), tmp[i][_k])
-            elif _k == "LanguageScore":
-                item.languages_score = tmp[i][_k]
-            elif _k == "Age":
-                for j in range(len(tmp[i][_k])):
-                    if tmp[i][_k][j][0] == "<20":
-                        item.age.below_twenty = tmp[i][_k][j][1]
-                    elif tmp[i][_k][j][0] == "20<30":
-                        item.age.twenty_thirthy = tmp[i][_k][j][1]
-                    elif tmp[i][_k][j][0] == "30<40":
-                        item.age.thirty_forty = tmp[i][_k][j][1]
-                    else:
-                        item.age.forty_more = tmp[i][_k][j][1]
-            else:
-                for k in range(len(tmp[i][_k])):
-                    if hasattr(item, k):
-                        setattr(item._k.lower(), _k.lower(), tmp[i][_k][k][1])
+    #for i, item in enumerate(items):
+    #    for _k in item.keys():
+    #        if _k in ["Translation", "Embedding", "Sentiment"]:
+    #            setattr(item, _k.lower(), tmp[i][_k])
+    #        elif _k == "LanguageScore":
+    #            item.languages_score = tmp[i][_k]
+    #        elif _k == "Age":
+    #            for j in range(len(tmp[i][_k])):
+    #                if tmp[i][_k][j][0] == "<20":
+    #                    item.age.below_twenty = tmp[i][_k][j][1]
+    #                elif tmp[i][_k][j][0] == "20<30":
+    #                    item.age.twenty_thirthy = tmp[i][_k][j][1]
+    #                elif tmp[i][_k][j][0] == "30<40":
+    #                    item.age.thirty_forty = tmp[i][_k][j][1]
+    #                else:
+    #                    item.age.forty_more = tmp[i][_k][j][1]
+    #        else:
+    #            for k in range(len(tmp[i][_k])):
+    #                if hasattr(item, k):
+    #                    setattr(item._k.lower(), _k.lower(), tmp[i][_k][k][1])
+                        
+    _out = []
+    for i in range(len(tmp)):
+
+        language_score = LanguageScore(tmp[i]["LanguageScore"])
+        sentiment = Sentiment(tmp[i]["Sentiment"])
+        embedding = Embedding(tmp[i]["Embedding"])
+        gender = Gender(male=tmp[i]["Gender"][0][1], female=tmp[i]["Gender"][1][1])
+        sources = {item['label']: item['score'] for item in tmp[i]["SourceType"]}
+        sourceType = DescriptedSourceType(SourceType(
+                        social: sources["Social Networking and Messaging"]
+                        computers: sources["Computers and Technology"]
+                        games: sources["Games"]
+                        business: sources["Business/Corporate"]
+                        streaming: sources["Streaming Services"]
+                        ecommerce: sources["E-Commerce"]
+                        forums: sources["Forums"]
+                        photography: sources["Photography"]
+                        travel: sources["Travel"]
+                        adult: sources["Adult"]
+                        law: sources["Law and Government"]
+                        sports: sources["Sports"]
+                        education: sources["Education"]
+                        food: sources["Food"]
+                        health: sources["Health and Fitness"]
+                        news: sources["News"]
+                    ))
+        types = {item['label']: item['score'] for item in tmp[i]["TextType"]}
+        textType = DescriptedTextType(TextType(
+                        assumption: types["Assumption"]
+                        anecdote: types["Anecdote"]
+                        none: types["None"]
+                        definition: types["Definition"]
+                        testimony: types["Testimony"]
+                        other: types["Other"]
+                        study: types["Statistics/Study"]
+                    ))
+
+        emotions = {item['label']: item['score'] for item in tmp[i]["Emotion"]}
+        emotion = DescriptedEmotion(Emotion(
+                        love: emotions["love"]
+                        admiration: emotions["admiration"]
+                        joy: emotions["joy"]
+                        approval: emotions["approval"]
+                        caring: emotions["caring"]
+                        excitement: emotions["excitement"]
+                        gratitude: emotions["gratitude"]
+                        desire: emotions["desire"]
+                        anger: emotions["anger"]
+                        optimism: emotions["optimism"]
+                        disapproval: emotions["disapproval"]
+                        grief: emotions["grief"]
+                        annoyance: emotions["annoyance"]
+                        pride: emotions["pride"]
+                        curiosity: emotions["curiosity"]
+                        neutral: emotions["neutral"]
+                        disgust: emotions["disgust"]
+                        disappointment: emotions["disappointment"]
+                        realization: emotions["realization"]
+                        fear: emotions["fear"]
+                        relief: emotions["relief"]
+                        confusion: emotions["confusion"]
+                        remorse: emotions["remorse"]
+                        embarrassement: emotions["embarrassement"]
+                        surprise: emotions["surprise"]
+                        sadness: emotions["sadness"]
+                        nervousness: emotions["nervousness"]
+                    ))
+
+        ironies = {item['label']: item['score'] for item in tmp[i]["Irony"]}
+        irony = DescriptedIrony(Irony(
+                    irony = ironies["irony"]
+                    non_irony = ironies["non_irony"]
+                    ))
+        ages = {item['label']: item['score'] for item in tmp[i]["Age"]}
+        age = DescriptedAge(Age(
+                        bellow_twenty: ages["<20"]
+                        twenty_thirty: ages["20<30"]
+                        thirty_forty: ages["30<40"]
+                        forty_more: ages[">=40"]
+                    ))
+        
+        analysis = Analysis(
+            langage_score= language_score
+            sentiment= sentiment
+            embedding= embedding
+            gender= gender
+            source_type= sourceType
+            text_type= textType
+            emotion= emotion
+            irony= irony
+            age= age
+        )
+        _out.append(analysis)
 
         # item.translation = tmp[i]["Translation"]
         # item.embedding = tmp[i]["Embedding"]
@@ -219,4 +313,4 @@ def tag(items, nlp, device, mappings):
         # item.text_type = tmp[i]["TextType"]
         # item.source_type = tmp[i]["SourceType"]
 
-    return items
+    return _out
