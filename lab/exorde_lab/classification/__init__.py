@@ -1,4 +1,10 @@
-def zero_shot(item, labeldict, classifier, max_depth=None, depth=0):
+from exorde_data.models import Item
+from .models import Classification
+
+
+def zero_shot(
+    item: Item, labeldict, classifier, max_depth=None, depth=0
+) -> Classification:
     """
     Perform zero-shot classification on the input text using a pre-trained language model.
 
@@ -32,10 +38,9 @@ def zero_shot(item, labeldict, classifier, max_depth=None, depth=0):
         _labels = labels
         return labels
     else:
-        output_list = list()
         keys = list(labeldict[labels_list[0][0]].keys())
-        output = classifier(
-                texts, keys, multi_label=False, max_length=32
-            )
-        item.classification = Classification(Topic(output[0]["labels"][0]), Weight(output[0]["scores"][0]))
+        output = classifier(texts, keys, multi_label=False, max_length=32)
+        return Classification(
+            classification=(output[0]["labels"][0], output[0]["scores"][0])
+        )
     return item
