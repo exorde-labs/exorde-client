@@ -11,8 +11,8 @@ a88aaaa    dP. .dP .d8888b. 88d888b. .d888b88 .d8888b.
 
 
 import logging, os, aiohttp, json, sys
-from aiosow.bindings import setup, option, on, make_async
-from aiosow.routines import routine
+from madframe.bindings import setup, option, on, make_async
+from madframe.routines import routine
 
 option(
     "--no_headless",

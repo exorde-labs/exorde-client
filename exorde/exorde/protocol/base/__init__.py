@@ -8,8 +8,8 @@ import yaml
 import string
 import aiohttp
 from pathlib import Path
-from aiosow.bindings import read_only
-from aiosow.autofill import autofill
+from madframe.bindings import read_only
+from madframe.autofill import autofill
 
 from web3.middleware.async_cache import (
     _async_simple_cache_middleware as cache_middleware,

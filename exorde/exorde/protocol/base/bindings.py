@@ -1,5 +1,5 @@
 import logging
-from aiosow.bindings import (
+from madframe.bindings import (
     setup,
     wrap,
     on,
@@ -8,7 +8,7 @@ from aiosow.bindings import (
     alias,
     until_success,
 )
-from aiosow.routines import routine
+from madframe.routines import routine
 
 from exorde.protocol.base import (
     check_user_address,

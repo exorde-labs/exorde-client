@@ -18,7 +18,7 @@ setup(
             "exorde_protocol_schema = exorde.protocol:print_schema",
         ],
     },
-    install_requires=["web3", "exorde_lab", "aiosow", "aiohttp"],
+    install_requires=["web3", "exorde_lab", "madframe", "aiohttp"],
     long_description=long_description,
     long_description_content_type="text/markdown",
     python_requires="==3.10.*",

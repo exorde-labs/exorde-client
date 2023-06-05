@@ -1,10 +1,10 @@
 import asyncio, logging
 from typing import Callable
 
-from aiosow.perpetuate import on
-from aiosow.bindings import wrap, setup
-from aiosow.routines import routine
-from aiosow.autofill import autofill
+from madframe.perpetuate import on
+from madframe.bindings import wrap, setup
+from madframe.routines import routine
+from madframe.autofill import autofill
 
 from exorde.protocol.ipfs import download_ipfs_file, upload_to_ipfs
 from exorde.protocol.base import (

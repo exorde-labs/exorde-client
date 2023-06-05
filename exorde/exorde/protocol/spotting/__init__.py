@@ -3,7 +3,7 @@
 from typing import Callable
 import logging
 from collections import deque
-from aiosow.autofill import autofill
+from madframe.autofill import autofill
 
 SIZE = 25
 

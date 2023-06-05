@@ -1,4 +1,4 @@
-from aiosow.bindings import wire
+from madframe.bindings import wire
 from exorde_lab.xyake import (
     populate_keywords as populate_keywords_implementation,
 )

@@ -1,3 +1,3 @@
-from aiosow.command import run
+from madframe.command import run
 
 launch = lambda: run("exorde", log=True)

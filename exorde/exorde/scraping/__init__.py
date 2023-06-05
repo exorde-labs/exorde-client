@@ -1,5 +1,5 @@
 from . import urls
-from aiosow.bindings import autofill
+from madframe.bindings import autofill
 import random
 
 

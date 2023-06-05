@@ -1,7 +1,7 @@
 from exorde_data import query
 
-from aiosow.bindings import alias, wire
-from aiosow.routines import routine, infinite_generator
+from madframe.bindings import alias, wire
+from madframe.routines import routine, infinite_generator
 from exorde.scraping import generate_url
 
 broadcast_formated_when, on_formated_data_do = wire(perpetual=True)

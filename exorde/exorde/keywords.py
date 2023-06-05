@@ -1,4 +1,4 @@
-from aiosow.bindings import setup, wrap, alias
+from madframe.bindings import setup, wrap, alias
 import aiohttp, random, logging
 
 

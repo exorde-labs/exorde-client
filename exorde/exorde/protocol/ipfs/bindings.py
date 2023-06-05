@@ -1,4 +1,4 @@
-from aiosow.bindings import setup, wrap, wire
+from madframe.bindings import setup, wrap, wire
 
 from exorde.protocol.ipfs import (
     # validate_batch_schema,

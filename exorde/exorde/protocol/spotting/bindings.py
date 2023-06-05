@@ -1,6 +1,6 @@
 import logging
-from aiosow.bindings import setup, wire
-from aiosow.perpetuate import on
+from madframe.bindings import setup, wire
+from madframe.perpetuate import on
 
 from exorde.scraping.bindings import on_formated_data_do
 
