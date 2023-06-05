@@ -1,4 +1,4 @@
-from aiosow.bindings import setup, wrap, option, wire
+from madframe.bindings import setup, wrap, option, wire
 from argostranslate import translate as _translate
 from . import translate as translate_implementation
 
