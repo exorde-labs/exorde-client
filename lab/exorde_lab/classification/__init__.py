@@ -1,9 +1,10 @@
 from exorde_data.models import Item
-from .models import Classification
+from .models import Classification, DescriptedClassification
+from ..models import Translation
 
 
 def zero_shot(
-    item: Item, labeldict, classifier, max_depth=None, depth=0
+    item: Translation, labeldict, classifier, max_depth=None, depth=0
 ) -> Classification:
     """
     Perform zero-shot classification on the input text using a pre-trained language model.
@@ -18,7 +19,7 @@ def zero_shot(
     Returns:
     - path (list): A list containing the path of labels from the root to the predicted label. If the label hierarchy was not explored fully and the max_depth parameter was set, the path may not be complete.
     """
-    text_ = item.content
+    text_ = item.translation
     texts = [text_]
     keys = list(labeldict.keys())
     output = classifier(texts, keys, multi_label=False, max_length=32)
@@ -33,9 +34,10 @@ def zero_shot(
         ]
         labels_list.append(labels)
 
-    
     keys = list(labeldict[labels_list[0][0]].keys())
     output = classifier(texts, keys, multi_label=False, max_length=32)
     return Classification(
-        classification=(output[0]["labels"][0], output[0]["scores"][0])
+        classification=DescriptedClassification(
+            label=output[0]["labels"][0], score=output[0]["scores"][0]
+        )
     )

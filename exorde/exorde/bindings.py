@@ -30,6 +30,9 @@ option("--tab_lifetime", default=60, help="Time passed on each page")
 
 option("--twitter_username", default=None, help="Twitter username")
 option("--twitter_password", default=None, help="Twitter password")
+option(
+    "--no_faucet", action="store_true", default=False, help="Will not Faucet"
+)
 
 option(
     "-m",
@@ -106,10 +109,6 @@ option("--source", nargs="+", help="Scraping module to be used")
 def init_spotting(no_spotting, remote_kill, memory):
     if not no_spotting and not remote_kill:
         from exorde.protocol.spotting import bindings as __bindings__
-        from exorde.protocol.spotting import (
-            applicator as spotting_applicator,
-            batch_applicator as spotting_batch_applicator,
-        )
         from exorde.protocol.spotting import filter as spotting_filter
         from exorde import keywords as __keywords__
 
@@ -117,23 +116,12 @@ def init_spotting(no_spotting, remote_kill, memory):
             datetime_filter,
             has_content,
         )
-        from exorde_lab.translation.bindings import translate
-        from exorde_lab.keywords.bindings import populate_keywords
         from exorde_lab.startup import meta_tagger_initialization
-        from exorde_lab.classification import zero_shot
-        from exorde_lab.preprocess import preprocess
-        from exorde_lab.analysis import tag
 
         setup(meta_tagger_initialization)
 
         spotting_filter(datetime_filter)
         spotting_filter(has_content)
-
-        spotting_applicator(preprocess)
-        spotting_applicator(translate)
-        spotting_applicator(populate_keywords)
-        spotting_applicator(make_async(zero_shot))
-        spotting_batch_applicator(tag)
 
 
 """

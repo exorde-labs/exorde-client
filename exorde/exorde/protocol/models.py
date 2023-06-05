@@ -45,7 +45,7 @@ class ProtocolAnalysis(
     pass
 
 
-class Item(dict, metaclass=MadType):
+class CalmItem(dict):
     item: ProtocolItem
 
     analysis: ProtocolAnalysis
@@ -53,6 +53,10 @@ class Item(dict, metaclass=MadType):
     collection_client_version: CollectionClientVersion
     collection_module: CollectionModule
     collected_at: CollectedAt
+
+
+class Item(CalmItem, metaclass=MadType):
+    pass
 
 
 class Batch(dict, metaclass=MadType):

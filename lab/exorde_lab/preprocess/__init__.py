@@ -1,4 +1,5 @@
 import re
+from exorde_data.models import Content
 
 
 def preprocess_text(text: str, remove_stopwords: bool) -> str:
@@ -38,8 +39,8 @@ def preprocess_text(text: str, remove_stopwords: bool) -> str:
 
 
 def preprocess(item, remove_stopwords):
-    item.content = preprocess_text(item.content, remove_stopwords)
-    item.content = item.content.replace(
-        "\n", ""
+    item.content = Content(preprocess_text(item.content, remove_stopwords))
+    item.content = Content(
+        item.content.replace("\n", "")
     )  # review-me: added by 6r17 to fix `predict porcess one line at a time (remove '\n') ; remove comment if OK
     return item

@@ -1,12 +1,13 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 
 
 def datetime_filter(value, expiration_delta, __stack__):
+    zless = value.created_at.replace("Z", "")
     if not value.created_at:
         return False
-    if datetime.fromisoformat(value.created_at) - datetime.now(
-        timezone.utc
-    ) > timedelta(seconds=expiration_delta):
+    if datetime.fromisoformat(zless) - datetime.now() > timedelta(
+        seconds=expiration_delta
+    ):
         return False
     return True
 

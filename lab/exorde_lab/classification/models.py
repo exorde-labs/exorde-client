@@ -1,9 +1,10 @@
 from madtypes import MadType
 
 
-class DescriptedClassification(tuple, metaclass=MadType):
+class DescriptedClassification(dict, metaclass=MadType):
     description = "label and score of zero_shot"
-    annotation = tuple[str, float]
+    score: float
+    label: str
 
 
 class Classification(dict, metaclass=MadType):

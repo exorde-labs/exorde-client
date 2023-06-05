@@ -13,6 +13,9 @@ def install_modules():
 
 
 def get_scraping_module(url: str):
+    print("-------------")
+    print(dir(scraping))
+    print("-------------")
     for module_name in dir(scraping):
         if module_name in url:
             return getattr(scraping, module_name)

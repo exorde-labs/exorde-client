@@ -14,8 +14,12 @@ class Language(str, metaclass=MadType):
     annotation = str
 
 
-class Translation(dict, metaclass=MadType):
+class CalmTranslation(dict):
     """Result of argos translate"""
 
     language: Optional[Language]  # uses content or title
     translation: Translated
+
+
+class Translation(CalmTranslation, metaclass=MadType):
+    pass

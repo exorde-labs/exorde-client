@@ -13,16 +13,10 @@ def init_stack():
 
 
 FILTERS = []
-APPLICATORS = []
 
 
 def filter(function: Callable):
     FILTERS.append(function)
-    return function
-
-
-def applicator(function: Callable):
-    APPLICATORS.append(function)
     return function
 
 
@@ -40,59 +34,82 @@ async def push_to_stack(value, stack, memory):
 
 
 import json
+from exorde_data.models import Item
+from exorde_lab.preprocess import preprocess
+from exorde_lab.keywords import populate_keywords
+from exorde_lab.keywords.models import TopKeywords
+from exorde_lab.translation import translate
+from exorde_lab.translation.models import Translation
+from exorde_lab.classification import zero_shot
+from exorde_lab.classification.models import Classification
+
+from madframe.bindings import make_async
+
+from madtypes import MadType
 
 
-async def pull_to_process(stack, processed, memory):
-    value = stack.pop()
-    print("\n")
-    print(value)
-    print("\n")
-    if len(value.content) < 35:
-        return {}
+class Processed(dict, metaclass=MadType):
+    translation: Translation
+    top_keywords: TopKeywords
+    classification: Classification
+    item: Item
+
+
+async def pull_to_process(stack, processed, installed_languages, memory):
+    item: Item = stack.pop()
     memory["processing"] = True
     memory["stack"] = stack
     try:
-        for applicator in APPLICATORS:
-            value = await autofill(applicator, args=[value], memory=memory)
-        processed.append(value)
-        logging.info(f"+ new processed item \t {len(processed)} / 25")
-        # technicaly the stack is already updated here
-        # we return to trigger the ONS events
-        return {"processed": processed, "processing": False, "stack": stack}
+        item = preprocess(item, False)
     except Exception as err:
-        logging.error("An error occured processing an item")
+        logging.error("An error occured pre-processing an item")
         logging.error(err)
-        logging.error(json.dumps(value, indent=4))
+        logging.error(json.dumps(item, indent=4))
+        raise err
 
+    try:
+        translation: Translation = translate(item, installed_languages)
+    except Exception as err:
+        logging.error("An error occured translating an item")
+        logging.error(err)
+        logging.error(json.dumps(item, indent=4))
+        raise err
 
-BATCH_APPLICATORS = []
+    try:
+        top_keywords: TopKeywords = populate_keywords(translation)
+    except Exception as err:
+        logging.error("An error occured populating keywords for an item")
+        logging.error(err)
+        logging.error(json.dumps(item, indent=4))
+        raise err
 
+    try:
+        classification: Classification = await autofill(
+            make_async(zero_shot), args=[translation], memory=memory
+        )
+    except Exception as err:
+        logging.error("An error occured translating an item")
+        logging.error(err)
+        logging.error(json.dumps(item, indent=4))
+        raise err
 
-def batch_applicator(function: Callable) -> Callable:
-    BATCH_APPLICATORS.append(function)
-    return function
+    processing_batch: Processed = Processed(
+        item=item,
+        translation=translation,
+        top_keywords=top_keywords,
+        classification=classification,
+    )
+
+    processed.append(processing_batch)
+    logging.info(f"+ new processed item \t {len(processed)} / 25")
+    # technicaly the stack is already updated here
+    # we return to trigger the ONS events
+    return {"processed": processed, "processing": False, "stack": stack}
 
 
 async def consume_processed(processed, memory):
-    batch = [processed.pop(0) for _ in range(SIZE)]
-    logging.info("applying batch applicators...")
-    for batch_applicator in BATCH_APPLICATORS:
-        try:
-            batch = await autofill(
-                batch_applicator, args=[batch], memory=memory
-            )
-        except Exception as err:
-            logging.error("An exception occured on batch processing")
-            logging.error(err)
-            raise (err)
-
-    logging.info("...batch applicators ok")
-    formated_batch = json.dumps(
-        {"kind": "SPOTTING", "items": batch},
-        indent=4,
-    )
-    with open("AFTER.json", "w") as file:
-        file.write(formated_batch)
+    batch: list[Processed] = [processed.pop(0) for _ in range(SIZE)]
+    print("HEEERE")
     return {"batch_to_consume": formated_batch, "processed": processed}
 
 

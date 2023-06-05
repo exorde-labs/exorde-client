@@ -13,9 +13,6 @@ from exorde_data import (
     Title,
     Url,
     Domain,
-    CollectedAt,
-    CollectionModule,
-    CollectionClientVersion,
 )
 
 
@@ -35,12 +32,10 @@ async def scrap_post(url: str) -> AsyncGenerator[Item, None]:
             created_at=CreatedAt(
                 str(
                     datetime.datetime.fromtimestamp(
-                        content["created_utc"], pytz.timezone("UTC")
+                        content["created_utc"]
                     ).isoformat()
+                    + "Z"
                 )
-            ),
-            collected_at=CollectedAt(
-                str(datetime.datetime.now(pytz.timezone("UTC")).isoformat())
             ),
             title=Title(content["title"]),
             domain=Domain("reddit.com"),
@@ -55,18 +50,16 @@ async def scrap_post(url: str) -> AsyncGenerator[Item, None]:
         yield Item(
             content=Content(content["body"]),
             author=Author(content["author"]),
-            collected_at=CollectedAt(
-                str(datetime.datetime.now(pytz.timezone("UTC")).isoformat())
-            ),
             created_at=CreatedAt(
                 str(
                     datetime.datetime.fromtimestamp(
-                        content["created_utc"], pytz.timezone("UTC")
+                        content["created_utc"]
                     ).isoformat()
+                    + "Z"
                 )
             ),
             domain=Domain("reddit.com"),
-            url=Url("reddit.com" + content["permalink"]),
+            url=Url("https://reddit.com" + content["permalink"]),
             # nb_likes=content["ups"],
         )
 

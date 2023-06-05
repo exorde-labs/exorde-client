@@ -1,7 +1,7 @@
 import yake
 
-from exorde_data.models import Item
-from .models import TopKeywords
+from .models import TopKeywords, Keywords
+from ..translation.models import Translation
 
 language = "en"
 max_ngram_size = 3
@@ -22,8 +22,8 @@ kw_extractor = yake.KeywordExtractor(
 extract_keywords = lambda text: kw_extractor.extract_keywords(text)
 
 
-def populate_keywords(item: Item) -> TopKeywords:
-    content: str = item.translation.translation
+def populate_keywords(translation: Translation) -> TopKeywords:
+    content: str = translation.translation
     return TopKeywords(
-        top_keywords=[e[0] for e in set(extract_keywords(content))]
+        top_keywords=Keywords({e[0] for e in set(extract_keywords(content))})
     )
