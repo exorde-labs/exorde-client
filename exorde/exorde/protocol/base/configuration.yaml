@@ -1,33 +1,8 @@
 ---
-mainnet:
-  _networkId: mainnet
-  _urlSkale:
-    - http://44.241.236.162:10067
-    - http://57.128.84.254:10067
-    - http://57.128.87.76:10067
-    - http://57.128.80.82:10067
-  SyncNodeCount: '5'
-  _urlTxSkale: https://mainnet.skalenodes.com/v1/light-vast-diphda
-  _chainID: '2139927552'
-  _blockExplorer: https://light-vast-diphda.explorer.mainnet.skalenodes.com/
-  _webSocket: wss://mainnet.skalenodes.com/v1/ws/light-vast-diphda
-testnet-A:
-  _networkId: testNet-A
-  _urlSkale:
-    - http://35.84.228.194:10451
-    - http://44.230.146.249:10451
-    - http://57.128.82.225:10451
-    - http://57.128.86.197:10451
-    - http://152.228.211.160:10451
-    - http://152.228.215.238:10451
-  _urlTxSkale: https://staging-v3.skalenodes.com/v1/staging-untimely-yawning-algorab
-  SyncNodeCount: '10'
-  _chainID: '1722394779'
-  _blockExplorer: https://staging-untimely-yawning-algorab.explorer.staging-v3.skalenodes.com/
-  _webSocket: wss://staging-v3.skalenodes.com/v1/ws/staging-untimely-yawning-algorab
+network: https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/NetworkConfig.json
 source: https://raw.github.com/exorde-labs/TestnetProtocol/main/
 contracts: ContractsAddresses.json
-target: mainnet
+target: testnet-A
 ABI:
   EXDT: ABIs/EXDT/EXDT.json 
   EXD: ABIs/EXD/EXD.json

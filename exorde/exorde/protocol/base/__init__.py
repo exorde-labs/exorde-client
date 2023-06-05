@@ -91,6 +91,15 @@ async def configuration():
     }
 
 
+async def fetch_network_configuration():
+    async with aiohttp.ClientSession() as session:
+        async with session.get(
+            "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/NetworkConfig.json"
+        ) as response:
+            json_content = await response.text()
+            return {"network_configuration": json.loads(json_content)}
+
+
 # cnf stands for configuration
 # Data-coupling because contract instanciation requires Contract & ABIS
 async def contracts_and_abi_cnf(configuration):
@@ -117,10 +126,30 @@ async def contracts_and_abi_cnf(configuration):
     }
 
 
-def read_web3(configuration):
+def read_web3(configuration, network_configuration):
+    print(
+        "network_configuration is : %s",
+        json.dumps(network_configuration, indent=4),
+    )
     return {
         "read_web3": instanciate_w3(
-            random.choice(configuration[configuration["target"]]["_urlSkale"])
+            random.choice(  # random ip described in `urlSkale`
+                random.choice(
+                    network_configuration[configuration["target"]]
+                )[  # random target
+                    "urlSkale"
+                ]
+            )
+        )
+    }
+
+
+def write_web3(configuration, network_configuration):
+    return {
+        "write_web3": instanciate_w3(
+            random.choice(network_configuration[configuration["target"]])[
+                "_urlTxSkale"
+            ]
         )
     }
 
@@ -129,14 +158,6 @@ def instanciate_w3(url):
     w3_instance = AsyncWeb3(AsyncHTTPProvider(url))
     w3_instance.middleware_onion.add(cache_middleware)
     return w3_instance
-
-
-def write_web3(configuration):
-    return {
-        "write_web3": instanciate_w3(
-            configuration[configuration["target"]]["_urlTxSkale"]
-        )
-    }
 
 
 def contract(name, read_w3, abi_cnf, contracts_cnf, configuration):
@@ -151,18 +172,11 @@ def contract(name, read_w3, abi_cnf, contracts_cnf, configuration):
 
 
 def contracts(read_w3, abi_cnf, contracts_cnf, configuration):
-    try:
-        return {
-            name: contract(
-                name, read_w3, abi_cnf, contracts_cnf, configuration
-            )
-            for name in contracts_cnf()[configuration["target"]]
-        }
-    except KeyError as e:
-        logging.critical(
-            "Mathias did something weird with the keys again. Please reach him on discord"
-        )
-        raise e
+    print(json.dumps(contracts_cnf(), indent=4))
+    return {
+        name: contract(name, read_w3, abi_cnf, contracts_cnf, configuration)
+        for name in contracts_cnf()[configuration["target"]]
+    }
 
 
 def worker_address(worker_name):

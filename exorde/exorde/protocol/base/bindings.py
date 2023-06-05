@@ -30,6 +30,7 @@ from exorde.protocol.base import (
     faucet,
     log_current_rep,
     register,
+    fetch_network_configuration,
 )
 
 
@@ -40,6 +41,7 @@ setup(
         lambda acct: {"worker_address": acct.address, "worker_key": acct.key}
     )(worker_address)
 )
+setup(fetch_network_configuration)
 setup(configuration)
 setup(init_gas_cache)
 

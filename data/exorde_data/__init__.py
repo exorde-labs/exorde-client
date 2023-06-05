@@ -1,3 +1,4 @@
+import logging
 from typing import AsyncGenerator
 import json
 from importlib import metadata
@@ -8,7 +9,7 @@ from . import scraping
 
 
 def install_modules():
-    raise NotImplemented()
+    raise NotImplementedError("Module installation is not implemented")
 
 
 def get_scraping_module(url: str):
@@ -21,7 +22,8 @@ def get_scraping_module(url: str):
 async def query(url: str) -> AsyncGenerator[Item, None]:
     scraping_module = get_scraping_module(url)
     if not scraping_module:
-        raise NotImplemented(f"There is no scraping module for {url}")
+        logging.debug(f"Installed modules are : {dir(scraping)}")
+        raise NotImplementedError(f"There is no scraping module for {url}")
     async for item in scraping_module.query(url):
         print("\n")
         print(item)
