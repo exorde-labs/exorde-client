@@ -115,11 +115,6 @@ class SourceType(dict, metaclass=MadType):
     health: float
 
 
-class DescriptedSourceType(SourceType, metaclass=MadType):
-    description = "Category of the source that has produced the post"
-    annotation = SourceType
-
-
 class TextType(dict, metaclass=MadType):
     assumption: float
     anecdote: float
@@ -128,11 +123,6 @@ class TextType(dict, metaclass=MadType):
     testimony: float
     other: float
     study: float
-
-
-class DescriptedTextType(TextType, metaclass=MadType):
-    description = "Type (category) of the post (article, etc)"
-    annotation = TextType
 
 
 class Emotion(dict, metaclass=MadType):
@@ -165,23 +155,9 @@ class Emotion(dict, metaclass=MadType):
     nervousness: float
 
 
-class DescriptedEmotion(Emotion, metaclass=MadType):
-    description = ""
-    annotation = Emotion
-
-
 class Irony(dict, metaclass=MadType):
     irony: float
     non_irony: float
-
-
-class DescriptedIrony(Irony, metaclass=MadType):
-    description = "Measure of how much a post is ironic (in %)"
-    annotation = Irony
-
-
-# todo:
-# unique items (pas de doublons dans la liste) -> type set
 
 
 class ExternalId(str, metaclass=MadType):
@@ -225,8 +201,8 @@ class Analysis(dict, metaclass=MadType):
     classification: DescriptedClassification
     embedding: Embedding
     gender: DescriptedGender
-    source_type: DescriptedSourceType
-    text_type: DescriptedTextType
-    emotion: DescriptedEmotion
-    irony: DescriptedIrony
+    source_type: SourceType
+    text_type: TextType
+    emotion: Emotion
+    irony: Irony
     # age
