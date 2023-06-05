@@ -118,13 +118,11 @@ def init_spotting(no_spotting, remote_kill, memory):
             has_content,
         )
         from exorde_lab.translation.bindings import translate
-        from exorde_lab.xyake.bindings import populate_keywords
-        from exorde_lab.meta_tagger import (
-            meta_tagger_initialization,
-            preprocess,
-            zero_shot,
-            tag,
-        )
+        from exorde_lab.keywords.bindings import populate_keywords
+        from exorde_lab.startup import meta_tagger_initialization
+        from exorde_lab.classification import zero_shot
+        from exorde_lab.preprocess import preprocess
+        from exorde_lab.analysis import tag
 
         setup(meta_tagger_initialization)
 
@@ -164,8 +162,8 @@ def init_validation(no_validation, remote_kill):
             validator as validation_validator,
         )
         from exorde.protocol.base import bindings as __bindings__
-        from exorde.drivers.meta_tagger import tag
-        from exorde_lab.meta_tagger import meta_tagger_initialization
+        from exorde_lab.analysis import tag
+        from exorde_lab.startup import meta_tagger_initialization
 
         setup(meta_tagger_initialization)
         validation_validator(tag)

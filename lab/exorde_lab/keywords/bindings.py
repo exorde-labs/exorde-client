@@ -1,5 +1,5 @@
 from madframe.bindings import wire
-from exorde_lab.xyake import (
+from exorde_lab.keywords import (
     populate_keywords as populate_keywords_implementation,
 )
 
