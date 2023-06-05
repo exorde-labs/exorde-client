@@ -35,30 +35,26 @@ class BatchKindEnum(Enum):
 
 from madtypes import subtract_fields
 
-ProtocolItem = subtract_fields("content")(CollectedItem)
 ProtocolTranslation = subtract_fields("translation")(Translation)
+ContentLessItem = subtract_fields("content")(CollectedItem)
 
 
-class ProtocolAnalysis(
-    Classification, Analysis, ProtocolTranslation, TopKeywords
-):
+class ProtocolItem(ContentLessItem, ProtocolTranslation):
     pass
 
 
-class CalmItem(dict):
+class ProtocolAnalysis(Classification, Analysis, TopKeywords):
+    pass
+
+
+class ProcessedItem(dict, metaclass=MadType):
     item: ProtocolItem
-
     analysis: ProtocolAnalysis
-
     collection_client_version: CollectionClientVersion
     collection_module: CollectionModule
     collected_at: CollectedAt
 
 
-class Item(CalmItem, metaclass=MadType):
-    pass
-
-
 class Batch(dict, metaclass=MadType):
-    items: list[Item]
+    items: list[ProcessedItem]
     kind: BatchKindEnum

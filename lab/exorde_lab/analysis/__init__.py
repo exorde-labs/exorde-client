@@ -65,7 +65,10 @@ class TransformerBlock(tf.keras.layers.Layer):
         return self.layernorm2(out1 + ffn_output)
 
 
-def tag(texts, nlp, device, mappings):
+from exorde_lab.translation import Translation
+
+
+def tag(translated: list[Translation], nlp, device, mappings):
     """
     Analyzes and tags a list of text documents using various NLP models and techniques.
 
@@ -94,8 +97,7 @@ def tag(texts, nlp, device, mappings):
         return result
 
     # get text content attribute from all items
-    documents = [item.content for item in texts]
-    print(documents)
+    documents: list[str] = [item.translation for item in translated]
     for doc in documents:
         assert isinstance(doc, str)
 
@@ -302,21 +304,4 @@ def tag(texts, nlp, device, mappings):
         )
 
         _out.append(analysis)
-
-        # item.translation = tmp[i]["Translation"]
-        # item.embedding = tmp[i]["Embedding"]
-        # item.sentiment = tmp[i]["Sentiment"]
-        # item.emotion = tmp[i]["Emotion"]
-        # item.age.below_twenty = tmp[i]["Age"][0][1]
-        # item.age.twenty_thirthy = tmp[i]["Age"][1][1]
-        # item.age.thirty_forty = tmp[i]["Age"][2][1]
-        # item.age.forty_more = tmp[i]["Age"][3][1]
-        # item.gender.female = tmp[i]["Gender"][0][1]
-        # item.gender.male = tmp[i]["Gender"][1][1]
-        # item.irony.irony = tmp[i]["Irony"][0][1]
-        # item.irony.non_irony = tmp[i]["Irony"][1][1]
-        # item.language_score = tmp[i]["LanguageScore"]  # ??
-        # item.text_type = tmp[i]["TextType"]
-        # item.source_type = tmp[i]["SourceType"]
-
     return _out
