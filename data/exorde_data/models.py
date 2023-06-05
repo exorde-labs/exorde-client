@@ -1,103 +1,103 @@
-from madtypes import Annotation, Schema
+from madtypes import MadType
 from typing import Optional
 
 
-class Content(str, metaclass=Annotation):
+class Content(str, metaclass=MadType):
     description = "Text body of the item"
     annotation = str
 
 
-class Summary(str, metaclass=Annotation):
+class Summary(str, metaclass=MadType):
     description = "Short version of the content"
     annotation = str
 
 
-class Picture(str, metaclass=Annotation):
+class Picture(str, metaclass=MadType):
     description = "Image linked to the item"
     annotation = str
     pattern = r"^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\.)+[a-zA-Z]{2,}"
 
 
-class Author(str, metaclass=Annotation):
+class Author(str, metaclass=MadType):
     """todo : SHA1 format check ?"""
 
     description = "SHA1 encoding of the username assigned as creator of the item on its source platform"
     annotation = str
 
 
-class CreatedAt(str, metaclass=Annotation):
+class CreatedAt(str, metaclass=MadType):
     description = "ISO8601/RFC3339 Date of creation of the item"
     annotation = str
     pattern = r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(.[0-9]{1,6})?Z$"
 
 
-class Title(str, metaclass=Annotation):
+class Title(str, metaclass=MadType):
     description = "Headline of the item"
     annotation = str
 
 
-class Domain(str, metaclass=Annotation):
+class Domain(str, metaclass=MadType):
     description = "Domain name on which the item was retrieved"
     annotation = str
 
 
-class Url(str, metaclass=Annotation):
+class Url(str, metaclass=MadType):
     description = "Uniform-Resource-Locator"
     annotation = str
     pattern = r"^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,32}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$"
 
 
-class Sentiment(str, metaclass=Annotation):
+class Sentiment(str, metaclass=MadType):
     description = "Measure of post sentiment from negative to positive (-1 = negative, +1 = positive, 0 = neutral)"
     annotation = float
 
 
-class Topic(str, metaclass=Annotation):
+class Topic(str, metaclass=MadType):
     description = ""
     annotation = str
 
 
-class Weight(str, metaclass=Annotation):
+class Weight(str, metaclass=MadType):
     description = ""
     annotation = float
 
 
-class Classification(Schema):
+class Classification(dict, metaclass=MadType):
     topic: Topic
     weight: Weight
 
 
-class DescriptedClassification(list, metaclass=Annotation):
+class DescriptedClassification(list, metaclass=MadType):
     description = "Probable categorization(s) of the post in a pre-determined set of general topics (list of objects with float associated for each topic, expressing their likelihood)"
     annotation = list[Classification]
 
 
-class Embedding(list, metaclass=Annotation):
+class Embedding(list, metaclass=MadType):
     description = "Vector/numerical representation of the translated content (field: translation), produced by a NLP encoder model"
     annotation = list[float]
 
 
-class TopKeywords(list, metaclass=Annotation):
+class TopKeywords(list, metaclass=MadType):
     description = "The main keywords extracted from the content field"
     annotation = list[str]
 
 
-class LanguageScore(float, metaclass=Annotation):
+class LanguageScore(float, metaclass=MadType):
     description = "Readability score of the text"
     annotation = float
 
 
-class Gender(Schema):
+class Gender(dict, metaclass=MadType):
     male: float
     female: float
 
 
-class DescriptedGender(Gender, metaclass=Annotation):
+class DescriptedGender(Gender, metaclass=MadType):
     description = "Probable gender (female or male) of the author"
     annotation = Gender
 
 
-class SourceType(Schema):
+class SourceType(dict, metaclass=MadType):
     social: float
     computers: float
     games: float
@@ -115,12 +115,12 @@ class SourceType(Schema):
     health: float
 
 
-class DescriptedSourceType(SourceType, metaclass=Annotation):
+class DescriptedSourceType(SourceType, metaclass=MadType):
     description = "Category of the source that has produced the post"
     annotation = SourceType
 
 
-class TextType(Schema):
+class TextType(dict, metaclass=MadType):
     assumption: float
     anecdote: float
     none: float
@@ -130,12 +130,12 @@ class TextType(Schema):
     study: float
 
 
-class DescriptedTextType(TextType, metaclass=Annotation):
+class DescriptedTextType(TextType, metaclass=MadType):
     description = "Type (category) of the post (article, etc)"
     annotation = TextType
 
 
-class Emotion(Schema):
+class Emotion(dict, metaclass=MadType):
     love: float
     admiration: float
     joy: float
@@ -165,17 +165,17 @@ class Emotion(Schema):
     nervousness: float
 
 
-class DescriptedEmotion(Emotion, metaclass=Annotation):
+class DescriptedEmotion(Emotion, metaclass=MadType):
     description = ""
     annotation = Emotion
 
 
-class Irony(Schema):
+class Irony(dict, metaclass=MadType):
     irony: float
     non_irony: float
 
 
-class DescriptedIrony(Irony, metaclass=Annotation):
+class DescriptedIrony(Irony, metaclass=MadType):
     description = "Measure of how much a post is ironic (in %)"
     annotation = Irony
 
@@ -184,17 +184,17 @@ class DescriptedIrony(Irony, metaclass=Annotation):
 # unique items (pas de doublons dans la liste) -> type set
 
 
-class ExternalId(str, metaclass=Annotation):
+class ExternalId(str, metaclass=MadType):
     description = "Identifier used by source"
     annotation = str
 
 
-class ExternalParentId(str, metaclass=Annotation):
+class ExternalParentId(str, metaclass=MadType):
     description = "Identifier of parent item, as used by source"
     annotation = str
 
 
-class Item(Schema):
+class Item(dict, metaclass=MadType):
     """Created by a scraping module, it represent a post, article, comment..."""
 
     created_at: CreatedAt
@@ -219,7 +219,7 @@ class Item(Schema):
         )
 
 
-class Analysis(Schema):
+class Analysis(dict, metaclass=MadType):
     langage_score: LanguageScore
     sentiment: Sentiment
     classification: DescriptedClassification

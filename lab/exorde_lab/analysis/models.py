@@ -1,32 +1,28 @@
-from madtypes import Schema, Annotation
+from madtypes import MadType
 
 
-class Sentiment(float, metaclass=Annotation):
+class Sentiment(float, metaclass=MadType):
     description = "Measure of post sentiment from negative to positive (-1 = negative, +1 = positive, 0 = neutral)"
     annotation = float
 
 
-class Embedding(list, metaclass=Annotation):
+class Embedding(list, metaclass=MadType):
     description = "Vector/numerical representation of the translated content (field: translation), produced by a NLP encoder model"
     annotation = list[float]
 
 
-class LanguageScore(float, metaclass=Annotation):
+class LanguageScore(float, metaclass=MadType):
     description = "Readability score of the text"
     annotation = float
 
 
-class Gender(Schema):
+class Gender(dict, metaclass=MadType):
     male: float
     female: float
-
-
-class DescriptedGender(Gender, metaclass=Annotation):
     description = "Probable gender (female or male) of the author"
-    annotation = Gender
 
 
-class SourceType(Schema):
+class SourceType(dict, metaclass=MadType):
     social: float
     computers: float
     games: float
@@ -43,14 +39,10 @@ class SourceType(Schema):
     food: float
     health: float
     news: float
-
-
-class DescriptedSourceType(SourceType, metaclass=Annotation):
     description = "Category of the source that has produced the post"
-    annotation = SourceType
 
 
-class TextType(Schema):
+class TextType(dict, metaclass=MadType):
     assumption: float
     anecdote: float
     none: float
@@ -58,14 +50,10 @@ class TextType(Schema):
     testimony: float
     other: float
     study: float
-
-
-class DescriptedTextType(TextType, metaclass=Annotation):
     description = "Type (category) of the post (article, etc)"
-    annotation = TextType
 
 
-class Emotion(Schema):
+class Emotion(dict, metaclass=MadType):
     love: float
     admiration: float
     joy: float
@@ -95,40 +83,27 @@ class Emotion(Schema):
     nervousness: float
 
 
-class DescriptedEmotion(Emotion, metaclass=Annotation):
-    description = ""
-    annotation = Emotion
-
-
-class Irony(Schema):
+class Irony(dict, metaclass=MadType):
     irony: float
     non_irony: float
-
-
-class DescriptedIrony(Irony, metaclass=Annotation):
     description = "Measure of how much a post is ironic (in %)"
-    annotation = Irony
 
 
-class Age(Schema):
+class Age(dict, metaclass=MadType):
     below_twenty: float
     twenty_thirty: float
     thirty_forty: float
     forty_more: float
-
-
-class DescriptedAge(Age, metaclass=Annotation):
     description = "Measure author's age"
-    annotation = Age
 
 
-class Analysis(Schema):
+class Analysis(dict, metaclass=MadType):
     langage_score: LanguageScore
     sentiment: Sentiment
     embedding: Embedding
-    gender: DescriptedGender
-    source_type: DescriptedSourceType
-    text_type: DescriptedTextType
-    emotion: DescriptedEmotion
-    irony: DescriptedIrony
-    age: DescriptedAge
+    gender: Gender
+    source_type: SourceType
+    text_type: TextType
+    emotion: Emotion
+    irony: Irony
+    age: Age

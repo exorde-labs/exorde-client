@@ -1,5 +1,5 @@
 from enum import Enum
-from madtypes import Schema, Annotation
+from madtypes import MadType
 
 from exorde_data.models import Item as CollectedItem
 from exorde_lab.models import (
@@ -10,20 +10,20 @@ from exorde_lab.models import (
 )
 
 
-class CollectedAt(str, metaclass=Annotation):
+class CollectedAt(str, metaclass=MadType):
     description = "ISO8601/RFC3339 Date of collection of the item"
     annotation = str
     pattern = r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}\.[0-9]{1,6}?Z$"
 
 
-class CollectionClientVersion(str, metaclass=Annotation):
+class CollectionClientVersion(str, metaclass=MadType):
     description = (
         "Client identifier with version of the client that collected the item."
     )
     annotation = str
 
 
-class CollectionModule(str, metaclass=Annotation):
+class CollectionModule(str, metaclass=MadType):
     description = "Module that scraped the item."
     annotation = str
 
@@ -45,7 +45,7 @@ class ProtocolAnalysis(
     pass
 
 
-class Item(Schema):
+class Item(dict, metaclass=MadType):
     item: ProtocolItem
 
     analysis: ProtocolAnalysis
@@ -55,6 +55,6 @@ class Item(Schema):
     collected_at: CollectedAt
 
 
-class Batch(Schema):
+class Batch(dict, metaclass=MadType):
     items: list[Item]
     kind: BatchKindEnum

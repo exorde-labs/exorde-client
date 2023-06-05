@@ -11,17 +11,12 @@ from .models import (
     LanguageScore,
     Sentiment,
     Embedding,
-    DescriptedGender,
-    DescriptedSourceType,
     SourceType,
-    DescriptedTextType,
     TextType,
-    DescriptedEmotion,
     Emotion,
-    DescriptedIrony,
     Irony,
-    DescriptedAge,
     Age,
+    Gender,
     Analysis,
 )
 
@@ -216,12 +211,12 @@ def tag(texts, nlp, device, mappings):
 
         embedding = Embedding(tmp[i]["Embedding"])
 
-        gender = DescriptedGender(
+        gender = Gender(
             male=tmp[i]["Gender"][0][1], female=tmp[i]["Gender"][1][1]
         )
 
         sources = {item[0]: item[1] for item in tmp[i]["SourceType"]}
-        sourceType = DescriptedSourceType(
+        sourceType = SourceType(
             social=sources["Social Networking and Messaging"],
             computers=sources["Computers and Technology"],
             games=sources["Games"],
@@ -240,7 +235,7 @@ def tag(texts, nlp, device, mappings):
             news=sources["News"],
         )
         types = {item[0]: item[1] for item in tmp[i]["TextType"]}
-        textType = DescriptedTextType(
+        textType = TextType(
             assumption=types["Assumption"],
             anecdote=types["Anecdote"],
             none=types["None"],
@@ -251,7 +246,7 @@ def tag(texts, nlp, device, mappings):
         )
 
         emotions = {item[0]: item[1] for item in tmp[i]["Emotion"]}
-        emotion = DescriptedEmotion(
+        emotion = Emotion(
             love=emotions["love"],
             admiration=emotions["admiration"],
             joy=emotions["joy"],
@@ -283,13 +278,11 @@ def tag(texts, nlp, device, mappings):
 
         ironies = {item[0]: item[1] for item in tmp[i]["Irony"]}
 
-        irony = DescriptedIrony(
-            irony=ironies["irony"], non_irony=ironies["non_irony"]
-        )
+        irony = Irony(irony=ironies["irony"], non_irony=ironies["non_irony"])
 
         ages = {item[0]: item[1] for item in tmp[i]["Age"]}
 
-        age = DescriptedAge(
+        age = Age(
             below_twenty=ages["<20"],
             twenty_thirty=ages["20<30"],
             thirty_forty=ages["30<40"],
