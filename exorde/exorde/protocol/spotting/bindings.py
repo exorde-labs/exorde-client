@@ -44,7 +44,7 @@ on(
 )(pull_to_process)
 on("processed")(lambda processed: f"{len(processed)} processed items")
 # idk why this line does not trigger
-on("processed", condition=lambda processed: len(processed) == 25)(
+on("processed", condition=lambda processed: len(processed) == 3)(
     consume_processed
 )
 on(

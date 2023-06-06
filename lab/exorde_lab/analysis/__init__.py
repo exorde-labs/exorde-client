@@ -108,7 +108,6 @@ def tag(documents: list[str], nlp, device, mappings):
 
     assert tmp["Translation"] is not None
     assert len(tmp["Translation"]) > 0
-    print(tmp["Translation"])
 
     # Compute sentence embeddings
     model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")

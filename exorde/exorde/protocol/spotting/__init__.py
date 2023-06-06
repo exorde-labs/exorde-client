@@ -5,7 +5,7 @@ import logging
 from collections import deque
 from madframe.autofill import autofill
 
-SIZE = 25
+SIZE = 3
 
 
 def init_stack():
@@ -103,7 +103,7 @@ async def pull_to_process(stack, processed, installed_languages, memory):
         )
 
         processed.append(processing_batch)
-        logging.info(f"+ new processed item \t {len(processed)} / 25")
+        logging.info(f"+ new processed item \t {len(processed)} / 3")
         # technicaly the stack is already updated here
         # we return to trigger the ONS events
         return {"processed": processed, "processing": False, "stack": stack}
@@ -121,7 +121,6 @@ from exorde.protocol.models import (
 
 
 async def consume_processed(processed, memory):
-    print(json.dumps(processed, indent=4))
     batch: list[Processed] = [processed.pop(0) for _ in range(SIZE)]
     analysis_results: list[Analysis] = await autofill(
         tag,
