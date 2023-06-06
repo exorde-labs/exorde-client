@@ -57,55 +57,58 @@ class Processed(dict, metaclass=MadType):
 
 
 async def pull_to_process(stack, processed, installed_languages, memory):
-    item: Item = stack.pop()
-    memory["processing"] = True
-    memory["stack"] = stack
     try:
-        item = preprocess(item, False)
-    except Exception as err:
-        logging.error("An error occured pre-processing an item")
-        logging.error(err)
-        logging.error(json.dumps(item, indent=4))
-        raise err
+        item: Item = stack.pop()
+        memory["processing"] = True
+        memory["stack"] = stack
+        try:
+            item = preprocess(item, False)
+        except Exception as err:
+            logging.error("An error occured pre-processing an item")
+            logging.error(err)
+            logging.error(json.dumps(item, indent=4))
+            raise err
 
-    try:
-        translation: Translation = translate(item, installed_languages)
-    except Exception as err:
-        logging.error("An error occured translating an item")
-        logging.error(err)
-        logging.error(json.dumps(item, indent=4))
-        raise err
+        try:
+            translation: Translation = translate(item, installed_languages)
+        except Exception as err:
+            logging.error("An error occured translating an item")
+            logging.error(err)
+            logging.error(json.dumps(item, indent=4))
+            raise err
 
-    try:
-        top_keywords: TopKeywords = populate_keywords(translation)
-    except Exception as err:
-        logging.error("An error occured populating keywords for an item")
-        logging.error(err)
-        logging.error(json.dumps(item, indent=4))
-        raise err
+        try:
+            top_keywords: TopKeywords = populate_keywords(translation)
+        except Exception as err:
+            logging.error("An error occured populating keywords for an item")
+            logging.error(err)
+            logging.error(json.dumps(item, indent=4))
+            raise err
 
-    try:
-        classification: Classification = await autofill(
-            make_async(zero_shot), args=[translation], memory=memory
+        try:
+            classification: Classification = await autofill(
+                make_async(zero_shot), args=[translation], memory=memory
+            )
+        except Exception as err:
+            logging.error("An error occured translating an item")
+            logging.error(err)
+            logging.error(json.dumps(item, indent=4))
+            raise err
+
+        processing_batch: Processed = Processed(
+            item=item,
+            translation=translation,
+            top_keywords=top_keywords,
+            classification=classification,
         )
-    except Exception as err:
-        logging.error("An error occured translating an item")
-        logging.error(err)
-        logging.error(json.dumps(item, indent=4))
-        raise err
 
-    processing_batch: Processed = Processed(
-        item=item,
-        translation=translation,
-        top_keywords=top_keywords,
-        classification=classification,
-    )
-
-    processed.append(processing_batch)
-    logging.info(f"+ new processed item \t {len(processed)} / 25")
-    # technicaly the stack is already updated here
-    # we return to trigger the ONS events
-    return {"processed": processed, "processing": False, "stack": stack}
+        processed.append(processing_batch)
+        logging.info(f"+ new processed item \t {len(processed)} / 25")
+        # technicaly the stack is already updated here
+        # we return to trigger the ONS events
+        return {"processed": processed, "processing": False, "stack": stack}
+    except:
+        return {"processing": False, "stack": stack}
 
 
 from exorde.protocol.models import (
@@ -118,17 +121,29 @@ from exorde.protocol.models import (
 
 
 async def consume_processed(processed, memory):
+    print(json.dumps(processed, indent=4))
     batch: list[Processed] = [processed.pop(0) for _ in range(SIZE)]
     analysis_results: list[Analysis] = await autofill(
         tag,
-        args=[[processed.translation for processed in batch]],
+        args=[[processed.translation.translation for processed in batch]],
         memory=memory,
     )
     complete_processes: list[ProcessedItem] = []
     for processed, analysis in zip(batch, analysis_results):
         complete_processes.append(
             ProcessedItem(
-                item=ProtocolItem(),
+                item=ProtocolItem(
+                    title=processed.item.title,
+                    created_at=processed.item.created_at,
+                    summary=processed.item.summary,
+                    picture=processed.item.picture,
+                    author=processed.item.author,
+                    external_id=processed.item.external_id,
+                    external_parent_id=processed.item.external_parent_id,
+                    domain=processed.item.domain,
+                    url=processed.item.url,
+                    language=processed.translation.language,
+                ),
                 analysis=ProtocolAnalysis(
                     classification=processed.classification,
                     top_keywords=processed.top_keywords,

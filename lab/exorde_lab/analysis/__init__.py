@@ -68,7 +68,7 @@ class TransformerBlock(tf.keras.layers.Layer):
 from exorde_lab.translation import Translation
 
 
-def tag(translated: list[Translation], nlp, device, mappings):
+def tag(documents: list[str], nlp, device, mappings):
     """
     Analyzes and tags a list of text documents using various NLP models and techniques.
 
@@ -97,7 +97,6 @@ def tag(translated: list[Translation], nlp, device, mappings):
         return result
 
     # get text content attribute from all items
-    documents: list[str] = [item.translation for item in translated]
     for doc in documents:
         assert isinstance(doc, str)
 

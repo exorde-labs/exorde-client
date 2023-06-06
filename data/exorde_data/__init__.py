@@ -13,9 +13,6 @@ def install_modules():
 
 
 def get_scraping_module(url: str):
-    print("-------------")
-    print(dir(scraping))
-    print("-------------")
     for module_name in dir(scraping):
         if module_name in url:
             return getattr(scraping, module_name)
@@ -27,11 +24,11 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
     if not scraping_module:
         logging.debug(f"Installed modules are : {dir(scraping)}")
         raise NotImplementedError(f"There is no scraping module for {url}")
-    async for item in scraping_module.query(url):
-        print("\n")
-        print(item)
-        print("\n")
-        yield item
+    try:
+        async for item in scraping_module.query(url):
+            yield item
+    except:
+        raise StopAsyncIteration
 
 
 def print_schema():

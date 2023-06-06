@@ -127,10 +127,6 @@ async def contracts_and_abi_cnf(configuration):
 
 
 def read_web3(configuration, network_configuration):
-    print(
-        "network_configuration is : %s",
-        json.dumps(network_configuration, indent=4),
-    )
     return {
         "read_web3": instanciate_w3(
             random.choice(  # random ip described in `urlSkale`

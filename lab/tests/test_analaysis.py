@@ -1,33 +1,14 @@
 import os
 
 os.environ["PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION"] = "python"
-import datetime
 from exorde_lab.analysis import tag
 from exorde_lab.analysis.models import Analysis
 from exorde_lab.startup import meta_tagger_initialization
-from exorde_data.models import Item, CreatedAt, Title, Content, Domain, Url
 
 
 def test_analysis():
-    test_item1 = Item(
-        created_at=CreatedAt(
-            str(datetime.datetime.now(None).isoformat()) + "Z"
-        ),
-        title=Title("some title"),
-        content=Content("Ceci est un magnifique contenu francais"),
-        domain=Domain("test.local"),
-        url=Url("https://exorde.network/"),
-    )
-    test_item2 = Item(
-        created_at=CreatedAt(
-            str(datetime.datetime.now(None).isoformat()) + "Z"
-        ),
-        title=Title("some title two"),
-        content=Content("This is the bitcoin crash we all waited for"),
-        domain=Domain("twitter.com"),
-        url=Url("https://twitter.com/ExordeLabs/status/1664647166189551618"),
-    )
-
+    test_item1: str = "As I progress through implementing the different methods of calculating cosine, I will be comparing them from two perspectives: runtime and accuracy."
+    test_item2: str = "For runtime, each function is executed 100 million times using a range of input values and it is timed using time.h's clock function."
     list_item = [test_item1, test_item2]
 
     output = meta_tagger_initialization()

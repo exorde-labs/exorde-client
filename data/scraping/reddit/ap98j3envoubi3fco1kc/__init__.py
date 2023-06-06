@@ -1,7 +1,6 @@
 import aiohttp
 from lxml import html
 from typing import AsyncGenerator
-import pytz
 import datetime
 import hashlib
 
