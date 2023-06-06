@@ -12,7 +12,7 @@ setup(wrap(lambda session: {"session": session})(create_session))
 
 
 def spot_block(entities):
-    return {"Content": list(entities)}
+    return entities
 
 
 broadcast_new_valid_batch, on_new_valid_batch_do = wire()

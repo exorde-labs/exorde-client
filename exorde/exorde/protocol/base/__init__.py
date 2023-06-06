@@ -168,7 +168,6 @@ def contract(name, read_w3, abi_cnf, contracts_cnf, configuration):
 
 
 def contracts(read_w3, abi_cnf, contracts_cnf, configuration):
-    print(json.dumps(contracts_cnf(), indent=4))
     return {
         name: contract(name, read_w3, abi_cnf, contracts_cnf, configuration)
         for name in contracts_cnf()[configuration["target"]]

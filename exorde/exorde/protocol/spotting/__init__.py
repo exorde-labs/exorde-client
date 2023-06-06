@@ -7,6 +7,39 @@ from madframe.autofill import autofill
 from importlib import metadata
 from datetime import datetime
 
+import json
+from exorde_data.models import Item
+from exorde_lab.preprocess import preprocess
+from exorde_lab.keywords import populate_keywords
+from exorde_lab.keywords.models import Keywords
+from exorde_lab.translation import translate
+from exorde_lab.translation.models import Translation
+from exorde_lab.classification import zero_shot
+from exorde_lab.classification.models import Classification
+from exorde_lab.analysis.models import Analysis
+from exorde_lab.analysis import tag
+from madframe.bindings import make_async
+
+from madtypes import MadType
+
+
+from exorde.protocol.models import (
+    ProtocolItem,
+    ProtocolAnalysis,
+    ProcessedItem,
+    Batch,
+    BatchKindEnum,
+)
+
+from exorde.protocol.models import (
+    CollectionClientVersion,
+    CollectedAt,
+    CollectionModule,
+)
+
+from enum import Enum
+
+
 SIZE = 3
 
 
@@ -33,22 +66,6 @@ async def push_to_stack(value, stack, memory):
     if filter_result:
         stack.append(value)
         return {"stack": stack}
-
-
-import json
-from exorde_data.models import Item
-from exorde_lab.preprocess import preprocess
-from exorde_lab.keywords import populate_keywords
-from exorde_lab.keywords.models import Keywords
-from exorde_lab.translation import translate
-from exorde_lab.translation.models import Translation
-from exorde_lab.classification import zero_shot
-from exorde_lab.classification.models import Classification
-from exorde_lab.analysis.models import Analysis
-from exorde_lab.analysis import tag
-from madframe.bindings import make_async
-
-from madtypes import MadType
 
 
 class Processed(dict, metaclass=MadType):
@@ -80,7 +97,7 @@ async def pull_to_process(stack, processed, installed_languages, memory):
             raise err
 
         try:
-            top_keywords: TopKeywords = populate_keywords(translation)
+            top_keywords: Keywords = populate_keywords(translation)
         except Exception as err:
             logging.error("An error occured populating keywords for an item")
             logging.error(err)
@@ -111,23 +128,6 @@ async def pull_to_process(stack, processed, installed_languages, memory):
         return {"processed": processed, "processing": False, "stack": stack}
     except:
         return {"processing": False, "stack": stack}
-
-
-from exorde.protocol.models import (
-    ProtocolItem,
-    ProtocolAnalysis,
-    ProcessedItem,
-    Batch,
-    BatchKindEnum,
-)
-
-from exorde.protocol.models import (
-    CollectionClientVersion,
-    CollectedAt,
-    CollectionModule,
-)
-
-from enum import Enum
 
 
 # Custom JSON encoder class
@@ -191,15 +191,10 @@ async def consume_processed(processed, memory):
     result_batch: Batch = Batch(
         items=complete_processes, kind=BatchKindEnum.SPOTTING
     )
-    print()
-    print()
-    print()
-    print(json.dumps(result_batch, indent=4, cls=EnumEncoder))
-    print()
-    print()
-    print()
-
-    return {"batch_to_consume": result_batch, "processed": processed}
+    return {
+        "batch_to_consume": json.dumps(result_batch, cls=EnumEncoder),
+        "processed": processed,
+    }
 
 
 def reset_cids():
