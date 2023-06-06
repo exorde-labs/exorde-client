@@ -14,6 +14,8 @@ from exorde_data import (
     Domain,
 )
 
+import hashlib
+
 
 async def scrap_post(url: str) -> AsyncGenerator[Item, None]:
     resolvers = {}
@@ -48,7 +50,11 @@ async def scrap_post(url: str) -> AsyncGenerator[Item, None]:
         content = data["data"]
         yield Item(
             content=Content(content["body"]),
-            author=Author(content["author"]),
+            author=Author(
+                hashlib.sha1(
+                    bytes(content["author"], encoding="utf-8")
+                ).hexdigest()
+            ),
             created_at=CreatedAt(
                 str(
                     datetime.datetime.fromtimestamp(

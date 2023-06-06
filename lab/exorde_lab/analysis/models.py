@@ -98,7 +98,7 @@ class Age(dict, metaclass=MadType):
 
 
 class Analysis(dict, metaclass=MadType):
-    langage_score: LanguageScore
+    language_score: LanguageScore
     sentiment: Sentiment
     embedding: Embedding
     gender: Gender

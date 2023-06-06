@@ -290,7 +290,7 @@ def tag(documents: list[str], nlp, device, mappings):
         )
 
         analysis = Analysis(
-            langage_score=language_score,
+            language_score=language_score,
             sentiment=sentiment,
             embedding=embedding,
             gender=gender,

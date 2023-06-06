@@ -1,6 +1,6 @@
 import yake
 
-from .models import TopKeywords, Keywords
+from .models import Keywords
 from ..translation.models import Translation
 
 language = "en"
@@ -22,8 +22,6 @@ kw_extractor = yake.KeywordExtractor(
 extract_keywords = lambda text: kw_extractor.extract_keywords(text)
 
 
-def populate_keywords(translation: Translation) -> TopKeywords:
+def populate_keywords(translation: Translation) -> Keywords:
     content: str = translation.translation
-    return TopKeywords(
-        top_keywords=Keywords({e[0] for e in set(extract_keywords(content))})
-    )
+    return Keywords([e[0] for e in set(extract_keywords(content))])

@@ -1,5 +1,5 @@
 from exorde_data.models import Item
-from .models import Classification, DescriptedClassification
+from .models import Classification
 from ..models import Translation
 
 
@@ -37,7 +37,5 @@ def zero_shot(
     keys = list(labeldict[labels_list[0][0]].keys())
     output = classifier(texts, keys, multi_label=False, max_length=32)
     return Classification(
-        classification=DescriptedClassification(
-            label=output[0]["labels"][0], score=output[0]["scores"][0]
-        )
+        label=output[0]["labels"][0], score=output[0]["scores"][0]
     )

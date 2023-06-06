@@ -1,4 +1,4 @@
-from exorde_lab.keywords.models import TopKeywords
+from exorde_lab.keywords.models import Keywords
 from exorde_lab.translation.models import (
     Translated,
     Language,
@@ -17,7 +17,7 @@ class LabItem(CalmItem, CalmTranslation, metaclass=MadType):
 
 
 __all__ = [
-    "TopKeywords",
+    "Keywords",
     "Translated",
     "Language",
     "Translation",

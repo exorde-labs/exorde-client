@@ -1,11 +1,8 @@
 from enum import Enum
 from madtypes import MadType
 
-from exorde_data.models import Item as CollectedItem
 from exorde_lab.models import (
-    TopKeywords,
-    Translation,
-    Analysis,
+    Keywords,
     Classification,
 )
 
@@ -13,7 +10,7 @@ from exorde_lab.models import (
 class CollectedAt(str, metaclass=MadType):
     description = "ISO8601/RFC3339 Date of collection of the item"
     annotation = str
-    pattern = r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}\.[0-9]{1,6}?Z$"
+    pattern = r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(.[0-9]{1,6})?Z$"
 
 
 class CollectionClientVersion(str, metaclass=MadType):
@@ -59,7 +56,7 @@ class ProtocolItem(dict, metaclass=MadType):
     external_parent_id: Optional[ExternalParentId]
     domain: Domain
     url: Url
-    langage: Language
+    language: Language
     # type: Type # work in progress
 
     def is_valid(self, **kwargs) -> bool:
@@ -72,8 +69,31 @@ class ProtocolItem(dict, metaclass=MadType):
         )
 
 
-class ProtocolAnalysis(Classification, Analysis, TopKeywords):
-    pass
+from exorde_lab.analysis.models import (
+    Sentiment,
+    Embedding,
+    Gender,
+    SourceType,
+    TextType,
+    Emotion,
+    Irony,
+    Age,
+    LanguageScore,
+)
+
+
+class ProtocolAnalysis(dict, metaclass=MadType):
+    classification: Classification
+    top_keywords: Keywords
+    language_score: LanguageScore
+    sentiment: Sentiment
+    embedding: Embedding
+    gender: Gender
+    source_type: SourceType
+    text_type: TextType
+    emotion: Emotion
+    irony: Irony
+    age: Age
 
 
 class ProcessedItem(dict, metaclass=MadType):

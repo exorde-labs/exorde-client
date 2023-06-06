@@ -7,6 +7,19 @@ import snscrape.modules
 from exorde_data import Item
 
 
+from exorde_data import (
+    Item,
+    Content,
+    Author,
+    CreatedAt,
+    Title,
+    Url,
+    Domain,
+    ExternalId,
+    ExternalParentId,
+)
+
+
 async def is_within_timeframe_seconds(datetime_str, timeframe_sec):
     # Convert the datetime string to a datetime object
     dt = datetime.fromisoformat(datetime_str)
@@ -79,8 +92,8 @@ async def get_sns_tweets(
         if c > nb_tweets_wanted:
             break
 
-        tr_post["internal_id"] = str(post["id"])
-        tr_post["internal_parent_id"] = post["inReplyToTweetId"]
+        tr_post["external_id"] = str(post["id"])
+        tr_post["external_parent_id"] = post["inReplyToTweetId"]
 
         tr_post["mediaType"] = "Social_Networks"
         tr_post["domainName"] = "twitter.com"
@@ -116,14 +129,14 @@ async def get_sns_tweets(
             tr_post["content"] = tr_post["title"]
 
         yield Item(
-            content=tr_post["content"],
-            author=tr_post["author"],
-            creation_datetime=tr_post["creationDateTime"],
-            title=tr_post["title"],
-            domain="twitter.com",
-            url=tr_post["url"],
-            internal_id=tr_post["internal_id"],
-            internal_parent_id=tr_post["internal_parent_id"],
+            content=Content(tr_post["content"]),
+            author=Author(tr_post["author"]),
+            creation_datetime=CreatedAt(tr_post["creationDateTime"]),
+            title=Title(tr_post["title"]),
+            domain=Domain("twitter.com"),
+            url=Url(tr_post["url"]),
+            external_id=ExternalId(tr_post["external_id"]),
+            external_parent_id=ExternalParentId(tr_post["external_parent_id"]),
         )
 
 
