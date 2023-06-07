@@ -1,8 +1,7 @@
-#! python3.10
+#! python50.10
 
 from typing import Callable
 import logging
-from collections import deque
 from madframe.autofill import autofill
 from importlib import metadata
 from datetime import datetime
@@ -40,11 +39,11 @@ from exorde.protocol.models import (
 from enum import Enum
 
 
-SIZE = 3
+SIZE = 50
 
 
 def init_stack():
-    return {"stack": deque(maxlen=SIZE), "processed": [], "processing": False}
+    return {"stack": [], "processed": [], "processing": False}
 
 
 FILTERS = []
@@ -122,12 +121,14 @@ async def pull_to_process(stack, processed, installed_languages, memory):
         )
 
         processed.append(processing_batch)
-        logging.info(f"+ new processed item \t {len(processed)} / 3")
+        logging.info(f"+ new processed item \t {len(processed)} / 50")
         # technicaly the stack is already updated here
         # we return to trigger the ONS events
         return {"processed": processed, "processing": False, "stack": stack}
-    except:
-        return {"processing": False, "stack": stack}
+    except Exception as err:
+        print(processed)
+        raise (err)
+        return {"processing": False}
 
 
 # Custom JSON encoder class
@@ -193,7 +194,7 @@ async def consume_processed(processed, memory):
     )
     return {
         "batch_to_consume": json.dumps(result_batch, cls=EnumEncoder),
-        "processed": processed,
+        "processed": [],
     }
 
 

@@ -4,26 +4,32 @@ from madframe.perpetuate import on
 
 from exorde.scraping.bindings import on_formated_data_do
 
-from typing import Callable
 from exorde.protocol.ipfs.bindings import push_to_ipfs, on_new_cid_do
 from exorde.protocol.base.bindings import commit_current_cid
 from exorde.protocol.spotting import (
-    init_stack,
     push_to_stack,
     consume_processed,
-    reset_cids,
-    push_new_cid,
-    choose_cid_to_commit,
     pull_to_process,
 )
 
 
-SPOTTING_PROCCESES: list[Callable] = []
+# event(success, failure)
 
 
-def spotting(function: Callable):
-    SPOTTING_PROCCESES.append(function)
-    return function
+def reset_cids():
+    return {"cids": [], "current_cid_commit": None}
+
+
+def push_new_cid(value, cids):
+    return {"cids": cids + [value["cid"]]}
+
+
+def choose_cid_to_commit(cids):
+    return {"current_cid_commit": cids[0], "cids": cids[1:]}
+
+
+def init_stack():
+    return {"stack": [], "processed": [], "processing": False}
 
 
 setup(init_stack)
@@ -35,6 +41,9 @@ spotting_ran_when, on_spotting_done_do = wire(perpetual=True)
 
 on_formated_data_do(push_to_stack)
 
+from madframe.routines import routine
+
+routine(60)(init_stack)
 
 on(
     "stack",
@@ -44,7 +53,7 @@ on(
 )(pull_to_process)
 on("processed")(lambda processed: f"{len(processed)} processed items")
 # idk why this line does not trigger
-on("processed", condition=lambda processed: len(processed) == 3)(
+on("processed", condition=lambda processed: len(processed) == 50)(
     consume_processed
 )
 on(

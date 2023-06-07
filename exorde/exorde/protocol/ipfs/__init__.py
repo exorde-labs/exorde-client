@@ -9,7 +9,6 @@ def create_session(*__args__, **__kwargs__):
 async def upload_to_ipfs(
     value, ipfs_path="http://ipfs-api.exorde.network/add"
 ):
-    print(value)
     async with aiohttp.ClientSession() as session:
         async with session.post(
             ipfs_path,
