@@ -12,6 +12,7 @@ setup(
             "exorde_lab.xyake",
             "exorde_lab.preprocess",
             "exorde_lab.keywords",
+            "exorde_lab.classification",
         ]
     ),
     install_requires=[
