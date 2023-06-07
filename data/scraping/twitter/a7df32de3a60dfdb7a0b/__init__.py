@@ -115,7 +115,7 @@ async def get_sns_tweets(
         tr_post["creationDateTime"] = post["date"]
         if tr_post["creationDateTime"] is not None:
             newness = is_within_timeframe_seconds(
-                tr_post["creationDateTime"], 120
+                tr_post["creationDateTime"], 480
             )
             if not newness:
                 break  # finish the generation if we scrolled further than 5min old tweets
