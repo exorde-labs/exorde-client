@@ -1,7 +1,5 @@
 FROM python:3.10.11
 
-COPY . /exorde
-
 RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends \
   libnss3 \
   libglib2.0-0 \
@@ -56,10 +54,16 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-reco
   && rm -rf /var/lib/apt/lists/*
 
 
-RUN pip3.10 install --no-cache /exorde
+COPY . /exorde
+RUN pip3.10 install --no-cache /exorde/data
+RUN pip3.10 install /exorde/data/scraping/reddit
+RUN pip3.10 install /exorde/data/scraping/twitter
+RUN pip3.10 install --upgrade git+https://github.com/JustAnotherArchivist/snscrape.git 
+RUN pip3.10 install --no-cache /exorde/lab
+RUN pip3.10 install --no-cache /exorde/exorde
 
-# RUN pip3.10 --no-cache install exorde==0.1.1
 
 
-ENTRYPOINT ["exorde"]
-CMD ["-h"]
+ENTRYPOINT ["/bin/bash", "-c"] 
+# ["exorde"]
+# CMD ["-h"]

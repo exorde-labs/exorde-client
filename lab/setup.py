@@ -10,6 +10,8 @@ setup(
             "exorde_lab.meta_tagger",
             "exorde_lab.translation",
             "exorde_lab.xyake",
+            "exorde_lab.preprocess",
+            "exorde_lab.keywords",
         ]
     ),
     install_requires=[
