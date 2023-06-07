@@ -9,4 +9,6 @@ RUN pip3.10 install /exorde/data/scraping/twitter
 RUN pip3.10 install --upgrade git+https://github.com/JustAnotherArchivist/snscrape.git 
 RUN pip3.10 install /exorde/lab
 RUN pip3.10 install /exorde/exorde
+RUN python3 -m spacy download en_core_web_trf
+RUN install_translation
 ENTRYPOINT ["/bin/zsh"]
