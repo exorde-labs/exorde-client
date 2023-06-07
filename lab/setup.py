@@ -7,6 +7,7 @@ setup(
     license="MIT",
     packages=find_packages(
         include=[
+            "exorde_lab",
             "exorde_lab.analysis",
             "exorde_lab.classification",
             "exorde_lab.keywords",
