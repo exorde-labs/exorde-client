@@ -8,7 +8,15 @@ setup(
     version="0.1.1",
     description="Exorde CLI",
     packages=find_packages(
-        include=["exorde", "exorde.protocol.*", "exorde.drivers"]
+        include=[
+            "exorde",
+            "exorde.protocol",
+            "exorde.scraping",
+            "exorde.protocol.base",
+            "exorde.protocol.ipfs",
+            "exorde.protocol.spotting",
+            "exorde.protocol.validation",
+        ]
     ),
     include_package_data=True,
     license="MIT",
