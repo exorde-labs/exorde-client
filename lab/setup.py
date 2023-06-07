@@ -7,12 +7,12 @@ setup(
     license="MIT",
     packages=find_packages(
         include=[
-            "exorde_lab.meta_tagger",
-            "exorde_lab.translation",
-            "exorde_lab.xyake",
-            "exorde_lab.preprocess",
-            "exorde_lab.keywords",
+            "exorde_lab.analysis",
             "exorde_lab.classification",
+            "exorde_lab.keywords",
+            "exorde_lab.preprocess",
+            "exorde_lab.translation",
+            "exorde_lab.translation",
         ]
     ),
     install_requires=[
