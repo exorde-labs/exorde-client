@@ -3,10 +3,10 @@ COPY . /exorde
 WORKDIR /exorde
 RUN apt-get update
 RUN apt-get install zsh -y
-RUN pip3.10 install --no-cache /exorde/data
+RUN pip3.10 install /exorde/data
 RUN pip3.10 install /exorde/data/scraping/reddit
 RUN pip3.10 install /exorde/data/scraping/twitter
 RUN pip3.10 install --upgrade git+https://github.com/JustAnotherArchivist/snscrape.git 
-RUN pip3.10 install --no-cache /exorde/lab
-RUN pip3.10 install --no-cache /exorde/exorde
+RUN pip3.10 install /exorde/lab
+RUN pip3.10 install /exorde/exorde
 ENTRYPOINT ["/bin/zsh"]
