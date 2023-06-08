@@ -1,2 +1,0 @@
-include exorde/protocol/configuration.yaml
-include exorde/ipfs/schema.json

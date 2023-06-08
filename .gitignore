@@ -7,6 +7,11 @@ tracemalloc
 cli
 keygen.py
 main_address.key
-Makefile
 build
 dist
+schemator
+tag-result.json
+zero_shot-result.json
+browser
+playwright
+.eggs

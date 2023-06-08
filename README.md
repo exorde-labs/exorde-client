@@ -1,10 +1,6 @@
 <img src="https://media.exorde.io/brand/landscape-logo-color.svg">
-
-The exorde-cli is available on [pip](https://pypi.org/). You can install it running the following command :
-```
-pip3.10 install exorde
-```
-### Usage
-```
-exorde -h
-```
+<p align="center">
+  <a href="lab"><img src="https://img.shields.io/badge/how%20to-analyse%20data-red?style=for-the-badge" /></a>
+  <a href="data"><img src="https://img.shields.io/badge/how%20to-scrap-blue?style=for-the-badge" /></a>
+  <a href="exorde"><img src="https://img.shields.io/badge/how%20to-mine%20EXD-yellowgreen?style=for-the-badge" /></a>
+</p>

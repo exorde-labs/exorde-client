@@ -1,0 +1,110 @@
+{
+    "type": "object",
+    "properties": {
+        "items": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "item": {
+                        "type": "object",
+                        "properties": {
+                            "created_at": {
+                                "description": "ISO8601/RFC3339 Date of creation of the item",
+                                "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(.[0-9]{1,6})?Z$",
+                                "type": "string"
+                            },
+                            "title": {
+                                "description": "Headline of the item",
+                                "type": "string"
+                            },
+                            "summary": {
+                                "description": "Short version of the content",
+                                "type": "string"
+                            },
+                            "picture": {
+                                "description": "Uniform-Resource-Locator",
+                                "pattern": "^https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,32}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)$",
+                                "type": "string"
+                            },
+                            "author": {
+                                "description": "SHA1 encoding of the username assigned as creator of the item on its source platform",
+                                "type": "string"
+                            },
+                            "external_id": {
+                                "description": "Identifier used by source",
+                                "type": "string"
+                            },
+                            "external_parent_id": {
+                                "description": "Identifier of parent item, as used by source",
+                                "type": "string"
+                            },
+                            "domain": {
+                                "description": "Domain name on which the item was retrieved",
+                                "type": "string"
+                            },
+                            "url": {
+                                "description": "Uniform-Resource-Locator",
+                                "pattern": "^https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,32}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)$",
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "created_at",
+                            "domain",
+                            "url"
+                        ]
+                    },
+                    "analysis": {
+                        "type": "object",
+                        "properties": {},
+                        "required": [
+                            "classification",
+                            "langage_score",
+                            "sentiment",
+                            "embedding",
+                            "gender",
+                            "source_type",
+                            "text_type",
+                            "emotion",
+                            "irony",
+                            "age",
+                            "top_keywords"
+                        ]
+                    },
+                    "collection_client_version": {
+                        "description": "Client identifier with version of the client that collected the item.",
+                        "type": "string"
+                    },
+                    "collection_module": {
+                        "description": "Module that scraped the item.",
+                        "type": "string"
+                    },
+                    "collected_at": {
+                        "description": "ISO8601/RFC3339 Date of collection of the item",
+                        "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}\\.[0-9]{1,6}?Z$",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "item",
+                    "analysis",
+                    "collection_client_version",
+                    "collection_module",
+                    "collected_at"
+                ]
+            }
+        },
+        "kind": {
+            "type": "string",
+            "enum": [
+                "SPOTTING",
+                "VALIDATION"
+            ]
+        }
+    },
+    "required": [
+        "items",
+        "kind"
+    ]
+}
