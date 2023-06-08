@@ -6,6 +6,10 @@ import aiohttp, random
 from lxml import html
 
 
+async def generate_4chan_url(__keyword__: str):
+    return "https://boards.4channel.org/biz/"
+
+
 async def generate_reddit_url(keyword: str):
     """
     Generate a subreddit URL using the search tool with `keyword`.
@@ -33,7 +37,11 @@ async def generate_twitter_url(keyword: str, live_mode=True):
     return base_url
 
 
-url_generators: list[Callable] = [generate_twitter_url, generate_reddit_url]
+url_generators: list[Callable] = [
+    generate_twitter_url,
+    generate_reddit_url,
+    generate_4chan_url,
+]
 
 
 async def generate_url(keyword: str):

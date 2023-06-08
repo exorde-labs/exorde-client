@@ -12,5 +12,5 @@ RUN pip3.10 install /exorde/exorde
 RUN python3 -m spacy download en_core_web_trf
 RUN install_translation
 ENV PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python 
-cp /exorde/exorde/exorde/protocol/base/configuration.yaml /usr/local/lib/python3.10/site-packages/exorde/protocol/base/
-ENTRYPOINT ["/bin/zsh"]
+COPY /exorde/exorde/exorde/protocol/base/configuration.yaml /usr/local/lib/python3.10/site-packages/exorde/protocol/base/
+ENTRYPOINT ["python3", "/exorde/exorde/main.py"]

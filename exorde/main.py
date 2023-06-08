@@ -221,7 +221,11 @@ async def main():
             )
             if len(batch) != configuration["batch_size"]:
                 logging.warning("Something weird is going on")
-            processed_batch = await process_batch(batch, lab_configuration)
+            try:
+                processed_batch = await process_batch(batch, lab_configuration)
+            except:
+                logging.exception("An error occured during batch processing")
+                continue
             cid = await upload_to_ipfs(processed_batch)
             transaction_hash, previous_nonce = await spot_data(
                 cid,
