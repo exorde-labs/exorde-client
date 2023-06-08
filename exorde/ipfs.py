@@ -2,10 +2,6 @@ import json, itertools, logging, aiohttp
 from aiohttp import ClientSession
 
 
-def create_session(*__args__, **__kwargs__):
-    return ClientSession()
-
-
 async def upload_to_ipfs(
     value, ipfs_path="http://ipfs-api.exorde.network/add"
 ):
