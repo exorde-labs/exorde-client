@@ -2,10 +2,9 @@ import hashlib
 import re
 from datetime import date
 from typing import AsyncGenerator
-from datetime import datetime, timedelta, date
+from datetime import datetime, timedelta, date, timezone
 import snscrape.modules
 from exorde_data import Item
-
 
 from exorde_data import (
     Item,
@@ -18,6 +17,7 @@ from exorde_data import (
     ExternalId,
     ExternalParentId,
 )
+
 
 def is_within_timeframe_seconds(dt, timeframe_sec):
     # Get the current datetime in UTC
@@ -117,7 +117,7 @@ async def get_sns_tweets(
         tr_post["author"] = author_sha1_hex
         tr_post["creationDateTime"] = post["date"]
         if tr_post["creationDateTime"] is not None:
-            newness = await is_within_timeframe_seconds(
+            newness =  is_within_timeframe_seconds(
                 tr_post["creationDateTime"], 480
             )
             if not newness:
@@ -136,7 +136,7 @@ async def get_sns_tweets(
             yield Item(
                 content=Content(tr_post["content"]),
                 author=Author(tr_post["author"]),
-                creation_datetime=CreatedAt(
+                created_at=CreatedAt(
                     convert_datetime(tr_post["creationDateTime"])
                 ),
                 title=Title(tr_post["title"]),
