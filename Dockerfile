@@ -11,4 +11,5 @@ RUN pip3.10 install /exorde/lab
 RUN pip3.10 install /exorde/exorde
 RUN python3 -m spacy download en_core_web_trf
 RUN install_translation
+cp /exorde/exorde/exorde/protocol/base/configuration.yaml /usr/local/lib/python3.10/site-packages/exorde/protocol/base/
 ENTRYPOINT ["/bin/zsh"]
