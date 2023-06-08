@@ -22,7 +22,7 @@ from exorde_data import (
 
 async def is_within_timeframe_seconds(datetime_str, timeframe_sec):
     # Convert the datetime string to a datetime object
-    dt = datetime.fromisoformat(datetime_str)
+    dt = datetime.fromisoformat(str(datetime_str))
 
     # Get the current datetime in UTC
     current_dt = datetime.utcnow()
@@ -100,7 +100,7 @@ async def get_sns_tweets(
             break
 
         tr_post["external_id"] = str(post["id"])
-        tr_post["external_parent_id"] = post["inReplyToTweetId"]
+        tr_post["external_parent_id"] = str(post["conversationId"])
 
         tr_post["mediaType"] = "Social_Networks"
         tr_post["domainName"] = "twitter.com"
@@ -134,19 +134,23 @@ async def get_sns_tweets(
         )
         if tr_post["content"] in ("", "[removed]") and tr_post["title"] != "":
             tr_post["content"] = tr_post["title"]
-
-        yield Item(
-            content=Content(tr_post["content"]),
-            author=Author(tr_post["author"]),
-            creation_datetime=CreatedAt(
-                convert_datetime(tr_post["creationDateTime"])
-            ),
-            title=Title(tr_post["title"]),
-            domain=Domain("twitter.com"),
-            url=Url(tr_post["url"]),
-            external_id=ExternalId(tr_post["external_id"]),
-            external_parent_id=ExternalParentId(tr_post["external_parent_id"]),
-        )
+        if (
+            len(tr_post["content"]) >= 20
+        ):  # yield only tweets with >=25 real text characters
+            yield Item(
+                content=Content(tr_post["content"]),
+                author=Author(tr_post["author"]),
+                creation_datetime=CreatedAt(
+                    convert_datetime(tr_post["creationDateTime"])
+                ),
+                title=Title(tr_post["title"]),
+                domain=Domain("twitter.com"),
+                url=Url(tr_post["url"]),
+                external_id=ExternalId(tr_post["external_id"]),
+                external_parent_id=ExternalParentId(
+                    tr_post["external_parent_id"]
+                ),
+            )
 
 
 async def query(url: str) -> AsyncGenerator[Item, None]:
@@ -161,15 +165,7 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
     if "f=live" not in url_parts:
         select_top_tweets = True
     if len(search_keyword) == 0:
-        print("keyword not found, can't search using snscrape.")
-    print(
-        "\nSearch_keyword = ",
-        search_keyword,
-        " select_top_tweets = ",
-        select_top_tweets,
-        nb_tweets_wanted,
-    )
-    print("Scraping....")
+        print("keyword not found, can't search tweets using snscrape.")
     async for result in get_sns_tweets(
         search_keyword, select_top_tweets, nb_tweets_wanted
     ):
