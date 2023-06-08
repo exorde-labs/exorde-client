@@ -32,4 +32,4 @@ def generate_twitter_url(keyword: str, live_mode=True):
 
 
 # "generate_reddit_url",
-__all__ = ["generate_twitter_url"]
+__all__ = ["generate_twitter_url", "generate_reddit_url"]
