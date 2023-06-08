@@ -24,10 +24,12 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
     if not scraping_module:
         logging.debug(f"Installed modules are : {dir(scraping)}")
         raise NotImplementedError(f"There is no scraping module for {url}")
+    generator = scraping_module.query(url)
     try:
-        async for item in scraping_module.query(url):
+        async for item in generator:
             yield item
     except:
+        await generator.aclose()
         raise StopAsyncIteration
 
 

@@ -1,6 +1,6 @@
 import pytest
 from typing import AsyncGenerator
-from .item import get_item, Item
+from .item import implementation, Item
 
 
 async def unstable_query(content: str) -> AsyncGenerator[Item, None]:
@@ -13,7 +13,8 @@ async def unstable_query(content: str) -> AsyncGenerator[Item, None]:
 @pytest.mark.asyncio
 async def test_get_item_should_always_return_an_item():
     increment = 0
-    async for item in get_item(unstable_query):
+    async for item in implementation(unstable_query)():
+        print(item)
         assert isinstance(item, Item)
         increment += 1
         if increment <= 10:

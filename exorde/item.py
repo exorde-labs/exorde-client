@@ -15,20 +15,17 @@ def implementation(
 ) -> Callable:
     async def logic() -> AsyncGenerator[Item, None]:
         item: Item
-        try:
-            while True:
-                try:
-                    url = await generate_url(random.choice(keywords))
-                    async for item in query(url):
-                        if isinstance(item, Item):
-                            yield item
-                        else:
-                            continue
-                except Exception as e:
-                    logging.exception("an error occured retrieving an item")
-                    raise (e)
-        except GeneratorExit:
-            return
+        while True:
+            try:
+                url = await generate_url(random.choice(keywords))
+                async for item in query(url):
+                    if isinstance(item, Item):
+                        yield item
+                    else:
+                        continue
+            except Exception as e:
+                logging.exception("an error occured retrieving an item")
+                raise (e)
 
     return logic
 

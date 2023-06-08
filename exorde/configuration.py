@@ -23,7 +23,7 @@ def logic(implementation: Callable) -> Callable:
 
 
 def implementation() -> Configuration:
-    return Configuration(online=True, batch_size=2)
+    return Configuration(online=True, batch_size=100)
 
 
 get_configuration: Callable[[], Coroutine[None, None, Configuration]] = logic(
