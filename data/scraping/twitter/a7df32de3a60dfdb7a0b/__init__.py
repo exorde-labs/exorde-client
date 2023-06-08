@@ -52,6 +52,11 @@ def cleanhtml(raw_html):
     return cleantext
 
 
+def convert_datetime(datetime_str):
+    datetime_str = str(datetime_str)
+    dt = datetime.strptime(datetime_str, "%Y-%m-%d %H:%M:%S%z")
+    converted_str = dt.strftime("%Y-%m-%dT%H:%M:%S.00Z")
+    return converted_str
 ########################################################################
 
 
@@ -131,7 +136,7 @@ async def get_sns_tweets(
         yield Item(
             content=Content(tr_post["content"]),
             author=Author(tr_post["author"]),
-            creation_datetime=CreatedAt(tr_post["creationDateTime"]),
+            creation_datetime=CreatedAt(convert_datetime(tr_post["creationDateTime"])),
             title=Title(tr_post["title"]),
             domain=Domain("twitter.com"),
             url=Url(tr_post["url"]),
