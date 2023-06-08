@@ -7,7 +7,6 @@ setup(
     install_requires=[
         "exorde_data",
         "aiohttp",
-        "snscrape==0.6.2.20230320",
     ],
     extras_require={"dev": ["pytest", "pytest-cov", "pytest-asyncio"]},
 )
