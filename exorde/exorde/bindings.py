@@ -95,19 +95,10 @@ def print_pid():
 Spotting processes are expressed as functions that take and return 1 item
 """
 
-option(
-    "--no_spotting",
-    action="store_true",
-    default=False,
-    help="Won't run spotting",
-)
-
-option("--source", nargs="+", help="Scraping module to be used")
-
 
 @setup
 def init_spotting(no_spotting, remote_kill, memory):
-    if not no_spotting and not remote_kill:
+    if not remote_kill:
         from exorde.protocol.spotting import bindings as __bindings__
         from exorde.protocol.spotting import filter as spotting_filter
         from exorde import keywords as __keywords__
@@ -122,36 +113,3 @@ def init_spotting(no_spotting, remote_kill, memory):
 
         spotting_filter(datetime_filter)
         spotting_filter(has_content)
-
-
-"""
-# Validation
-Validators are expressed as function that take and return a list of items
-
-# Votes (validation)
-Votes are expressed as function that take a liste of items and return an integer
-
-The voting system is an unanimous consent, if even a single vote function negates
-the batch, the vote fails and the batch is not accepted.
-"""
-
-option(
-    "--no_validation",
-    action="store_true",
-    default=False,
-    help="Won't run validation",
-)
-
-
-@setup
-def init_validation(no_validation, remote_kill):
-    if not no_validation and not remote_kill:
-        from exorde.protocol.validation.bindings import (
-            validator as validation_validator,
-        )
-        from exorde.protocol.base import bindings as __bindings__
-        from exorde_lab.analysis import tag
-        from exorde_lab.startup import meta_tagger_initialization
-
-        setup(meta_tagger_initialization)
-        validation_validator(tag)
