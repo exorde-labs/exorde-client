@@ -5,20 +5,25 @@ from aiohttp import ClientSession
 async def upload_to_ipfs(
     value, ipfs_path="http://ipfs-api.exorde.network/add"
 ):
-    async with aiohttp.ClientSession() as session:
-        async with session.post(
-            ipfs_path,
-            data=value,
-            headers={"Content-Type": "application/json"},
-        ) as resp:
-            if resp.status == 200:
-                logging.debug("Upload to ipfs succeeded")
-                response = await resp.json()
-                return response
-            else:
-                content = await resp.text()
-                logging.error(json.dumps(content, indent=4))
-                raise Exception(f"Failed to upload to IPFS ({resp.status})")
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.post(
+                ipfs_path,
+                data=value,
+                headers={"Content-Type": "application/json"},
+            ) as resp:
+                if resp.status == 200:
+                    logging.debug("Upload to ipfs succeeded")
+                    response = await resp.json()
+                    return response
+                else:
+                    content = await resp.text()
+                    logging.error(json.dumps(content, indent=4))
+                    raise Exception(
+                        f"Failed to upload to IPFS ({resp.status})"
+                    )
+    except:
+        logging.exception("An error ocurred while uploading to IPFS")
 
 
 def rotate_gateways():

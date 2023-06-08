@@ -19,18 +19,20 @@ def get_scraping_module(url: str):
     return None
 
 
-async def query(url: str) -> AsyncGenerator[Item, None]:
+from typing import Union
+
+
+async def query(url: str) -> AsyncGenerator[Union[Item, None], None]:
     scraping_module = get_scraping_module(url)
     if not scraping_module:
         logging.debug(f"Installed modules are : {dir(scraping)}")
         raise NotImplementedError(f"There is no scraping module for {url}")
-    generator = scraping_module.query(url)
     try:
+        generator = scraping_module.query(url)
         async for item in generator:
             yield item
     except:
-        await generator.aclose()
-        raise StopAsyncIteration
+        yield None
 
 
 def print_schema():

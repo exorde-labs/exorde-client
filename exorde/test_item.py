@@ -1,12 +1,32 @@
+import hashlib
+import datetime
 import pytest
 from typing import AsyncGenerator
-from .item import implementation, Item
+from .item import implementation
+from exorde_data.models import (
+    Item,
+    Content,
+    Author,
+    CreatedAt,
+    Title,
+    Domain,
+    Url,
+)
 
 
-async def unstable_query(content: str) -> AsyncGenerator[Item, None]:
+async def unstable_query(url: str) -> AsyncGenerator[Item, None]:
     yield "foo"
-    yield None
-    yield Item(content=content)
+    yield Item(
+        content=Content("some content"),
+        author=Author(
+            hashlib.sha1(bytes("username", encoding="utf-8")).hexdigest()
+        ),
+        created_at=CreatedAt(str(datetime.datetime.now().isoformat() + "Z")),
+        title=Title("title"),
+        domain=Domain("reddit.com"),
+        url=Url("https://exorde.io/test"),
+    )
+    raise StopAsyncIteration()
     raise ValueError("An error")
 
 
