@@ -68,7 +68,7 @@ class TransformerBlock(tf.keras.layers.Layer):
 from exorde_lab.translation import Translation
 
 
-def tag(documents: list[str], nlp, device, mappings):
+def tag(documents: list[str], lab_configuration):
     """
     Analyzes and tags a list of text documents using various NLP models and techniques.
 
@@ -88,6 +88,9 @@ def tag(documents: list[str], nlp, device, mappings):
               contains various processed data like embeddings, text classifications, sentiment, etc.,
               as key-value pairs.
     """
+    nlp = lab_configuration["nlp"]
+    device = lab_configuration["device"]
+    mappings = lab_configuration["mappings"]
 
     def predict(text, pipe, tag, mappings):
         preds = pipe.predict(text, verbose=0)[0]

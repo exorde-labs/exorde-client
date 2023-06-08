@@ -1,21 +1,31 @@
 import json, itertools, logging, aiohttp
 from aiohttp import ClientSession
 
+from enum import Enum
+
+
+class EnumEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Enum):
+            return obj.name  # Serialize Enum value as its name
+        return super().default(obj)
+
 
 async def upload_to_ipfs(
     value, ipfs_path="http://ipfs-api.exorde.network/add"
 ):
     try:
         async with aiohttp.ClientSession() as session:
+            _value = json.dumps(value, cls=EnumEncoder)
             async with session.post(
                 ipfs_path,
-                data=value,
+                data=_value,
                 headers={"Content-Type": "application/json"},
             ) as resp:
                 if resp.status == 200:
                     logging.debug("Upload to ipfs succeeded")
                     response = await resp.json()
-                    return response
+                    return response["cid"]
                 else:
                     content = await resp.text()
                     logging.error(json.dumps(content, indent=4))

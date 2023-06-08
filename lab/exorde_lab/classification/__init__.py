@@ -4,7 +4,7 @@ from ..models import Translation
 
 
 def zero_shot(
-    item: Translation, labeldict, classifier, max_depth=None, depth=0
+    item: Translation, lab_configuration, max_depth=None, depth=0
 ) -> Classification:
     """
     Perform zero-shot classification on the input text using a pre-trained language model.
@@ -19,6 +19,8 @@ def zero_shot(
     Returns:
     - path (list): A list containing the path of labels from the root to the predicted label. If the label hierarchy was not explored fully and the max_depth parameter was set, the path may not be complete.
     """
+    labeldict = lab_configuration["labeldict"]
+    classifier = lab_configuration["classifier"]
     text_ = item.translation
     texts = [text_]
     keys = list(labeldict.keys())
