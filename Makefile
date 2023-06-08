@@ -12,8 +12,16 @@ protocol_schema:
 	env/bin/python3 exorde/exorde/protocol/__init__.py >> exorde/exorde/schema.json
 	cat exorde/exorde/schema.json
 
-image:
-	docker build -t exorde .
+_lab:
+	docker build -t exorde_lab lab
+
+_data:
+	docker build -t data data
+
+_client:
+	docker built -t exorde exorde
+
+image: _lab _data _client
 
 run:
 	docker run exorde

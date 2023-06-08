@@ -1,14 +1,11 @@
 #! python3.10
 
-import sys
 import json
 import logging
 import asyncio
 from importlib import metadata
 from datetime import datetime
-from eth_account import Account
 from madtypes import MadType
-from enum import Enum
 
 from configuration import Configuration, get_configuration
 from item import get_item, Item

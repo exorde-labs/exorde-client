@@ -3,7 +3,7 @@ from argostranslate import package
 from typing import cast
 
 
-def install_translation_modules():
+if __name__ == "__main__":
     """Download and install Argos Translate translation packages"""
     package.update_package_index()
     available_packages = package.get_available_packages()
