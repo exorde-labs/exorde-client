@@ -111,7 +111,7 @@ async def scrap_subreddit(subreddit_url: str) -> AsyncGenerator[Item, None]:
 
 async def query(url: str) -> AsyncGenerator[Item, None]:
     if "reddit.com" not in url:
-        raise ValueError("Not a reddit URL")
+        raise ValueError(f"Not a reddit URL {url}")
     parameters = url.split("reddit.com")[1].split("/")[1:]
     if "comments" in parameters:
         async for result in scrap_post(url):

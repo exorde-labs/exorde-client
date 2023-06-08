@@ -1,28 +1,39 @@
 import json, itertools, logging, aiohttp
 from aiohttp import ClientSession
 
+from enum import Enum
 
-def create_session(*__args__, **__kwargs__):
-    return ClientSession()
+
+class EnumEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Enum):
+            return obj.name  # Serialize Enum value as its name
+        return super().default(obj)
 
 
 async def upload_to_ipfs(
     value, ipfs_path="http://ipfs-api.exorde.network/add"
 ):
-    async with aiohttp.ClientSession() as session:
-        async with session.post(
-            ipfs_path,
-            data=value,
-            headers={"Content-Type": "application/json"},
-        ) as resp:
-            if resp.status == 200:
-                logging.debug("Upload to ipfs succeeded")
-                response = await resp.json()
-                return response
-            else:
-                content = await resp.text()
-                logging.error(json.dumps(content, indent=4))
-                raise Exception(f"Failed to upload to IPFS ({resp.status})")
+    try:
+        async with aiohttp.ClientSession() as session:
+            _value = json.dumps(value, cls=EnumEncoder)
+            async with session.post(
+                ipfs_path,
+                data=_value,
+                headers={"Content-Type": "application/json"},
+            ) as resp:
+                if resp.status == 200:
+                    logging.debug("Upload to ipfs succeeded")
+                    response = await resp.json()
+                    return response["cid"]
+                else:
+                    content = await resp.text()
+                    logging.error(json.dumps(content, indent=4))
+                    raise Exception(
+                        f"Failed to upload to IPFS ({resp.status})"
+                    )
+    except:
+        logging.exception("An error ocurred while uploading to IPFS")
 
 
 def rotate_gateways():

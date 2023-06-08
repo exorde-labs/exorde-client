@@ -1,5 +1,7 @@
 """URL construction define how the end-pages are going to be displayed."""
 
+from typing import Callable
+import random
 import aiohttp, random
 from lxml import html
 
@@ -24,12 +26,15 @@ async def generate_reddit_url(keyword: str):
             return result
 
 
-def generate_twitter_url(keyword: str, live_mode=True):
+async def generate_twitter_url(keyword: str, live_mode=True):
     base_url = f"https://twitter.com/search?q={keyword}&src=typed_query"
     if live_mode:
         base_url = base_url + "&f=live"
     return base_url
 
 
-# "generate_reddit_url",
-__all__ = ["generate_twitter_url", "generate_reddit_url"]
+url_generators: list[Callable] = [generate_twitter_url, generate_reddit_url]
+
+
+async def generate_url(keyword: str):
+    return await random.choice(url_generators)(keyword)

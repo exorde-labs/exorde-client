@@ -2,7 +2,6 @@
 network: https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/NetworkConfig.json
 source: https://raw.github.com/exorde-labs/TestnetProtocol/main/
 contracts: ContractsAddresses.json
-target: testnet-A
 ABI:
   EXDT: ABIs/EXDT/EXDT.json 
   EXD: ABIs/EXD/EXD.json
