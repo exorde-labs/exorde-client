@@ -19,13 +19,9 @@ from exorde_data import (
     ExternalParentId,
 )
 
-
-async def is_within_timeframe_seconds(datetime_str, timeframe_sec):
-    # Convert the datetime string to a datetime object
-    dt = datetime.fromisoformat(str(datetime_str))
-
+def is_within_timeframe_seconds(dt, timeframe_sec):
     # Get the current datetime in UTC
-    current_dt = datetime.utcnow()
+    current_dt = datetime.now(timezone.utc)
 
     # Calculate the time difference between the two datetimes
     time_diff = current_dt - dt
