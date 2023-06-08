@@ -1,17 +1,13 @@
-import asyncio
+import random
 import logging
 from typing import Callable
-from madtypes import MadType
 
 from typing import AsyncGenerator
+from urls import generate_url
 
+from exorde_data import query, Item
 
-class Item(dict, metaclass=MadType):
-    content: str
-
-
-def generate_url() -> str:
-    return "http://an-url.com"
+keywords = ["BTC", "MONERO", "reddit"]
 
 
 def implementation(
@@ -22,7 +18,8 @@ def implementation(
         try:
             while True:
                 try:
-                    async for item in query(generate_url()):
+                    url = await generate_url(random.choice(keywords))
+                    async for item in query(url):
                         if isinstance(item, Item):
                             yield item
                         else:
@@ -34,12 +31,6 @@ def implementation(
             return
 
     return logic
-
-
-async def query(__url__: str):
-    for i in range(10):
-        await asyncio.sleep(1)  # Delay of 1 second between iterations
-        yield Item(content=str(i))
 
 
 get_item: Callable[[], AsyncGenerator[Item, None]] = implementation(query)
