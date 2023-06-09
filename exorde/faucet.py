@@ -1,10 +1,15 @@
 import logging, os, asyncio
 from web3 import Web3
 
+from models import StaticConfiguration
 
-async def faucet(
-    __balance__, write_web3, read_web3, selected_faucet, worker_account
-):
+
+async def faucet(static_configuration: StaticConfiguration):
+    write_web3 = static_configuration["write_web3"]
+    read_web3 = static_configuration["read_web3"]
+    selected_faucet = static_configuration["selected_faucet"]
+    worker_account = static_configuration["worker_account"]
+
     if not Web3.is_address(worker_account.address):
         logging.critical("Invalid worker address")
         os._exit(1)

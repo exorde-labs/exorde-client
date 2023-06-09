@@ -1,14 +1,11 @@
 import json, logging
 
-from models import Processed, Item, Keywords
 
-from exorde_lab.preprocess import preprocess
-from exorde_lab.translation import translate
-from exorde_lab.keywords import populate_keywords
-from exorde_lab.classification import zero_shot
-from exorde_lab.classification.models import Classification
-from exorde_lab.translation.models import Translation
-from exorde_lab.keywords.models import Keywords
+from preprocess import preprocess
+from translate import translate
+from extract_keywords import extract_keywords
+from zero_shot import zero_shot
+from models import Classification, Translation, Keywords, Processed, Item
 
 
 async def process(item: Item, lab_configuration) -> Processed:
@@ -34,7 +31,7 @@ async def process(item: Item, lab_configuration) -> Processed:
             raise err
 
         try:
-            top_keywords: Keywords = populate_keywords(translation)
+            top_keywords: Keywords = extract_keywords(translation)
         except Exception as err:
             logging.error("An error occured populating keywords for an item")
             logging.error(err)

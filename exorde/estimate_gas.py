@@ -1,8 +1,8 @@
-from models import Configuration
+from models import LiveConfiguration
 
 
 async def estimate_gas(
-    transaction, read_web3, gas_cache, configuration: Configuration
+    transaction, read_web3, gas_cache, configuration: LiveConfiguration
 ):
     async def do_estimate_gas():
         gas = configuration["default_gas_amount"]  # default gas amount

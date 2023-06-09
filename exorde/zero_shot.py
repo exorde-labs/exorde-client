@@ -1,6 +1,5 @@
 from exorde_data.models import Item
-from .models import Classification
-from ..models import Translation
+from models import Classification, Translation
 
 
 def zero_shot(

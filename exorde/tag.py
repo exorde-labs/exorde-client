@@ -7,7 +7,8 @@ from huggingface_hub import hf_hub_download
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import tensorflow as tf
 import swifter
-from .models import (
+from models import (
+    Translation,
     LanguageScore,
     Sentiment,
     Embedding,
@@ -63,9 +64,6 @@ class TransformerBlock(tf.keras.layers.Layer):
         ffn_output = self.ffn(out1)
         ffn_output = self.dropout2(ffn_output, training=training)
         return self.layernorm2(out1 + ffn_output)
-
-
-from exorde_lab.translation import Translation
 
 
 def tag(documents: list[str], lab_configuration):

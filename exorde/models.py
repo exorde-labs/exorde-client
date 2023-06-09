@@ -1,13 +1,173 @@
 from enum import Enum
 from madtypes import MadType
 
+from eth_account.signers.local import LocalAccount
 from exorde_data.models import Item
-from exorde_lab.models import Keywords, Classification, Analysis, Translation
-
+from web3 import AsyncWeb3
 from typing import Optional
 
 
-class Configuration(dict):
+class Translated(str, metaclass=MadType):
+    description = "The content translated in English language"
+    annotation = str
+
+
+class Language(str, metaclass=MadType):
+    description = (
+        "ISO639-1 language code that consists of two lowercase letters"
+    )
+    annotation = str
+
+
+class CalmTranslation(dict):
+    """Result of argos translate"""
+
+    language: Optional[Language]  # uses content or title
+    translation: Translated
+
+
+class Translation(CalmTranslation, metaclass=MadType):
+    pass
+
+
+class Keywords(list, metaclass=MadType):
+    description = "The main keywords extracted from the content field"
+    annotation = list[str]
+
+
+class TopKeywords(dict, metaclass=MadType):
+    top_keywords: Keywords
+
+
+class Classification(dict, metaclass=MadType):
+    description = "label and score of zero_shot"
+    score: float
+    label: str
+
+
+class Sentiment(float, metaclass=MadType):
+    description = "Measure of post sentiment from negative to positive (-1 = negative, +1 = positive, 0 = neutral)"
+    annotation = float
+
+
+class Embedding(list, metaclass=MadType):
+    description = "Vector/numerical representation of the translated content (field: translation), produced by a NLP encoder model"
+    annotation = list[float]
+
+
+class LanguageScore(float, metaclass=MadType):
+    description = "Readability score of the text"
+    annotation = float
+
+
+class Gender(dict, metaclass=MadType):
+    male: float
+    female: float
+    description = "Probable gender (female or male) of the author"
+
+
+class SourceType(dict, metaclass=MadType):
+    social: float
+    computers: float
+    games: float
+    business: float
+    streaming: float
+    ecommerce: float
+    forums: float
+    photography: float
+    travel: float
+    adult: float
+    law: float
+    sports: float
+    education: float
+    food: float
+    health: float
+    news: float
+    description = "Category of the source that has produced the post"
+
+
+class TextType(dict, metaclass=MadType):
+    assumption: float
+    anecdote: float
+    none: float
+    definition: float
+    testimony: float
+    other: float
+    study: float
+    description = "Type (category) of the post (article, etc)"
+
+
+class Emotion(dict, metaclass=MadType):
+    love: float
+    admiration: float
+    joy: float
+    approval: float
+    caring: float
+    excitement: float
+    gratitude: float
+    desire: float
+    anger: float
+    optimism: float
+    disapproval: float
+    grief: float
+    annoyance: float
+    pride: float
+    curiosity: float
+    neutral: float
+    disgust: float
+    disappointment: float
+    realization: float
+    fear: float
+    relief: float
+    confusion: float
+    remorse: float
+    embarrassement: float
+    surprise: float
+    sadness: float
+    nervousness: float
+
+
+class Irony(dict, metaclass=MadType):
+    irony: float
+    non_irony: float
+    description = "Measure of how much a post is ironic (in %)"
+
+
+class Age(dict, metaclass=MadType):
+    below_twenty: float
+    twenty_thirty: float
+    thirty_forty: float
+    forty_more: float
+    description = "Measure author's age"
+
+
+class Analysis(dict, metaclass=MadType):
+    language_score: LanguageScore
+    sentiment: Sentiment
+    embedding: Embedding
+    gender: Gender
+    source_type: SourceType
+    text_type: TextType
+    emotion: Emotion
+    irony: Irony
+    age: Age
+
+
+class StaticConfiguration(dict):
+    main_address: str
+    worker_account: LocalAccount
+    protocol_configuration: dict
+    network_configuration: dict
+    contracts_and_abi: dict
+    contracts: dict
+    read_web3: AsyncWeb3
+    write_web3: AsyncWeb3
+    lab_configuration: dict
+    selected_faucet: tuple[int, str]
+    gas_cache: dict
+
+
+class LiveConfiguration(dict):
     """
     Configuration is not a MadType because we do not want to break the
     configuration instantiation if a key is not defined in the python
@@ -69,8 +229,6 @@ from exorde_data.models import (
     ExternalParentId,
     Domain,
 )
-from exorde_lab.translation.models import Language
-from typing import Optional
 
 
 class ProtocolItem(dict, metaclass=MadType):
@@ -96,19 +254,6 @@ class ProtocolItem(dict, metaclass=MadType):
             and not kwargs.get("title", None)
             else True
         )
-
-
-from exorde_lab.analysis.models import (
-    Sentiment,
-    Embedding,
-    Gender,
-    SourceType,
-    TextType,
-    Emotion,
-    Irony,
-    Age,
-    LanguageScore,
-)
 
 
 class ProtocolAnalysis(dict, metaclass=MadType):

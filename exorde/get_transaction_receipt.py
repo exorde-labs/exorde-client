@@ -2,8 +2,10 @@ import logging, asyncio
 
 
 async def get_transaction_receipt(
-    transaction_hash, previous_nonce, worker_account, read_web3
+    transaction_hash, previous_nonce, static_configuration
 ):
+    worker_account = static_configuration["worker_account"]
+    read_web3 = static_configuration["read_web3"]
     await asyncio.sleep(3)
     logging.info("Waiting for transaction confirmation")
     for i in range(10):

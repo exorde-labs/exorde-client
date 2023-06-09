@@ -14,10 +14,11 @@ from models import (
     Analysis,
 )
 
-from exorde_lab.analysis import tag
+from tag import tag
 
 
-async def process_batch(batch: list[Processed], lab_configuration):
+async def process_batch(batch: list[Processed], static_configuration):
+    lab_configuration = static_configuration["lab_configuration"]
     logging.info(f"running batch for {len(batch)}")
     analysis_results: list[Analysis] = tag(
         [processed.translation.translation for processed in batch],

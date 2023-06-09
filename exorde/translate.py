@@ -1,5 +1,6 @@
 import logging
 from ftlangdetect import detect as _detect
+from models import Translation, Language, Translated, Item
 
 
 from_lang = lambda from_code, installed_languages: list(
@@ -13,9 +14,6 @@ translation = lambda from_code, to_code, installed_languages: from_lang(
 ).get_translation(to_lang(to_code, installed_languages))
 
 detect = lambda text, low_memory: _detect(text, low_memory=low_memory)
-
-from exorde_data.models import Item
-from exorde_lab.translation.models import Translation, Language, Translated
 
 
 def translate(

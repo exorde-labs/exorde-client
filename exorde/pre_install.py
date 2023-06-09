@@ -1,14 +1,29 @@
-import logging
+from transformers import AutoModel, AutoTokenizer
+
 from argostranslate import package
 from typing import cast
 
 
 if __name__ == "__main__":
-    """Download and install Argos Translate translation packages"""
+    models = [
+        "SamLowe/roberta-base-go_emotions",
+        "cardiffnlp/twitter-roberta-base-irony",
+        "salesken/query_wellformedness_score",
+        "marieke93/MiniLM-evidence-types",
+        "alimazhar-110/website_classification",
+        # "ExordeLabs/SentimentDetection",
+    ]
+
+    def install_hugging_face_models(models):
+        for model in models:
+            __tokenizer__ = AutoTokenizer.from_pretrained(model)
+            model = AutoModel.from_pretrained(model)
+
+    install_hugging_face_models(models)
+
     package.update_package_index()
     available_packages = package.get_available_packages()
     length = len(available_packages)
-    logging.info(f"{length} translation modules to install")
     i = 0
     for pkg in available_packages:
         i += 1

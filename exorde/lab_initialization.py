@@ -42,6 +42,3 @@ def lab_initialization():
         "remove_stopwords": False,
         "installed_languages": installed_languages,
     }
-
-
-__all__ = ["lab_initialization"]
