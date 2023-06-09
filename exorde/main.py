@@ -1,5 +1,6 @@
 #! python3.10
 
+import argparse
 import logging, asyncio
 
 from get_configuration import get_configuration
@@ -28,7 +29,7 @@ from get_network_configuration import get_network_configuration
 #  -> si c'est good on claim_master
 
 
-async def main():
+async def main(command_line_arguments):
     configuration: Configuration = await get_configuration()
     protocol_configuration: dict = get_protocol_configuration()
     network_configuration: dict = await get_network_configuration()
@@ -109,8 +110,13 @@ async def main():
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--main_address", help="Main wallet", type=str, required=True
+    )
+    command_line_arguments = parser.parse_args()
     logging.basicConfig(level=logging.DEBUG)
     try:
-        asyncio.run(main())
+        asyncio.run(main(command_line_arguments))
     except KeyboardInterrupt:
         logging.info("bye bye !")
