@@ -59,7 +59,7 @@ class DownloadError(Exception):
     pass
 
 
-async def download_ipfs_file(hashname: str, max_attempts: int = 5):
+async def download_ipfs_file(cid: str, max_attempts: int = 5):
     headers = {
         "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.146 Safari/537.36",
         "Connection": "close",
@@ -68,7 +68,7 @@ async def download_ipfs_file(hashname: str, max_attempts: int = 5):
 
     async with ClientSession(headers=headers) as session:
         for i in range(max_attempts):
-            url = next(gateways) + hashname
+            url = next(gateways) + cid
             try:
                 logging.info("download of %s (%s)", url, i)
                 async with session.get(
@@ -80,6 +80,4 @@ async def download_ipfs_file(hashname: str, max_attempts: int = 5):
             except:
                 return None
 
-    logging.error(
-        f"Failed to download {hashname} after {max_attempts} attempts"
-    )
+    logging.error(f"Failed to download {cid} after {max_attempts} attempts")

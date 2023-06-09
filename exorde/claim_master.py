@@ -1,15 +1,20 @@
 async def claim_master(
-    main_address_to_claim, worker_account, contracts, write_web3, read_web3
+    main_address_to_claim, static_configuration, live_configuration
 ):
+    worker_account = static_configuration["worker_account"]
+    contracts = static_configuration["contracts"]
+    write_web3 = static_configuration["write_web3"]
+    read_web3 = static_configuration["read_web3"]
     nonce = await read_web3.eth.get_transaction_count(worker_account.address)
 
-    transaction = (
+    transaction = await (
         contracts["AddressManager"]
         .functions.ClaimMaster(main_address_to_claim)
         .build_transaction(
             {
                 "nonce": nonce,
                 "from": worker_account.address,
+                "gasPrice": live_configuration["default_gas_price"],
             }
         )
     )

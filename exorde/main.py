@@ -4,16 +4,18 @@ import sys
 import argparse
 import logging, asyncio
 
-# TODO
-# provide la main address
-# check si elle est valide -> stop
-#  -> si c'est good on claim_master
-
 from models import LiveConfiguration, StaticConfiguration
 from faucet import faucet
+from web3 import Web3
+from claim_master import claim_master
 
 
 async def main(command_line_arguments: argparse.Namespace):
+    if not Web3.is_address(command_line_arguments.main_address):
+        logging.error("The provided address is not a valid Web3 address")
+        sys.exit()
+
+    # imports are heavy and prevent an instantaneous answer to previous checks
     from spotting import spotting
     from get_live_configuration import get_live_configuration
     from get_static_configuration import get_static_configuration
@@ -37,9 +39,22 @@ async def main(command_line_arguments: argparse.Namespace):
         )
         sys.exit()
 
-    logging.info("Importing spotting module")
+    try:
+        await claim_master(
+            command_line_arguments.main_address,
+            static_configuration,
+            live_configuration,
+        )
+    except:
+        logging.exception("An error occured claiming")
+        sys.exit()
 
-    await faucet(static_configuration)
+    for i in range(0, 3):
+        try:
+            await faucet(static_configuration)
+            break
+        except:
+            logging.exception(f"An error occured during faucet (attempt {i})")
     cursor = 0
     while True:
         if cursor % 10 == 0:

@@ -26,6 +26,13 @@ async def spotting(live_configuration, static_configuration):
         logging.exception("An error occured during batch processing")
         return
     cid = await upload_to_ipfs(processed_batch)
+    post_upload_file = await download_ipfs_file(cid)
+    item_count = len(post_uploaf_file["items"])
+    if item_count == 0:
+        logging.error(
+            "All items of previous batch are already discovered, skipped."
+        )
+        return
     try:
         logging.info("Building a spot-data transaction")
         transaction_hash, previous_nonce = await spot_data(
