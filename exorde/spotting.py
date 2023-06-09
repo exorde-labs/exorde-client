@@ -1,4 +1,3 @@
-from ipfs import upload_to_ipfs
 import logging
 
 from models import Processed
@@ -9,6 +8,7 @@ from process_batch import process_batch
 from spot_data import spot_data
 
 from get_transaction_receipt import get_transaction_receipt
+from ipfs import download_ipfs_file, upload_to_ipfs
 
 
 async def spotting(live_configuration, static_configuration):
@@ -27,7 +27,7 @@ async def spotting(live_configuration, static_configuration):
         return
     cid = await upload_to_ipfs(processed_batch)
     post_upload_file = await download_ipfs_file(cid)
-    item_count = len(post_uploaf_file["items"])
+    item_count = len(post_upload_file["items"])
     if item_count == 0:
         logging.error(
             "All items of previous batch are already discovered, skipped."

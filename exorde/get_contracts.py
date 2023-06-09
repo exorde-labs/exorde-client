@@ -12,7 +12,7 @@ def contract(
             abi=abi_cnf[name]["abi"],
         )
     except:
-        logging.exception(f"Skipped contract instanciation for {name}")
+        logging.info(f"Skipped contract instanciation for {name}")
         return None
 
 

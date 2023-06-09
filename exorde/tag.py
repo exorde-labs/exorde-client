@@ -147,7 +147,7 @@ def tag(documents: list[str], lab_configuration):
                 add_special_tokens=True,
                 max_length=512,
                 truncation=True,
-                pad_to_max_length=True,
+                padding="max_length",
                 return_attention_mask=False,
                 return_tensors="tf",
             )["input_ids"][0]

@@ -39,6 +39,13 @@ async def main(command_line_arguments: argparse.Namespace):
         )
         sys.exit()
 
+    for i in range(0, 3):
+        try:
+            await faucet(static_configuration)
+            break
+        except:
+            logging.exception(f"An error occured during faucet (attempt {i})")
+
     try:
         await claim_master(
             command_line_arguments.main_address,
@@ -49,12 +56,6 @@ async def main(command_line_arguments: argparse.Namespace):
         logging.exception("An error occured claiming")
         sys.exit()
 
-    for i in range(0, 3):
-        try:
-            await faucet(static_configuration)
-            break
-        except:
-            logging.exception(f"An error occured during faucet (attempt {i})")
     cursor = 0
     while True:
         if cursor % 5 == 0:
