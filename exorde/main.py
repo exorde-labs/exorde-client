@@ -53,7 +53,12 @@ async def main():
     while True:
         cursor += 1
         if cursor % 10 == 0:
-            configuration: Configuration = await get_configuration()
+            try:
+                configuration: Configuration = await get_configuration()
+            except:
+                logging.exception(
+                    "An error occured retrieving the live-configuration"
+                )
         if configuration["online"]:
             batch: list[Processed] = await prepare_batch(
                 configuration["batch_size"], lab_configuration, configuration
@@ -62,22 +67,40 @@ async def main():
                 logging.warning("Something weird is going on, batch ignored")
                 continue
             try:
+                logging.info("Processing batch")
                 processed_batch = await process_batch(batch, lab_configuration)
             except:
                 logging.exception("An error occured during batch processing")
                 continue
             cid = await upload_to_ipfs(processed_batch)
-            transaction_hash, previous_nonce = await spot_data(
-                cid,
-                worker_account,
-                configuration,
-                gas_cache,
-                contracts,
-                read_web3,
-                write_web3,
-            )
-            await get_transaction_receipt(
-                transaction_hash, previous_nonce, worker_account, read_web3
+            try:
+                logging.info("Building a spot-data transaction")
+                transaction_hash, previous_nonce = await spot_data(
+                    cid,
+                    worker_account,
+                    configuration,
+                    gas_cache,
+                    contracts,
+                    read_web3,
+                    write_web3,
+                )
+            except:
+                logging.exception(
+                    "An error occured during transaction building"
+                )
+                continue
+            try:
+                logging.info("Looking for transaction receipt")
+                await get_transaction_receipt(
+                    transaction_hash, previous_nonce, worker_account, read_web3
+                )
+            except:
+                logging.exception(
+                    "An error occured during transaction validation"
+                )
+                continue
+            logging.info(
+                "+ A receipt for previous transaction has been confirmed"
             )
         await asyncio.sleep(configuration["inter_spot_delay_seconds"])
 
