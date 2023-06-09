@@ -22,6 +22,12 @@ from get_contracts_and_abi_cnf import get_contracts_and_abi_cnf
 from get_network_configuration import get_network_configuration
 
 
+# TODO
+# provide la main address
+# check si elle est valide -> stop
+#  -> si c'est good on claim_master
+
+
 async def main():
     configuration: Configuration = await get_configuration()
     protocol_configuration: dict = get_protocol_configuration()
