@@ -6,23 +6,20 @@ from get_configuration import get_configuration
 from prepare_batch import prepare_batch
 from process_batch import process_batch
 from models import Configuration, Processed
-from protocol import (
-    spot_data,
-    get_transaction_receipt,
-    get_worker_account,
-    get_protocol_configuration,
-    get_contracts_and_abi_cnf,
-    get_network_configuration,
-)
-from ipfs import upload_to_ipfs
+from spot_data import spot_data
+
 from exorde_lab.startup import lab_initialization
-from protocol import (
-    _read_web3,
-    _write_web3,
-    get_contracts,
-    select_random_faucet,
-    faucet,
-)
+from ipfs import upload_to_ipfs
+from faucet import faucet
+from select_random_faucet import select_random_faucet
+from get_contracts import get_contracts
+from read_web3 import read_web3 as _read_web3
+from write_web3 import write_web3 as _write_web3
+from get_transaction_receipt import get_transaction_receipt
+from get_worker_account import get_worker_account
+from get_protocol_configuration import get_protocol_configuration
+from get_contracts_and_abi_cnf import get_contracts_and_abi_cnf
+from get_network_configuration import get_network_configuration
 
 
 async def main():
