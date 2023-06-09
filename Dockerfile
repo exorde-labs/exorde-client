@@ -9,6 +9,8 @@ RUN pip3.10 install madtypes
 RUN pip3.10 install eth-account
 RUN pip3.10 install asyncio
 RUN pip3.10 install aiohttp
+RUN pip3.10 install lxml
+RUN pip3.10 install HTMLParser
 RUN pip3.10 install pyyaml
 RUN pip3.10 install web3
 RUN pip3.10 install fasttext==0.9.2
