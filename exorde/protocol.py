@@ -15,7 +15,7 @@ from typing import Union
 import asyncio
 import aiohttp
 
-from configuration import Configuration
+from models import Configuration
 
 
 def load_yaml(path) -> dict:

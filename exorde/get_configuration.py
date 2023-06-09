@@ -1,25 +1,10 @@
 import json
-from typing import Callable, Coroutine, Optional
+from typing import Callable, Coroutine
 import logging
 from functools import wraps
 import aiohttp
 
-from typing import TypedDict
-
-
-class Configuration(TypedDict):
-    online: bool
-    batch_size: int
-    last_info: Optional[str]
-    worker_version: Optional[str]
-    protocol_version: Optional[str]
-    expiration_delta: Optional[int]  # data freshness
-    inter_spot_delay_seconds: Optional[int]
-    target: Optional[str]
-    default_gas_price: Optional[int]
-    default_gas_amount: Optional[int]
-    gas_cap_min: Optional[int]
-    inter_spot_delay_seconds: int
+from models import Configuration
 
 
 def logic(implementation: Callable) -> Callable:
