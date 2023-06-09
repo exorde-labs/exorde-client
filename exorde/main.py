@@ -57,7 +57,7 @@ async def main(command_line_arguments: argparse.Namespace):
             logging.exception(f"An error occured during faucet (attempt {i})")
     cursor = 0
     while True:
-        if cursor % 10 == 0:
+        if cursor % 5 == 0:
             try:
                 live_configuration: LiveConfiguration = (
                     await get_live_configuration()
