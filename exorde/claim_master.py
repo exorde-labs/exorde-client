@@ -1,5 +1,6 @@
-
-async def claimMaster(main_address_to_claim, worker_account, contracts, write_web3, read_web3):
+async def claim_master(
+    main_address_to_claim, worker_account, contracts, write_web3, read_web3
+):
     nonce = await read_web3.eth.get_transaction_count(worker_account.address)
 
     transaction = (
