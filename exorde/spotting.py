@@ -25,9 +25,13 @@ async def spotting(live_configuration, static_configuration):
     except:
         logging.exception("An error occured during batch processing")
         return
-    cid = await upload_to_ipfs(processed_batch)
-    post_upload_file = await download_ipfs_file(cid)
-    item_count = len(post_upload_file["items"])
+    try:
+        cid = await upload_to_ipfs(processed_batch)
+        post_upload_file = await download_ipfs_file(cid)
+        item_count = len(post_upload_file["items"])
+    except:
+        logging.exception("An error occured during IPFS uploading")
+        return
     if item_count == 0:
         logging.error(
             "All items of previous batch are already discovered, skipped."
