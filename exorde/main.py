@@ -8,7 +8,7 @@ from models import LiveConfiguration, StaticConfiguration
 from faucet import faucet
 from web3 import Web3
 from claim_master import claim_master
-
+from log_current_rep import log_current_rep
 
 async def main(command_line_arguments: argparse.Namespace):
     if not Web3.is_address(command_line_arguments.main_address):
@@ -55,14 +55,24 @@ async def main(command_line_arguments: argparse.Namespace):
     except:
         logging.exception("An error occured claiming")
         sys.exit()
+    # print main address REP
+    try:
+        log_current_rep(command_line_arguments.main_address)
+    except:
+        logging.exception(
+            "An error occured logging the current Main Address REP at initialization."
+        )
 
-    cursor = 0
+    cursor = 1
     while True:
         if cursor % 5 == 0:
             try:
+                # update/refresh configuration
                 live_configuration: LiveConfiguration = (
                     await get_live_configuration()
                 )
+                # print main address REP
+                log_current_rep(command_line_arguments.main_address)
             except:
                 logging.exception(
                     "An error occured retrieving the live_configuration"
