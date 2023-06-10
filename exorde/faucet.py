@@ -55,3 +55,4 @@ async def faucet(static_configuration: StaticConfiguration):
     logging.info(
         f"SFUEL funding transaction {transaction_receipt.transactionHash.hex()}"
     )
+    await asyncio.sleep(1)
