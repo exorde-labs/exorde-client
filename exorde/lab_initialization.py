@@ -17,7 +17,7 @@ def lab_initialization():
         max_length=64,
     )
     labels = requests.get(
-        "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/cateogry_tree.json"
+        "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/class_names.json"
     ).json()
     mappings = {
         "Gender": {0: "Female", 1: "Male"},
