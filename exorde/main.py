@@ -57,7 +57,7 @@ async def main(command_line_arguments: argparse.Namespace):
         sys.exit()
     # print main address REP
     try:
-        log_current_rep(command_line_arguments.main_address)
+        await log_current_rep(command_line_arguments.main_address)
     except:
         logging.exception(
             "An error occured logging the current Main Address REP at initialization."
@@ -72,7 +72,7 @@ async def main(command_line_arguments: argparse.Namespace):
                     await get_live_configuration()
                 )
                 # print main address REP
-                log_current_rep(command_line_arguments.main_address)
+                await log_current_rep(command_line_arguments.main_address)
             except:
                 logging.exception(
                     "An error occured retrieving the live_configuration"
