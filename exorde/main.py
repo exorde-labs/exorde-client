@@ -1,6 +1,6 @@
 #! python3.10
 
-import sys, os
+import os
 import argparse
 import logging, asyncio
 
@@ -14,12 +14,10 @@ from get_current_rep import get_current_rep
 async def main(command_line_arguments: argparse.Namespace):
     if not Web3.is_address(command_line_arguments.main_address):
         logging.error("The provided address is not a valid Web3 address")
-        sys.exit()
+        os._exit(1)
 
     # imports are heavy and prevent an instantaneous answer to previous checks
-    from spotting import spotting
     from get_live_configuration import get_live_configuration
-    from get_static_configuration import get_static_configuration
 
     try:
         live_configuration: LiveConfiguration = await get_live_configuration()
@@ -30,7 +28,10 @@ async def main(command_line_arguments: argparse.Namespace):
         logging.exception(
             "An error occured retrieving live configuration, exiting"
         )
-        sys.exit()
+        os._exit(1)
+
+    from get_static_configuration import get_static_configuration
+
     try:
         static_configuration: StaticConfiguration = (
             await get_static_configuration(
@@ -41,7 +42,7 @@ async def main(command_line_arguments: argparse.Namespace):
         logging.exception(
             "An error occured retrieving static configuration, exiting"
         )
-        os._exit(0)
+        os._exit(1)
 
     for i in range(0, 3):
         try:
@@ -58,9 +59,11 @@ async def main(command_line_arguments: argparse.Namespace):
         )
     except:
         logging.exception("An error occured claiming")
-        sys.exit()
+        os._exit(1)
     # print main address REP
     cursor = 0
+    from spotting import spotting
+
     while True:
         if cursor % 5 == 0:
             try:
