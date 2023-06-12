@@ -176,6 +176,7 @@ class LiveConfiguration(dict):
     is unable to reach the configuration but the protocol is still online ?
     """
 
+    remote_kill: bool
     online: bool
     batch_size: int
     last_info: Optional[str]
