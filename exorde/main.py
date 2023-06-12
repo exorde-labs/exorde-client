@@ -8,7 +8,8 @@ from models import LiveConfiguration, StaticConfiguration
 from faucet import faucet
 from web3 import Web3
 from claim_master import claim_master
-from log_current_rep import log_current_rep
+from get_current_rep import get_current_rep
+
 
 async def main(command_line_arguments: argparse.Namespace):
     if not Web3.is_address(command_line_arguments.main_address):
@@ -71,11 +72,20 @@ async def main(command_line_arguments: argparse.Namespace):
                 live_configuration: LiveConfiguration = (
                     await get_live_configuration()
                 )
-                # print main address REP
-                await log_current_rep(command_line_arguments.main_address)
             except:
                 logging.exception(
                     "An error occured retrieving the live_configuration"
+                )
+            try:
+                current_reputation = await get_current_rep(
+                    command_line_arguments.main_address
+                )
+                logging.info(
+                    f"\n*********\n[REPUTATION] Current Main Address REP = {current_reputation}\n*********\n"
+                )
+            except:
+                logging.exception(
+                    "An error occured while logging the current reputation"
                 )
         cursor += 1
         if live_configuration and live_configuration["online"]:
