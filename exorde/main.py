@@ -23,6 +23,9 @@ async def main(command_line_arguments: argparse.Namespace):
 
     try:
         live_configuration: LiveConfiguration = await get_live_configuration()
+        if live_configuration["remote_kill"] == True:
+            logging.info("Protocol is shut down")
+            sys.exit()
     except:
         logging.exception(
             "An error occured retrieving live configuration, exiting"
