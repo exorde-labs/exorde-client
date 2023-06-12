@@ -8,7 +8,7 @@ except:
 try:
     import a7df32de3a60dfdb7a0b as twitter
 except:
-    logging.exception("An error occured loading reddit")
+    logging.exception("An error occured loading twitter")
 
 try:
     import ch4875eda56be56000ac as boards

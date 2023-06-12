@@ -4,15 +4,23 @@ import json
 from importlib import metadata
 from exorde_data.models import *
 from madtypes import json_schema
-
-from . import scraping
+import importlib
 
 
 def install_modules():
     raise NotImplementedError("Module installation is not implemented")
 
 
-def get_scraping_module(url: str):
+def get_scraping_module_version(module_name):
+    scraping_module = importlib.import_module("scraping")
+    return getattr(scraping_module, module_name).__version__
+
+
+def get_scraping_module(url: str, self_update: bool = False):
+    from . import scraping
+
+    modules = dir(scraping)
+    print(modules)
     for module_name in dir(scraping):
         if module_name in url:
             return getattr(scraping, module_name)
@@ -22,8 +30,10 @@ def get_scraping_module(url: str):
 from typing import Union
 
 
-async def query(url: str) -> AsyncGenerator[Union[Item, None], None]:
-    scraping_module = get_scraping_module(url)
+async def query(
+    url: str, self_update: bool = False
+) -> AsyncGenerator[Union[Item, None], None]:
+    scraping_module = get_scraping_module(url, self_update)
     if not scraping_module:
         logging.debug(f"Installed modules are : {dir(scraping)}")
         raise NotImplementedError(f"There is no scraping module for {url}")
