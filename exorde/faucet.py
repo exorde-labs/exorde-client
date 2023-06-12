@@ -24,7 +24,7 @@ async def faucet(static_configuration: StaticConfiguration):
             "gasPrice": 500_000,
             "gas": 100_000,
             "to": worker_account.address,
-            "value": 500000000000000,
+            "value": 50000000000000,
             "data": b"Hi Exorde!",
         },
         selected_faucet[1],
