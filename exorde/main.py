@@ -17,9 +17,7 @@ async def main(command_line_arguments: argparse.Namespace):
         os._exit(1)
 
     # imports are heavy and prevent an instantaneous answer to previous checks
-    from spotting import spotting
     from get_live_configuration import get_live_configuration
-    from get_static_configuration import get_static_configuration
 
     try:
         live_configuration: LiveConfiguration = await get_live_configuration()
@@ -31,6 +29,9 @@ async def main(command_line_arguments: argparse.Namespace):
             "An error occured retrieving live configuration, exiting"
         )
         os._exit(1)
+
+    from get_static_configuration import get_static_configuration
+
     try:
         static_configuration: StaticConfiguration = (
             await get_static_configuration(
@@ -61,6 +62,8 @@ async def main(command_line_arguments: argparse.Namespace):
         os._exit(1)
     # print main address REP
     cursor = 0
+    from spotting import spotting
+
     while True:
         if cursor % 5 == 0:
             try:
