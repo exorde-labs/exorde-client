@@ -4,6 +4,7 @@ from typing import Callable
 import random
 import aiohttp, random
 from lxml import html
+import os
 
 
 async def generate_4chan_url(__keyword__: str):
@@ -37,12 +38,22 @@ async def generate_twitter_url(keyword: str, live_mode=True):
     return base_url
 
 
-url_generators: list[Callable] = [
-    generate_twitter_url,
-    generate_reddit_url,
-    generate_4chan_url,
+url_generators: list[list] = [
+    [generate_twitter_url, 0],
+    [generate_reddit_url, 0],
+    [generate_4chan_url, 0],
 ]
+
+BREAKDOWN = 5
 
 
 async def generate_url(keyword: str):
-    return await random.choice(url_generators)(keyword)
+    while True:
+        random_generator = random.choice(url_generators)
+        try:
+            url = await random_generator[0](keyword)
+            return url
+        except:
+            random_generator[1] = +1
+            if random_generator[1] == BREAKDOWN:
+                url_generators.remove(random_generator)

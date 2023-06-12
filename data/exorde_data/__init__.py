@@ -37,7 +37,7 @@ async def fetch_version_from_setup_file(url_endpoint: str) -> str:
 
 
 async def get_module_online_version(module_name: str):
-    repository_path = f"https://raw.githubusercontent.com/exorde-labs/exorde/selfupdate/data/scraping/{module_name}"
+    repository_path = f"https://raw.githubusercontent.com/exorde-labs/exorde/main/data/scraping/{module_name}"
     return await fetch_version_from_setup_file(f"{repository_path}/setup.py")
 
 
@@ -48,13 +48,14 @@ async def get_scraping_module(module_name):
     from exorde_data.scraping import scraping_modules
 
     module_hash = scraping_modules[module_name]
-    module_version = metadata.version(module_hash)
+    old_module_version = metadata.version(module_hash)
     online_module_version = await get_module_online_version(module_name)
-    if module_version != online_module_version:
+    if old_module_version != online_module_version:
+        logging.info(f"Updating {module_name}")
         logging.info(
             "diff in versions : {module_version} != {online_module_version}"
         )
-        repository_path = f"https://github.com/exorde-labs/exorde/tree/selfupdate/data/scraping/{module_name}"
+        repository_path = f"git+https://github.com/exorde-labs/exorde.git#subdirectory=data/scraping/{module_name}&egg={module_hash}"
         subprocess.check_call(["pip", "install", repository_path])
     loaded_module = import_module(module_hash)
     return loaded_module
@@ -63,7 +64,7 @@ async def get_scraping_module(module_name):
 async def get_scraping_module_name_from_url(
     url: str, self_update: bool = False
 ):
-    mapping_url = "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/selfupdate/targets/scraping_module_substrings_mapping.json"
+    mapping_url = "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/scraping_module_substrings_mapping.json"
 
     # If self_update is True, fetch the latest mapping from the GitHub URL
     if self_update:
@@ -133,6 +134,3 @@ def print_schema():
     except Exception as err:
         print(err)
         print(schem)
-
-
-__all__ = ["scraping"]
