@@ -1,6 +1,6 @@
 #! python3.10
 
-import sys
+import sys, os
 import argparse
 import logging, asyncio
 
@@ -25,7 +25,7 @@ async def main(command_line_arguments: argparse.Namespace):
         live_configuration: LiveConfiguration = await get_live_configuration()
         if live_configuration["remote_kill"] == True:
             logging.info("Protocol is shut down")
-            sys.exit()
+            os._exit(0)
     except:
         logging.exception(
             "An error occured retrieving live configuration, exiting"
@@ -41,7 +41,7 @@ async def main(command_line_arguments: argparse.Namespace):
         logging.exception(
             "An error occured retrieving static configuration, exiting"
         )
-        sys.exit()
+        os._exit(0)
 
     for i in range(0, 3):
         try:
@@ -70,12 +70,12 @@ async def main(command_line_arguments: argparse.Namespace):
                 )
                 if live_configuration["remote_kill"] == True:
                     logging.info("Protocol is shut down")
-                    sys.exit()
+                    os._exit(0)
             except:
                 logging.exception(
                     "An error occured retrieving the live_configuration"
                 )
-                sys.exit()
+                os._exit(0)
             try:
                 current_reputation = await get_current_rep(
                     command_line_arguments.main_address
