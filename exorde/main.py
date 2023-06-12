@@ -57,14 +57,7 @@ async def main(command_line_arguments: argparse.Namespace):
         logging.exception("An error occured claiming")
         sys.exit()
     # print main address REP
-    try:
-        await log_current_rep(command_line_arguments.main_address)
-    except:
-        logging.exception(
-            "An error occured logging the current Main Address REP at initialization."
-        )
-
-    cursor = 1
+    cursor = 0
     while True:
         if cursor % 5 == 0:
             try:
