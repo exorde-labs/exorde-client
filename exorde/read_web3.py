@@ -1,5 +1,5 @@
 import random
-from instanciate_w3 import instanciate_w3
+from exorde.instanciate_w3 import instanciate_w3
 from web3 import AsyncWeb3
 
 

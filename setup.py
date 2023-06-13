@@ -14,6 +14,7 @@ setup(
     url="https://github.com/exorde-labs/exorde-client",
     entry_points={"console_scripts": ["exorde = exorde.main:run"]},
     packages=find_packages(include=["exorde"]),
+    include_package_data=True,
     install_requires=[
         "madtypes",
         "eth-account",

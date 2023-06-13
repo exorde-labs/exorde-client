@@ -18,7 +18,7 @@ async def main(command_line_arguments: argparse.Namespace):
         os._exit(1)
 
     # imports are heavy and prevent an instantaneous answer to previous checks
-    from get_live_configuration import get_live_configuration
+    from exorde.get_live_configuration import get_live_configuration
 
     try:
         live_configuration: LiveConfiguration = await get_live_configuration()
@@ -31,7 +31,7 @@ async def main(command_line_arguments: argparse.Namespace):
         )
         os._exit(1)
 
-    from get_static_configuration import get_static_configuration
+    from exorde.get_static_configuration import get_static_configuration
 
     try:
         static_configuration: StaticConfiguration = (
