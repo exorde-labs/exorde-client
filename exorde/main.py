@@ -63,7 +63,7 @@ async def main(command_line_arguments: argparse.Namespace):
         os._exit(1)
     # print main address REP
     cursor = 0
-    from spotting import spotting
+    from exorde.spotting import spotting
 
     while True:
         if cursor % 5 == 0:
