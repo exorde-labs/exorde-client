@@ -1,14 +1,14 @@
-from select_random_faucet import select_random_faucet
-from get_contracts import get_contracts
-from read_web3 import read_web3 as _read_web3
-from write_web3 import write_web3 as _write_web3
-from get_worker_account import get_worker_account
-from get_protocol_configuration import get_protocol_configuration
-from get_contracts_and_abi_cnf import get_contracts_and_abi_cnf
-from get_network_configuration import get_network_configuration
-from models import StaticConfiguration
+from exorde.select_random_faucet import select_random_faucet
+from exorde.get_contracts import get_contracts
+from exorde.read_web3 import read_web3 as _read_web3
+from exorde.write_web3 import write_web3 as _write_web3
+from exorde.get_worker_account import get_worker_account
+from exorde.get_protocol_configuration import get_protocol_configuration
+from exorde.get_contracts_and_abi_cnf import get_contracts_and_abi_cnf
+from exorde.get_network_configuration import get_network_configuration
+from exorde.models import StaticConfiguration
 from argparse import Namespace
-from lab_initialization import lab_initialization
+from exorde.lab_initialization import lab_initialization
 
 
 async def get_static_configuration(

@@ -7,7 +7,7 @@ from huggingface_hub import hf_hub_download
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import tensorflow as tf
 import swifter
-from models import (
+from exorde.models import (
     Translation,
     LanguageScore,
     Sentiment,

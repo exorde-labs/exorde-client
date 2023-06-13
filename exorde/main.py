@@ -4,12 +4,12 @@ import os
 import argparse
 import logging, asyncio
 
-from models import LiveConfiguration, StaticConfiguration
-from faucet import faucet
+from exorde.models import LiveConfiguration, StaticConfiguration
+from exorde.faucet import faucet
 from web3 import Web3
-from claim_master import claim_master
-from get_current_rep import get_current_rep
-from self_update import self_update
+from exorde.claim_master import claim_master
+from exorde.get_current_rep import get_current_rep
+from exorde.self_update import self_update
 
 
 async def main(command_line_arguments: argparse.Namespace):

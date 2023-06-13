@@ -1,6 +1,6 @@
 import yake
 
-from models import Keywords, Translation
+from exorde.models import Keywords, Translation
 
 language = "en"
 max_ngram_size = 3

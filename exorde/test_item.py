@@ -2,7 +2,7 @@ import hashlib
 import datetime
 import pytest
 from typing import AsyncGenerator
-from .item import implementation
+from exorde.item import implementation
 from exorde_data.models import (
     Item,
     Content,

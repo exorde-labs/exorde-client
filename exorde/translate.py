@@ -1,6 +1,6 @@
 import logging
 from ftlangdetect import detect as _detect
-from models import Translation, Language, Translated, Item
+from exorde.models import Translation, Language, Translated, Item
 
 
 from_lang = lambda from_code, installed_languages: list(

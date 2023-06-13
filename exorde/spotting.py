@@ -3,12 +3,12 @@ import logging
 from models import Processed
 
 
-from prepare_batch import prepare_batch
-from process_batch import process_batch
-from spot_data import spot_data
+from exorde.prepare_batch import prepare_batch
+from exorde.process_batch import process_batch
+from exorde.spot_data import spot_data
 
-from get_transaction_receipt import get_transaction_receipt
-from ipfs import download_ipfs_file, upload_to_ipfs
+from exorde.get_transaction_receipt import get_transaction_receipt
+from exorde.ipfs import download_ipfs_file, upload_to_ipfs
 
 
 async def spotting(live_configuration, static_configuration):

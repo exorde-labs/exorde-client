@@ -1,4 +1,4 @@
-from models import LiveConfiguration
+from exorde.models import LiveConfiguration
 
 
 async def estimate_gas(

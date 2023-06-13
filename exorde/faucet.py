@@ -1,7 +1,7 @@
 import logging, os, asyncio
 from web3 import Web3
 
-from models import StaticConfiguration
+from exorde.models import StaticConfiguration
 
 
 async def faucet(static_configuration: StaticConfiguration):

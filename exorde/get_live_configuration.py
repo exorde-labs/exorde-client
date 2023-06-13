@@ -4,7 +4,7 @@ import logging
 from functools import wraps
 import aiohttp
 
-from models import LiveConfiguration
+from exorde.models import LiveConfiguration
 
 
 def logic(implementation: Callable) -> Callable:

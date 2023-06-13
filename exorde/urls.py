@@ -4,7 +4,6 @@ from typing import Callable
 import random
 import aiohttp, random
 from lxml import html
-import os
 
 
 async def generate_4chan_url(__keyword__: str):

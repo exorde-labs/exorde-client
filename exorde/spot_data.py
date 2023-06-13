@@ -1,4 +1,4 @@
-from estimate_gas import estimate_gas
+from exorde.estimate_gas import estimate_gas
 
 
 async def spot_data(

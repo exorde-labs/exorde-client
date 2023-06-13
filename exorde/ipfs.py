@@ -14,26 +14,21 @@ class EnumEncoder(json.JSONEncoder):
 async def upload_to_ipfs(
     value, ipfs_path="http://ipfs-api.exorde.network/add"
 ):
-    try:
-        async with aiohttp.ClientSession() as session:
-            _value = json.dumps(value, cls=EnumEncoder)
-            async with session.post(
-                ipfs_path,
-                data=_value,
-                headers={"Content-Type": "application/json"},
-            ) as resp:
-                if resp.status == 200:
-                    logging.debug("Upload to ipfs succeeded")
-                    response = await resp.json()
-                    return response["cid"]
-                else:
-                    content = await resp.text()
-                    logging.error(json.dumps(content, indent=4))
-                    raise Exception(
-                        f"Failed to upload to IPFS ({resp.status})"
-                    )
-    except:
-        logging.exception("An error ocurred while uploading to IPFS")
+    async with aiohttp.ClientSession() as session:
+        _value = json.dumps(value, cls=EnumEncoder)
+        async with session.post(
+            ipfs_path,
+            data=_value,
+            headers={"Content-Type": "application/json"},
+        ) as resp:
+            if resp.status == 200:
+                logging.debug("Upload to ipfs succeeded")
+                response = await resp.json()
+                return response["cid"]
+            else:
+                content = await resp.text()
+                logging.error(json.dumps(content, indent=4))
+                raise Exception(f"Failed to upload to IPFS ({resp.status})")
 
 
 def rotate_gateways():
@@ -76,5 +71,4 @@ async def download_ipfs_file(cid: str, max_attempts: int = 5):
                 if response.status == 200:
                     logging.info("download of %s OK after (%s)", url, i)
                     return await response.json()
-
-    logging.error(f"Failed to download {cid} after {max_attempts} attempts")
+        raise ValueError("Failed to download file from IPFS")

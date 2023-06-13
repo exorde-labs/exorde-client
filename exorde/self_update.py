@@ -1,7 +1,7 @@
 import os, subprocess
 from importlib import metadata
 
-from get_latest_tag import get_latest_tag
+from exorde.get_latest_tag import get_latest_tag
 
 
 async def self_update():
