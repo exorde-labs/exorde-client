@@ -22,7 +22,7 @@ from exorde_scrapping import reddit
 ```
 
 
-## ![https://github.com/exorde-labs/exorde/actions/workflows/interface-test.yaml](https://github.com/exorde-labs/exorde/actions/workflows/interface-test.yaml/badge.svg)
+## ![https://github.com/exorde-labs/exorde-client/actions/workflows/interface-test.yaml](https://github.com/exorde-labs/exorde-client/actions/workflows/interface-test.yaml/badge.svg)
 
 
 
@@ -37,12 +37,11 @@ query(url: str) -> AsyncGenerator[Item, None]
 ## Item schema
 - Items describe entities such as links, videos, posts, comments.
 - The item description is valid both for scraping & analysis, therefor the schema also contains the attributes that would be retrieved trough [lab](../lab) processing.
-- The [json-schema](https://github.com/exorde-labs/exorde/schema/schema.json) is generated from this [expression](./exorde_data/__init__.py)
 - Both `Content` and `Title` are Optional, HOWEVER, one of them has to be existent for an Item to be valid.
 ```json
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "$id": "https://github.com/exorde-labs/exorde/repo/tree/v0.0.1/exorde/schema/schema.json",
+    "$id": "https://raw.githubusercontent.com/exorde-labs/exorde-client/main/data/schema.json",
     "type": "object",
     "properties": {
         "created_at": {

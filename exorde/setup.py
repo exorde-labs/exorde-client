@@ -11,7 +11,7 @@ setup(
     description="The AI-based client to mine data and power the Exorde Network",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/exorde-labs/exorde",
+    url="https://github.com/exorde-labs/exorde-client",
     entry_points={"console_scripts": ["exorde = main:run"]},
     packages=find_packages(),
     install_requires=[

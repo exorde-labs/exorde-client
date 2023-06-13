@@ -37,7 +37,7 @@ async def fetch_version_from_setup_file(url_endpoint: str) -> str:
 
 
 async def get_module_online_version(module_name: str):
-    repository_path = f"https://raw.githubusercontent.com/exorde-labs/exorde/main/data/scraping/{module_name}"
+    repository_path = f"https://raw.githubusercontent.com/exorde-labs/exorde-client/main/data/scraping/{module_name}"
     return await fetch_version_from_setup_file(f"{repository_path}/setup.py")
 
 
@@ -55,7 +55,7 @@ async def get_scraping_module(module_name):
         logging.info(
             "diff in versions : {module_version} != {online_module_version}"
         )
-        repository_path = f"git+https://github.com/exorde-labs/exorde.git#subdirectory=data/scraping/{module_name}&egg={module_hash}"
+        repository_path = f"git+https://github.com/exorde-labs/exorde-client.git#subdirectory=data/scraping/{module_name}&egg={module_hash}"
         subprocess.check_call(["pip", "install", repository_path])
     loaded_module = import_module(module_hash)
     return loaded_module
@@ -121,7 +121,7 @@ def print_schema():
         Item,
         **{
             "$schema": "http://json-schema.org/draft-07/schema#",
-            "$id": f'https://github.com/exorde-labs/exorde/repo/tree/v{metadata.version("exorde_data")}/exorde/schema/schema.json',
+            "$id": f'https://github.com/exorde-labs/exorde-client/repo/tree/v{metadata.version("exorde_data")}/exorde/schema/schema.json',
         },
     )
     try:

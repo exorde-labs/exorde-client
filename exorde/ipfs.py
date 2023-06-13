@@ -69,15 +69,12 @@ async def download_ipfs_file(cid: str, max_attempts: int = 5):
     async with ClientSession(headers=headers) as session:
         for i in range(max_attempts):
             url = next(gateways) + cid
-            try:
-                logging.info("download of %s (%s)", url, i)
-                async with session.get(
-                    url, timeout=20, allow_redirects=True
-                ) as response:
-                    if response.status == 200:
-                        logging.info("download of %s OK after (%s)", url, i)
-                        return await response.json()
-            except:
-                return None
+            logging.info("download of %s (%s)", url, i)
+            async with session.get(
+                url, timeout=20, allow_redirects=True
+            ) as response:
+                if response.status == 200:
+                    logging.info("download of %s OK after (%s)", url, i)
+                    return await response.json()
 
     logging.error(f"Failed to download {cid} after {max_attempts} attempts")
