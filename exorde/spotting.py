@@ -1,6 +1,6 @@
 import logging
 
-from models import Processed
+from exorde.models import Processed
 
 
 from exorde.prepare_batch import prepare_batch
