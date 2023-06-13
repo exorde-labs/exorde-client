@@ -9,6 +9,7 @@ from faucet import faucet
 from web3 import Web3
 from claim_master import claim_master
 from get_current_rep import get_current_rep
+from self_update import self_update
 
 
 async def main(command_line_arguments: argparse.Namespace):
@@ -67,6 +68,7 @@ async def main(command_line_arguments: argparse.Namespace):
     while True:
         if cursor % 5 == 0:
             try:
+                await self_update()
                 # update/refresh configuration
                 live_configuration: LiveConfiguration = (
                     await get_live_configuration()
@@ -96,7 +98,7 @@ async def main(command_line_arguments: argparse.Namespace):
         await asyncio.sleep(live_configuration["inter_spot_delay_seconds"])
 
 
-if __name__ == "__main__":
+def run():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--main_address", help="Main wallet", type=str, required=True
@@ -107,3 +109,7 @@ if __name__ == "__main__":
         asyncio.run(main(command_line_arguments))
     except KeyboardInterrupt:
         logging.info("bye bye !")
+
+
+if __name__ == "__main__":
+    run()
