@@ -4,9 +4,9 @@ WORKDIR /exorde
 RUN pip install --upgrade pip
 RUN apt-get update
 
-RUN pip3.10 install git+https://github.com/exorde-labs/exorde-client.git#subdirectory=data&egg=exorde-data
-RUN pip3.10 install git+https://github.com/exorde-labs/exorde-client.git#subdirectory=exorde&egg=exorde
-RUN pip3.10 install --upgrade git+https://github.com/JustAnotherArchivist/snscrape.git
+RUN pip3.10 install 'git+https://github.com/exorde-labs/exorde-client.git#subdirectory=data&egg=exorde-data'
+RUN pip3.10 install 'git+https://github.com/exorde-labs/exorde-client.git#subdirectory=exorde&egg=exorde'
+RUN pip3.10 install --upgrade 'git+https://github.com/JustAnotherArchivist/snscrape.git'
 
 ## INSTALL ALL MODELS
 RUN exorde_install_models
