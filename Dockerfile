@@ -7,9 +7,9 @@ RUN apt-get update
 RUN pip3.10 install 'git+https://github.com/exorde-labs/exorde-client.git#subdirectory=data&egg=exorde-data'
 RUN pip3.10 install 'git+https://github.com/exorde-labs/exorde-client.git#subdirectory=exorde&egg=exorde'
 RUN pip3.10 install --upgrade 'git+https://github.com/JustAnotherArchivist/snscrape.git'
-
+COPY exorde/pre_install.py /exorde/exorde_install_models.py
 ## INSTALL ALL MODELS
-RUN exorde_install_models
+RUN ./exorde_install_models.py
 RUN python3 -m spacy download en_core_web_trf
 ENV PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
 
