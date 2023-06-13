@@ -1,1 +1,2 @@
 include exorde/get_live_configuration.py
+include exorde/protocol-configuration.yaml
