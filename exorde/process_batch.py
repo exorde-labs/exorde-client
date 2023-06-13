@@ -1,7 +1,7 @@
 import logging
 from importlib import metadata
 from datetime import datetime
-from models import (
+from exorde.models import (
     ProtocolItem,
     ProtocolAnalysis,
     ProcessedItem,
