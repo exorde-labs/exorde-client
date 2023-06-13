@@ -62,7 +62,7 @@ async def main(command_line_arguments: argparse.Namespace):
         logging.exception("An error occured claiming")
         os._exit(1)
     # print main address REP
-    cursor = 0
+    cursor = 1
     from exorde.spotting import spotting
 
     while True:
