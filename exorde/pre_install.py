@@ -4,7 +4,7 @@ from argostranslate import package
 from typing import cast
 
 
-if __name__ == "__main__":
+def pre_install():
     models = [
         "SamLowe/roberta-base-go_emotions",
         "cardiffnlp/twitter-roberta-base-irony",

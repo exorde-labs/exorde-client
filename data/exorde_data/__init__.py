@@ -42,17 +42,24 @@ async def get_module_online_version(module_name: str):
     return await fetch_version_from_setup_file(f"{repository_path}/setup.py")
 
 
+from importlib.metadata import PackageNotFoundError
+
+
 async def get_scraping_module(module_name):
     from exorde_data.scraping import scraping_modules
 
     module_hash = scraping_modules[module_name]
-    old_module_version = metadata.version(module_hash)
-    online_module_version = await get_module_online_version(module_name)
-    if old_module_version != online_module_version:
-        logging.info(f"Updating {module_name}")
-        logging.info(
-            "diff in versions : {module_version} != {online_module_version}"
-        )
+    try:
+        old_module_version = metadata.version(module_hash)
+        online_module_version = await get_module_online_version(module_name)
+        if old_module_version != online_module_version:
+            logging.info(f"Updating {module_name}")
+            logging.info(
+                "diff in versions : {module_version} != {online_module_version}"
+            )
+            repository_path = f"git+https://github.com/exorde-labs/exorde-client.git#subdirectory=data/scraping/{module_name}&egg={module_hash}"
+            subprocess.check_call(["pip", "install", repository_path])
+    except PackageNotFoundError:
         repository_path = f"git+https://github.com/exorde-labs/exorde-client.git#subdirectory=data/scraping/{module_name}&egg={module_hash}"
         subprocess.check_call(["pip", "install", repository_path])
     loaded_module = import_module(module_hash)
