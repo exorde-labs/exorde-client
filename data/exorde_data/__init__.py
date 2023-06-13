@@ -8,6 +8,7 @@ from importlib import import_module, metadata
 import re
 import aiohttp
 from typing import Union
+import subprocess
 
 
 def install_modules():
@@ -39,9 +40,6 @@ async def fetch_version_from_setup_file(url_endpoint: str) -> str:
 async def get_module_online_version(module_name: str):
     repository_path = f"https://raw.githubusercontent.com/exorde-labs/exorde-client/main/data/scraping/{module_name}"
     return await fetch_version_from_setup_file(f"{repository_path}/setup.py")
-
-
-import subprocess
 
 
 async def get_scraping_module(module_name):
