@@ -3,7 +3,7 @@ while true
 do
     exorde "$@"
     exit_code=$?
-    echo "main.py has crashed with exit code $exit_code. Respawning..." >&2
+    echo "exorde has crashed with exit code $exit_code. Respawning..." >&2
     if [ $exit_code -eq 42 ]
     then
         sleep 120
