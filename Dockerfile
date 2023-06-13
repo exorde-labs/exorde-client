@@ -47,4 +47,4 @@ RUN python3 -m spacy download en_core_web_trf
 ENV PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
 
 ## ENTRY POINT IS MAIN.PY
-ENTRYPOINT ["python3", "/exorde/exorde/main.py"]
+ENTRYPOINT ["./exorde/exorde/keepalive.sh"]

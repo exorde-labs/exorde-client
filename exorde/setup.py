@@ -1,10 +1,28 @@
-from setuptools import find_packages, setup
+from setuptools import setup, find_packages
+
+with open("README.md", "r", encoding="utf-8") as fh:
+    long_description = fh.read()
 
 setup(
     name="exorde",
     version="0.0.1",
+    author="Exorde Labs",
+    author_email="hello@exordelabs.com",
+    description="The AI-based client to mine data and power the Exorde Network",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    url="https://github.com/exorde-labs/exorde",
+    entry_points={"console_scripts": ["exorde = main:run"]},
     packages=find_packages(),
     install_requires=[
+        "madtypes",
+        "eth-account",
+        "asyncio",
+        "aiohttp",
+        "lxml",
+        "HTMLParser",
+        "pyyaml",
+        "web3",
         "fasttext==0.9.2",
         "fasttext-langdetect==1.0.5",
         "huggingface_hub==0.14.1",
@@ -17,13 +35,6 @@ setup(
         "vaderSentiment==3.3.2",
         "yake==0.4.8",
         "argostranslate==1.8.0",
-        "madtypes",
-        "pyyaml",
-        "eth-account",
-        "asyncio",
-        "aiohttp",
-        "web3",
     ],
-    entry_points={},
-    extras_require={},
+    python_requires=">=3.10",
 )
