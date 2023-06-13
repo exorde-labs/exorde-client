@@ -14,7 +14,7 @@ from models import (
     Analysis,
 )
 
-from tag import tag
+from exorde.tag import tag
 
 
 async def process_batch(batch: list[Processed], static_configuration):

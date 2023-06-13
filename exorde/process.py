@@ -1,11 +1,11 @@
 import json, logging
 
 
-from preprocess import preprocess
-from translate import translate
-from extract_keywords import extract_keywords
-from zero_shot import zero_shot
-from models import Classification, Translation, Keywords, Processed, Item
+from exorde.preprocess import preprocess
+from exorde.translate import translate
+from exorde.extract_keywords import extract_keywords
+from exorde.zero_shot import zero_shot
+from exorde.models import Classification, Translation, Keywords, Processed, Item
 
 
 async def process(item: Item, lab_configuration) -> Processed:

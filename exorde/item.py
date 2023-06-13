@@ -3,7 +3,7 @@ import logging
 from typing import Callable
 
 from typing import AsyncGenerator
-from urls import generate_url
+from exorde.urls import generate_url
 
 from exorde_data import query, Item
 

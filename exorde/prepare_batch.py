@@ -1,7 +1,7 @@
 import logging
-from item import get_item
-from models import Processed, LiveConfiguration
-from process import process
+from exorde.item import get_item
+from exorde.models import Processed, LiveConfiguration
+from exorde.process import process
 
 
 async def prepare_batch(
