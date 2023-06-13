@@ -1,43 +1,45 @@
-# Exorde Participation Module CLI
+# Exorde Participation Module
 
-The full documentation of Exorde Participation Module CLI is available on https://docs.exorde.network.
+The full documentation of Exorde Participation Module is available on https://docs.exorde.network.
 
 ## Instructions
 
 You have several choices to run the Exorde CLI:
 
 - Run from sources inside a virtual Python environment
-- Run from a Docker image
+- Run from a Docker image (RECOMMENDED)
 
-Exorde CLI does not come with a GUI, it aims to be used by advanced users who want to run it inside a terminal. The installation process assume that users who run Exorde CLI are familiar with command lines.
+Exorde client does not come with a GUI, it aims to be used by advanced users who want to run it inside a terminal. The installation process assume that users who run Exorde CLI are familiar with command lines.
 
 Using the container image is the recommanded way to run Exorde CLI, as it avoid dependencies issues, handles automatic restart in case of failure/application update and make multi easier to run multiple instances of the application.
 
 ## Requirements
 
 - Windows 8.1/10/11 or Linux or macOS
-- 4 GB RAM
-- 2 CPU cores
-- 1 GB storage (HDD or SSD)
+- 6 GB RAM per instance/container
+- 2-4 virtual CPU cores (4 recommended)
+- 40 GB storage (HDD or SSD) (the image is currently 30 gb)
+- Python 3.10
+- no GPU required
 
-## Quickstart using Python and Conda on Linux/macOS
+## Quickstart using Python and Conda on Linux/macOS (DEPRECATED, to update)
 
 1.  Follow the [Conda's documentation](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html#regular-installation) to install it on your system.
 2.  Download and unzip the latest version of Exorde CLI:
     ```bash
-    wget https://github.com/exorde-labs/ExordeModuleCLI/archive/refs/heads/main.zip \
-    --output-document=ExordeModuleCLI.zip \
-    && unzip ExordeModuleCLI.zip \
-    && rm ExordeModuleCLI.zip \
-    && mv ExordeModuleCLI-main ExordeModuleCLI
+    wget https://github.com/exorde-labs/exorde-client/archive/refs/heads/main.zip \
+    --output-document=exorde-client.zip \
+    && unzip exorde-client.zip \
+    && rm exorde-client.zip \
+    && mv exorde-client-main exorde-client
     ```
 3.  Go to the root of Exorde CLI folder:
     ```bash
-    cd ExordeModuleCLI
+    cd exorde-client
     ```
 4.  Create and activate a new virtual conda environment with Python 3.9 as the environment executable (exorde-env is an example name):
     ```bash
-    conda create --name exorde-env python=3.9
+    conda create --name exorde-env python=3.10
     conda activate exorde-env
     ```
 5.  Upgrade Pip :
@@ -51,13 +53,13 @@ Using the container image is the recommanded way to run Exorde CLI, as it avoid 
 7.  Run the program:
 
     ```bash
-    python Launcher.py -m <YOUR_MAIN_ADDRESS> -l <LOGGING_LEVEL>
+    python ./exorde/main.py --main_address <YOUR_MAIN_ADDRESS>
     ```
 
     Usage example:
 
     ```bash
-    python Launcher.py -m 0x0F67059ea5c125104E46B46769184dB6DC405C42 -l 2
+    python ./exorde/main.py -m 0x0F67059ea5c125104E46B46769184dB6DC405C42
     ```
 
 For more detailled informations, please read the [full documentation](https://docs.exorde.network).
@@ -73,7 +75,7 @@ For more detailled informations, please read the [full documentation](https://do
    --restart unless-stopped \
    --pull always \
    --name <CONTAINER_NAME> \
-   exordelabs/exorde-cli \
+   exordelabs/exorde-client \
    -m <YOUR_MAIN_ADDRESS> \
    -l <LOGGING_LEVEL>
    ```
@@ -85,11 +87,38 @@ For more detailled informations, please read the [full documentation](https://do
    -d \
    --restart unless-stopped \
    --pull always \
-   --name exorde-cli \
-   exordelabs/exorde-cli \
-   -m 0x0F67059ea5c125104E46B46769184dB6DC405C42 \
-   -l 2
+   --name exorde-client \
+   exordelabs/exorde-client \
+   -m 0x0F67059ea5c125104E46B46769184dB6DC405C42
    ```
+   
+2. Run multiple containers on same machine, and limit their machine usage with arguments --cpus="x" --memory="Xg"
+
+   ```bash
+   docker run \
+   -d \
+   --restart unless-stopped \
+   --cpus="x" --memory="Xg" \
+   --pull always \
+   --name <CONTAINER_NAME> \
+   exordelabs/exorde-client \
+   -m <YOUR_MAIN_ADDRESS> \
+   -l <LOGGING_LEVEL>
+   ```
+
+   Usage example:
+
+   ```bash
+   docker run \
+   -d \
+   --restart unless-stopped \
+   --cpus="4" --memory="6g" \
+   --pull always \
+   --name exorde-client \
+   exordelabs/exorde-client \
+   -m 0x0F67059ea5c125104E46B46769184dB6DC405C42
+   ```
+    
 
 For more detailled informations, please read the [full documentation](https://docs.exorde.network).
 
@@ -108,7 +137,7 @@ If you are already running Exorde CLI with Docker and you want to use a new uplo
    For example, if you are running only one container named "exorde-cli":
 
    ```
-   docker stop exorde-cli && docker rm exorde-cli
+   docker stop exorde-client && docker rm exorde-client
    ```
 
 2. Start new containers:
@@ -118,7 +147,7 @@ If you are already running Exorde CLI with Docker and you want to use a new uplo
    --restart unless-stopped \
    --pull always \
    --name <CONTAINER_NAME> \
-   exordelabs/exorde-cli \
+   exordelabs/exorde-client \
    -m <YOUR_MAIN_ADDRESS> \
    -l <LOGGING_LEVEL>
    ```
@@ -150,7 +179,7 @@ Code Sub-Module 4 / 4 Downloading... https://bafybeicdgmxvetbi4yqjztzzroevcfvnwo
 ...
 ```
 
-The module is autonomous.
+The module is autonomous. It is made to be plugin-based for scrapers, so feel free to submit your scrapers, part of Exorde Labs's Open Source bounty program (to properly develop in 2023).
 
 ## Spontaneous updates
 
