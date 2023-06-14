@@ -20,7 +20,7 @@ def zero_shot(
     """
     # If max_depth is 0, return immediately with empty label and score 0
     if max_depth == 0:
-        return Classification(label="", score=0)
+        return Classification(label=str(""), score=float(0))
 
     labeldict = lab_configuration["labeldict"]
     classifier = lab_configuration["classifier"]
