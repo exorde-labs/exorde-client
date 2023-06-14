@@ -65,4 +65,4 @@ def extract_keywords(translation: Translation) -> Keywords:
     keywords_weighted.extend(x for x in kx2 if x not in keywords_weighted)
     keywords_ = [e[0] for e in set(keywords_weighted)]
     fitlered_keywords = filter_strings(keywords_)
-    return fitlered_keywords
+    return Keywords(fitlered_keywords)
