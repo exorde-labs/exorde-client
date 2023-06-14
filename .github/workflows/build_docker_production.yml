@@ -8,9 +8,6 @@ on:
   release:
     types: [created, edited]
 
-permissions:
-  contents: read
-
 jobs:
   build-deploy:
     name: Build and Publish (on production)
