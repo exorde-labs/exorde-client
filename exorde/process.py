@@ -8,7 +8,7 @@ from exorde.zero_shot import zero_shot
 from exorde.models import Classification, Translation, Keywords, Processed, Item
 
 
-async def process(item: Item, lab_configuration) -> Processed:
+async def process(item: Item, lab_configuration, max_depth_classification) -> Processed:
     try:
         try:
             item = preprocess(item, False)
@@ -40,7 +40,7 @@ async def process(item: Item, lab_configuration) -> Processed:
 
         try:
             classification: Classification = zero_shot(
-                translation, lab_configuration
+                translation, lab_configuration, max_depth=max_depth_classification
             )
         except Exception as err:
             logging.error("An error occured classifying an item")
