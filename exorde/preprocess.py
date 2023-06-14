@@ -17,6 +17,9 @@ def preprocess_text(text: str, remove_stopwords: bool) -> str:
         str: the cleaned text
     """
 
+    def remove_unicode_escapes(s):
+        return re.sub(r'\\u[\da-fA-F]{4}', '', s)
+
     def contains_only_special_chars(s):
         pattern = r"^[^\w\s]+$"
         return bool(re.match(pattern, s))
@@ -30,6 +33,7 @@ def preprocess_text(text: str, remove_stopwords: bool) -> str:
         return " ".join(new_text)
 
     text = text.replace("#", "")
+    texst = remove_unicode_escapes(text)
     text = preprocess(text)
     text = text.lower().strip()
 
