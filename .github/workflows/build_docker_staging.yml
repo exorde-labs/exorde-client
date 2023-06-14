@@ -1,0 +1,69 @@
+name: Build & Publish the container image - staging
+
+concurrency:
+  group: build_docker_staging
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-deploy:
+    name: Build and Publish (on staging)
+    runs-on: ubuntu-latest
+    env:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set commit sha short
+        run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
+
+      - name: Log into registry ${{ secrets.DEV_CONTAINER_REGISTRY_URL }}
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ secrets.DEV_CONTAINER_REGISTRY_URL }}
+          username: ${{ secrets.DEV_CONTAINER_REGISTRY_LOGIN }}
+          password: ${{ secrets.DEV_CONTAINER_REGISTRY_SECRET_KEY }}
+
+      - name: Setup Docker buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build and push Docker image
+        id: build-and-push
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: "./Dockerfile"
+          push: true
+          tags: |
+            ${{ secrets.DEV_CONTAINER_REGISTRY_URL }}/exorde/exorde:${{ env.SHORT_SHA }}
+            ${{ secrets.DEV_CONTAINER_REGISTRY_URL }}/exorde/exorde:latest
+
+      - name: Send a message to slack if CI has succeeded
+        if: ${{ success() }}
+        uses: slackapi/slack-github-action@v1.18.0
+        with:
+          payload: |
+            {
+              "text": "✓ The CI _'${{ github.workflow }}'_ of repository _${{ github.repository }}_ has been successfully deployed. Link to PR/commit: ${{ github.event.pull_request.html_url || github.event.head_commit.url }}."
+            }
+
+      - name: Send a message to slack if CI has failed
+        if: ${{ failure() }}
+        uses: slackapi/slack-github-action@v1.18.0
+        with:
+          payload: |
+            {
+              "text": ":x: The CI _'${{ github.workflow }}'_ of repository _${{ github.repository }}_ has failed. Link to PR/commit: ${{ github.event.pull_request.html_url || github.event.head_commit.url }}."
+            }
