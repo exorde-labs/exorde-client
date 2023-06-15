@@ -44,8 +44,8 @@ jobs:
             linux/arm64
           push: true
           tags: |
-            ${{ secrets.DEV_CONTAINER_REGISTRY_URL }}/exordelabs/exorde-client:${{ github.event.release.tag_name }}
-            ${{ secrets.DEV_CONTAINER_REGISTRY_URL }}/exordelabs/exorde-client:latest
+            exordelabs/exorde-client:${{ github.event.release.tag_name }}
+            exordelabs/exorde-client:latest
 
       - name: Send a message to slack if CI has succeeded
         if: ${{ success() }}
