@@ -3,6 +3,7 @@ from exorde.estimate_gas import estimate_gas
 
 async def spot_data(
     cid,
+    item_count_,
     worker_account,
     configuration,
     gas_cache,
@@ -13,10 +14,11 @@ async def spot_data(
     previous_nonce = await read_web3.eth.get_transaction_count(
         worker_account.address
     )
+    item_count = min(int(item_count_),int(configuration["batch_size"]))
     assert isinstance(cid, str)
     transaction = await (
         contracts["DataSpotting"]
-        .functions.SpotData([cid], [""], [configuration["batch_size"]], "")
+        .functions.SpotData([cid], [""], [item_count], "")
         .build_transaction(
             {
                 "nonce": previous_nonce,
