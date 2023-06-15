@@ -66,7 +66,7 @@ async def main(command_line_arguments: argparse.Namespace):
     from exorde.spotting import spotting
 
     while True:
-        if cursor % 5 == 0:
+        if cursor % 4 == 0:
             try:
                 await self_update()
                 # update/refresh configuration
@@ -74,7 +74,7 @@ async def main(command_line_arguments: argparse.Namespace):
                     await get_live_configuration()
                 )
                 if live_configuration["remote_kill"] == True:
-                    logging.info("Protocol is shut down")
+                    logging.info("Protocol is shut down (remote kill)")
                     os._exit(0)
             except:
                 logging.exception(
@@ -95,6 +95,8 @@ async def main(command_line_arguments: argparse.Namespace):
         cursor += 1
         if live_configuration and live_configuration["online"]:
             await spotting(live_configuration, static_configuration)
+        elif not live_configuration["online"]:            
+            logging.info("Protocol is paused (online mode is False), temporarily. Your client will wait for the pause to end and will continue automatically.")
         await asyncio.sleep(live_configuration["inter_spot_delay_seconds"])
 
 
