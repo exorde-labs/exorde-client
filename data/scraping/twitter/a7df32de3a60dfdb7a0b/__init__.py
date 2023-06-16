@@ -415,7 +415,7 @@ def print_first_and_last(s):
        return(s[0] + "***" + s[-1])
         
 
-def log_in(env=".env", wait=4):
+def log_in(env="/.env", wait=4):
     global driver
 
     email = get_email(env)  # const.EMAIL
