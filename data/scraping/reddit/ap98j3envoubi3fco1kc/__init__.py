@@ -2,6 +2,9 @@ import aiohttp
 from lxml import html
 from typing import AsyncGenerator
 import datetime
+from datetime import datetime as datett
+from datetime import timedelta, timezone
+import pytz
 import hashlib
 
 from exorde_data import (
@@ -16,6 +19,26 @@ from exorde_data import (
 
 import hashlib
 
+MAX_EXPIRATION_SECONDS = 120
+
+def is_within_timeframe_seconds(dt_str, timeframe_sec):
+    # Convert the datetime string to a datetime object
+    dt = datett.strptime(dt_str, "%Y-%m-%dT%H:%M:%S.%fZ")
+
+    # Make it aware about timezone (UTC)
+    dt = dt.replace(tzinfo=timezone.utc)
+
+    # Get the current datetime in UTC
+    current_dt = datett.now(timezone.utc)
+
+    # Calculate the time difference between the two datetimes
+    time_diff = current_dt - dt
+
+    # Check if the time difference is within the specified timeframe in seconds
+    if abs(time_diff) <= timedelta(seconds=timeframe_sec):
+        return True
+    else:
+        return False
 
 async def scrap_post(url: str) -> AsyncGenerator[Item, None]:
     resolvers = {}
@@ -23,7 +46,7 @@ async def scrap_post(url: str) -> AsyncGenerator[Item, None]:
     async def post(data) -> AsyncGenerator[Item, None]:
         """t3"""
         content = data["data"]
-        yield Item(
+        item_ = Item(
             content=Content(content["selftext"]),
             author=Author(
                 hashlib.sha1(
@@ -44,11 +67,13 @@ async def scrap_post(url: str) -> AsyncGenerator[Item, None]:
             # nb_comments=content["num_comments"],
             # nb_likes=content["ups"],
         )
+        if is_within_timeframe_seconds(str(item_.created_at),MAX_EXPIRATION_SECONDS):
+            yield item_
 
     async def comment(data) -> AsyncGenerator[Item, None]:
         """t1"""
         content = data["data"]
-        yield Item(
+        item_ = Item(
             content=Content(content["body"]),
             author=Author(
                 hashlib.sha1(
@@ -67,6 +92,8 @@ async def scrap_post(url: str) -> AsyncGenerator[Item, None]:
             url=Url("https://reddit.com" + content["permalink"]),
             # nb_likes=content["ups"],
         )
+        if is_within_timeframe_seconds(str(item_.created_at),MAX_EXPIRATION_SECONDS):
+            yield item_
 
     async def more(__data__):
         for __item__ in []:
@@ -106,8 +133,8 @@ async def scrap_subreddit(subreddit_url: str) -> AsyncGenerator[Item, None]:
                 async for item in scrap_post(
                     post.xpath("div/ul/li/a")[0].get("href")
                 ):
-                    yield item
-
+                    if is_within_timeframe_seconds(str(item.created_at),MAX_EXPIRATION_SECONDS):
+                        yield item
 
 async def query(url: str) -> AsyncGenerator[Item, None]:
     if "reddit.com" not in url:
