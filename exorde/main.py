@@ -99,12 +99,54 @@ async def main(command_line_arguments: argparse.Namespace):
             logging.info("Protocol is paused (online mode is False), temporarily. Your client will wait for the pause to end and will continue automatically.")
         await asyncio.sleep(live_configuration["inter_spot_delay_seconds"])
 
+def write_env(email, password, username):
+    # Check the conditions for each field
+    if email is None or len(email) <= 3:
+        print("Invalid email. Operation aborted.")
+        return
+    if password is None or len(password) <= 3:
+        print("Invalid password. Operation aborted.")
+        return
+    if username is None or len(username) <= 3:
+        print("Invalid username. Operation aborted.")
+        return
+
+    # Define the content
+    content = f"SCWEET_EMAIL={email}\nSCWEET_PASSWORD={password}\nSCWEET_USERNAME={username}\n"
+
+    # Check if the .env file exists, if not create it
+    if not os.path.exists('.env'):
+        with open('.env', 'w') as f:
+            f.write(content)
+        try:
+            os.chmod('.env', 0o600)  # Set file permissions to rw for the owner only
+        except Exception as e:
+            print("Error: ",e, " - could not chmod .env, passing...")
+        print(".env file created.")
+    else:
+        with open('.env', 'a') as f:
+            f.write(content)
+        print(".env file updated.")
 
 def run():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--main_address", help="Main wallet", type=str, required=True
     )
+    parser.add_argument("--twitter_username", help="Twitter username", type=str)
+    parser.add_argument("--twitter_password", help="Twitter password", type=str)
+    parser.add_argument("--twitter_email", help="Twitter email", type=str)
+
+    args = parser.parse_args()
+
+    # Check that either all or none of Twitter arguments are provided
+    if (args.twitter_username is None) != (args.twitter_password is None) or (args.twitter_username is None) != (args.twitter_email is None):
+        parser.error("--twitter_username, --twitter_password, and --twitter_email must be given together")
+    else:
+        print("Twitter login arguments detected")
+        write_env(email=args.twitter_email, password=args.twitter_password, username=args.twitter_username)
+
+
     command_line_arguments: argparse.Namespace = parser.parse_args()
     logging.basicConfig(level=logging.DEBUG)
     try:
