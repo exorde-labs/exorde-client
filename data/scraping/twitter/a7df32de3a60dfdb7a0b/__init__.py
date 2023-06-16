@@ -29,7 +29,7 @@ from exorde_data import (
     ExternalParentId,
 )
 import chromedriver_autoinstaller
-import geckodriver_autoinstaller
+# import geckodriver_autoinstaller
 
 global driver
 
