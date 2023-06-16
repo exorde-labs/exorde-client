@@ -7,6 +7,10 @@ setup(
     install_requires=[
         "exorde_data",
         "aiohttp",
+        "python-dotenv",
+        "selenium==4.2.0",
+        "pathlib",
+        "chromedriver-autoinstaller==0.4.0"
     ],
     extras_require={"dev": ["pytest", "pytest-cov", "pytest-asyncio"]},
 )
