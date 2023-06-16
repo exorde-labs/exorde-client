@@ -345,6 +345,10 @@ def init_driver(headless=True, proxy=None, show_images=False, option=None, firef
     else:
         options = ChromeOptions()
         driver_path = chromedriver_autoinstaller.install()
+        print("Add options to Chrome Driver")
+        options.add_argument("--headless") # Ensure GUI is off. Essential for Docker.
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
 
     if headless is True:
         print("Scraping on headless mode.")
@@ -693,7 +697,7 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
         
         try:
             print("[Twitter] Open driver")
-            driver = init_driver(headless=False, show_images=False, proxy=None)
+            driver = init_driver(headless=True, show_images=False, proxy=None)
             print("[Twitter] Chrome/Selenium Driver = ",driver)
             print("[TWITTER LOGIN] Trying...")
             log_in()
