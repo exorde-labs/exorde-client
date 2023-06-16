@@ -115,18 +115,18 @@ def write_env(email, password, username):
     content = f"SCWEET_EMAIL={email}\nSCWEET_PASSWORD={password}\nSCWEET_USERNAME={username}\n"
 
     # Check if the .env file exists, if not create it
-    if not os.path.exists('.env'):
-        with open('.env', 'w') as f:
+    if not os.path.exists('/.env'):
+        with open('/.env', 'w') as f:
             f.write(content)
         try:
-            os.chmod('.env', 0o600)  # Set file permissions to rw for the owner only
+            os.chmod('/.env', 0o600)  # Set file permissions to rw for the owner only
         except Exception as e:
             print("Error: ",e, " - could not chmod .env, passing...")
-        print(".env file created.")
+        print("/.env file created.")
     else:
         with open('.env', 'a') as f:
             f.write(content)
-        print(".env file updated.")
+        print("/.env file updated.")
 
 def run():
     parser = argparse.ArgumentParser()
