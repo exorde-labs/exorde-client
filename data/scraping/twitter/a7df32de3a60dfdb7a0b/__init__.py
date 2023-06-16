@@ -7,13 +7,12 @@ from datetime import datetime as datett
 from datetime import timedelta, date, timezone
 from time import sleep
 import pytz
-import pandas as pd
 import snscrape.modules
 import dotenv
 from pathlib import Path
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options as ChromeOptions
-from selenium.webdriver.firefox.options import Options as FirefoxOptions
+# from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
@@ -340,8 +339,9 @@ def init_driver(headless=True, proxy=None, show_images=False, option=None, firef
     global driver
 
     if firefox:
-        options = FirefoxOptions()
-        driver_path = geckodriver_autoinstaller.install()
+        print("Firefox is disabled for now")
+        # options = FirefoxOptions()
+        # driver_path = geckodriver_autoinstaller.install()
     else:
         options = ChromeOptions()
         driver_path = chromedriver_autoinstaller.install()
