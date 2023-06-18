@@ -410,7 +410,7 @@ def log_search_page(since, until_local, lang, display_type, word, to_account, fr
     mention_account = "(%40" + mention_account + ")%20" if mention_account is not None else ""
     hash_tags = "(%23" + hashtag + ")%20" if hashtag is not None else ""
 
-    since = "since%3A" + since + "%20"
+    since = "" # "since%3A" + since + "%20"
 
     if display_type == "Latest" or display_type == "latest":
         display_type = "&f=live"
