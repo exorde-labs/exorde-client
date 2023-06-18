@@ -427,9 +427,9 @@ def print_first_and_last(s):
 def log_in(env="/.env", wait=4):
     global driver
 
-    email = get_email(env)[0]  # const.EMAIL
-    password = get_password(env)[0]  # const.PASSWORD
-    username = get_username(env)[0]  # const.USERNAME
+    email = get_email(env)  # const.EMAIL
+    password = get_password(env)  # const.PASSWORD
+    username = get_username(env)  # const.USERNAME
 
     logging.info("\t[Twitter] Email provided = ",email)
     logging.info("\t[Twitter] Password provided = ",print_first_and_last(password))
