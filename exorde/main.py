@@ -136,6 +136,8 @@ def run():
     parser.add_argument("--twitter_username", help="Twitter username", type=str)
     parser.add_argument("--twitter_password", help="Twitter password", type=str)
     parser.add_argument("--twitter_email", help="Twitter email", type=str)
+    parser.add_argument('-v', '--verbosity', type=int, choices=[0, 1, 2], default=1, 
+                        help='set verbosity level (0=warnings and above, 1=info and above, 2=debug and above)')
 
     args = parser.parse_args()
 
@@ -145,14 +147,17 @@ def run():
     else:
         print("Twitter login arguments detected")
         write_env(email=args.twitter_email, password=args.twitter_password, username=args.twitter_username)
-
-
+            
+    # Map verbosity level from command line to logging level.
+    LOGGING_LEVELS = {0: logging.WARNING, 1: logging.INFO, 2: logging.DEBUG}
+    # Set logging level based on the verbosity argument.
+    print("Setting Client Logs verbosity to level ",args.verbosity)
+    logging.basicConfig(level=LOGGING_LEVELS[args.verbosity])
     command_line_arguments: argparse.Namespace = parser.parse_args()
-    logging.basicConfig(level=logging.DEBUG)
     try:
         asyncio.run(main(command_line_arguments))
     except KeyboardInterrupt:
-        logging.info("bye bye !")
+        logging.info("Exit")
 
 
 if __name__ == "__main__":
