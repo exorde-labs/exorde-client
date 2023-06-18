@@ -339,6 +339,40 @@ def get_data(card):
         username, handle, postdate, text, embedded, emojis, reply_cnt, retweet_cnt, like_cnt, image_links, tweet_url)
     return tweet
 
+user_agents = [
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 5.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36",
+    "Mozilla/5.0 (Windows; U; Windows NT 6.2) AppleWebKit/537.0.0 (KHTML, like Gecko) Chrome/32.0.847.0 Safari/537.0.0",
+    "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.9.5; rv:8.1) Gecko/20100101 Firefox/8.1.0",
+    "Mozilla/5.0 (Windows; U; Windows NT 6.2) AppleWebKit/535.2.2 (KHTML, like Gecko) Chrome/18.0.800.0 Safari/535.2.2",
+    "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_8_9) AppleWebKit/534.1.0 (KHTML, like Gecko) Chrome/22.0.845.0 Safari/534.1.0",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_4) AppleWebKit/533.1.2 (KHTML, like Gecko) Chrome/32.0.870.0 Safari/533.1.2",
+    "Mozilla/5.0 (Windows; U; Windows NT 6.2) AppleWebKit/531.1.1 (KHTML, like Gecko) Chrome/39.0.866.0 Safari/531.1.1",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6.0; rv:11.3) Gecko/20100101 Firefox/11.3.2",
+    "Mozilla/5.0 (compatible; MSIE 7.0; Windows NT 6.3; Trident/3.0; .NET CLR 2.2.96897.2)",
+    "Mozilla/5.0 (compatible; MSIE 7.0; Windows NT 6.1; Trident/7.1; .NET CLR 3.8.72460.7)",
+    "Mozilla/5.0 (Windows; U; Windows NT 6.0) AppleWebKit/531.2.1 (KHTML, like Gecko) Chrome/29.0.831.0 Safari/531.2.1",
+    "Mozilla/5.0 (Linux; Android 8.1.0; Texet TM-5081) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Mobile Safari/537.36",
+    "Mozilla/5.0 (Linux; Android 6.0.1; SM-N910C Build/MMB29K; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/91.0.4472.101 Mobile Safari/537.36 [FB_IAB/FB4A;FBAV/331.1.0.29.117;]",
+    "Mozilla/5.0 (Linux; Android 6.0.1; Redmi 4 Build/MMB29M; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/92.0.4515.131 Mobile Safari/537.36 [FB_IAB/FB4A;FBAV/331.1.0.29.117;]",
+    "Mozilla/5.0 (Linux; arm_64; Android 7.1.1; ZC600KL) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.164 YaBrowser/21.6.2.119.00 SA/3 Mobile Safari/537.36",
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 14_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 YaBrowser/20.2.1.272.10 Mobile/15E148 Safari/604.1",
+    "Mozilla/5.0 (Linux; Android 8.1.0; TECNO LA7 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.115 Mobile Safari/537.36",
+    "Mozilla/5.0 (Linux; Android 9; BND-L21 Build/HONORBND-L21) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.164 Mobile Safari/537.36",
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 YaBrowser/21.3.1.844.10 SA/3 Mobile/15E148 Safari/604.1",
+    "Mozilla/5.0 (Linux; Android 6.0.1; SM-G532F Build/MMB29T; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/56.0.2924.87 Mobile Safari/537.36 [FB_IAB/FB4A;FBAV/330.0.0.31.120;]",
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 12_5_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) YaBrowser/16.3.3.4 YaApp_iOS/4.80 YaApp_iOS_Browser/4.80"
+]
+
+    
 def init_driver(headless=True, proxy=None, show_images=False, option=None, firefox=False, env=None):
     """ initiate a chromedriver or firefoxdriver instance
         --option : other option to add (str)
@@ -367,6 +401,7 @@ def init_driver(headless=True, proxy=None, show_images=False, option=None, firef
             options.add_argument("--no-sandbox")
             options.add_argument("--disable-dev-shm-usage")
             options.add_argument("disable-infobars")
+            options.add_argument(f'user-agent={random.choice(user_agents)}')
 
             driver = webdriver.Chrome(options=options)
         if headless is True:
