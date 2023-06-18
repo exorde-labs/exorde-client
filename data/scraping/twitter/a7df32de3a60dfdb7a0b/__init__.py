@@ -380,11 +380,11 @@ def init_driver(headless=True, proxy=None, show_images=False, option=None, firef
     global driver
     driver_manager = SingletonDriver()
     if driver_manager.is_driver_initialized:
-        print("Driver is initialized already.")
         driver = driver_manager.driver
+        logging.info("Driver is initialized already. -> %s",driver)
         return driver
     else:
-        print("Driver is not initialized.")
+        logging.info("Driver is not initialized...")
         if firefox:
             # options = FirefoxOptions()
             # driver_path = geckodriver_autoinstaller.install()
@@ -798,8 +798,8 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
             logging.info("Failed to scrape_() tweets. Error =  %s",e)
             pass
         
-        logging.info("[Twitter] Close driver")
-        driver.close()
+        # logging.info("[Twitter] Close driver")
+        # driver.close()
     else:
         async for result in get_sns_tweets(
             search_keyword, select_top_tweets, nb_tweets_wanted
