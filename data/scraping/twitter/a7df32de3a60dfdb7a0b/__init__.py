@@ -7,16 +7,20 @@ from datetime import datetime as datett
 from datetime import timedelta, date, timezone
 from time import sleep
 import pytz
+import pandas as pd
 import snscrape.modules
 import dotenv
+import logging
 from pathlib import Path
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options as ChromeOptions
-# from selenium.webdriver.firefox.options import Options as FirefoxOptions
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 from typing import AsyncGenerator
+from models import Item
+import logging
 from exorde_data import (
     Item,
     Content,
@@ -29,11 +33,11 @@ from exorde_data import (
     ExternalParentId,
 )
 import chromedriver_autoinstaller
-# import geckodriver_autoinstaller
+import geckodriver_autoinstaller
 
 global driver
 
-driver = None
+
 #############################################################################
 #############################################################################
 #############################################################################
@@ -172,7 +176,7 @@ async def get_sns_tweets(
 def check_env():
     # Check if the .env file exists
     if not os.path.exists('/.env'):
-        print("/.env file does not exist.")
+        logging.info("/.env file does not exist.")
         return False
 
     # Read the .env file
@@ -195,7 +199,7 @@ def check_env():
     # Check if all keys have non-null values
     for key in keys:
         if keys[key] is None:
-            print(f"{key} is missing or null.")
+            logging.info(f"{key} is missing or null.")
             return False
 
     # If all checks pass, return True
@@ -339,19 +343,24 @@ def init_driver(headless=True, proxy=None, show_images=False, option=None, firef
     global driver
 
     if firefox:
-        print("Firefox is disabled for now")
-        # options = FirefoxOptions()
-        # driver_path = geckodriver_autoinstaller.install()
+        options = FirefoxOptions()
+        driver_path = geckodriver_autoinstaller.install()
     else:
         options = ChromeOptions()
         driver_path = chromedriver_autoinstaller.install()
-        print("Add options to Chrome Driver")
+        logging.info("Add options to Chrome Driver")
+        options.add_argument("--disable-blink-features") # Disable features that might betray automation
+        options.add_argument("--disable-blink-features=AutomationControlled") # Disables a Chrome flag that shows an 'automation' toolbar
+        options.add_experimental_option("excludeSwitches", ["enable-automation"]) # Disable automation flags
+        options.add_experimental_option('useAutomationExtension', False) # Disable automation extensions
         options.add_argument("--headless") # Ensure GUI is off. Essential for Docker.
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("disable-infobars")
 
+        driver = webdriver.Chrome(options=options)
     if headless is True:
-        print("Scraping on headless mode.")
+        logging.info("Scraping on headless mode.")
         options.add_argument('--disable-gpu')
         options.headless = True
     else:
@@ -359,7 +368,7 @@ def init_driver(headless=True, proxy=None, show_images=False, option=None, firef
     options.add_argument('log-level=3')
     if proxy is not None:
         options.add_argument('--proxy-server=%s' % proxy)
-        print("using proxy : ", proxy)
+        logging.info("using proxy : ", proxy)
     if show_images == False and firefox == False:
         prefs = {"profile.managed_default_content_settings.images": 2}
         options.add_experimental_option("prefs", prefs)
@@ -370,11 +379,10 @@ def init_driver(headless=True, proxy=None, show_images=False, option=None, firef
         driver = webdriver.Firefox(options=options, executable_path=driver_path)
     else:
         driver = webdriver.Chrome(options=options, executable_path=driver_path)
+        logging.info("Chrome driver initialized = ",driver)
         # driver = uc.Chrome(headless=headless, use_subprocess=True) 
 
-        
-
-    driver.set_page_load_timeout(100)
+    driver.set_page_load_timeout(123)
     return driver
 
 
@@ -383,6 +391,7 @@ def log_search_page(since, until_local, lang, display_type, word, to_account, fr
                     geocode, minreplies, minlikes, minretweets):
     """ Search for this query between since and until_local"""
     global driver
+    logging.info("Log search page = ",driver)
     # format the <from_account>, <to_account> and <hash_tags>
     from_account = "(from%3A" + from_account + ")%20" if from_account is not None else ""
     to_account = "(to%3A" + to_account + ")%20" if to_account is not None else ""
@@ -422,9 +431,9 @@ def log_in(env="/.env", wait=4):
     password = get_password(env)  # const.PASSWORD
     username = get_username(env)  # const.USERNAME
 
-    print("\t[Twitter] Email provided = ",email)
-    print("\t[Twitter] Password provided = ",print_first_and_last(password))
-    print("\t[Twitter] Username provided = ",username)
+    logging.info("\t[Twitter] Email provided = ",email)
+    logging.info("\t[Twitter] Password provided = ",print_first_and_last(password))
+    logging.info("\t[Twitter] Username provided = ",username)
 
     driver.get('https://twitter.com/i/flow/login')
 
@@ -435,7 +444,7 @@ def log_in(env="/.env", wait=4):
     sleep(random.uniform(wait, wait + 1))
 
     # enter email
-    print("Entering Email..")
+    logging.info("Entering Email..")
     email_el = driver.find_element(by=By.XPATH, value=email_xpath)
     sleep(random.uniform(wait, wait + 1))
     # email_el.send_keys(email)        
@@ -446,10 +455,10 @@ def log_in(env="/.env", wait=4):
     sleep(random.uniform(wait, wait + 1))
     # in case twitter spotted unusual login activity : enter your username
     if check_exists_by_xpath(username_xpath, driver):
-        print("Unusual Activity Mode")
+        logging.info("Unusual Activity Mode")
         username_el = driver.find_element(by=By.XPATH, value=username_xpath)
         sleep(random.uniform(wait, wait + 1))
-        print("\tEntering username..")
+        logging.info("\tEntering username..")
         # username_el.send_keys(username)        
         type_slow(username, username_el)
         sleep(random.uniform(wait, wait + 1))
@@ -458,7 +467,7 @@ def log_in(env="/.env", wait=4):
     # enter password
     password_el = driver.find_element(by=By.XPATH, value=password_xpath)
     # password_el.send_keys(password)   
-    print("\tEntering password...")
+    logging.info("\tEntering password...")
     type_slow(password, password_el)
     sleep(random.uniform(wait, wait + 1))
     password_el.send_keys(Keys.RETURN)
@@ -510,9 +519,9 @@ def keep_scroling(data, tweet_ids, scrolling, tweet_parsed, limit, scroll, last_
                     data.append(tweet)
                     last_date = str(tweet[2])
                     if is_within_timeframe_seconds(last_date, 60):
-                        print("Tweet made at: " + str(last_date) + " is found.")
-                        print(tweet)
-                        print(tweet_parsed," tweets found.")
+                        logging.info("Tweet made at: " + str(last_date) + " is found.")
+                        logging.info(tweet)
+                        logging.info(tweet_parsed," tweets found.")
                         tweet_parsed += 1
                     elif not is_within_timeframe_seconds(last_date, 60) or  tweet_parsed >= limit:
                         return data, tweet_ids, scrolling, tweet_parsed, scroll, last_position
@@ -576,7 +585,7 @@ async def scrape_(until=None, keyword="bitcoin", to_account=None, from_account=N
     Item: containing all tweets scraped with the associated features.
     """
     global driver
-    print("\tScraping latest tweets on keyword = ",keyword)
+    logging.info("\tScraping latest tweets on keyword = ",keyword)
     # ------------------------- Variables : 
     # list that contains all data 
     data = []
@@ -595,7 +604,7 @@ async def scrape_(until=None, keyword="bitcoin", to_account=None, from_account=N
 
     #------------------------- start scraping : keep searching until until
     # open the file
-    print("\tStart collecting tweets....")
+    logging.info("\tStart collecting tweets....")
     nb_search_tries = 0
     # log search page for a specific <interval> of time and keep scrolling unltil scrolling stops or reach the <until>
     while True:
@@ -608,7 +617,7 @@ async def scrape_(until=None, keyword="bitcoin", to_account=None, from_account=N
         if type(until_local) != str :
             until_local = datetime.datetime.strftime(until_local, '%Y-%m-%d')
         
-        # print("Start log_search_page....")
+        # logging.info("Start log_search_page....")
         nb_search_tries += 1
         path = log_search_page(word=keyword, since=since,
                         until_local=until_local, to_account=to_account,
@@ -616,19 +625,19 @@ async def scrape_(until=None, keyword="bitcoin", to_account=None, from_account=N
                         display_type=display_type, filter_replies=filter_replies, proximity=proximity,
                         geocode=geocode, minreplies=minreplies, minlikes=minlikes, minretweets=minretweets)
         refresh += 1
-        # print("Start execute_script....")
+        # logging.info("Start execute_script....")
         last_position = driver.execute_script("return window.pageYOffset;")
         scrolling = True
-        # print("looking for tweets between " + str(since) + " and " + str(until_local) + " ...")
-        print("\tURL being parsed : {}".format(path))
+        # logging.info("looking for tweets between " + str(since) + " and " + str(until_local) + " ...")
+        logging.info("\tURL being parsed : {}".format(path))
         tweet_parsed = 0
         sleep(random.uniform(0.5, 1.5))
-        # print("Start scrolling & get tweets....")
+        # logging.info("Start scrolling & get tweets....")
         data, tweet_ids, scrolling, tweet_parsed, scroll, last_position = \
             keep_scroling(data, tweet_ids, scrolling, tweet_parsed, limit, scroll, last_position)
 
         if scroll > 50: 
-            print("\tReached 50 scrolls: breaking")
+            logging.debug("\tReached 50 scrolls: breaking")
             break
         if type(since) == str:
             since = datetime.datetime.strptime(since, '%Y-%m-%d') + datetime.timedelta(days=interval)
@@ -687,7 +696,7 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
     if "f=live" not in url_parts:
         select_top_tweets = True
     if len(search_keyword) == 0:
-        print("keyword not found, can't search tweets using snscrape.")
+        logging.info("keyword not found, can't search tweets using snscrape.")
     ### NOW SELECT SCRAPER
     select_login_based_scraper = False
     if check_env():
@@ -696,14 +705,14 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
 
         
         try:
-            print("[Twitter] Open driver")
+            logging.info("[Twitter] Open driver")
             driver = init_driver(headless=True, show_images=False, proxy=None)
-            print("[Twitter] Chrome/Selenium Driver = ",driver)
-            print("[TWITTER LOGIN] Trying...")
+            logging.info("[Twitter] Chrome/Selenium Driver = ",driver)
+            logging.info("[TWITTER LOGIN] Trying...")
             log_in()
-            print("[Twitter] Logged in.")
+            logging.info("[Twitter] Logged in.")
         except Exception as e:
-            print("Exception during Twitter Init: ",e)
+            logging.debug("Exception during Twitter Init: ",e)
 
 
         chromedriver_autoinstaller.install()
@@ -718,15 +727,15 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
         if "f=live" not in url_parts:
             selected_mode = "LIVE"
         if len(search_keyword) == 0:
-            print("keyword not found, can't search tweets using snscrape.")
+            logging.info("keyword not found, can't search tweets using snscrape.")
         try:
             async for result in scrape_( keyword=search_keyword, display_type=selected_mode, limit=nb_tweets_wanted):
                 yield result
         except Exception as e:
-            print("Failed to scrape_() tweets. Error = ",e," . Passing...")
+            logging.info("Failed to scrape_() tweets. Error = ",e," . Passing...")
             pass
         
-        print("[Twitter] Close driver")
+        logging.info("[Twitter] Close driver")
         driver.close()
     else:
         async for result in get_sns_tweets(
