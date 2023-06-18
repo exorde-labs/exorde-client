@@ -368,7 +368,7 @@ def init_driver(headless=True, proxy=None, show_images=False, option=None, firef
     options.add_argument('log-level=3')
     if proxy is not None:
         options.add_argument('--proxy-server=%s' % proxy)
-        logging.info("using proxy : ", proxy)
+        logging.info("using proxy :  %s", proxy)
     if show_images == False and firefox == False:
         prefs = {"profile.managed_default_content_settings.images": 2}
         options.add_experimental_option("prefs", prefs)
@@ -379,7 +379,7 @@ def init_driver(headless=True, proxy=None, show_images=False, option=None, firef
         driver = webdriver.Firefox(options=options, executable_path=driver_path)
     else:
         driver = webdriver.Chrome(options=options, executable_path=driver_path)
-        logging.info("Chrome driver initialized = ",driver)
+        logging.info("Chrome driver initialized =  %s",driver)
         # driver = uc.Chrome(headless=headless, use_subprocess=True) 
 
     driver.set_page_load_timeout(123)
@@ -391,7 +391,7 @@ def log_search_page(since, until_local, lang, display_type, word, to_account, fr
                     geocode, minreplies, minlikes, minretweets):
     """ Search for this query between since and until_local"""
     global driver
-    logging.info("Log search page = ",driver)
+    logging.info("Log search page =  %s",driver)
     # format the <from_account>, <to_account> and <hash_tags>
     from_account = "(from%3A" + from_account + ")%20" if from_account is not None else ""
     to_account = "(to%3A" + to_account + ")%20" if to_account is not None else ""
@@ -431,9 +431,9 @@ def log_in(env="/.env", wait=4):
     password = get_password(env)  # const.PASSWORD
     username = get_username(env)  # const.USERNAME
 
-    logging.info("\t[Twitter] Email provided = ",email)
-    logging.info("\t[Twitter] Password provided = ",print_first_and_last(password))
-    logging.info("\t[Twitter] Username provided = ",username)
+    logging.info("\t[Twitter] Email provided =  %s",email)
+    logging.info("\t[Twitter] Password provided =  %s",print_first_and_last(password))
+    logging.info("\t[Twitter] Username provided =  %s",username)
 
     driver.get('https://twitter.com/i/flow/login')
 
@@ -519,9 +519,9 @@ def keep_scroling(data, tweet_ids, scrolling, tweet_parsed, limit, scroll, last_
                     data.append(tweet)
                     last_date = str(tweet[2])
                     if is_within_timeframe_seconds(last_date, 60):
-                        logging.info("Tweet made at: " + str(last_date) + " is found.")
+                        logging.info("Found Tweet made at:  %s" + str(last_date))
                         logging.info(tweet)
-                        logging.info(tweet_parsed," tweets found.")
+                        # logging.info(tweet_parsed," tweets found.")
                         tweet_parsed += 1
                     elif not is_within_timeframe_seconds(last_date, 60) or  tweet_parsed >= limit:
                         return data, tweet_ids, scrolling, tweet_parsed, scroll, last_position
@@ -585,7 +585,7 @@ async def scrape_(until=None, keyword="bitcoin", to_account=None, from_account=N
     Item: containing all tweets scraped with the associated features.
     """
     global driver
-    logging.info("\tScraping latest tweets on keyword = ",keyword)
+    logging.info("\tScraping latest tweets on keyword =  %s",keyword)
     # ------------------------- Variables : 
     # list that contains all data 
     data = []
@@ -629,7 +629,7 @@ async def scrape_(until=None, keyword="bitcoin", to_account=None, from_account=N
         last_position = driver.execute_script("return window.pageYOffset;")
         scrolling = True
         # logging.info("looking for tweets between " + str(since) + " and " + str(until_local) + " ...")
-        logging.info("\tURL being parsed : {}".format(path))
+        logging.info("\tURL being parsed :  %s",str(path))
         tweet_parsed = 0
         sleep(random.uniform(0.5, 1.5))
         # logging.info("Start scrolling & get tweets....")
@@ -707,12 +707,12 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
         try:
             logging.info("[Twitter] Open driver")
             driver = init_driver(headless=True, show_images=False, proxy=None)
-            logging.info("[Twitter] Chrome/Selenium Driver = ",driver)
+            logging.info("[Twitter] Chrome/Selenium Driver =  %s",driver)
             logging.info("[TWITTER LOGIN] Trying...")
             log_in()
             logging.info("[Twitter] Logged in.")
         except Exception as e:
-            logging.debug("Exception during Twitter Init: ",e)
+            logging.debug("Exception during Twitter Init:  %s",e)
 
 
         chromedriver_autoinstaller.install()
@@ -732,7 +732,7 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
             async for result in scrape_( keyword=search_keyword, display_type=selected_mode, limit=nb_tweets_wanted):
                 yield result
         except Exception as e:
-            logging.info("Failed to scrape_() tweets. Error = ",e," . Passing...")
+            logging.info("Failed to scrape_() tweets. Error =  %s",e)
             pass
         
         logging.info("[Twitter] Close driver")
@@ -742,4 +742,3 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
             search_keyword, select_top_tweets, nb_tweets_wanted
         ):
             yield result
-
