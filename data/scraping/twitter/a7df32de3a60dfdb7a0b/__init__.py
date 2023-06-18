@@ -342,8 +342,9 @@ def init_driver(headless=True, proxy=None, show_images=False, option=None, firef
     global driver
 
     if firefox:
-        options = FirefoxOptions()
-        driver_path = geckodriver_autoinstaller.install()
+        # options = FirefoxOptions()
+        # driver_path = geckodriver_autoinstaller.install()
+        print("Geckodriver disabled")
     else:
         options = ChromeOptions()
         driver_path = chromedriver_autoinstaller.install()
