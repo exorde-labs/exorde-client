@@ -19,7 +19,6 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 from typing import AsyncGenerator
-from models import Item
 import logging
 from exorde_data import (
     Item,
