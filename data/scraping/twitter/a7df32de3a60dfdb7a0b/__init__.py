@@ -18,7 +18,11 @@ from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from typing import AsyncGenerator
+from singleton_driver import SingletonDriver
 import logging
 from exorde_data import (
     Item,
@@ -35,6 +39,7 @@ import chromedriver_autoinstaller
 # import geckodriver_autoinstaller
 
 global driver
+driver = None
 
 
 #############################################################################
@@ -334,56 +339,63 @@ def get_data(card):
         username, handle, postdate, text, embedded, emojis, reply_cnt, retweet_cnt, like_cnt, image_links, tweet_url)
     return tweet
 
-
 def init_driver(headless=True, proxy=None, show_images=False, option=None, firefox=False, env=None):
     """ initiate a chromedriver or firefoxdriver instance
         --option : other option to add (str)
     """
     global driver
-
-    if firefox:
-        # options = FirefoxOptions()
-        # driver_path = geckodriver_autoinstaller.install()
-        print("Geckodriver disabled")
+    driver_manager = SingletonDriver()
+    if driver_manager.is_driver_initialized:
+        print("Driver is initialized already.")
+        driver = driver_manager.driver
+        return driver
     else:
-        options = ChromeOptions()
-        driver_path = chromedriver_autoinstaller.install()
-        logging.info("Add options to Chrome Driver")
-        options.add_argument("--disable-blink-features") # Disable features that might betray automation
-        options.add_argument("--disable-blink-features=AutomationControlled") # Disables a Chrome flag that shows an 'automation' toolbar
-        options.add_experimental_option("excludeSwitches", ["enable-automation"]) # Disable automation flags
-        options.add_experimental_option('useAutomationExtension', False) # Disable automation extensions
-        options.add_argument("--headless") # Ensure GUI is off. Essential for Docker.
-        options.add_argument("--no-sandbox")
-        options.add_argument("--disable-dev-shm-usage")
-        options.add_argument("disable-infobars")
+        print("Driver is not initialized.")
+        if firefox:
+            # options = FirefoxOptions()
+            # driver_path = geckodriver_autoinstaller.install()
+            print("Geckodriver disabled")
+        else:
+            options = ChromeOptions()
+            driver_path = chromedriver_autoinstaller.install()
+            logging.info("Add options to Chrome Driver")
+            options.add_argument("--disable-blink-features") # Disable features that might betray automation
+            options.add_argument("--disable-blink-features=AutomationControlled") # Disables a Chrome flag that shows an 'automation' toolbar
+            options.add_experimental_option("excludeSwitches", ["enable-automation"]) # Disable automation flags
+            options.add_experimental_option('useAutomationExtension', False) # Disable automation extensions
+            options.add_argument("--headless") # Ensure GUI is off. Essential for Docker.
+            options.add_argument("--no-sandbox")
+            options.add_argument("--disable-dev-shm-usage")
+            options.add_argument("disable-infobars")
 
-        driver = webdriver.Chrome(options=options)
-    if headless is True:
-        logging.info("Scraping on headless mode.")
-        options.add_argument('--disable-gpu')
-        options.headless = True
-    else:
-        options.headless = False
-    options.add_argument('log-level=3')
-    if proxy is not None:
-        options.add_argument('--proxy-server=%s' % proxy)
-        logging.info("using proxy :  %s", proxy)
-    if show_images == False and firefox == False:
-        prefs = {"profile.managed_default_content_settings.images": 2}
-        options.add_experimental_option("prefs", prefs)
-    if option is not None:
-        options.add_argument(option)
+            driver = webdriver.Chrome(options=options)
+        if headless is True:
+            logging.info("Scraping on headless mode.")
+            options.add_argument('--disable-gpu')
+            options.headless = True
+        else:
+            options.headless = False
+        options.add_argument('log-level=3')
+        if proxy is not None:
+            options.add_argument('--proxy-server=%s' % proxy)
+            logging.info("using proxy :  %s", proxy)
+        if show_images == False and firefox == False:
+            prefs = {"profile.managed_default_content_settings.images": 2}
+            options.add_experimental_option("prefs", prefs)
+        if option is not None:
+            options.add_argument(option)
 
-    if firefox:
-        driver = webdriver.Firefox(options=options, executable_path=driver_path)
-    else:
-        driver = webdriver.Chrome(options=options, executable_path=driver_path)
-        logging.info("Chrome driver initialized =  %s",driver)
-        # driver = uc.Chrome(headless=headless, use_subprocess=True) 
+        if firefox:
+            driver = webdriver.Firefox(options=options, executable_path=driver_path)
+        else:
+            driver = webdriver.Chrome(options=options, executable_path=driver_path)
+            logging.info("Chrome driver initialized =  %s",driver)
+            # driver = uc.Chrome(headless=headless, use_subprocess=True) 
 
-    driver.set_page_load_timeout(123)
-    return driver
+        # Set it to the singleton
+        driver_manager.set_driver(driver)
+        driver.set_page_load_timeout(123)
+        return driver
 
 
 def log_search_page(since, until_local, lang, display_type, word, to_account, from_account, mention_account,
@@ -423,6 +435,22 @@ def print_first_and_last(s):
     else:
        return(s[0] + "***" + s[-1])
         
+
+def check_twitter_login(driver_manager, search_term):
+    driver = driver_manager.driver
+
+    try:
+        # Wait for the login screen to load, if it appears
+        login_screen = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.NAME, "session[username_or_email]")))
+        print("We are on the login page.")
+        # You can add logic here to log into the account if needed
+    except:
+        print("We are already logged in.")
+        # If we're already logged in, search for a term
+        search_box = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//input[@aria-label="Search query"]')))
+        search_box.clear()
+        search_box.send_keys(search_term)
+        search_box.submit()
 
 def log_in(env="/.env", wait=4):
     global driver
