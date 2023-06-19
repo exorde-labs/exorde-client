@@ -480,7 +480,9 @@ def log_in(env="/.env", wait=4):
     try:
         # Load cookies if they exist
         cookies = pickle.load(open("cookies.pkl", "rb"))
+        logging.info("Cookies file = %s",cookies)
         for cookie in cookies:
+            logging.info("Cookie : %s",cookie)
             # Add each cookie to the browser
             # Check if the cookie is expired
             if 'expiry' in cookie and datett.fromtimestamp(cookie['expiry']) < datett.now():
