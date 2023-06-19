@@ -33,13 +33,13 @@ async def fetch_keywords(keywords_raw_url) -> dict:
 ## CACHING MECHANISM
 # save keywords to a local file, at root directory, alongside the timestamp of the update
 def save_keywords_to_json(keywords):
-    with open(JSON_FILE_PATH, "w") as json_file:
-        json.dump({"last_update_ts": int(time.time()), "keywords": keywords}, json_file)
+    with open(JSON_FILE_PATH, "w", encoding='utf-8') as json_file:
+        json.dump({"last_update_ts": int(time.time()), "keywords": keywords}, json_file, ensure_ascii=False)
 
 # load keywords from local file, if exists
 def load_keywords_from_json():
     if os.path.exists(JSON_FILE_PATH):
-        with open(JSON_FILE_PATH, "r") as json_file:
+        with open(JSON_FILE_PATH, "r", encoding='utf-8') as json_file:
             data = json.load(json_file)
             return data["keywords"]
     return None
@@ -60,7 +60,7 @@ async def get_keywords():
     if os.path.exists(JSON_FILE_PATH):
         try:
             # Attempting to read the JSON file.
-            with open(JSON_FILE_PATH, "r") as json_file:
+            with open(JSON_FILE_PATH, "r", encoding='utf-8') as json_file:
                 data = json.load(json_file)
                 last_update_ts = data.get("last_update_ts", 0)
                 ts = int(time.time())
@@ -90,7 +90,7 @@ async def get_keywords():
     # or there was an error during processing the keywords. Attempt to return the keywords from the JSON file, if it exists.
     if os.path.exists(JSON_FILE_PATH):
         try:
-            with open(JSON_FILE_PATH, "r") as json_file:
+            with open(JSON_FILE_PATH, "r", encoding='utf-8') as json_file:
                 data = json.load(json_file)
                 return data.get("keywords", [])
         except Exception as e:
