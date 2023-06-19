@@ -481,7 +481,6 @@ def log_in(env="/.env", wait=4):
         # Load cookies if they exist
         cookies = pickle.load(open("cookies.pkl", "rb"))
         logging.info("[Twitter Chrome] loading existing cookies... ")  
-        logging.info("Cookies file = %s",cookies) 
         for cookie in cookies:
             logging.info("\t-%s",cookie)
             # Add each cookie to the browser
@@ -585,6 +584,7 @@ def keep_scroling(data, tweet_ids, scrolling, tweet_parsed, limit, scroll, last_
 
     save_images_dir = "/images"
 
+    save_cookies(driver)
     if save_images == True:
         if not os.path.exists(save_images_dir):
             os.mkdir(save_images_dir)
