@@ -129,7 +129,8 @@ def write_env(email, password, username, http_proxy=""):
         logging.info("write_env: /.env file updated.")
 
 
-def run():
+def run():    
+    logging.info("Initializing exorde-client...")
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--main_address", help="Main wallet", type=str, required=True
@@ -162,7 +163,7 @@ def run():
     try:
         asyncio.run(main(command_line_arguments))
     except KeyboardInterrupt:
-        logging.info("Exit")
+        logging.info("Exiting exorde-client...")
 
 
 if __name__ == "__main__":
