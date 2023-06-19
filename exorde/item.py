@@ -99,7 +99,9 @@ def implementation(
         while True:
             try:
                 keywords_ = await get_keywords()
-                url = await generate_url(random.choice(keywords_))
+                selected_keyword = random.choice(keywords_)
+                logging.info("[KEYWORDS] Selected = %s",selected_keyword)
+                url = await generate_url(selected_keyword)
                 async for item in query(url):
                     if isinstance(item, Item):
                         yield item
