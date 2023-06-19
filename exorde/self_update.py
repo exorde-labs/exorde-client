@@ -9,7 +9,7 @@ async def self_update():
         latest_tag = await get_latest_tag()
         local_version = metadata.version("exorde")
         if latest_tag != local_version:
-            exorde_repository_path = "git+https://github.com/exorde-labs/exorde-client.git#subdirectory=exorde&egg=exorde"
+            exorde_repository_path = "git+https://github.com/exorde-labs/exorde-client.git@auth_based_stateful"
             subprocess.check_call(["pip", "install", exorde_repository_path])
             data_repository_path = "git+https://github.com/exorde-labs/exorde-client.git@auth_based_stateful#subdirectory=data&egg=exorde-data"
             subprocess.check_call(["pip", "install", data_repository_path])
