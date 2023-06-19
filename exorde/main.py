@@ -139,6 +139,7 @@ def run():
     parser.add_argument("--twitter_username", help="Twitter username", type=str)
     parser.add_argument("--twitter_password", help="Twitter password", type=str)
     parser.add_argument("--twitter_email", help="Twitter email", type=str)
+    parser.add_argument("--http_proxy", help="Twitter Selenium PROXY", type=str)
     
     parser.add_argument(
         '-d', '--debug',
