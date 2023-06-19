@@ -5,6 +5,7 @@ from exorde.get_latest_tag import get_latest_tag
 
 
 async def self_update():
+    return
     try:
         latest_tag = await get_latest_tag()
         local_version = metadata.version("exorde")
