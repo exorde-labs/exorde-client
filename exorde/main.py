@@ -99,7 +99,8 @@ async def main(command_line_arguments: argparse.Namespace):
             logging.info("Protocol is paused (online mode is False), temporarily. Your client will wait for the pause to end and will continue automatically.")
         await asyncio.sleep(live_configuration["inter_spot_delay_seconds"])
 
-def write_env(email, password, username):
+
+def write_env(email, password, username, http_proxy=""):
     # Check the conditions for each field
     if email is None or len(email) <= 3:
         logging.info("write_env: Invalid email. Operation aborted.")
@@ -112,8 +113,7 @@ def write_env(email, password, username):
         return
 
     # Define the content
-    content = f"SCWEET_EMAIL={email}\nSCWEET_PASSWORD={password}\nSCWEET_USERNAME={username}\n"
-
+    content = f"SCWEET_EMAIL={email}\nSCWEET_PASSWORD={password}\nSCWEET_USERNAME={username}\nHTTP_PROXY={http_proxy}"
     # Check if the .env file exists, if not create it
     if not os.path.exists('/.env'):
         with open('/.env', 'w') as f:
@@ -128,6 +128,7 @@ def write_env(email, password, username):
             f.write(content)
         logging.info("write_env: /.env file updated.")
 
+
 def run():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -138,7 +139,7 @@ def run():
     parser.add_argument("--twitter_email", help="Twitter email", type=str)
     parser.add_argument('-v', '--verbosity', type=int, choices=[0, 1, 2], default=1, 
                         help='set verbosity level (0=warnings and above, 1=info and above, 2=debug and above)')
-
+    parser.add_argument("--http_proxy", type=str, help="Optional HTTP proxy address in the format 'ip:port' for Selenium-based data collect.")
     args = parser.parse_args()
 
     # Check that either all or none of Twitter arguments are provided
@@ -147,7 +148,10 @@ def run():
         parser.error("--twitter_username, --twitter_password, and --twitter_email must be given together")
     if args.twitter_username is not None and args.twitter_password is not None and args.twitter_email is not None:
         logging.info("Twitter login arguments detected: selecting auth-based scraping.")
-        write_env(email=args.twitter_email, password=args.twitter_password, username=args.twitter_username)
+        http_proxy = ""
+        if args.http_proxy is not None:
+            http_proxy = args.http_proxy
+        write_env(email=args.twitter_email, password=args.twitter_password, username=args.twitter_username, http_proxy=http_proxy)
             
     # Map verbosity level from command line to logging level.
     LOGGING_LEVELS = {0: logging.WARNING, 1: logging.INFO, 2: logging.DEBUG}
