@@ -2,7 +2,7 @@ import os, subprocess
 from importlib import metadata
 
 from exorde.get_latest_tag import get_latest_tag
-
+import logging
 
 async def self_update():
     logging.info("[UDPATING] DISABLED FOR TESTING")
