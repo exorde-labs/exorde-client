@@ -388,7 +388,7 @@ def init_driver(headless=True, proxy=None, show_images=False, option=None, firef
         if firefox:
             # options = FirefoxOptions()
             # driver_path = geckodriver_autoinstaller.install()
-            print("Geckodriver disabled")
+            logging.info("Firefox: Geckodriver disabled")
         else:
             options = ChromeOptions()
             driver_path = chromedriver_autoinstaller.install()
@@ -471,22 +471,6 @@ def print_first_and_last(s):
        return(s[0] + "***" + s[-1])
         
 
-def check_twitter_login(driver_manager, search_term):
-    driver = driver_manager.driver
-
-    try:
-        # Wait for the login screen to load, if it appears
-        login_screen = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.NAME, "session[username_or_email]")))
-        print("We are on the login page.")
-        # You can add logic here to log into the account if needed
-    except:
-        print("We are already logged in.")
-        # If we're already logged in, search for a term
-        search_box = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//input[@aria-label="Search query"]')))
-        search_box.clear()
-        search_box.send_keys(search_term)
-        search_box.submit()
-
 def save_cookies(driver_):
     # Save cookies
     pickle.dump(driver_.get_cookies(), open("cookies.pkl", "wb"))
@@ -496,19 +480,25 @@ def log_in(env="/.env", wait=4):
     global driver
 
     cookies_added = 0
+    cookies_expired = 0
     try:
         # Load cookies if they exist
         cookies = pickle.load(open("cookies.pkl", "rb"))
         for cookie in cookies:
             # Add each cookie to the browser
-            driver.add_cookie(cookie)
-            logging.info("[Twitter Chrome] loading existing cookies...")
-            cookies_added += 1
+            # Check if the cookie is expired
+            if 'expiry' in cookie and datett.fromtimestamp(cookie['expiry']) < datett.now():
+                logging.info("Cookie expired")
+                cookies_expired += 1
+            else:
+                driver.add_cookie(cookie)
+                logging.info("[Twitter Chrome] loading existing cookies... %s",cookie)
+                cookies_added += 1
         sleep(random.uniform(wait, wait + 1))
     except Exception as e:
         logging.info("No cookies found")
 
-    if cookies_added == 0:
+    if cookies_added == 0 or cookies_expired > 2:
         email = get_email(env)  # const.EMAIL
         password = get_password(env)  # const.PASSWORD
         username = get_username(env)  # const.USERNAME
