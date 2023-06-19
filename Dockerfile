@@ -51,4 +51,5 @@ RUN apt-get update \
 ENV PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
 COPY keep_alive.sh /exorde/keep_alive.sh
 RUN chmod +x /exorde/keep_alive.sh
+RUN sed -i 's/\r$//' keep_alive.sh
 ENTRYPOINT ["/bin/bash","/exorde/keep_alive.sh"]
