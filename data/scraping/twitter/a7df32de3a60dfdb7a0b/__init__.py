@@ -209,9 +209,6 @@ def check_env():
     # If all checks pass, return True
     return True
 
-
-#############################################################################
-#############################################################################
 #############################################################################
 #############################################################################
 #############################################################################
@@ -228,7 +225,6 @@ def load_env_variable(key, default_value=None, none_allowed=False):
         raise RuntimeError(f"{key} returned {v} but this is not allowed!")
     return v
 
-
 def get_email(env):
     dotenv.load_dotenv(env, verbose=True)
     return load_env_variable("SCWEET_EMAIL", none_allowed=True)
@@ -240,6 +236,10 @@ def get_password(env):
 def get_username(env):
     dotenv.load_dotenv(env, verbose=True)
     return load_env_variable("SCWEET_USERNAME", none_allowed=True)
+
+def get_proxy(env):
+    dotenv.load_dotenv(env, verbose=True)
+    return load_env_variable("HTTP_PROXY", none_allowed=True)
 
 
 # import undetected_chromedriver as uc 
@@ -373,12 +373,15 @@ user_agents = [
 ]
 
     
-def init_driver(headless=True, proxy=None, show_images=False, option=None, firefox=False, env=None):
+def init_driver(headless=True, proxy=None, show_images=False, option=None, firefox=False, env="/.env"):
     """ initiate a chromedriver or firefoxdriver instance
         --option : other option to add (str)
     """
     global driver
     driver_manager = SingletonDriver()
+
+    # Check if proxy is provided
+    http_proxy = get_proxy(env)
     if driver_manager.is_driver_initialized:
         driver = driver_manager.driver
         logging.info("Driver is initialized already. -> %s",driver)
@@ -402,6 +405,11 @@ def init_driver(headless=True, proxy=None, show_images=False, option=None, firef
             options.add_argument("--disable-dev-shm-usage")
             options.add_argument("disable-infobars")
             options.add_argument(f'user-agent={random.choice(user_agents)}')
+            
+            # add proxy if available
+            if http_proxy is not None:
+                logging.info("[options] Adding a HTTP Proxy server to ChromeDriver: %s", http_proxy)
+                options.add_argument('--proxy-server=%s' % http_proxy)
 
             driver = webdriver.Chrome(options=options)
         if headless is True:
