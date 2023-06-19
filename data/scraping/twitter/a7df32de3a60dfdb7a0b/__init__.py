@@ -423,8 +423,6 @@ def init_driver(headless=True, proxy=None, show_images=False, option=None, firef
         driver = webdriver.Firefox(options=options, executable_path=driver_path)
     else:
         driver = webdriver.Chrome(options=options, executable_path=driver_path)
-        logging.info("Chrome driver initialized =  %s",driver)
-        # driver = uc.Chrome(headless=headless, use_subprocess=True) 
 
     driver.set_page_load_timeout(123)
     return driver
@@ -794,7 +792,7 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
         try:
             logging.info("[Twitter] Open driver")
             driver = init_driver(headless=True, show_images=False, proxy=None)
-            logging.info("[Twitter] Chrome/Selenium Driver =  %s",driver)
+            logging.info("[Twitter] Chrome Selenium Driver =  %s",driver)
             logging.info("[TWITTER LOGIN] Trying...")
             log_in()
             logging.info("[Twitter] Logged in.")
