@@ -23,7 +23,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from typing import AsyncGenerator
 from singleton_driver import SingletonDriver
-import logging
+import pickle
 from exorde_data import (
     Item,
     Content,
@@ -487,54 +487,75 @@ def check_twitter_login(driver_manager, search_term):
         search_box.send_keys(search_term)
         search_box.submit()
 
+def save_cookies(driver_):
+    # Save cookies
+    pickle.dump(driver_.get_cookies(), open("cookies.pkl", "wb"))
+    logging.info("[Twitter Chrome] Saved cookies.")
+
 def log_in(env="/.env", wait=4):
     global driver
 
-    email = get_email(env)  # const.EMAIL
-    password = get_password(env)  # const.PASSWORD
-    username = get_username(env)  # const.USERNAME
-
-    logging.info("\t[Twitter] Email provided =  %s",email)
-    logging.info("\t[Twitter] Password provided =  %s",print_first_and_last(password))
-    logging.info("\t[Twitter] Username provided =  %s",username)
-
-    driver.get('https://twitter.com/i/flow/login')
-
-    email_xpath = '//input[@autocomplete="username"]'
-    password_xpath = '//input[@autocomplete="current-password"]'
-    username_xpath = '//input[@data-testid="ocfEnterTextTextInput"]'
-
-    sleep(random.uniform(wait, wait + 1))
-
-    # enter email
-    logging.info("Entering Email..")
-    email_el = driver.find_element(by=By.XPATH, value=email_xpath)
-    sleep(random.uniform(wait, wait + 1))
-    # email_el.send_keys(email)        
-    type_slow(email, email_el)
-
-    sleep(random.uniform(wait, wait + 1))
-    email_el.send_keys(Keys.RETURN)
-    sleep(random.uniform(wait, wait + 1))
-    # in case twitter spotted unusual login activity : enter your username
-    if check_exists_by_xpath(username_xpath, driver):
-        logging.info("Unusual Activity Mode")
-        username_el = driver.find_element(by=By.XPATH, value=username_xpath)
+    cookies_added = 0
+    try:
+        # Load cookies if they exist
+        cookies = pickle.load(open("cookies.pkl", "rb"))
+        for cookie in cookies:
+            # Add each cookie to the browser
+            driver.add_cookie(cookie)
+            logging.info("[Twitter Chrome] loading existing cookies...")
+            cookies_added += 1
         sleep(random.uniform(wait, wait + 1))
-        logging.info("\tEntering username..")
-        # username_el.send_keys(username)        
-        type_slow(username, username_el)
+    except Exception as e:
+        print(f"No cookies found: {e}")
+
+    if cookies_added == 0:
+        email = get_email(env)  # const.EMAIL
+        password = get_password(env)  # const.PASSWORD
+        username = get_username(env)  # const.USERNAME
+
+        logging.info("\t[Twitter] Email provided =  %s",email)
+        logging.info("\t[Twitter] Password provided =  %s",print_first_and_last(password))
+        logging.info("\t[Twitter] Username provided =  %s",username)
+
+        driver.get('https://twitter.com/i/flow/login')
+
+        email_xpath = '//input[@autocomplete="username"]'
+        password_xpath = '//input[@autocomplete="current-password"]'
+        username_xpath = '//input[@data-testid="ocfEnterTextTextInput"]'
+
         sleep(random.uniform(wait, wait + 1))
-        username_el.send_keys(Keys.RETURN)
+
+        # enter email
+        logging.info("Entering Email..")
+        email_el = driver.find_element(by=By.XPATH, value=email_xpath)
         sleep(random.uniform(wait, wait + 1))
-    # enter password
-    password_el = driver.find_element(by=By.XPATH, value=password_xpath)
-    # password_el.send_keys(password)   
-    logging.info("\tEntering password...")
-    type_slow(password, password_el)
-    sleep(random.uniform(wait, wait + 1))
-    password_el.send_keys(Keys.RETURN)
-    sleep(random.uniform(wait, wait + 1))
+        # email_el.send_keys(email)        
+        type_slow(email, email_el)
+
+        sleep(random.uniform(wait, wait + 1))
+        email_el.send_keys(Keys.RETURN)
+        sleep(random.uniform(wait, wait + 1))
+        # in case twitter spotted unusual login activity : enter your username
+        if check_exists_by_xpath(username_xpath, driver):
+            logging.info("Unusual Activity Mode")
+            username_el = driver.find_element(by=By.XPATH, value=username_xpath)
+            sleep(random.uniform(wait, wait + 1))
+            logging.info("\tEntering username..")
+            # username_el.send_keys(username)        
+            type_slow(username, username_el)
+            sleep(random.uniform(wait, wait + 1))
+            username_el.send_keys(Keys.RETURN)
+            sleep(random.uniform(wait, wait + 1))
+        # enter password
+        password_el = driver.find_element(by=By.XPATH, value=password_xpath)
+        # password_el.send_keys(password)   
+        logging.info("\tEntering password...")
+        type_slow(password, password_el)
+        sleep(random.uniform(wait, wait + 1))
+        password_el.send_keys(Keys.RETURN)
+        sleep(random.uniform(wait, wait + 1))
+        save_cookies(driver)
+
 
         
 def is_within_timeframe_seconds(dt_str, timeframe_sec):
@@ -798,8 +819,8 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
             logging.info("Failed to scrape_() tweets. Error =  %s",e)
             pass
         
-        # logging.info("[Twitter] Close driver")
-        # driver.close()
+        logging.info("[Twitter] Close driver")
+        driver.close()
     else:
         async for result in get_sns_tweets(
             search_keyword, select_top_tweets, nb_tweets_wanted
