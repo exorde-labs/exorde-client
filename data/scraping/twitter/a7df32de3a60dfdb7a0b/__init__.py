@@ -471,11 +471,17 @@ def save_cookies(driver_):
     pickle.dump(driver_.get_cookies(), open("cookies.pkl", "wb"))
     logging.info("[Twitter Chrome] Saved cookies.")
 
+def clear_cookies():
+    try:
+        open("cookies.pkl", "wb").close()
+        logging.info("Cleared cookies.")
+    except Exception as e:
+        logging.info("Clear cookies error: %s",e)
+
 def log_in(env="/.env", wait=4):
     global driver
 
     cookies_added = 0
-    cookie_session_import_succeeded = 0
     driver.get('https://www.twitter.com/')
     target_home_url = 'https://twitter.com/home'
     target_broad = 'twitter.com/home'
@@ -508,7 +514,9 @@ def log_in(env="/.env", wait=4):
     sleep(random.uniform(2, 5))
     # Check if we are indeed on the target URL
     logging.info("[Twitter Chrome] Current URL = %s",str(driver.current_url))   
-    if target_broad in driver.current_url:
+    if not target_broad in driver.current_url:
+        print("[Twitter] Not on target, let's log in...")
+        clear_cookies()
         email = get_email(env)  # const.EMAIL
         password = get_password(env)  # const.PASSWORD
         username = get_username(env)  # const.USERNAME
@@ -555,6 +563,8 @@ def log_in(env="/.env", wait=4):
         password_el.send_keys(Keys.RETURN)
         sleep(random.uniform(wait, wait + 1))
         save_cookies(driver)
+    else:        
+        print("[Twitter] We are already logged in")
 
 
         
@@ -584,8 +594,6 @@ def keep_scroling(data, tweet_ids, scrolling, tweet_parsed, limit, scroll, last_
     global driver
 
     save_images_dir = "/images"
-
-    save_cookies(driver)
     if save_images == True:
         if not os.path.exists(save_images_dir):
             os.mkdir(save_images_dir)
