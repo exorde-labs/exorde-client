@@ -440,7 +440,7 @@ def log_search_page(since, until_local, lang, display_type, word, to_account, fr
     from_account = "(from%3A" + from_account + ")%20" if from_account is not None else ""
     to_account = "(to%3A" + to_account + ")%20" if to_account is not None else ""
     mention_account = "(%40" + mention_account + ")%20" if mention_account is not None else ""
-    hash_tags = "(%23" + hashtag + ")%20" if hashtag is not None else ""
+    hash_tags = "%20(%23" + hashtag + ")%20" if hashtag is not None else ""
 
     since = "" # "since%3A" + since + "%20"
 
@@ -452,7 +452,7 @@ def log_search_page(since, until_local, lang, display_type, word, to_account, fr
     else:
         proximity = ""
 
-    path = 'https://twitter.com/search?q=' + word + '%20' + hash_tags + since + '&src=typed_query' + display_type + proximity
+    path = 'https://twitter.com/search?q=' + word+ hash_tags + since + '&src=typed_query' + display_type + proximity
     driver.get(path)
     return path
 
@@ -816,6 +816,7 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
         if len(search_keyword) == 0:
             logging.info("keyword not found, can't search tweets using snscrape.")
         try:
+            search_keyword = convert_spaces_to_percent20(search_keyword)
             async for result in scrape_( keyword=search_keyword, display_type=selected_mode, limit=nb_tweets_wanted):
                 yield result
         except Exception as e:
