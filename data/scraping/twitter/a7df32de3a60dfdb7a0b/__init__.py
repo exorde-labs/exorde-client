@@ -21,6 +21,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common import exceptions
 from typing import AsyncGenerator
 import pickle
 from exorde_data import (
@@ -477,6 +478,7 @@ def log_in(env="/.env", wait=4):
 
     cookies_added = 0
     cookies_expired = 0
+    driver.get('https://www.twitter.com/')
     try:
         # Load cookies if they exist
         cookies = pickle.load(open("cookies.pkl", "rb"))
@@ -489,10 +491,20 @@ def log_in(env="/.env", wait=4):
                 logging.info("Cookie expired")
                 cookies_expired += 1
             else:
-                driver.add_cookie(cookie)
-                logging.info("[Twitter Chrome] loading existing cookies... %s",cookie)
-                cookies_added += 1
+                try:            
+                    driver.add_cookie(cookie)
+                    logging.info("[Twitter Chrome] loading existing cookies... %s",cookie)                    
+                    cookies_added += 1
+                except exceptions.InvalidCookieDomainException as e:
+                    logging.info("[Twitter Chrome] Not importable cookie: %s",e)
+                except:
+                    logging.info("[Twitter Chrome] Error for cookie %s",cookie)     
+
         sleep(random.uniform(wait, wait + 1))
+        logging.info("[Twitter Chrome] refreshing after cookie import.")     
+        driver.refresh()
+        sleep(random.uniform(wait, wait + 1))
+
     except Exception as e:
         logging.exception("An error occured retrieving cookies: %s",e)
 
