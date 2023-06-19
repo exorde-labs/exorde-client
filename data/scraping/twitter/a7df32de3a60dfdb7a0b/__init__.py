@@ -752,6 +752,8 @@ async def scrape_(until=None, keyword="bitcoin", to_account=None, from_account=N
 #############################################################################
 #############################################################################
 #############################################################################
+def convert_spaces_to_percent20(input_string):
+    return input_string.replace(" ", "%20")
 
 async def query(url: str) -> AsyncGenerator[Item, None]:
     global driver
@@ -761,6 +763,7 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
     search_keyword = ""
     if url_parts[0].startswith("search"):
         search_keyword = url_parts[0].split("q=")[1]
+        search_keyword = convert_spaces_to_percent20(search_keyword)
     nb_tweets_wanted = 25
     select_top_tweets = False
     if "f=live" not in url_parts:
@@ -773,7 +776,6 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
         select_login_based_scraper = True
     if select_login_based_scraper:      
 
-        
         try:
             logging.info("[Twitter] Open driver")
             driver = init_driver(headless=True, show_images=False, proxy=None)
