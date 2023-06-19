@@ -157,7 +157,7 @@ def run():
     LOGGING_LEVELS = {0: logging.WARNING, 1: logging.INFO, 2: logging.DEBUG}
     # Set logging level based on the verbosity argument.
     logging.basicConfig(level=LOGGING_LEVELS[args.verbosity])
-    logging.info("Setting Client Logs verbosity to level ",args.verbosity)
+    logging.info("Setting Client Logs verbosity to level %s",args.verbosity)
     command_line_arguments: argparse.Namespace = parser.parse_args()
     try:
         logging.info("Initializing exorde-client...")
