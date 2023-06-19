@@ -5,6 +5,7 @@ from exorde.get_latest_tag import get_latest_tag
 
 
 async def self_update():
+    logging.info("[UDPATING] DISABLED FOR TESTING")
     return
     try:
         latest_tag = await get_latest_tag()
