@@ -766,6 +766,7 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
     if url_parts[0].startswith("search"):
         search_keyword = url_parts[0].split("q=")[1]
         search_keyword = convert_spaces_to_percent20(search_keyword)
+    logging.info("[Twitter] internal Keyword used = %s",search_keyword)
     nb_tweets_wanted = 25
     select_top_tweets = False
     if "f=live" not in url_parts:
