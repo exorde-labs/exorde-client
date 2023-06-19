@@ -22,7 +22,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from typing import AsyncGenerator
-from singleton_driver import SingletonDriver
 import pickle
 from exorde_data import (
     Item,
@@ -378,67 +377,56 @@ def init_driver(headless=True, proxy=None, show_images=False, option=None, firef
         --option : other option to add (str)
     """
     global driver
-    driver_manager = SingletonDriver()
-
-    # Check if proxy is provided
     http_proxy = get_proxy(env)
-    if driver_manager.is_driver_initialized:
-        driver = driver_manager.driver
-        logging.info("Driver is initialized already. -> %s",driver)
-        return driver
+    if firefox:
+        # options = FirefoxOptions()
+        # driver_path = geckodriver_autoinstaller.install()
+        logging.info("Firefox: Geckodriver disabled")
     else:
-        logging.info("Driver is not initialized...")
-        if firefox:
-            # options = FirefoxOptions()
-            # driver_path = geckodriver_autoinstaller.install()
-            logging.info("Firefox: Geckodriver disabled")
-        else:
-            options = ChromeOptions()
-            driver_path = chromedriver_autoinstaller.install()
-            logging.info("Add options to Chrome Driver")
-            options.add_argument("--disable-blink-features") # Disable features that might betray automation
-            options.add_argument("--disable-blink-features=AutomationControlled") # Disables a Chrome flag that shows an 'automation' toolbar
-            options.add_experimental_option("excludeSwitches", ["enable-automation"]) # Disable automation flags
-            options.add_experimental_option('useAutomationExtension', False) # Disable automation extensions
-            options.add_argument("--headless") # Ensure GUI is off. Essential for Docker.
-            options.add_argument("--no-sandbox")
-            options.add_argument("--disable-dev-shm-usage")
-            options.add_argument("disable-infobars")
-            options.add_argument(f'user-agent={random.choice(user_agents)}')
-            
-            # add proxy if available
-            if http_proxy is not None:
-                logging.info("[options] Adding a HTTP Proxy server to ChromeDriver: %s", http_proxy)
-                options.add_argument('--proxy-server=%s' % http_proxy)
+        options = ChromeOptions()
+        driver_path = chromedriver_autoinstaller.install()
+        logging.info("Add options to Chrome Driver")
+        options.add_argument("--disable-blink-features") # Disable features that might betray automation
+        options.add_argument("--disable-blink-features=AutomationControlled") # Disables a Chrome flag that shows an 'automation' toolbar
+        options.add_experimental_option("excludeSwitches", ["enable-automation"]) # Disable automation flags
+        options.add_experimental_option('useAutomationExtension', False) # Disable automation extensions
+        options.add_argument("--headless") # Ensure GUI is off. Essential for Docker.
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("disable-infobars")
+        options.add_argument(f'user-agent={random.choice(user_agents)}')
+        
+        # add proxy if available
+        if http_proxy is not None:
+            logging.info("[options] Adding a HTTP Proxy server to ChromeDriver: %s", http_proxy)
+            options.add_argument('--proxy-server=%s' % http_proxy)
 
-            driver = webdriver.Chrome(options=options)
-        if headless is True:
-            logging.info("Scraping on headless mode.")
-            options.add_argument('--disable-gpu')
-            options.headless = True
-        else:
-            options.headless = False
-        options.add_argument('log-level=3')
-        if proxy is not None:
-            options.add_argument('--proxy-server=%s' % proxy)
-            logging.info("using proxy :  %s", proxy)
-        if show_images == False and firefox == False:
-            prefs = {"profile.managed_default_content_settings.images": 2}
-            options.add_experimental_option("prefs", prefs)
-        if option is not None:
-            options.add_argument(option)
+        driver = webdriver.Chrome(options=options)
+    if headless is True:
+        logging.info("Scraping on headless mode.")
+        options.add_argument('--disable-gpu')
+        options.headless = True
+    else:
+        options.headless = False
+    options.add_argument('log-level=3')
+    if proxy is not None:
+        options.add_argument('--proxy-server=%s' % proxy)
+        logging.info("using proxy :  %s", proxy)
+    if show_images == False and firefox == False:
+        prefs = {"profile.managed_default_content_settings.images": 2}
+        options.add_experimental_option("prefs", prefs)
+    if option is not None:
+        options.add_argument(option)
 
-        if firefox:
-            driver = webdriver.Firefox(options=options, executable_path=driver_path)
-        else:
-            driver = webdriver.Chrome(options=options, executable_path=driver_path)
-            logging.info("Chrome driver initialized =  %s",driver)
-            # driver = uc.Chrome(headless=headless, use_subprocess=True) 
+    if firefox:
+        driver = webdriver.Firefox(options=options, executable_path=driver_path)
+    else:
+        driver = webdriver.Chrome(options=options, executable_path=driver_path)
+        logging.info("Chrome driver initialized =  %s",driver)
+        # driver = uc.Chrome(headless=headless, use_subprocess=True) 
 
-        # Set it to the singleton
-        driver_manager.set_driver(driver)
-        driver.set_page_load_timeout(123)
-        return driver
+    driver.set_page_load_timeout(123)
+    return driver
 
 
 def log_search_page(since, until_local, lang, display_type, word, to_account, from_account, mention_account,
