@@ -154,10 +154,10 @@ def run():
         write_env(email=args.twitter_email, password=args.twitter_password, username=args.twitter_username, http_proxy=http_proxy)
             
     # Map verbosity level from command line to logging level.
-    LOGGING_LEVELS = {0: logging.WARNING, 1: logging.INFO, 2: logging.DEBUG}
+    # LOGGING_LEVELS = {0: logging.WARNING, 1: logging.INFO, 2: logging.DEBUG}
     # Set logging level based on the verbosity argument.
     # logging.basicConfig(level=LOGGING_LEVELS[args.verbosity])
-    logging.basicConfig(logging.DEBUG)
+    logging.basicConfig(level=logging.DEBUG)
 
     logging.info("Setting Client Logs verbosity to level %s",args.verbosity)
     command_line_arguments: argparse.Namespace = parser.parse_args()
