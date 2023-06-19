@@ -475,8 +475,10 @@ def log_in(env="/.env", wait=4):
     global driver
 
     cookies_added = 0
-    cookies_not_imported = 0
+    cookie_session_import_succeeded = 0
     driver.get('https://www.twitter.com/')
+    target_home_url = 'https://twitter.com/home'
+    target_broad = 'twitter.com/home'
     try:
         # Load cookies if they exist
         cookies = pickle.load(open("cookies.pkl", "rb"))
@@ -487,27 +489,26 @@ def log_in(env="/.env", wait=4):
             # Check if the cookie is expired
             if 'expiry' in cookie and datett.fromtimestamp(cookie['expiry']) < datett.now():
                 logging.info("Cookie expired")
-                cookies_expired += 1
             else:
                 try:            
                     driver.add_cookie(cookie)                 
                     cookies_added += 1
                 except exceptions.InvalidCookieDomainException as e:
                     logging.info("[Twitter Chrome] Not importable cookie: %s",e)
-                    cookies_not_imported += 1
                 except:
                     logging.info("[Twitter Chrome] Error for cookie %s",cookie)   
                     cookies_not_imported += 1  
-
-        sleep(random.uniform(wait, wait + 1))
-        logging.info("[Twitter Chrome] refreshing after cookie import.")     
-        driver.refresh()
-        sleep(random.uniform(wait, wait + 1))
-
     except Exception as e:
         logging.exception("An error occured retrieving cookies: %s",e)
 
-    if cookies_not_imported > 0 or cookies_expired >= 1:
+    logging.info("[Twitter Chrome] refreshing to Home after cookie import.")   
+    sleep(random.uniform(7, 10))
+    driver.get(target_home_url)
+    logging.info("[Twitter Chrome] Checking if we are on same URL...")   
+    sleep(random.uniform(2, 5))
+    # Check if we are indeed on the target URL
+    logging.info("[Twitter Chrome] Current URL = %s",str(driver.current_url))   
+    if target_broad in driver.current_url:
         email = get_email(env)  # const.EMAIL
         password = get_password(env)  # const.PASSWORD
         username = get_username(env)  # const.USERNAME
