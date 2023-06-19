@@ -29,9 +29,11 @@ async def generate_reddit_url(keyword: str):
             result = f"https://old.reddit.com{random.choice(urls)}new"
             return result
 
+def convert_spaces_to_percent20(input_string):
+    return input_string.replace(" ", "%20")
 
 async def generate_twitter_url(keyword: str, live_mode=True):
-    base_url = f"https://twitter.com/search?q={keyword}&src=typed_query"
+    base_url = f"https://twitter.com/search?q={convert_spaces_to_percent20(keyword)}&src=typed_query"
     if live_mode:
         base_url = base_url + "&f=live"
     return base_url
