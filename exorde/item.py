@@ -43,7 +43,19 @@ def load_keywords_from_json():
             return data["keywords"]
     return None
 
+#######################################################################################################
+def filter_strings(str_list):
+    # Step 1: strip each string and remove '\n', '\r' characters
+    step1 = [s.strip().replace('\n', '').replace('\r', '') for s in str_list]
+    # Step 2: remove '\\uXXXX' characters
+    step2 = [re.sub(r'\\u[\da-fA-F]{4}', '', s) for s in step1]
+    step3 = [s for s in step2 if s]
+
+    return step3
+
+#######################################################################################################
 async def get_keywords():
+    print("START")
     # Checking if JSON file exists.
     if os.path.exists(JSON_FILE_PATH):
         try:
@@ -51,7 +63,6 @@ async def get_keywords():
             with open(JSON_FILE_PATH, "r") as json_file:
                 data = json.load(json_file)
                 last_update_ts = data.get("last_update_ts", 0)
-                
                 ts = int(time.time())
                 # If last update was less than 5 minutes ago, return the stored keywords
                 if ts - last_update_ts < KEYWORDS_UPDATE_INTERVAL:
@@ -69,6 +80,7 @@ async def get_keywords():
             raise Exception("fetch_keywords returned None")
 
         keywords = keywords_txt.replace("\n", "").split(",")
+        keywords = filter_strings(keywords)
         save_keywords_to_json(keywords)
         return keywords
     except Exception as e:
@@ -88,6 +100,7 @@ async def get_keywords():
     # Return the fallback default list.
     logging.info(f"[KEYWORDS] Returning default fallback list")
     return FALLBACK_DEFAULT_LIST
+
 
 ####################
 # RETURN A GENERATED URL TO SCRAPE WITH RANDOM KEYWORD
