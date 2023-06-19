@@ -40,9 +40,9 @@ async def generate_twitter_url(keyword: str, live_mode=True):
 
 
 url_generators: list[list] = [
-    [generate_twitter_url, 0],
-    [generate_reddit_url, 0],
-    [generate_4chan_url, 0],
+    [generate_twitter_url, 0, 60],  # 60% chance
+    [generate_reddit_url, 0, 39],  # 39% chance
+    [generate_4chan_url, 0, 1],  # 1% chance
 ]
 
 BREAKDOWN = 5
@@ -51,10 +51,13 @@ BREAKDOWN = 5
 async def generate_url(keyword: str):
     while True:
         random_generator = random.choice(url_generators)
+         # Unpack the generator, count, and weight.
+        # random.choices() returns a list, so use [0] to get the actual value.
+        random_generator, _, _ = random.choices(url_generators, weights=[item[2] for item in url_generators])[0]
         try:
             url = await random_generator[0](keyword)
             return url
         except:
-            random_generator[1] = +1
+            random_generator[1] += 1
             if random_generator[1] == BREAKDOWN:
                 url_generators.remove(random_generator)
