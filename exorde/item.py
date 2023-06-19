@@ -55,7 +55,6 @@ def filter_strings(str_list):
 
 #######################################################################################################
 async def get_keywords():
-    print("START")
     # Checking if JSON file exists.
     if os.path.exists(JSON_FILE_PATH):
         try:
