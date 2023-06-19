@@ -506,7 +506,7 @@ def log_in(env="/.env", wait=4):
             cookies_added += 1
         sleep(random.uniform(wait, wait + 1))
     except Exception as e:
-        print(f"No cookies found: {e}")
+        logging.info("No cookies found")
 
     if cookies_added == 0:
         email = get_email(env)  # const.EMAIL
