@@ -58,12 +58,12 @@ async def get_scraping_module(module_name):
                 "diff in versions : {module_version} != {online_module_version}"
             )
             # repository_path = f"git+https://github.com/exorde-labs/exorde-client.git#subdirectory=data/scraping/{module_name}&egg={module_hash}"
-            repository_path = f"git+https://github.com/exorde-labs/exorde-client.git@new_sources#subdirectory=data/scraping/{module_name}&egg={module_hash}"
+            repository_path = f"git+https://github.com/exorde-labs/exorde-client.git@auth_based_stateful#subdirectory=data/scraping/{module_name}&egg={module_hash}"
 
             subprocess.check_call(["pip", "install", repository_path])
     except PackageNotFoundError:
         # repository_path = f"git+https://github.com/exorde-labs/exorde-client.git#subdirectory=data/scraping/{module_name}&egg={module_hash}"
-        repository_path = f"git+https://github.com/exorde-labs/exorde-client.git@new_sources#subdirectory=data/scraping/{module_name}&egg={module_hash}"
+        repository_path = f"git+https://github.com/exorde-labs/exorde-client.git@auth_based_stateful#subdirectory=data/scraping/{module_name}&egg={module_hash}"
 
         subprocess.check_call(["pip", "install", repository_path])
     loaded_module = import_module(module_hash)
