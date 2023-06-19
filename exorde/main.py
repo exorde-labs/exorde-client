@@ -102,13 +102,13 @@ async def main(command_line_arguments: argparse.Namespace):
 def write_env(email, password, username):
     # Check the conditions for each field
     if email is None or len(email) <= 3:
-        print("Invalid email. Operation aborted.")
+        logging.info("write_env: Invalid email. Operation aborted.")
         return
     if password is None or len(password) <= 3:
-        print("Invalid password. Operation aborted.")
+        logging.info("write_env: Invalid password. Operation aborted.")
         return
     if username is None or len(username) <= 3:
-        print("Invalid username. Operation aborted.")
+        logging.info("write_env: Invalid username. Operation aborted.")
         return
 
     # Define the content
@@ -121,12 +121,12 @@ def write_env(email, password, username):
         try:
             os.chmod('/.env', 0o600)  # Set file permissions to rw for the owner only
         except Exception as e:
-            print("Error: ",e, " - could not chmod .env, passing...")
-        print("/.env file created.")
+            logging.info("Error: ",e, " - could not chmod .env, passing...")
+        logging.info("write_env: /.env file created.")
     else:
         with open('.env', 'a') as f:
             f.write(content)
-        print("/.env file updated.")
+        logging.info("write_env: /.env file updated.")
 
 def run():
     parser = argparse.ArgumentParser()
@@ -143,15 +143,16 @@ def run():
 
     # Check that either all or none of Twitter arguments are provided
     if (args.twitter_username is None) != (args.twitter_password is None) or (args.twitter_username is None) != (args.twitter_email is None):
+        logging.info("Not selecting auth-based scraping for Twitter.")
         parser.error("--twitter_username, --twitter_password, and --twitter_email must be given together")
-    else:
-        print("Twitter login arguments detected")
+    if args.twitter_username is not None and args.twitter_password is not None and args.twitter_email is not None:
+        logging.info("Twitter login arguments detected: selecting auth-based scraping.")
         write_env(email=args.twitter_email, password=args.twitter_password, username=args.twitter_username)
             
     # Map verbosity level from command line to logging level.
     LOGGING_LEVELS = {0: logging.WARNING, 1: logging.INFO, 2: logging.DEBUG}
     # Set logging level based on the verbosity argument.
-    print("Setting Client Logs verbosity to level ",args.verbosity)
+    logging.info("Setting Client Logs verbosity to level ",args.verbosity)
     logging.basicConfig(level=LOGGING_LEVELS[args.verbosity])
     command_line_arguments: argparse.Namespace = parser.parse_args()
     try:
