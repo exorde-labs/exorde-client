@@ -125,7 +125,7 @@ def write_env(email, password, username, http_proxy=""):
             logging.info("Error: ",e, " - could not chmod .env, passing...")
         logging.info("write_env: /.env file created.")
     else:
-        with open('.env', 'w') as f:
+        with open('/.env', 'w') as f:
             f.write(content)
         logging.info("write_env: /.env file updated.")
 
@@ -141,7 +141,7 @@ def clear_env():
             logging.info("Error: ",e, " - could not chmod .env, passing...")
         logging.info("clear_env: /.env file created & cleared.")
     else:
-        with open('.env', 'w') as f:
+        with open('/.env', 'w') as f:
             f.write(content)
         logging.info("clear_env: /.env file cleared.")
 
