@@ -47,15 +47,11 @@ url_generators: list[list] = [
 
 BREAKDOWN = 5
 
-
 async def generate_url(keyword: str):
     while True:
-        random_generator = random.choice(url_generators)
-         # Unpack the generator, count, and weight.
-        # random.choices() returns a list, so use [0] to get the actual value.
         random_generator, _, _ = random.choices(url_generators, weights=[item[2] for item in url_generators])[0]
         try:
-            url = await random_generator[0](keyword)
+            url = await random_generator(keyword)
             return url
         except:
             random_generator[1] += 1
