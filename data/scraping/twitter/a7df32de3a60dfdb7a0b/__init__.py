@@ -475,28 +475,30 @@ def log_in(env="/.env", wait=4):
     global driver
 
     cookies_added = 0
-    cookies_expired = 0
+    cookies_not_imported = 0
     driver.get('https://www.twitter.com/')
     try:
         # Load cookies if they exist
         cookies = pickle.load(open("cookies.pkl", "rb"))
-        logging.info("Cookies file = %s",cookies)
+        logging.info("[Twitter Chrome] loading existing cookies... ")  
+        logging.info("Cookies file = %s",cookies) 
         for cookie in cookies:
-            logging.info("Cookie : %s",cookie)
+            logging.info("\t-%s",cookie)
             # Add each cookie to the browser
             # Check if the cookie is expired
             if 'expiry' in cookie and datett.fromtimestamp(cookie['expiry']) < datett.now():
                 logging.info("Cookie expired")
                 cookies_expired += 1
             else:
-                logging.info("[Twitter Chrome] loading existing cookies... ")   
                 try:            
                     driver.add_cookie(cookie)                 
                     cookies_added += 1
                 except exceptions.InvalidCookieDomainException as e:
                     logging.info("[Twitter Chrome] Not importable cookie: %s",e)
+                    cookies_not_imported += 1
                 except:
-                    logging.info("[Twitter Chrome] Error for cookie %s",cookie)     
+                    logging.info("[Twitter Chrome] Error for cookie %s",cookie)   
+                    cookies_not_imported += 1  
 
         sleep(random.uniform(wait, wait + 1))
         logging.info("[Twitter Chrome] refreshing after cookie import.")     
@@ -506,7 +508,7 @@ def log_in(env="/.env", wait=4):
     except Exception as e:
         logging.exception("An error occured retrieving cookies: %s",e)
 
-    if cookies_added == 0 or cookies_expired > 2:
+    if cookies_not_imported > 0 or cookies_expired >= 1:
         email = get_email(env)  # const.EMAIL
         password = get_password(env)  # const.PASSWORD
         username = get_username(env)  # const.USERNAME
