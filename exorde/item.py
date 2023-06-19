@@ -14,7 +14,7 @@ from exorde_data import query, Item
 
 FALLBACK_DEFAULT_LIST = ["bitcoin", "ethereum", "eth", "btc", "usdt", "usdc", "stablecoin", "defi", "finance", "liquidity","token", "economy", "markets", "stocks", "crisis"]
 KEYWORDS_URL = "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/keywords.txt"
-JSON_FILE_PATH = "keywords.json"
+JSON_FILE_PATH = "/keywords.json"
 KEYWORDS_UPDATE_INTERVAL = 5 * 60  # 5 minutes
 
 ## READ KEYWORDS FROM SOURCE OF TRUTH
