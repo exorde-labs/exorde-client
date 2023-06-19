@@ -165,7 +165,6 @@ def run():
 
         write_env(email=args.twitter_email, password=args.twitter_password, username=args.twitter_username, http_proxy=http_proxy)
             
-    logging.info("Setting Client Logs verbosity to level %s",args.verbosity)
     command_line_arguments: argparse.Namespace = parser.parse_args()
     try:
         logging.info("Initializing exorde-client...")
