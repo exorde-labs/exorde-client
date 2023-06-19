@@ -4,7 +4,7 @@ FROM python:3.10.11
 # RUN pip3.10 install --no-cache-dir 'git+https://github.com/exorde-labs/exorde-client.git#subdirectory=data&egg=exorde-data'
 # RUN pip3.10 install --no-cache-dir 'git+https://github.com/exorde-labs/exorde-client.git'
 RUN pip3.10 install --no-cache-dir 'git+https://github.com/exorde-labs/exorde-client.git@auth_based_stateful#subdirectory=data&egg=exorde-data'
-RUN pip3.10 install --no-cache-dir 'git+https://github.com/exorde-labs/exorde-client.git@auth_based_stateful'
+RUN pip3.10 install --no-cache-dir 'git+https://github.com/exorde-labs/exorde-client.git@auth_based_stateful&egg=exorde''
 
 RUN pip3.10 install --no-cache-dir --upgrade 'git+https://github.com/JustAnotherArchivist/snscrape.git'
 
