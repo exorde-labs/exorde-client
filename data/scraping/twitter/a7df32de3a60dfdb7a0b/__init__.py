@@ -42,6 +42,8 @@ global driver
 driver = None
 
 
+MAX_EXPIRATION_HARDCODED_SECONDS = 300
+
 #############################################################################
 #############################################################################
 #############################################################################
@@ -147,7 +149,7 @@ async def get_sns_tweets(
         tr_post["creationDateTime"] = post["date"]
         if tr_post["creationDateTime"] is not None:
             newness =  is_within_timeframe_seconds(
-                tr_post["creationDateTime"], 480
+                tr_post["creationDateTime"], MAX_EXPIRATION_HARDCODED_SECONDS
             )
             if not newness:
                 break  # finish the generation if we scrolled further than 5min old tweets
@@ -347,7 +349,6 @@ user_agents = [
     "Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36",
 ]
 
-
     
 def init_driver(headless=True, proxy=None, show_images=False, option=None, firefox=False, env="/.env"):
     """ initiate a chromedriver or firefoxdriver instance
@@ -400,7 +401,7 @@ def init_driver(headless=True, proxy=None, show_images=False, option=None, firef
     else:
         driver = webdriver.Chrome(options=options, executable_path=driver_path)
 
-    driver.set_page_load_timeout(123)
+    driver.set_page_load_timeout(10)
     return driver
 
 
@@ -587,12 +588,12 @@ def keep_scroling(data, tweet_ids, scrolling, tweet_parsed, limit, scroll, last_
                     tweet_ids.add(tweet_id)
                     data.append(tweet)
                     last_date = str(tweet[2])
-                    if is_within_timeframe_seconds(last_date, 60):
+                    if is_within_timeframe_seconds(last_date, MAX_EXPIRATION_HARDCODED_SECONDS):
                         logging.info("Found Tweet made at:  %s" + str(last_date))
                         logging.info(tweet)
                         # logging.info(tweet_parsed," tweets found.")
                         tweet_parsed += 1
-                    elif not is_within_timeframe_seconds(last_date, 60) or  tweet_parsed >= limit:
+                    elif not is_within_timeframe_seconds(last_date, MAX_EXPIRATION_HARDCODED_SECONDS) or  tweet_parsed >= limit:
                         return data, tweet_ids, scrolling, tweet_parsed, scroll, last_position
         scroll_attempt = 0
         while tweet_parsed < limit:
