@@ -10,7 +10,7 @@ from web3 import Web3
 from exorde.claim_master import claim_master
 from exorde.get_current_rep import get_current_rep
 from exorde.self_update import self_update
-log = logging.getLogger()
+# log = logging.getLogger()
 
 
 async def main(command_line_arguments: argparse.Namespace):
@@ -139,10 +139,15 @@ def run():
     parser.add_argument("--twitter_username", help="Twitter username", type=str)
     parser.add_argument("--twitter_password", help="Twitter password", type=str)
     parser.add_argument("--twitter_email", help="Twitter email", type=str)
-    parser.add_argument('-v', '--verbosity', type=int, choices=[0, 1, 2], default=1, 
-                        help='set verbosity level (0=warnings and above, 1=info and above, 2=debug and above)')
-    parser.add_argument("--http_proxy", type=str, help="Optional HTTP proxy address in the format 'ip:port' for Selenium-based data collect.")
+    
+    parser.add_argument(
+        '-d', '--debug',
+        help="Set verbosity level of logs to DEBUG",
+        action="store_const", dest="loglevel", const=logging.DEBUG,
+        default=logging.INFO,
+    )
     args = parser.parse_args()
+    logging.basicConfig(level=args.loglevel)
 
     # Check that either all or none of Twitter arguments are provided
     if (args.twitter_username is None) != (args.twitter_password is None) or (args.twitter_username is None) != (args.twitter_email is None):
@@ -159,13 +164,6 @@ def run():
 
         write_env(email=args.twitter_email, password=args.twitter_password, username=args.twitter_username, http_proxy=http_proxy)
             
-    # Map verbosity level from command line to logging level.
-    # LOGGING_LEVELS = {0: logging.WARNING, 1: logging.INFO, 2: logging.DEBUG}
-    # Set logging level based on the verbosity argument.
-    # logging.basicConfig(level=LOGGING_LEVELS[args.verbosity])
-    logging.basicConfig(level=logging.DEBUG)
-    log.setLevel(logging.DEBUG)
-
     logging.info("Setting Client Logs verbosity to level %s",args.verbosity)
     command_line_arguments: argparse.Namespace = parser.parse_args()
     try:
