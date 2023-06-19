@@ -491,9 +491,9 @@ def log_in(env="/.env", wait=4):
                 logging.info("Cookie expired")
                 cookies_expired += 1
             else:
+                logging.info("[Twitter Chrome] loading existing cookies... ")   
                 try:            
-                    driver.add_cookie(cookie)
-                    logging.info("[Twitter Chrome] loading existing cookies... %s",cookie)                    
+                    driver.add_cookie(cookie)                 
                     cookies_added += 1
                 except exceptions.InvalidCookieDomainException as e:
                     logging.info("[Twitter Chrome] Not importable cookie: %s",e)
