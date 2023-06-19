@@ -114,7 +114,7 @@ def write_env(email, password, username, http_proxy=""):
         return
 
     # Define the content
-    content = f"SCWEET_EMAIL={email}\nSCWEET_PASSWORD={password}\nSCWEET_USERNAME={username}\nHTTP_PROXY={http_proxy}"
+    content = f"SCWEET_EMAIL={email}\nSCWEET_PASSWORD={password}\nSCWEET_USERNAME={username}\nHTTP_PROXY={http_proxy}\n"
     # Check if the .env file exists, if not create it
     if not os.path.exists('/.env'):
         with open('/.env', 'w') as f:
@@ -129,6 +129,21 @@ def write_env(email, password, username, http_proxy=""):
             f.write(content)
         logging.info("write_env: /.env file updated.")
 
+def clear_env():
+    # Define the content
+    content = f"SCWEET_EMAIL=\nSCWEET_PASSWORD=\nSCWEET_USERNAME=\nHTTP_PROXY=\n"
+    if not os.path.exists('/.env'):
+        with open('/.env', 'w') as f:
+            f.write(content)
+        try:
+            os.chmod('/.env', 0o600)  # Set file permissions to rw for the owner only
+        except Exception as e:
+            logging.info("Error: ",e, " - could not chmod .env, passing...")
+        logging.info("clear_env: /.env file created & cleared.")
+    else:
+        with open('.env', 'w') as f:
+            f.write(content)
+        logging.info("clear_env: /.env file cleared.")
 
 def run():    
     print("[Pre-init] Parse args...")
@@ -154,6 +169,7 @@ def run():
     if (args.twitter_username is None) != (args.twitter_password is None) or (args.twitter_username is None) != (args.twitter_email is None):
         logging.info("Not selecting auth-based scraping for Twitter.")
         print("[Pre-init] Not selecting selenium Twitter")
+        clear_env()
         parser.error("--twitter_username, --twitter_password, and --twitter_email must be given together")
     if args.twitter_username is not None and args.twitter_password is not None and args.twitter_email is not None:
         logging.info("Twitter login arguments detected: selecting auth-based scraping.")
