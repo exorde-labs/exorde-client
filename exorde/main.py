@@ -156,7 +156,7 @@ def run():
     # Map verbosity level from command line to logging level.
     LOGGING_LEVELS = {0: logging.WARNING, 1: logging.INFO, 2: logging.DEBUG}
     # Set logging level based on the verbosity argument.
-    logging.basicConfig(level=LOGGING_LEVELS[args.verbosity])
+    # logging.basicConfig(level=LOGGING_LEVELS[args.verbosity])
     logging.info("Setting Client Logs verbosity to level %s",args.verbosity)
     command_line_arguments: argparse.Namespace = parser.parse_args()
     try:
@@ -167,4 +167,5 @@ def run():
 
 
 if __name__ == "__main__":
+    print("HELLO LETS GO")
     run()
