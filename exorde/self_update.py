@@ -15,5 +15,5 @@ async def self_update():
             subprocess.check_call(["pip", "install", data_repository_path])
             os._exit(42)
     except Exception as e:
-        print("error during self update: ",e)
+        logging.info("[UDPATING] Error during self update: %s",e)
         
