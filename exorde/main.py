@@ -166,20 +166,19 @@ def run():
     logging.basicConfig(level=args.loglevel)
 
     # Check that either all or none of Twitter arguments are provided
-    if (args.twitter_username is None) != (args.twitter_password is None) or (args.twitter_username is None) != (args.twitter_email is None):
-        logging.info("Not selecting auth-based scraping for Twitter.")
-        print("[Pre-init] Not selecting selenium Twitter")
-        clear_env()
-        parser.error("--twitter_username, --twitter_password, and --twitter_email must be given together")
+    args_list = [args.twitter_username, args.twitter_password, args.twitter_email]
     if args.twitter_username is not None and args.twitter_password is not None and args.twitter_email is not None:
-        logging.info("Twitter login arguments detected: selecting auth-based scraping.")
-        print("[Pre-init] Selecting selenium Twitter")
+        logging.info("[Init] Twitter login arguments detected: selecting auth-based scraping.")
         http_proxy = ""
         if args.http_proxy is not None:
             http_proxy = args.http_proxy
-            print("[Pre-init] Selecting Provided Selenium HTTP Proxy")
-
+            print("[Init] Selecting Provided Selenium HTTP Proxy")
         write_env(email=args.twitter_email, password=args.twitter_password, username=args.twitter_username, http_proxy=http_proxy)
+    elif args_list.count(None) in [1, 2]:
+        parser.error("--twitter_username, --twitter_password, and --twitter_email must be given together")        
+    else:        
+        logging.info("[Init] No login arguments detected: using login-less scraping")
+        clear_env()
             
     command_line_arguments: argparse.Namespace = parser.parse_args()
     try:
