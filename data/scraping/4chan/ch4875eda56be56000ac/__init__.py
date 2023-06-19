@@ -370,8 +370,8 @@ async def scrape_4chan(
     except:
         try:
             bad_words = load_file_words("bad_words_list.txt")
-        except Exception as e:
-            print("Error with loading BAD WORDS: ", e)
+        except Exception as e:            
+            logging.info("[4chan] Error loading BAD WORDS: %s", e)
 
 
     # Initialize the bad words processor
