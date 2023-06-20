@@ -36,6 +36,8 @@ from exorde_data import (
     ExternalParentId,
 )
 import chromedriver_autoinstaller
+import subprocess
+import signal
 # import geckodriver_autoinstaller
 
 global driver
@@ -442,6 +444,18 @@ def print_first_and_last(s):
     else:
        return(s[0] + "***" + s[-1])
         
+def check_and_kill_processes(process_names):
+    for process_name in process_names:
+        try:
+            # Find processes by name
+            result = subprocess.check_output(['pgrep', '-f', process_name])
+            # If the previous command did not fail, we have some processes to kill
+            if result:
+                logging.info(f"[Chrome] Killing old processes for: {process_name}")
+                subprocess.run(["pkill", "-f", process_name])
+        except subprocess.CalledProcessError:
+            # If pgrep fails to find any processes, it throws an error. We catch that here and assume no processes are running
+            logging.info(f"[Chrome] No running processes found for: {process_name}")
 
 def save_cookies(driver_):
     # Save cookies
@@ -771,48 +785,59 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
         select_top_tweets = True
     if len(search_keyword) == 0:
         logging.info("keyword not found, can't search tweets using snscrape.")
+
     ### NOW SELECT SCRAPER
     select_login_based_scraper = False
     if check_env():
         select_login_based_scraper = True
-    if select_login_based_scraper:      
+    if select_login_based_scraper:
+        try:                     
+            # Usage
+            check_and_kill_processes(["chromedriver", "google-chrome"])
 
-        try:
-            logging.info("[Twitter] Open driver")
-            driver = init_driver(headless=True, show_images=False, proxy=None)
-            logging.info("[Twitter] Chrome Selenium Driver =  %s",driver)
-            logging.info("[TWITTER LOGIN] Trying...")
-            log_in()
-            logging.info("[Twitter] Logged in.")
+            try:
+                logging.info("[Twitter] Open driver")
+                driver = init_driver(headless=True, show_images=False, proxy=None)
+                logging.info("[Twitter] Chrome Selenium Driver =  %s",driver)
+                logging.info("[TWITTER LOGIN] Trying...")
+                log_in()
+                logging.info("[Twitter] Logged in.")
+            except Exception as e:
+                logging.debug("Exception during Twitter Init:  %s",e)
+
+
+            chromedriver_autoinstaller.install()
+            if "twitter.com" not in url:
+                raise ValueError("Not a twitter URL")
+            url_parts = url.split("twitter.com/")[1].split("&")
+            search_keyword = ""
+            if url_parts[0].startswith("search"):
+                search_keyword = url_parts[0].split("q=")[1]
+            nb_tweets_wanted = 200
+            selected_mode = "latest"
+            if "f=live" not in url_parts:
+                selected_mode = "LIVE"
+            if len(search_keyword) == 0:
+                logging.info("keyword not found, can't search tweets using snscrape.")
+            try:
+                search_keyword = convert_spaces_to_percent20(search_keyword)
+                async for result in scrape_( keyword=search_keyword, display_type=selected_mode, limit=nb_tweets_wanted):
+                    yield result
+            except Exception as e:
+                logging.info("Failed to scrape_() tweets. Error =  %s",e)
+                pass          
         except Exception as e:
-            logging.debug("Exception during Twitter Init:  %s",e)
+            logging.info("[Twitter] Exception in during execution =  %s",e)
+        finally:      
+            logging.info("[Twitter] Close driver")
+            driver.close()
+            sleep(3) # the 3 seconds rule
+            logging.info("[Twitter] Quit driver")
+            driver.quit()
 
-
-        chromedriver_autoinstaller.install()
-        if "twitter.com" not in url:
-            raise ValueError("Not a twitter URL")
-        url_parts = url.split("twitter.com/")[1].split("&")
-        search_keyword = ""
-        if url_parts[0].startswith("search"):
-            search_keyword = url_parts[0].split("q=")[1]
-        nb_tweets_wanted = 200
-        selected_mode = "latest"
-        if "f=live" not in url_parts:
-            selected_mode = "LIVE"
-        if len(search_keyword) == 0:
-            logging.info("keyword not found, can't search tweets using snscrape.")
-        try:
-            search_keyword = convert_spaces_to_percent20(search_keyword)
-            async for result in scrape_( keyword=search_keyword, display_type=selected_mode, limit=nb_tweets_wanted):
-                yield result
-        except Exception as e:
-            logging.info("Failed to scrape_() tweets. Error =  %s",e)
-            pass
-        
-        logging.info("[Twitter] Close driver")
-        driver.close()
     else:
         async for result in get_sns_tweets(
             search_keyword, select_top_tweets, nb_tweets_wanted
         ):
+            print("SNSCRAPE item = ",result)
             yield result
