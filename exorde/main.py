@@ -45,6 +45,10 @@ async def main(command_line_arguments: argparse.Namespace):
         )
         os._exit(1)
 
+    logging.info(
+        f"Worker-Address is : {static_configuration['worker_account'].address}"
+    )
+
     for i in range(0, 3):
         try:
             await faucet(static_configuration)
@@ -95,8 +99,10 @@ async def main(command_line_arguments: argparse.Namespace):
         cursor += 1
         if live_configuration and live_configuration["online"]:
             await spotting(live_configuration, static_configuration)
-        elif not live_configuration["online"]:            
-            logging.info("Protocol is paused (online mode is False), temporarily. Your client will wait for the pause to end and will continue automatically.")
+        elif not live_configuration["online"]:
+            logging.info(
+                "Protocol is paused (online mode is False), temporarily. Your client will wait for the pause to end and will continue automatically."
+            )
         await asyncio.sleep(live_configuration["inter_spot_delay_seconds"])
 
 
