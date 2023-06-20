@@ -146,7 +146,7 @@ def clear_env():
         logging.info("clear_env: /.env file cleared.")
 
 def run():    
-    print("[Pre-init] Parse args...")
+    logging.info("[Pre-init] Parse args...")
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--main_address", help="Main wallet", type=str, required=True
@@ -172,7 +172,7 @@ def run():
         http_proxy = ""
         if args.http_proxy is not None:
             http_proxy = args.http_proxy
-            print("[Init] Selecting Provided Selenium HTTP Proxy")
+            logging.info("[Init] Selecting Provided Selenium HTTP Proxy")
         write_env(email=args.twitter_email, password=args.twitter_password, username=args.twitter_username, http_proxy=http_proxy)
     elif args_list.count(None) in [1, 2]:
         parser.error("--twitter_username, --twitter_password, and --twitter_email must be given together")        
@@ -189,5 +189,5 @@ def run():
 
 
 if __name__ == "__main__":
-    print("\n*****************************\nExorde Client starting...\n*****************************\n")
+    logging.info("\n*****************************\nExorde Client starting...\n*****************************\n")
     run()
