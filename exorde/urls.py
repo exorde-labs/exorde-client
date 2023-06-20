@@ -51,7 +51,6 @@ BREAKDOWN = 100
 async def generate_url(keyword: str):
     while True:
         random_generator, _, _ = random.choices(url_generators, weights=[item[2] for item in url_generators])[0]
-        print(random_generator)
         try:
             url = await random_generator(keyword)
             return url
