@@ -45,7 +45,7 @@ jobs:
             linux/arm64
           push: true
           tags: |
-            exordelabs/exorde-client:${{ github.event.release.tag_name || githut.ref }}
+            exordelabs/exorde-client:${{ github.event.release.tag_name || github.ref }}
             exordelabs/exorde-client:latest
 
       - name: Send a message to slack if CI has succeeded
