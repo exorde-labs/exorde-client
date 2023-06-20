@@ -52,7 +52,7 @@ MAX_EXPIRATION_HARDCODED_SECONDS = 300
 #############################################################################
 #############################################################################
 
-def is_within_timeframe_seconds(dt, timeframe_sec):
+def is_within_timeframe_seconds_snscrape(dt, timeframe_sec):
     # Get the current datetime in UTC
     current_dt = datett.now(timezone.utc)
 
@@ -151,7 +151,7 @@ async def get_sns_tweets(
         tr_post["author"] = author_sha1_hex
         tr_post["creationDateTime"] = post["date"]
         if tr_post["creationDateTime"] is not None:
-            newness =  is_within_timeframe_seconds(
+            newness =  is_within_timeframe_seconds_snscrape(
                 tr_post["creationDateTime"], MAX_EXPIRATION_HARDCODED_SECONDS
             )
             if not newness:
