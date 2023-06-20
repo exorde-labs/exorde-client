@@ -21,24 +21,20 @@ import hashlib
 
 MAX_EXPIRATION_SECONDS = 120
 
-def is_within_timeframe_seconds(dt_str, timeframe_sec):
-    # Convert the datetime string to a datetime object
-    dt = datett.strptime(dt_str, "%Y-%m-%dT%H:%M:%S.%fZ")
+def is_within_timeframe_seconds(input_timestamp, timeframe_sec):
+    input_timestamp = int(input_timestamp)
+    current_timestamp = int(time.time())  # Get the current UNIX timestamp
+    elapsed_time = current_timestamp - input_timestamp
 
-    # Make it aware about timezone (UTC)
-    dt = dt.replace(tzinfo=timezone.utc)
-
-    # Get the current datetime in UTC
-    current_dt = datett.now(timezone.utc)
-
-    # Calculate the time difference between the two datetimes
-    time_diff = current_dt - dt
-
-    # Check if the time difference is within the specified timeframe in seconds
-    if abs(time_diff) <= timedelta(seconds=timeframe_sec):
+    if elapsed_time <= timeframe_sec:
         return True
     else:
         return False
+    
+def format_timestamp(timestamp):
+    dt = datett.fromtimestamp(timestamp, timezone.utc)
+    formatted_timestamp = dt.strftime("%Y-%m-%dT%H:%M:%SZ")
+    return formatted_timestamp
 
 async def scrap_post(url: str) -> AsyncGenerator[Item, None]:
     resolvers = {}
@@ -55,19 +51,16 @@ async def scrap_post(url: str) -> AsyncGenerator[Item, None]:
             ),
             created_at=CreatedAt(
                 str(
-                    datetime.datetime.fromtimestamp(
+                    format_timestamp(
                         content["created_utc"]
-                    ).isoformat()
-                    + "Z"
+                    )
                 )
             ),
             title=Title(content["title"]),
             domain=Domain("reddit.com"),
             url=Url(content["url"]),
-            # nb_comments=content["num_comments"],
-            # nb_likes=content["ups"],
         )
-        if is_within_timeframe_seconds(str(item_.created_at),MAX_EXPIRATION_SECONDS):
+        if is_within_timeframe_seconds(content["created_utc"],MAX_EXPIRATION_SECONDS):
             yield item_
 
     async def comment(data) -> AsyncGenerator[Item, None]:
@@ -82,17 +75,15 @@ async def scrap_post(url: str) -> AsyncGenerator[Item, None]:
             ),
             created_at=CreatedAt(
                 str(
-                    datetime.datetime.fromtimestamp(
+                    format_timestamp(
                         content["created_utc"]
-                    ).isoformat()
-                    + "Z"
+                    )
                 )
             ),
             domain=Domain("reddit.com"),
             url=Url("https://reddit.com" + content["permalink"]),
-            # nb_likes=content["ups"],
         )
-        if is_within_timeframe_seconds(str(item_.created_at),MAX_EXPIRATION_SECONDS):
+        if is_within_timeframe_seconds(content["created_utc"],MAX_EXPIRATION_SECONDS):
             yield item_
 
     async def more(__data__):
@@ -128,12 +119,12 @@ async def scrap_subreddit(subreddit_url: str) -> AsyncGenerator[Item, None]:
     async with aiohttp.ClientSession() as session:
         async with session.get(subreddit_url) as response:
             html_content = await response.text()
-            html_tree = html.fromstring(html_content)
+            html_tree = fromstring(html_content)
             for post in html_tree.xpath("//div[contains(@class, 'entry')]"):
                 async for item in scrap_post(
                     post.xpath("div/ul/li/a")[0].get("href")
                 ):
-                    if is_within_timeframe_seconds(str(item.created_at),MAX_EXPIRATION_SECONDS):
+                    if is_within_timeframe_seconds(str(item["created_at"]),MAX_EXPIRATION_SECONDS):
                         yield item
 
 async def query(url: str) -> AsyncGenerator[Item, None]:
@@ -142,7 +133,11 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
     parameters = url.split("reddit.com")[1].split("/")[1:]
     if "comments" in parameters:
         async for result in scrap_post(url):
+            print(result)
+            logging.info("[Reddit] found post = %s",result)
             yield result
     else:
         async for result in scrap_subreddit(url):
+            print(result)
+            logging.info("[Reddit] found post = %s",result)
             yield result
