@@ -10,6 +10,7 @@ from web3 import Web3
 from exorde.claim_master import claim_master
 from exorde.get_current_rep import get_current_rep
 from exorde.self_update import self_update
+from exorde.get_balance import get_balance
 
 
 async def main(command_line_arguments: argparse.Namespace):
@@ -49,12 +50,19 @@ async def main(command_line_arguments: argparse.Namespace):
         f"Worker-Address is : {static_configuration['worker_account'].address}"
     )
 
-    for i in range(0, 3):
-        try:
-            await faucet(static_configuration)
-            break
-        except:
-            logging.exception(f"An error occured during faucet (attempt {i})")
+    try:
+        balance = await get_balance(static_configuration)
+    except:
+        balance = None
+    if not balance or balance < 0.001:
+        for i in range(0, 3):
+            try:
+                await faucet(static_configuration)
+                break
+            except:
+                logging.exception(
+                    f"An error occured during faucet (attempt {i})"
+                )
 
     try:
         await claim_master(
