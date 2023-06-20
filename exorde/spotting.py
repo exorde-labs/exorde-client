@@ -38,7 +38,7 @@ async def spotting(live_configuration, static_configuration):
         )
         return
     try:
-        logging.info("Building a spot-data transaction")
+        logging.info("Building a spot-data transaction ({item_count} items)")
         transaction_hash, previous_nonce = await spot_data(
             cid,
             item_count,
