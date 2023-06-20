@@ -10,7 +10,7 @@ from web3 import Web3
 from exorde.claim_master import claim_master
 from exorde.get_current_rep import get_current_rep
 from exorde.self_update import self_update
-# log = logging.getLogger()
+log = logging.getLogger()
 
 
 async def main(command_line_arguments: argparse.Namespace):
@@ -163,6 +163,7 @@ def run():
         default=logging.INFO,
     )
     args = parser.parse_args()
+    print("logs activated starting from now...")
     logging.basicConfig(level=args.loglevel)
 
     # Check that either all or none of Twitter arguments are provided
