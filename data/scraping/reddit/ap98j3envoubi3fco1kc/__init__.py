@@ -6,6 +6,7 @@ from datetime import datetime as datett
 from datetime import timedelta, timezone
 import pytz
 import hashlib
+import logging
 
 from exorde_data import (
     Item,
@@ -119,7 +120,7 @@ async def scrap_subreddit(subreddit_url: str) -> AsyncGenerator[Item, None]:
     async with aiohttp.ClientSession() as session:
         async with session.get(subreddit_url) as response:
             html_content = await response.text()
-            html_tree = fromstring(html_content)
+            html_tree = html.fromstring(html_content)
             for post in html_tree.xpath("//div[contains(@class, 'entry')]"):
                 async for item in scrap_post(
                     post.xpath("div/ul/li/a")[0].get("href")
