@@ -807,6 +807,7 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
 
             chromedriver_autoinstaller.install()
             try:         
+                nb_tweets_wanted = 50
                 async for result in scrape_( keyword=search_keyword, display_type="latest", limit=nb_tweets_wanted):
                     yield result
             except Exception as e:
@@ -829,7 +830,7 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
     else:
         logging.getLogger("snscrape").setLevel(logging.WARNING)
         # SNSCRAPE track b
-        nb_tweets_wanted = 25
+        nb_tweets_wanted = 30
         select_top_tweets = False
         if "f=live" not in url_parts:
             select_top_tweets = True
