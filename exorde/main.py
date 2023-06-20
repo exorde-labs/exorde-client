@@ -191,5 +191,5 @@ def run():
 
 
 if __name__ == "__main__":
-    print("\n*****************************\nExorde Client starting...\n*****************************\n")
+    logging.info("\n*****************************\nExorde Client starting...\n*****************************\n")
     run()
