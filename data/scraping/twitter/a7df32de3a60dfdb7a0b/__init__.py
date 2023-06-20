@@ -145,7 +145,7 @@ async def get_sns_tweets(
             author = post["user"].displayname
         except:
             author = "unknown"
-        sha1.update(author.encode())
+        sha1.update(author.encode())    
         # Get the hexadecimal representation of the hash
         author_sha1_hex = sha1.hexdigest()
         tr_post["author"] = author_sha1_hex
@@ -814,12 +814,17 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
                 pass          
         except Exception as e:
             logging.info("[Twitter] Exception in during execution =  %s",e)
-        finally:      
-            logging.info("[Twitter] Close driver")
-            driver.close()
-            sleep(3) # the 3 seconds rule
-            logging.info("[Twitter] Quit driver")
-            driver.quit()
+        finally:     
+            try:
+                if driver is not None: 
+                    logging.info("[Twitter] Close driver")
+                    driver.close()
+                    sleep(3) # the 3 seconds rule
+                    logging.info("[Twitter] Quit driver")
+                    driver.quit()
+            except Exception as e:
+                logging.info("[Twitter Driver] Exception while closing/quitting driver =  %s",e)
+
 
     else:
         logging.getLogger("snscrape").setLevel(logging.WARNING)
