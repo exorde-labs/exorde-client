@@ -210,7 +210,6 @@ def check_env():
     # Check if all keys have non-null values
     for key in keys:
         if keys[key] is None:
-            logging.info(f"{key} is missing or null.")
             return False
 
     # If all checks pass, return True
