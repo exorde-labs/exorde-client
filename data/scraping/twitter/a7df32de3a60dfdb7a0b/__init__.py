@@ -786,6 +786,7 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
 
     search_keyword = convert_spaces_to_percent20(search_keyword)
     logging.info("[Twitter] internal Keyword used = %s",search_keyword)
+    logging.getLogger("selenium").setLevel(logging.WARNING)
     select_login_based_scraper = False
     if check_env():
         select_login_based_scraper = True
@@ -821,6 +822,7 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
             driver.quit()
 
     else:
+        logging.getLogger("snscrape").setLevel(logging.WARNING)
         # SNSCRAPE track b
         nb_tweets_wanted = 25
         select_top_tweets = False
