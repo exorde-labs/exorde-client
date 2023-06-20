@@ -578,7 +578,7 @@ def is_within_timeframe_seconds(dt_str, timeframe_sec):
     else:
         return False
 
-
+max_old_tweets_successive = 3
 def keep_scroling(data, tweet_ids, scrolling, tweet_parsed, limit, scroll, last_position,
                   save_images=False):
     """ scrolling function for tweets crawling"""
@@ -588,6 +588,8 @@ def keep_scroling(data, tweet_ids, scrolling, tweet_parsed, limit, scroll, last_
     if save_images == True:
         if not os.path.exists(save_images_dir):
             os.mkdir(save_images_dir)
+    
+    successsive_old_tweets = 0
     while scrolling and tweet_parsed < limit:
         sleep(random.uniform(0.5, 1.5))
         # get the card of tweets
@@ -607,7 +609,10 @@ def keep_scroling(data, tweet_ids, scrolling, tweet_parsed, limit, scroll, last_
                         logging.info(tweet)
                         # logging.info(tweet_parsed," tweets found.")
                         tweet_parsed += 1
-                    elif not is_within_timeframe_seconds(last_date, MAX_EXPIRATION_HARDCODED_SECONDS) or  tweet_parsed >= limit:
+                        successsive_old_tweets = 0
+                    else:
+                        successsive_old_tweets +=1
+                    if successsive_old_tweets >= max_old_tweets_successive or  tweet_parsed >= limit:
                         return data, tweet_ids, scrolling, tweet_parsed, scroll, last_position
         scroll_attempt = 0
         while tweet_parsed < limit:
@@ -775,22 +780,12 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
         raise ValueError("Not a twitter URL")
     url_parts = url.split("twitter.com/")[1].split("&")
     search_keyword = ""
-    if url_parts[0].startswith("search"):
-        search_keyword = url_parts[0].split("q=")[1]
-        search_keyword = convert_spaces_to_percent20(search_keyword)
-    logging.info("[Twitter] internal Keyword used = %s",search_keyword)
-    nb_tweets_wanted = 25
-    select_top_tweets = False
-    if "f=live" not in url_parts:
-        select_top_tweets = True
-    if len(search_keyword) == 0:
-        logging.info("keyword not found, can't search tweets using snscrape.")
 
-    ### NOW SELECT SCRAPER
     select_login_based_scraper = False
     if check_env():
         select_login_based_scraper = True
     if select_login_based_scraper:
+        # Selenium track A: login based
         try:                     
             # Usage
             check_and_kill_processes(["chromedriver", "google-chrome"])
@@ -813,14 +808,14 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
             search_keyword = ""
             if url_parts[0].startswith("search"):
                 search_keyword = url_parts[0].split("q=")[1]
-            nb_tweets_wanted = 200
             selected_mode = "latest"
             if "f=live" not in url_parts:
                 selected_mode = "LIVE"
             if len(search_keyword) == 0:
                 logging.info("keyword not found, can't search tweets using snscrape.")
             try:
-                search_keyword = convert_spaces_to_percent20(search_keyword)
+                search_keyword = convert_spaces_to_percent20(search_keyword)                
+                logging.info("[Twitter - Selenium] internal Keyword used = %s",search_keyword)
                 async for result in scrape_( keyword=search_keyword, display_type=selected_mode, limit=nb_tweets_wanted):
                     yield result
             except Exception as e:
@@ -836,6 +831,17 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
             driver.quit()
 
     else:
+        # SNSCRAPE track b
+        if url_parts[0].startswith("search"):
+            search_keyword = url_parts[0].split("q=")[1]
+        logging.info("[Twitter - SNSCRAPE] internal Keyword used = %s",search_keyword)
+        nb_tweets_wanted = 25
+        select_top_tweets = False
+        if "f=live" not in url_parts:
+            select_top_tweets = True
+        if len(search_keyword) == 0:
+            logging.info("keyword not found, can't search tweets using snscrape.")
+
         async for result in get_sns_tweets(
             search_keyword, select_top_tweets, nb_tweets_wanted
         ):
