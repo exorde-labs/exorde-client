@@ -45,7 +45,7 @@ url_generators: list[list] = [
     [generate_4chan_url, 0, 3], # 2% chance
 ]
 
-BREAKDOWN = 5
+BREAKDOWN = 100
 
 async def generate_url(keyword: str):
     while True:
