@@ -181,7 +181,7 @@ async def get_sns_tweets(
                     tr_post["external_parent_id"]
                 )
             )
-            logging.info(f"[Twitter Snscrape] Found tweet: %s",new_tweet_item)
+            logging.info("[Twitter Snscrape] Found tweet: %s",new_tweet_item)
             yield new_tweet_item
 
 def check_env():
@@ -608,9 +608,7 @@ def keep_scroling(data, tweet_ids, scrolling, tweet_parsed, limit, scroll, last_
                     data.append(tweet)
                     last_date = str(tweet[2])
                     if is_within_timeframe_seconds(last_date, MAX_EXPIRATION_HARDCODED_SECONDS):
-                        logging.info("Found Tweet made at:  %s" + str(last_date))
-                        logging.info(tweet)
-                        # logging.info(tweet_parsed," tweets found.")
+                        logging.info("[Twitter Selenium] Found Tweet:  %s", tweet)
                         tweet_parsed += 1
                         successsive_old_tweets = 0
                     else:
@@ -741,11 +739,11 @@ async def scrape_(until=None, keyword="bitcoin", to_account=None, from_account=N
             until_local = until_local + datetime.timedelta(days=interval)
 
         for tweet_tuple in data:
-            # ex: ('Cripto_tuga94', '@cripto_tuga94', '2023-06-16T10:10:59.000Z', 
-            # 'Cripto_tuga94\n@cripto_tuga94\n·\nJun 16', '#Criptomoedas #Bitcoin\nNesta quinta-feira, 15, 
+            # ex: ('xxxxx', '@xxxx', '2023-06-16T10:10:59.000Z', 
+            # 'xx\n@xxxx\n·\nJun 16', '#Criptomoedas #Bitcoin\nNesta quinta-feira, 15, 
             # a BlackRock solicitou a autorização para ofertar um fundo negociado em bolsa (ETF) de bitcoin nos Estados Unidos.\nSe aprovado, o 
             # ETF será o primeiro dos Estados Unidos de bitcoin à vista.', '', '1', '', '1', 
-            # ['https://pbs.twimg.com/card_img/1669440299171565584/vDzyarEo?format=jpg&name=small'], 'https://twitter.com/cripto_tuga94/status/1669648758726860800')
+            # ['https://pbs.twimg.com/card_img/12.21654/zd45zz5?format=jpg&name=small'], 'https://twitter.com/xxxxx/status/1231456479')
             # Create a new sha1 hash
             content_, author_, created_at_, title_, domain_, url_, external_id_ = extract_tweet_info(tweet_tuple)
             sha1 = hashlib.sha1()
@@ -766,11 +764,8 @@ async def scrape_(until=None, keyword="bitcoin", to_account=None, from_account=N
                 url=Url(url_),
                 external_id=ExternalId(external_id_)
             )
-
             yield new_tweet_item
 
-#############################################################################
-#############################################################################
 #############################################################################
 #############################################################################
 #############################################################################
@@ -791,7 +786,6 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
         search_keyword = "crypto"
 
     search_keyword = convert_spaces_to_percent20(search_keyword)
-
     logging.info("[Twitter] internal Keyword used = %s",search_keyword)
     select_login_based_scraper = False
     if check_env():
@@ -812,8 +806,7 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
                 logging.debug("Exception during Twitter Init:  %s",e)
 
             chromedriver_autoinstaller.install()
-            try:
-                search_keyword = convert_spaces_to_percent20(search_keyword)                
+            try:         
                 async for result in scrape_( keyword=search_keyword, display_type="latest", limit=nb_tweets_wanted):
                     yield result
             except Exception as e:
@@ -838,5 +831,4 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
         async for result in get_sns_tweets(
             search_keyword, select_top_tweets, nb_tweets_wanted
         ):
-            logging.info("[Twitter Snscrape] Found item = %s",result)
             yield result
