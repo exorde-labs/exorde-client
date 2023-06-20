@@ -2,7 +2,7 @@
 
 import os
 import argparse
-import logging, asyncio
+import asyncio
 
 from exorde.models import LiveConfiguration, StaticConfiguration
 from exorde.faucet import faucet
@@ -10,10 +10,9 @@ from web3 import Web3
 from exorde.claim_master import claim_master
 from exorde.get_current_rep import get_current_rep
 from exorde.self_update import self_update
-logging.basicConfig()  # Add logging level here if you plan on using logging.info() instead of my_logger as below.
-
-my_logger = logging.getLogger(__name__)
-my_logger .setLevel(logging.INFO)
+import logging
+logger = logging.getLogger()
+logging.basicConfig(level=logging.INFO)
 
 async def main(command_line_arguments: argparse.Namespace):
     if not Web3.is_address(command_line_arguments.main_address):
