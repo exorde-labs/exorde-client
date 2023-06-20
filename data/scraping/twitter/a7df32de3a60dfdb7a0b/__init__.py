@@ -506,7 +506,7 @@ def log_in(env="/.env", wait=4):
     # Check if we are indeed on the target URL
     logging.info("[Twitter Chrome] Current URL = %s",str(driver.current_url))   
     if not target_broad in driver.current_url:
-        print("[Twitter] Not on target, let's log in...")
+        logging.info("[Twitter] Not on target, let's log in...")
         clear_cookies()
         email = get_email(env)  # const.EMAIL
         password = get_password(env)  # const.PASSWORD
@@ -555,7 +555,7 @@ def log_in(env="/.env", wait=4):
         sleep(random.uniform(wait, wait + 1))
         save_cookies(driver)
     else:        
-        print("[Twitter] We are already logged in")
+        logging.info("[Twitter] We are already logged in")
 
 
         
@@ -845,5 +845,5 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
         async for result in get_sns_tweets(
             search_keyword, select_top_tweets, nb_tweets_wanted
         ):
-            print("SNSCRAPE item = ",result)
+            logging.info("SNSCRAPE item = %s",result)
             yield result
