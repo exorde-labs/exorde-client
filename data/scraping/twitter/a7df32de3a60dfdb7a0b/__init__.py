@@ -118,7 +118,6 @@ async def get_sns_tweets(
                 "{} since:{}".format(search_keyword, today), mode=mode
             ).get_items()
         )
-        logging.info(f"[Twitter Snscrape] Found potentially {len(attempted_tweet_collect)} tweets")
     except:
         raise StopIteration
 
@@ -167,8 +166,8 @@ async def get_sns_tweets(
             tr_post["content"] = tr_post["title"]
         if (
             len(tr_post["content"]) >= 20
-        ):  # yield only tweets with >=25 real text characters
-            yield Item(
+        ):  # yield only tweets with >=25 real text characters        
+            new_tweet_item = Item(
                 content=Content(tr_post["content"]),
                 author=Author(tr_post["author"]),
                 created_at=CreatedAt(
@@ -180,8 +179,10 @@ async def get_sns_tweets(
                 external_id=ExternalId(tr_post["external_id"]),
                 external_parent_id=ExternalParentId(
                     tr_post["external_parent_id"]
-                ),
+                )
             )
+            logging.info(f"[Twitter Snscrape] Found tweet: %s",new_tweet_item)
+            yield new_tweet_item
 
 def check_env():
     # Check if the .env file exists
