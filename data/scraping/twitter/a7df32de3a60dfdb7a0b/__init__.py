@@ -112,11 +112,13 @@ async def get_sns_tweets(
         mode = snscrape.modules.twitter.TwitterSearchScraperMode.TOP
 
     try:
+        logging.info("[Twitter Snscrape] Attempt on keywords = %s",search_keyword)
         attempted_tweet_collect = (
             snscrape.modules.twitter.TwitterSearchScraper(
                 "{} since:{}".format(search_keyword, today), mode=mode
             ).get_items()
         )
+        logging.info(f"[Twitter Snscrape] Found potentially {len(attempted_tweet_collect)} tweets")
     except:
         raise StopIteration
 
@@ -779,8 +781,17 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
     if "twitter.com" not in url:
         raise ValueError("Not a twitter URL")
     url_parts = url.split("twitter.com/")[1].split("&")
-    search_keyword = ""
+    search_keyword = ""    
+    if url_parts[0].startswith("search"):
+        search_keyword = url_parts[0].split("q=")[1]
 
+    if len(search_keyword) == 0:
+        logging.info("keyword not found, can't search tweets using snscrape.")
+        search_keyword = "crypto"
+
+    search_keyword = convert_spaces_to_percent20(search_keyword)
+
+    logging.info("[Twitter] internal Keyword used = %s",search_keyword)
     select_login_based_scraper = False
     if check_env():
         select_login_based_scraper = True
@@ -789,7 +800,6 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
         try:                     
             # Usage
             check_and_kill_processes(["chromedriver", "google-chrome"])
-
             try:
                 logging.info("[Twitter] Open driver")
                 driver = init_driver(headless=True, show_images=False, proxy=None)
@@ -800,23 +810,10 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
             except Exception as e:
                 logging.debug("Exception during Twitter Init:  %s",e)
 
-
             chromedriver_autoinstaller.install()
-            if "twitter.com" not in url:
-                raise ValueError("Not a twitter URL")
-            url_parts = url.split("twitter.com/")[1].split("&")
-            search_keyword = ""
-            if url_parts[0].startswith("search"):
-                search_keyword = url_parts[0].split("q=")[1]
-            selected_mode = "latest"
-            if "f=live" not in url_parts:
-                selected_mode = "LIVE"
-            if len(search_keyword) == 0:
-                logging.info("keyword not found, can't search tweets using snscrape.")
             try:
                 search_keyword = convert_spaces_to_percent20(search_keyword)                
-                logging.info("[Twitter - Selenium] internal Keyword used = %s",search_keyword)
-                async for result in scrape_( keyword=search_keyword, display_type=selected_mode, limit=nb_tweets_wanted):
+                async for result in scrape_( keyword=search_keyword, display_type="latest", limit=nb_tweets_wanted):
                     yield result
             except Exception as e:
                 logging.info("Failed to scrape_() tweets. Error =  %s",e)
@@ -832,18 +829,13 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
 
     else:
         # SNSCRAPE track b
-        if url_parts[0].startswith("search"):
-            search_keyword = url_parts[0].split("q=")[1]
-        logging.info("[Twitter - SNSCRAPE] internal Keyword used = %s",search_keyword)
         nb_tweets_wanted = 25
         select_top_tweets = False
         if "f=live" not in url_parts:
             select_top_tweets = True
-        if len(search_keyword) == 0:
-            logging.info("keyword not found, can't search tweets using snscrape.")
 
         async for result in get_sns_tweets(
             search_keyword, select_top_tweets, nb_tweets_wanted
         ):
-            logging.info("SNSCRAPE item = %s",result)
+            logging.info("[Twitter Snscrape] Found item = %s",result)
             yield result
