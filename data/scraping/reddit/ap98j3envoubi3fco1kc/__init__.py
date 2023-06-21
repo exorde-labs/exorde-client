@@ -2,11 +2,13 @@ import aiohttp
 from lxml import html
 from typing import AsyncGenerator
 import datetime
+import time
 from datetime import datetime as datett
-from datetime import timedelta, timezone
+from datetime import timezone
 import pytz
 import hashlib
 import logging
+from lxml.html import fromstring
 
 from exorde_data import (
     Item,
@@ -120,26 +122,23 @@ async def scrap_subreddit(subreddit_url: str) -> AsyncGenerator[Item, None]:
     async with aiohttp.ClientSession() as session:
         async with session.get(subreddit_url) as response:
             html_content = await response.text()
-            html_tree = html.fromstring(html_content)
+            html_tree = fromstring(html_content)
             for post in html_tree.xpath("//div[contains(@class, 'entry')]"):
                 async for item in scrap_post(
                     post.xpath("div/ul/li/a")[0].get("href")
                 ):
-                    if is_within_timeframe_seconds(str(item["created_at"]),MAX_EXPIRATION_SECONDS):
-                        yield item
+                    yield item
 
 async def query(url: str) -> AsyncGenerator[Item, None]:
-    logging.info("[Reddit] Scraping...")
+    logging.info("[Reddit] Scraping %s",url)
     if "reddit.com" not in url:
         raise ValueError(f"Not a reddit URL {url}")
     parameters = url.split("reddit.com")[1].split("/")[1:]
     if "comments" in parameters:
         async for result in scrap_post(url):
-            print(result)
             logging.info("[Reddit] found post = %s",result)
             yield result
     else:
         async for result in scrap_subreddit(url):
-            print(result)
             logging.info("[Reddit] found post = %s",result)
             yield result
