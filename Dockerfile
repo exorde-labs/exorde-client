@@ -1,5 +1,19 @@
 FROM python:3.10.11
 
+# Install necessary tools and libraries
+RUN apt-get update \
+    && apt-get install -y wget gnupg ca-certificates
+
+# Add the Chromium distribution's key
+RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add -
+
+# Add the Chromium distribution to sources
+RUN echo "deb http://dl.google.com/linux/chrome/deb/ stable main" | tee /etc/apt/sources.list.d/google-chrome.list 
+
+# Update and install Chromium
+RUN apt-get update \
+    && apt-get install -y chromium
+
 # ## INSTALL DEPENDENCIES
 RUN pip3.10 install --no-cache-dir 'git+https://github.com/exorde-labs/exorde-client.git#subdirectory=data&egg=exorde-data'
 RUN pip3.10 install --no-cache-dir 'git+https://github.com/exorde-labs/exorde-client.git'
@@ -9,11 +23,12 @@ RUN pip3.10 install --no-cache-dir --upgrade 'git+https://github.com/JustAnother
 # install selenium
 RUN pip install selenium==4.2.0
 
-# Install Google Chrome
-RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
-    && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list \
-    && apt-get update -y \
-    && apt-get install -y google-chrome-stable
+# Install Google Chrome -> is for amd only, not arm
+# RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+#     && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list \
+#     && apt-get update -y \
+#     && apt-get install -y google-chrome-stable
+
 
 RUN CHROME_DRIVER_VERSION=`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE` && \
     wget -N http://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/chromedriver_linux64.zip -P ~/ && \
