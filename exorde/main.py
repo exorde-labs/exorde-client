@@ -10,6 +10,8 @@ from web3 import Web3
 from exorde.claim_master import claim_master
 from exorde.get_current_rep import get_current_rep
 from exorde.self_update import self_update
+from exorde.get_balance import get_balance
+
 import logging
 logger = logging.getLogger()
 logging.basicConfig(level=logging.INFO)
@@ -47,12 +49,23 @@ async def main(command_line_arguments: argparse.Namespace):
         )
         os._exit(1)
 
-    for i in range(0, 3):
-        try:
-            await faucet(static_configuration)
-            break
-        except:
-            logging.exception(f"An error occured during faucet (attempt {i})")
+    logging.info(
+        f"Worker-Address is : {static_configuration['worker_account'].address}"
+    )
+
+    try:
+        balance = await get_balance(static_configuration)
+    except:
+        balance = None
+    if not balance or balance < 0.001:
+        for i in range(0, 3):
+            try:
+                await faucet(static_configuration)
+                break
+            except:
+                logging.exception(
+                    f"An error occured during faucet (attempt {i})"
+                )
 
     try:
         await claim_master(
@@ -97,8 +110,10 @@ async def main(command_line_arguments: argparse.Namespace):
         cursor += 1
         if live_configuration and live_configuration["online"]:
             await spotting(live_configuration, static_configuration)
-        elif not live_configuration["online"]:            
-            logging.info("Protocol is paused (online mode is False), temporarily. Your client will wait for the pause to end and will continue automatically.")
+        elif not live_configuration["online"]:
+            logging.info(
+                "Protocol is paused (online mode is False), temporarily. Your client will wait for the pause to end and will continue automatically."
+            )
         await asyncio.sleep(live_configuration["inter_spot_delay_seconds"])
 
 
