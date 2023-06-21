@@ -41,15 +41,11 @@ async def generate_twitter_url(keyword: str, live_mode=True):
         base_url = base_url + "&f=live"
     return base_url
 
-
 url_generators: list[list] = [
-    [generate_twitter_url, 0, 1],
-    [generate_reddit_url, 0, 98],
-    [generate_4chan_url, 0, 1],
+    [generate_twitter_url, 0, 60],
+    [generate_reddit_url, 0, 35],
+    [generate_4chan_url, 0, 5],
 ]
-
-
-# BREAKDOWN = 100 # to rework later
 
 async def generate_url(keyword: str):
     while True:
@@ -57,7 +53,7 @@ async def generate_url(keyword: str):
         try:
             url = await random_generator(keyword)
             return url
-        except:
-            random_generator[1] += 1
-            # if random_generator[1] == BREAKDOWN:
-            #     url_generators.remove(random_generator)
+        except:                
+            logging.exception(
+                " [!] An error occured in generate_url [!]"
+            )
