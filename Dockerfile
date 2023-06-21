@@ -1,35 +1,19 @@
 FROM python:3.10.11
 
-# Install necessary tools and libraries
+# Update and install dependencies
 RUN apt-get update \
-    && apt-get install -y wget gnupg ca-certificates
+    && apt-get upgrade -y \
+    && apt-get install -y chromium xvfb \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Add the Chromium distribution's key
-RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add -
+RUN pip3.10 install --no-cache-dir \
+        'git+https://github.com/exorde-labs/exorde-client.git#subdirectory=data&egg=exorde-data' \
+        'git+https://github.com/exorde-labs/exorde-client.git' \
+        selenium==4.2.0 \
+    && pip3.10 install --no-cache-dir --upgrade 'git+https://github.com/JustAnotherArchivist/snscrape.git'
 
-# Add the Chromium distribution to sources
-RUN echo "deb http://dl.google.com/linux/chrome/deb/ stable main" | tee /etc/apt/sources.list.d/google-chrome.list 
-
-# Update and install Chromium
-RUN apt-get update \
-    && apt-get install -y chromium
-
-# ## INSTALL DEPENDENCIES
-RUN pip3.10 install --no-cache-dir 'git+https://github.com/exorde-labs/exorde-client.git#subdirectory=data&egg=exorde-data'
-RUN pip3.10 install --no-cache-dir 'git+https://github.com/exorde-labs/exorde-client.git'
-
-RUN pip3.10 install --no-cache-dir --upgrade 'git+https://github.com/JustAnotherArchivist/snscrape.git'
-
-# install selenium
-RUN pip install selenium==4.2.0
-
-# Install Google Chrome -> is for amd only, not arm
-# RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
-#     && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list \
-#     && apt-get update -y \
-#     && apt-get install -y google-chrome-stable
-
-
+# Configure Chrome
 RUN CHROME_DRIVER_VERSION=`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE` && \
     wget -N http://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/chromedriver_linux64.zip -P ~/ && \
     unzip ~/chromedriver_linux64.zip -d ~/ && \
@@ -37,9 +21,6 @@ RUN CHROME_DRIVER_VERSION=`curl -sS chromedriver.storage.googleapis.com/LATEST_R
     mv -f ~/chromedriver /usr/local/bin/chromedriver && \
     chmod 0755 /usr/local/bin/chromedriver && \
     ln -s /usr/local/bin/chromedriver /usr/bin/chromedriver
-
-# install xvfb
-RUN apt-get install -y xvfb
 
 # set display port to avoid crash
 ENV DISPLAY=:99
@@ -55,10 +36,6 @@ RUN python3.10 -m spacy download en_core_web_trf \
 
 ## INSTALL THE APP
 COPY data /exorde
-RUN apt-get update \
-    && apt-get upgrade --yes \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
 
 ## ENTRY POINT IS MAIN.PY
 ENV PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
