@@ -40,9 +40,9 @@ async def generate_twitter_url(keyword: str, live_mode=True):
 
 
 url_generators: list[list] = [
-    [generate_twitter_url, 0, 67],
-    [generate_reddit_url, 0, 30],
-    [generate_4chan_url, 0, 3],
+    [generate_twitter_url, 0, 1],
+    [generate_reddit_url, 0, 98],
+    [generate_4chan_url, 0, 1],
 ]
 
 
