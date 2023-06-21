@@ -129,6 +129,7 @@ async def scrap_subreddit(subreddit_url: str) -> AsyncGenerator[Item, None]:
                         yield item
 
 async def query(url: str) -> AsyncGenerator[Item, None]:
+    logging.info("[Reddit] Scraping...")
     if "reddit.com" not in url:
         raise ValueError(f"Not a reddit URL {url}")
     parameters = url.split("reddit.com")[1].split("/")[1:]
