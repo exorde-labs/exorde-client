@@ -2,7 +2,7 @@ import os, subprocess
 from importlib import metadata
 
 from exorde.get_latest_tag import get_latest_tag
-
+import logging
 
 async def self_update():
     try:
@@ -15,5 +15,4 @@ async def self_update():
             subprocess.check_call(["pip", "install", data_repository_path])
             os._exit(42)
     except Exception as e:
-        print("error during self update: ",e)
-        
+        logging.info("[UDPATING] Error during self update: %s",e)

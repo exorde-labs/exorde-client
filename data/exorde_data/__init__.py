@@ -58,9 +58,11 @@ async def get_scraping_module(module_name):
                 "diff in versions : {module_version} != {online_module_version}"
             )
             repository_path = f"git+https://github.com/exorde-labs/exorde-client.git#subdirectory=data/scraping/{module_name}&egg={module_hash}"
+
             subprocess.check_call(["pip", "install", repository_path])
     except PackageNotFoundError:
         repository_path = f"git+https://github.com/exorde-labs/exorde-client.git#subdirectory=data/scraping/{module_name}&egg={module_hash}"
+
         subprocess.check_call(["pip", "install", repository_path])
     loaded_module = import_module(module_hash)
     return loaded_module
@@ -76,7 +78,7 @@ async def get_scraping_module_name_from_url(
         async with aiohttp.ClientSession() as session:
             async with session.get(mapping_url) as resp:
                 if resp.status != 200:
-                    print(f"Unable to fetch data: HTTP {resp.status}")
+                    logging.info(f"get_scraping_module_name_from_url: Unable to fetch data: HTTP {resp.status}")
                     return None
 
                 data = await resp.text()

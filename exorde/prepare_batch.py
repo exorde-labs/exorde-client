@@ -21,7 +21,7 @@ async def prepare_batch(
             exec_time_s = end_time - start_time
             batch.append(processed_item)
             logging.info(
-                f" + A new item has been processed {len(batch)}/{live_configuration['batch_size']} - ({exec_time_s} s)"
+                f" + A new item has been processed {len(batch)}/{live_configuration['batch_size']} - ({exec_time_s} s) - Source = {str(item['domain'])}"
             )
             if len(batch) == batch_size:
                 await generator.aclose()

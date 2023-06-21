@@ -2,7 +2,7 @@
 
 import os
 import argparse
-import logging, asyncio
+import asyncio
 
 from exorde.models import LiveConfiguration, StaticConfiguration
 from exorde.faucet import faucet
@@ -12,6 +12,9 @@ from exorde.get_current_rep import get_current_rep
 from exorde.self_update import self_update
 from exorde.get_balance import get_balance
 
+import logging
+logger = logging.getLogger()
+logging.basicConfig(level=logging.INFO)
 
 async def main(command_line_arguments: argparse.Namespace):
     if not Web3.is_address(command_line_arguments.main_address):
@@ -114,18 +117,94 @@ async def main(command_line_arguments: argparse.Namespace):
         await asyncio.sleep(live_configuration["inter_spot_delay_seconds"])
 
 
-def run():
+def write_env(email, password, username, http_proxy=""):
+    # Check the conditions for each field
+    if email is None or len(email) <= 3:
+        logging.info("write_env: Invalid email. Operation aborted.")
+        return
+    if password is None or len(password) <= 3:
+        logging.info("write_env: Invalid password. Operation aborted.")
+        return
+    if username is None or len(username) <= 3:
+        logging.info("write_env: Invalid username. Operation aborted.")
+        return
+
+    # Define the content
+    content = f"SCWEET_EMAIL={email}\nSCWEET_PASSWORD={password}\nSCWEET_USERNAME={username}\nHTTP_PROXY={http_proxy}\n"
+    # Check if the .env file exists, if not create it
+    if not os.path.exists('/.env'):
+        with open('/.env', 'w') as f:
+            f.write(content)
+        try:
+            os.chmod('/.env', 0o600)  # Set file permissions to rw for the owner only
+        except Exception as e:
+            logging.info("Error: ",e, " - could not chmod .env, passing...")
+        logging.info("write_env: /.env file created.")
+    else:
+        with open('/.env', 'w') as f:
+            f.write(content)
+        logging.info("write_env: /.env file updated.")
+
+def clear_env():
+    # Define the content
+    content = f"SCWEET_EMAIL=\nSCWEET_PASSWORD=\nSCWEET_USERNAME=\nHTTP_PROXY=\n"
+    if not os.path.exists('/.env'):
+        with open('/.env', 'w') as f:
+            f.write(content)
+        try:
+            os.chmod('/.env', 0o600)  # Set file permissions to rw for the owner only
+        except Exception as e:
+            logging.info("Error: ",e, " - could not chmod .env, passing...")
+        logging.info("clear_env: /.env file created & cleared.")
+    else:
+        with open('/.env', 'w') as f:
+            f.write(content)
+        logging.info("clear_env: /.env file cleared.")
+
+def run():    
+    logging.info("[Pre-init] Parse args...")
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--main_address", help="Main wallet", type=str, required=True
     )
+    parser.add_argument("--twitter_username", help="Twitter username", type=str)
+    parser.add_argument("--twitter_password", help="Twitter password", type=str)
+    parser.add_argument("--twitter_email", help="Twitter email", type=str)
+    parser.add_argument("--http_proxy", help="Twitter Selenium PROXY", type=str)
+    
+    parser.add_argument(
+        '-d', '--debug',
+        help="Set verbosity level of logs to DEBUG",
+        action="store_const", dest="loglevel", const=logging.DEBUG,
+        default=logging.INFO,
+    )
+    args = parser.parse_args()
+    print("logs activated starting from now...")
+    logging.basicConfig(level=args.loglevel)
+
+    # Check that either all or none of Twitter arguments are provided
+    args_list = [args.twitter_username, args.twitter_password, args.twitter_email]
+    if args.twitter_username is not None and args.twitter_password is not None and args.twitter_email is not None:
+        logging.info("[Init] Twitter login arguments detected: selecting auth-based scraping.")
+        http_proxy = ""
+        if args.http_proxy is not None:
+            http_proxy = args.http_proxy
+            logging.info("[Init] Selecting Provided Selenium HTTP Proxy")
+        write_env(email=args.twitter_email, password=args.twitter_password, username=args.twitter_username, http_proxy=http_proxy)
+    elif args_list.count(None) in [1, 2]:
+        parser.error("--twitter_username, --twitter_password, and --twitter_email must be given together")        
+    else:        
+        logging.info("[Init] No login arguments detected: using login-less scraping")
+        clear_env()
+            
     command_line_arguments: argparse.Namespace = parser.parse_args()
-    logging.basicConfig(level=logging.DEBUG)
     try:
+        logging.info("Initializing exorde-client...")
         asyncio.run(main(command_line_arguments))
     except KeyboardInterrupt:
-        logging.info("bye bye !")
+        logging.info("Exiting exorde-client...")
 
 
 if __name__ == "__main__":
+    print("\n*****************************\nExorde Client starting...\n*****************************\n")
     run()
