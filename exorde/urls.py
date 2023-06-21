@@ -49,7 +49,7 @@ url_generators: list[list] = [
 ]
 
 
-BREAKDOWN = 100
+# BREAKDOWN = 100 # to rework later
 
 async def generate_url(keyword: str):
     while True:
@@ -59,5 +59,5 @@ async def generate_url(keyword: str):
             return url
         except:
             random_generator[1] += 1
-            if random_generator[1] == BREAKDOWN:
-                url_generators.remove(random_generator)
+            # if random_generator[1] == BREAKDOWN:
+            #     url_generators.remove(random_generator)
