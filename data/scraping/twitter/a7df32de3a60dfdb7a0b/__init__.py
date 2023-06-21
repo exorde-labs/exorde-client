@@ -501,10 +501,10 @@ def log_in(env="/.env", wait=4):
         logging.exception("An error occured retrieving cookies: %s",e)
 
     logging.info("[Twitter Chrome] refreshing to Home after cookie import.")   
-    sleep(random.uniform(7, 10))
+    sleep(random.uniform(1, 4))
     driver.get(target_home_url)
     logging.info("[Twitter Chrome] Checking if we are on same URL...")   
-    sleep(random.uniform(2, 5))
+    sleep(random.uniform(1, 5))
     # Check if we are indeed on the target URL
     logging.info("[Twitter Chrome] Current URL = %s",str(driver.current_url))   
     if not target_broad in driver.current_url:
