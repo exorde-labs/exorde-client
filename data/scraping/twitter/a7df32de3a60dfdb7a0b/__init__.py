@@ -362,23 +362,26 @@ def init_driver(headless=True, proxy=None, show_images=False, option=None, firef
     http_proxy = get_proxy(env)
     options = ChromeOptions()
     # driver_path = chromedriver_autoinstaller.install()
-    logging.info("Add options to Chrome Driver")
+    logging.info("Adding options to Chromium Driver")
     options.add_argument("--disable-blink-features") # Disable features that might betray automation
     options.add_argument("--disable-blink-features=AutomationControlled") # Disables a Chrome flag that shows an 'automation' toolbar
     options.add_experimental_option("excludeSwitches", ["enable-automation"]) # Disable automation flags
     options.add_experimental_option('useAutomationExtension', False) # Disable automation extensions
+    logging.info("\tDisable automation extensions & flags")
     options.add_argument("--headless") # Ensure GUI is off. Essential for Docker.
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("disable-infobars")
-    options.add_argument(f'user-agent={random.choice(user_agents)}')
+    selected_user_agent = random.choice(user_agents)
+    options.add_argument(f'user-agent={selected_user_agent}')
+    logging.info("\tselected_user_agent :  %s", selected_user_agent)
     
     # add proxy if available
     if http_proxy is not None and len(http_proxy)>6:
         logging.info("[options] Adding a HTTP Proxy server to ChromeDriver: %s", http_proxy)
         options.add_argument('--proxy-server=%s' % http_proxy)
     if headless is True:
-        logging.info("Scraping on headless mode.")
+        logging.info("\tScraping on headless mode.")
         options.add_argument('--disable-gpu')
         options.headless = True
     else:
@@ -386,7 +389,7 @@ def init_driver(headless=True, proxy=None, show_images=False, option=None, firef
     options.add_argument('log-level=3')
     if proxy is not None:
         options.add_argument('--proxy-server=%s' % proxy)
-        logging.info("using proxy :  %s", proxy)
+        logging.info("\tusing proxy :  %s", proxy)
     if show_images == False and firefox == False:
         prefs = {"profile.managed_default_content_settings.images": 2}
         options.add_experimental_option("prefs", prefs)
@@ -394,7 +397,6 @@ def init_driver(headless=True, proxy=None, show_images=False, option=None, firef
         options.add_argument(option)
 
     driver_path = '/usr/local/bin/chromedriver'
-    logging.info("Creating Chromium driver from %s",driver_path)
     driver = webdriver.Chrome(options=options, executable_path=driver_path)
 
     driver.set_page_load_timeout(7)
@@ -786,7 +788,7 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
         # Selenium track A: login based
         try:                     
             # Usage
-            check_and_kill_processes(["chromedriver", "google-chrome"])
+            check_and_kill_processes(["chromium","chromedriver", "google-chrome"])
             try:
                 logging.info("[Twitter] Open driver")
                 driver = init_driver(headless=True, show_images=False, proxy=None)
