@@ -360,30 +360,23 @@ def init_driver(headless=True, proxy=None, show_images=False, option=None, firef
     """
     global driver
     http_proxy = get_proxy(env)
-    if firefox:
-        # options = FirefoxOptions()
-        # driver_path = geckodriver_autoinstaller.install()
-        logging.info("Firefox: Geckodriver disabled")
-    else:
-        options = ChromeOptions()
-        # driver_path = chromedriver_autoinstaller.install()
-        logging.info("Add options to Chrome Driver")
-        options.add_argument("--disable-blink-features") # Disable features that might betray automation
-        options.add_argument("--disable-blink-features=AutomationControlled") # Disables a Chrome flag that shows an 'automation' toolbar
-        options.add_experimental_option("excludeSwitches", ["enable-automation"]) # Disable automation flags
-        options.add_experimental_option('useAutomationExtension', False) # Disable automation extensions
-        options.add_argument("--headless") # Ensure GUI is off. Essential for Docker.
-        options.add_argument("--no-sandbox")
-        options.add_argument("--disable-dev-shm-usage")
-        options.add_argument("disable-infobars")
-        options.add_argument(f'user-agent={random.choice(user_agents)}')
-        
-        # add proxy if available
-        if http_proxy is not None:
-            logging.info("[options] Adding a HTTP Proxy server to ChromeDriver: %s", http_proxy)
-            options.add_argument('--proxy-server=%s' % http_proxy)
-
-        driver = webdriver.Chrome(options=options)
+    options = ChromeOptions()
+    # driver_path = chromedriver_autoinstaller.install()
+    logging.info("Add options to Chrome Driver")
+    options.add_argument("--disable-blink-features") # Disable features that might betray automation
+    options.add_argument("--disable-blink-features=AutomationControlled") # Disables a Chrome flag that shows an 'automation' toolbar
+    options.add_experimental_option("excludeSwitches", ["enable-automation"]) # Disable automation flags
+    options.add_experimental_option('useAutomationExtension', False) # Disable automation extensions
+    options.add_argument("--headless") # Ensure GUI is off. Essential for Docker.
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("disable-infobars")
+    options.add_argument(f'user-agent={random.choice(user_agents)}')
+    
+    # add proxy if available
+    if http_proxy is not None and len(http_proxy)>6:
+        logging.info("[options] Adding a HTTP Proxy server to ChromeDriver: %s", http_proxy)
+        options.add_argument('--proxy-server=%s' % http_proxy)
     if headless is True:
         logging.info("Scraping on headless mode.")
         options.add_argument('--disable-gpu')
@@ -400,14 +393,10 @@ def init_driver(headless=True, proxy=None, show_images=False, option=None, firef
     if option is not None:
         options.add_argument(option)
 
-    if firefox:
-        driver_path = geckodriver_autoinstaller.install()
-        driver = webdriver.Firefox(options=options, executable_path=driver_path)
-    else:
-        driver_path = '/usr/local/bin/chromedriver'
-        driver = webdriver.Chrome(options=options, executable_path=driver_path)
+    driver_path = '/usr/local/bin/chromedriver'
+    driver = webdriver.Chrome(options=options, executable_path=driver_path)
 
-    driver.set_page_load_timeout(10)
+    driver.set_page_load_timeout(7)
     return driver
 
 
