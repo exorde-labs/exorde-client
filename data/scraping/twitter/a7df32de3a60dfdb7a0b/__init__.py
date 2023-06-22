@@ -366,7 +366,7 @@ def init_driver(headless=True, proxy=None, show_images=False, option=None, firef
         logging.info("Firefox: Geckodriver disabled")
     else:
         options = ChromeOptions()
-        driver_path = chromedriver_autoinstaller.install()
+        # driver_path = chromedriver_autoinstaller.install()
         logging.info("Add options to Chrome Driver")
         options.add_argument("--disable-blink-features") # Disable features that might betray automation
         options.add_argument("--disable-blink-features=AutomationControlled") # Disables a Chrome flag that shows an 'automation' toolbar
@@ -401,8 +401,10 @@ def init_driver(headless=True, proxy=None, show_images=False, option=None, firef
         options.add_argument(option)
 
     if firefox:
+        driver_path = geckodriver_autoinstaller.install()
         driver = webdriver.Firefox(options=options, executable_path=driver_path)
     else:
+        driver_path = '/usr/local/bin/chromedriver'
         driver = webdriver.Chrome(options=options, executable_path=driver_path)
 
     driver.set_page_load_timeout(10)
