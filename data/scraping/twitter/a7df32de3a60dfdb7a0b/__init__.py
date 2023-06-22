@@ -394,7 +394,7 @@ def init_driver(headless=True, proxy=None, show_images=False, option=None, firef
         options.add_argument(option)
 
     driver_path = '/usr/local/bin/chromedriver'
-    logging.info("Opening driver from path = {driver_path}")
+    logging.info(f"Opening driver from path = {driver_path}")
     driver = webdriver.Chrome(options=options, executable_path=driver_path)
 
     driver.set_page_load_timeout(7)
