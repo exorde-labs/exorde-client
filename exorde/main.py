@@ -3,7 +3,7 @@
 import os
 import argparse
 import asyncio
-
+import time
 from exorde.models import LiveConfiguration, StaticConfiguration
 from exorde.faucet import faucet
 from web3 import Web3
@@ -68,6 +68,7 @@ async def main(command_line_arguments: argparse.Namespace):
                 )
 
     try:
+        time.sleep(3)
         await claim_master(
             command_line_arguments.main_address,
             static_configuration,
