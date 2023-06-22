@@ -353,59 +353,65 @@ user_agents = [
     "Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36",
 ]
 
-    
+def get_chrome_path():
+    if os.path.isfile('/usr/bin/chromium-browser'):
+        return '/usr/bin/chromium-browser'
+    elif os.path.isfile('/usr/bin/chromium'):
+        return '/usr/bin/chromium'
+    elif os.path.isfile('/usr/bin/chrome'):
+        return '/usr/bin/chrome'
+    elif os.path.isfile('/usr/bin/google-chrome'):
+        return '/usr/bin/google-chrome'
+    else:
+        return None
+        
 def init_driver(headless=True, proxy=None, show_images=False, option=None, firefox=False, env="/.env"):
     """ initiate a chromedriver or firefoxdriver instance
         --option : other option to add (str)
     """
     global driver
     http_proxy = get_proxy(env)
-    if firefox:
-        # options = FirefoxOptions()
-        # driver_path = geckodriver_autoinstaller.install()
-        logging.info("Firefox: Geckodriver disabled")
-    else:
-        options = ChromeOptions()
-        driver_path = chromedriver_autoinstaller.install()
-        logging.info("Add options to Chrome Driver")
-        options.add_argument("--disable-blink-features") # Disable features that might betray automation
-        options.add_argument("--disable-blink-features=AutomationControlled") # Disables a Chrome flag that shows an 'automation' toolbar
-        options.add_experimental_option("excludeSwitches", ["enable-automation"]) # Disable automation flags
-        options.add_experimental_option('useAutomationExtension', False) # Disable automation extensions
-        options.add_argument("--headless") # Ensure GUI is off. Essential for Docker.
-        options.add_argument("--no-sandbox")
-        options.add_argument("--disable-dev-shm-usage")
-        options.add_argument("disable-infobars")
-        options.add_argument(f'user-agent={random.choice(user_agents)}')
-        
-        # add proxy if available
-        if http_proxy is not None:
-            logging.info("[options] Adding a HTTP Proxy server to ChromeDriver: %s", http_proxy)
-            options.add_argument('--proxy-server=%s' % http_proxy)
-
-        driver = webdriver.Chrome(options=options)
+    options = ChromeOptions()
+    # driver_path = chromedriver_autoinstaller.install()
+    logging.info("Adding options to Chromium Driver")
+    binary_path = get_chrome_path()
+    options.binary_location = binary_path
+    logging.info(f"\tSelected Chrome executable path = {binary_path}")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-blink-features") # Disable features that might betray automation
+    options.add_argument("--disable-blink-features=AutomationControlled") # Disables a Chrome flag that shows an 'automation' toolbar
+    options.add_experimental_option("excludeSwitches", ["enable-automation"]) # Disable automation flags
+    options.add_experimental_option('useAutomationExtension', False) # Disable automation extensions
+    logging.info("\tDisable automation extensions & flags")
+    options.add_argument("--headless") # Ensure GUI is off. Essential for Docker.
+    logging.info("\tHeadless")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("disable-infobars")
+    selected_user_agent = random.choice(user_agents)
+    options.add_argument(f'user-agent={selected_user_agent}')
+    logging.info("\tselected_user_agent :  %s", selected_user_agent)
+    
+    # add proxy if available
+    if http_proxy is not None and len(http_proxy)>6:
+        logging.info("\tAdding a HTTP Proxy server: %s", http_proxy)
+        options.add_argument('--proxy-server=%s' % http_proxy)
     if headless is True:
-        logging.info("Scraping on headless mode.")
         options.add_argument('--disable-gpu')
         options.headless = True
     else:
         options.headless = False
     options.add_argument('log-level=3')
-    if proxy is not None:
-        options.add_argument('--proxy-server=%s' % proxy)
-        logging.info("using proxy :  %s", proxy)
     if show_images == False and firefox == False:
         prefs = {"profile.managed_default_content_settings.images": 2}
         options.add_experimental_option("prefs", prefs)
     if option is not None:
         options.add_argument(option)
 
-    if firefox:
-        driver = webdriver.Firefox(options=options, executable_path=driver_path)
-    else:
-        driver = webdriver.Chrome(options=options, executable_path=driver_path)
+    driver_path = '/usr/local/bin/chromedriver'
+    logging.info(f"Opening driver from path = {driver_path}")
+    driver = webdriver.Chrome(options=options, executable_path=driver_path)
 
-    driver.set_page_load_timeout(10)
+    driver.set_page_load_timeout(7)
     return driver
 
 
@@ -480,7 +486,10 @@ def log_in(env="/.env", wait=4):
     target_broad = 'twitter.com/home'
     try:
         # Load cookies if they exist
-        cookies = pickle.load(open("cookies.pkl", "rb"))
+        try:
+            cookies = pickle.load(open("cookies.pkl", "rb"))
+        except:
+            
         logging.info("[Twitter Chrome] loading existing cookies... ")  
         for cookie in cookies:
             logging.info("\t-%s",cookie)
@@ -794,7 +803,7 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
         # Selenium track A: login based
         try:                     
             # Usage
-            check_and_kill_processes(["chromedriver", "google-chrome"])
+            check_and_kill_processes(["chromium","chromedriver", "google-chrome"])
             try:
                 logging.info("[Twitter] Open driver")
                 driver = init_driver(headless=True, show_images=False, proxy=None)
@@ -805,7 +814,6 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
             except Exception as e:
                 logging.debug("Exception during Twitter Init:  %s",e)
 
-            chromedriver_autoinstaller.install()
             try:         
                 nb_tweets_wanted = 50
                 async for result in scrape_( keyword=search_keyword, display_type="latest", limit=nb_tweets_wanted):
