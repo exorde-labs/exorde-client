@@ -489,6 +489,7 @@ def log_in(env="/.env", wait=4):
         try:
             cookies = pickle.load(open("cookies.pkl", "rb"))
         except:
+            logging.info("[Cookies] File not found, no cookies.")
             
         logging.info("[Twitter Chrome] loading existing cookies... ")  
         for cookie in cookies:
