@@ -353,7 +353,18 @@ user_agents = [
     "Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36",
 ]
 
-    
+def get_chrome_path():
+    if os.path.isfile('/usr/bin/chromium-browser'):
+        return '/usr/bin/chromium-browser'
+    elif os.path.isfile('/usr/bin/chromium'):
+        return '/usr/bin/chromium'
+    elif os.path.isfile('/usr/bin/chrome'):
+        return '/usr/bin/chrome'
+    elif os.path.isfile('/usr/bin/google-chrome'):
+        return '/usr/bin/google-chrome'
+    else:
+        return None
+        
 def init_driver(headless=True, proxy=None, show_images=False, option=None, firefox=False, env="/.env"):
     """ initiate a chromedriver or firefoxdriver instance
         --option : other option to add (str)
@@ -363,6 +374,9 @@ def init_driver(headless=True, proxy=None, show_images=False, option=None, firef
     options = ChromeOptions()
     # driver_path = chromedriver_autoinstaller.install()
     logging.info("Adding options to Chromium Driver")
+    binary_path = get_chrome_path()
+    options.binary_location = binary_path
+    logging.info(f"\tSelected Chrome executable path = {binary_path}")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-blink-features") # Disable features that might betray automation
     options.add_argument("--disable-blink-features=AutomationControlled") # Disables a Chrome flag that shows an 'automation' toolbar
