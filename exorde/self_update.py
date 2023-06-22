@@ -7,8 +7,8 @@ import logging
 async def self_update():
     try:
         latest_tag = await get_latest_tag()
-        logging.info(f"[CLIENT UPDATE] Updating from {local_version} to version  {latest_tag}")
         local_version = metadata.version("exorde")
+        logging.info(f"[CLIENT UPDATE] Updating from {local_version} to version  {latest_tag}")
         if latest_tag != local_version:
             exorde_repository_path = "git+https://github.com/exorde-labs/exorde-client.git#subdirectory=exorde&egg=exorde"
             subprocess.check_call(["pip", "install", exorde_repository_path])
