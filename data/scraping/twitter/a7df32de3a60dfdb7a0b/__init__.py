@@ -486,7 +486,10 @@ def log_in(env="/.env", wait=4):
     target_broad = 'twitter.com/home'
     try:
         # Load cookies if they exist
-        cookies = pickle.load(open("cookies.pkl", "rb"))
+        try:
+            cookies = pickle.load(open("cookies.pkl", "rb"))
+        except:
+            
         logging.info("[Twitter Chrome] loading existing cookies... ")  
         for cookie in cookies:
             logging.info("\t-%s",cookie)
@@ -811,7 +814,6 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
             except Exception as e:
                 logging.debug("Exception during Twitter Init:  %s",e)
 
-            chromedriver_autoinstaller.install()
             try:         
                 nb_tweets_wanted = 50
                 async for result in scrape_( keyword=search_keyword, display_type="latest", limit=nb_tweets_wanted):
