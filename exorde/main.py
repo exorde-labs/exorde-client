@@ -74,14 +74,14 @@ async def main(command_line_arguments: argparse.Namespace):
             live_configuration,
         )
     except:
-        logging.exception("An error occured claiming")
+        logging.exception("An error occurred claiming Master address")
         os._exit(1)
     # print main address REP
     cursor = 1
     from exorde.spotting import spotting
 
     while True:
-        if cursor % 4 == 0:
+        if cursor % 3 == 0:
             try:
                 await self_update()
                 # update/refresh configuration
@@ -206,5 +206,5 @@ def run():
 
 
 if __name__ == "__main__":
-    print("\n*****************************\nExorde Client starting...\n*****************************\n")
+    logging.info("\n*****************************\nExorde Client starting...\n*****************************\n")
     run()
