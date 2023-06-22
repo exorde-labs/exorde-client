@@ -51,8 +51,11 @@ async def get_scraping_module(module_name):
     module_hash = scraping_modules[module_name]
     try:
         old_module_version = metadata.version(module_hash)
+        logging.info(f"Scraping module [{module_name}] Version check")
+        logging.info(f"Current version = {old_module_version}")
         online_module_version = await get_module_online_version(module_name)
-        if old_module_version != online_module_version:
+        logging.info(f"Latest version = {online_module_version}")
+        if old_module_version < online_module_version:
             logging.info(f"Updating {module_name}")
             logging.info(
                 "diff in versions : {module_version} != {online_module_version}"
