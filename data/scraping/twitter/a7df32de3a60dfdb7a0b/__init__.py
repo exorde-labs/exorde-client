@@ -369,6 +369,7 @@ def init_driver(headless=True, proxy=None, show_images=False, option=None, firef
     options.add_experimental_option('useAutomationExtension', False) # Disable automation extensions
     logging.info("\tDisable automation extensions & flags")
     options.add_argument("--headless") # Ensure GUI is off. Essential for Docker.
+    logging.info("\tHeadless")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("disable-infobars")
@@ -378,18 +379,14 @@ def init_driver(headless=True, proxy=None, show_images=False, option=None, firef
     
     # add proxy if available
     if http_proxy is not None and len(http_proxy)>6:
-        logging.info("[options] Adding a HTTP Proxy server to ChromeDriver: %s", http_proxy)
+        logging.info("\tAdding a HTTP Proxy server: %s", http_proxy)
         options.add_argument('--proxy-server=%s' % http_proxy)
     if headless is True:
-        logging.info("\tScraping on headless mode.")
         options.add_argument('--disable-gpu')
         options.headless = True
     else:
         options.headless = False
     options.add_argument('log-level=3')
-    if proxy is not None:
-        options.add_argument('--proxy-server=%s' % proxy)
-        logging.info("\tusing proxy :  %s", proxy)
     if show_images == False and firefox == False:
         prefs = {"profile.managed_default_content_settings.images": 2}
         options.add_experimental_option("prefs", prefs)
@@ -397,6 +394,7 @@ def init_driver(headless=True, proxy=None, show_images=False, option=None, firef
         options.add_argument(option)
 
     driver_path = '/usr/local/bin/chromedriver'
+    logging.info("Opening driver from path = {driver_path}")
     driver = webdriver.Chrome(options=options, executable_path=driver_path)
 
     driver.set_page_load_timeout(7)
