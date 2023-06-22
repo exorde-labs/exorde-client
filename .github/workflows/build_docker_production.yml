@@ -12,7 +12,8 @@ on:
 jobs:
   build-deploy:
     name: Build and Publish (on production)
-    runs-on: ubuntu-latest
+    runs-on:
+      group: large-runners
     env:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
