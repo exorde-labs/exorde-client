@@ -363,6 +363,7 @@ def init_driver(headless=True, proxy=None, show_images=False, option=None, firef
     options = ChromeOptions()
     # driver_path = chromedriver_autoinstaller.install()
     logging.info("Adding options to Chromium Driver")
+    options.add_argument("--no-sandbox")
     options.add_argument("--disable-blink-features") # Disable features that might betray automation
     options.add_argument("--disable-blink-features=AutomationControlled") # Disables a Chrome flag that shows an 'automation' toolbar
     options.add_experimental_option("excludeSwitches", ["enable-automation"]) # Disable automation flags
@@ -370,7 +371,6 @@ def init_driver(headless=True, proxy=None, show_images=False, option=None, firef
     logging.info("\tDisable automation extensions & flags")
     options.add_argument("--headless") # Ensure GUI is off. Essential for Docker.
     logging.info("\tHeadless")
-    options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("disable-infobars")
     selected_user_agent = random.choice(user_agents)
