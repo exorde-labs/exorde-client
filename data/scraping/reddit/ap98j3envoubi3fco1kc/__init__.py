@@ -22,7 +22,7 @@ from exorde_data import (
 
 import hashlib
 
-MAX_EXPIRATION_SECONDS = 120
+MAX_EXPIRATION_SECONDS = 180
 
 def is_within_timeframe_seconds(input_timestamp, timeframe_sec):
     input_timestamp = int(input_timestamp)
