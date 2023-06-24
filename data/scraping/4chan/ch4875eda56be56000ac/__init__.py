@@ -493,7 +493,7 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
     if not has_substring(["4chan", "4channel", "4cdn"], url):
         raise ValueError("Not a 4chan URL")
     async for result in scrape_4chan(
-        max_oldness_seconds=60,
+        max_oldness_seconds=120,
         maximum_to_collect=25,
         skipping_thread_probability_percent=20,
     ):
