@@ -1,25 +1,15 @@
-import random
 import logging
-from typing import Callable
 from typing import AsyncGenerator
-from exorde.urls import generate_url
 
-from exorde_data import query, Item
-
-from exorde.get_keywords import get_keywords
+from exorde.brain import think
+from exorde_data import Item, query
 
 
-def implementation(
-    query: Callable[[str], AsyncGenerator[Item, None]]
-) -> Callable:
+async def get_item():
     async def logic() -> AsyncGenerator[Item, None]:
-        item: Item
         while True:
             try:
-                keywords_ = await get_keywords()
-                selected_keyword = random.choice(keywords_)
-                logging.info("[KEYWORDS] Selected = %s", selected_keyword)
-                url = await generate_url(selected_keyword)
+                url = await think()
                 async for item in query(url):
                     if isinstance(item, Item):
                         yield item
@@ -30,6 +20,3 @@ def implementation(
                 raise (e)
 
     return logic
-
-
-get_item: Callable[[], AsyncGenerator[Item, None]] = implementation(query)
