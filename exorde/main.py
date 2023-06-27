@@ -112,6 +112,10 @@ async def main(command_line_arguments: argparse.Namespace):
                 )
         cursor += 1
         if live_configuration and live_configuration["online"]:
+            # quality_job = await get_available_quality_job()
+            # if quality_job:
+            #    quality_check(job)
+            # else:
             await spotting(live_configuration, static_configuration)
         elif not live_configuration["online"]:
             logging.info(
