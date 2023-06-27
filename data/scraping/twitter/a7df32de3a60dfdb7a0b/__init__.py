@@ -273,7 +273,8 @@ def get_data(card):
         return
 
     try:
-        text = card.find_element(by=By.XPATH, value='.//div[2]/div[2]/div[1]').text
+        # text = card.find_element(by=By.XPATH, value='.//div[2]/div[2]/div[1]').text        
+        text = card.find_element(by=By.XPATH, value='.//div[@data-testid="tweetText"]').text
     except:
         text = ""
 
