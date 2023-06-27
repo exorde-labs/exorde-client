@@ -2,21 +2,18 @@ import logging
 from typing import AsyncGenerator
 
 from exorde.brain import think
-from exorde_data import Item, query
+from exorde_data import Item
 
 
-async def get_item():
-    async def logic() -> AsyncGenerator[Item, None]:
-        while True:
-            try:
-                url = await think()
-                async for item in query(url):
-                    if isinstance(item, Item):
-                        yield item
-                    else:
-                        continue
-            except Exception as e:
-                logging.exception("An error occured retrieving an item: %s", e)
-                raise (e)
-
-    return logic
+async def get_item() -> AsyncGenerator[Item, None]:
+    while True:
+        try:
+            url, module = await think()
+            async for item in module.query(url):
+                if isinstance(item, Item):
+                    yield item
+                else:
+                    continue
+        except Exception as e:
+            logging.exception("An error occured retrieving an item: %s", e)
+            raise (e)

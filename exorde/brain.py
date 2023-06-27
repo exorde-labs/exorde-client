@@ -2,11 +2,16 @@ import logging
 import random
 from exorde.get_keywords import get_keywords
 from exorde.urls import generate_url
+from exorde_data import get_scraping_module_for_url
 
 
 async def think():
     keywords_ = await get_keywords()
     selected_keyword = random.choice(keywords_)
-    logging.info("[KEYWORDS] Selected = %s", selected_keyword)
+    logging.info(f"[BRAIN] Selected Keyword : {selected_keyword}")
+
     url = await generate_url(selected_keyword)
-    return url
+    module = await get_scraping_module_for_url(url)
+    logging.info(f"[BRAIN] Selected URL : {url}")
+    logging.info(f"[BRAIN] Selected Module : {module.__name__}")
+    return url, module
