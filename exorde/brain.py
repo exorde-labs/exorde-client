@@ -14,4 +14,5 @@ async def think():
     module = await get_scraping_module_for_url(url)
     logging.info(f"[BRAIN] Selected URL : {url}")
     logging.info(f"[BRAIN] Selected Module : {module.__name__}")
-    return url, module
+    parameters = {}
+    return url, module, parameters

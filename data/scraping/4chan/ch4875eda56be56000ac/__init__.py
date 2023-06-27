@@ -216,7 +216,9 @@ def has_similar_chars(string, min_repetition_count):
     return False
 
 
-def filter_strings_multiple_words_length(strings, min_length, min_length_composed):
+def filter_strings_multiple_words_length(
+    strings, min_length, min_length_composed
+):
     filtered_list = []
     for string in strings:
         if len(string) >= min_length or has_higher_uppercase_percentage(
@@ -357,7 +359,9 @@ async def scrape_4chan(
 
     # Check if the response was successful
     if r is None:
-        raise Exception("Could not gather 4chan content from the base endpoint.")
+        raise Exception(
+            "Could not gather 4chan content from the base endpoint."
+        )
 
     # Load the bad words from the file
     bad_words = []
@@ -366,13 +370,12 @@ async def scrape_4chan(
             async with session.get(BAD_WORDS_ENDPOINT) as response:
                 if response.status == 200:
                     data = await response.text()
-                    bad_words = data.split('\n')
+                    bad_words = data.split("\n")
     except:
         try:
             bad_words = load_file_words("bad_words_list.txt")
-        except Exception as e:            
+        except Exception as e:
             logging.info("[4chan] Error loading BAD WORDS: %s", e)
-
 
     # Initialize the bad words processor
     bad_words_processor = KeywordProcessor()
@@ -453,7 +456,10 @@ async def scrape_4chan(
                         return
 
         # Check if the thread meets the criteria
-        if not is_older(time, oldness_th_timestamp) and len(thread_post) > min_post_len:
+        if (
+            not is_older(time, oldness_th_timestamp)
+            and len(thread_post) > min_post_len
+        ):
             thread_posts.append(thread_post)
 
             # Format the output
@@ -468,7 +474,10 @@ async def scrape_4chan(
             thread_post_datetime = convert_timestamp(str(time))
             thread_post_id = str(thread_id_number)
             thread_post_url = (
-                "https://boards.4channel.org/" + board_name_str + "/thread/" + thread_id_number
+                "https://boards.4channel.org/"
+                + board_name_str
+                + "/thread/"
+                + thread_id_number
             )
 
             # Yield the formatted item
@@ -489,7 +498,7 @@ async def scrape_4chan(
             return
 
 
-async def query(url: str) -> AsyncGenerator[Item, None]:
+async def query(url: str, parameters: dict) -> AsyncGenerator[Item, None]:
     if not has_substring(["4chan", "4channel", "4cdn"], url):
         raise ValueError("Not a 4chan URL")
     async for result in scrape_4chan(

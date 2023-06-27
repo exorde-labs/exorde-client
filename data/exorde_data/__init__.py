@@ -81,7 +81,9 @@ async def get_scraping_module_name_from_url(
         async with aiohttp.ClientSession() as session:
             async with session.get(mapping_url) as resp:
                 if resp.status != 200:
-                    logging.info(f"get_scraping_module_name_from_url: Unable to fetch data: HTTP {resp.status}")
+                    logging.info(
+                        f"get_scraping_module_name_from_url: Unable to fetch data: HTTP {resp.status}"
+                    )
                     return None
 
                 data = await resp.text()

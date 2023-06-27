@@ -8,8 +8,8 @@ from exorde_data import Item
 async def get_item() -> AsyncGenerator[Item, None]:
     while True:
         try:
-            url, module = await think()
-            async for item in module.query(url):
+            url, module, parameters = await think()
+            async for item in module.query(url, parameters):
                 if isinstance(item, Item):
                     yield item
                 else:

@@ -24,6 +24,7 @@ import hashlib
 
 MAX_EXPIRATION_SECONDS = 180
 
+
 def is_within_timeframe_seconds(input_timestamp, timeframe_sec):
     input_timestamp = int(input_timestamp)
     current_timestamp = int(time.time())  # Get the current UNIX timestamp
@@ -33,11 +34,13 @@ def is_within_timeframe_seconds(input_timestamp, timeframe_sec):
         return True
     else:
         return False
-    
+
+
 def format_timestamp(timestamp):
     dt = datett.fromtimestamp(timestamp, timezone.utc)
     formatted_timestamp = dt.strftime("%Y-%m-%dT%H:%M:%SZ")
     return formatted_timestamp
+
 
 async def scrap_post(url: str) -> AsyncGenerator[Item, None]:
     resolvers = {}
@@ -53,17 +56,15 @@ async def scrap_post(url: str) -> AsyncGenerator[Item, None]:
                 ).hexdigest()
             ),
             created_at=CreatedAt(
-                str(
-                    format_timestamp(
-                        content["created_utc"]
-                    )
-                )
+                str(format_timestamp(content["created_utc"]))
             ),
             title=Title(content["title"]),
             domain=Domain("reddit.com"),
             url=Url(content["url"]),
         )
-        if is_within_timeframe_seconds(content["created_utc"],MAX_EXPIRATION_SECONDS):
+        if is_within_timeframe_seconds(
+            content["created_utc"], MAX_EXPIRATION_SECONDS
+        ):
             yield item_
 
     async def comment(data) -> AsyncGenerator[Item, None]:
@@ -77,16 +78,14 @@ async def scrap_post(url: str) -> AsyncGenerator[Item, None]:
                 ).hexdigest()
             ),
             created_at=CreatedAt(
-                str(
-                    format_timestamp(
-                        content["created_utc"]
-                    )
-                )
+                str(format_timestamp(content["created_utc"]))
             ),
             domain=Domain("reddit.com"),
             url=Url("https://reddit.com" + content["permalink"]),
         )
-        if is_within_timeframe_seconds(content["created_utc"],MAX_EXPIRATION_SECONDS):
+        if is_within_timeframe_seconds(
+            content["created_utc"], MAX_EXPIRATION_SECONDS
+        ):
             yield item_
 
     async def more(__data__):
@@ -129,16 +128,17 @@ async def scrap_subreddit(subreddit_url: str) -> AsyncGenerator[Item, None]:
                 ):
                     yield item
 
-async def query(url: str) -> AsyncGenerator[Item, None]:
-    logging.info("[Reddit] Scraping %s",url)
+
+async def query(url: str, parameters: dict) -> AsyncGenerator[Item, None]:
+    logging.info("[Reddit] Scraping %s", url)
     if "reddit.com" not in url:
         raise ValueError(f"Not a reddit URL {url}")
     parameters = url.split("reddit.com")[1].split("/")[1:]
     if "comments" in parameters:
         async for result in scrap_post(url):
-            logging.info("[Reddit] found post = %s",result)
+            logging.info("[Reddit] found post = %s", result)
             yield result
     else:
         async for result in scrap_subreddit(url):
-            logging.info("[Reddit] found post = %s",result)
+            logging.info("[Reddit] found post = %s", result)
             yield result
