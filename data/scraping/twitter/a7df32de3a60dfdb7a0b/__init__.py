@@ -663,7 +663,7 @@ def check_exists_by_xpath(xpath, driver):
     return True
 
 def extract_tweet_info(tweet_tuple):
-    content = tweet_tuple[4]
+    content = tweet_tuple[3]
     author = tweet_tuple[0]
     created_at = tweet_tuple[2]
     title = tweet_tuple[0]
