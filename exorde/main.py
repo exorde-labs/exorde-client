@@ -173,7 +173,6 @@ def clear_env():
 
 
 def run():
-    logging.info("[Pre-init] Parse args...")
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--main_address", help="Main wallet", type=str, required=True
@@ -199,7 +198,6 @@ def run():
         default=logging.INFO,
     )
     args = parser.parse_args()
-    print("logs activated starting from now...")
     logging.basicConfig(level=args.loglevel)
 
     # Check that either all or none of Twitter arguments are provided
