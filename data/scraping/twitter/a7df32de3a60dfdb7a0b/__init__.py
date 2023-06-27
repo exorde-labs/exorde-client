@@ -755,7 +755,10 @@ async def scrape_(until=None, keyword="bitcoin", to_account=None, from_account=N
             # ETF será o primeiro dos Estados Unidos de bitcoin à vista.', '', '1', '', '1', 
             # ['https://pbs.twimg.com/card_img/12.21654/zd45zz5?format=jpg&name=small'], 'https://twitter.com/xxxxx/status/1231456479')
             # Create a new sha1 hash
-            content_, author_, created_at_, title_, domain_, url_, external_id_ = extract_tweet_info(tweet_tuple)
+            content_, author_, created_at_, title_, domain_, url_, external_id_ = extract_tweet_info(tweet_tuple)            
+            if keyword.lower() in author_.lower() and not keyword.lower() in content_.lower():
+                logging.info("Keyword not found in text, but in author's name, skipping this false positive.")
+                continue
             sha1 = hashlib.sha1()
             # Update the hash with the author string encoded to bytest
             try:
