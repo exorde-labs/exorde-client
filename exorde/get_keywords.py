@@ -18,7 +18,7 @@ FALLBACK_DEFAULT_LIST = [
     "crisis",
 ]
 KEYWORDS_URL = "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/keywords.txt"
-JSON_FILE_PATH = "/keywords.json"
+JSON_FILE_PATH = "keywords.json"
 KEYWORDS_UPDATE_INTERVAL = 5 * 60  # 5 minutes
 
 
