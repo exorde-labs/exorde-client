@@ -292,9 +292,8 @@ def get_data(card):
         return
 
     try:
-        text = card.find_element(
-            by=By.XPATH, value=".//div[2]/div[2]/div[1]"
-        ).text
+        # text = card.find_element(by=By.XPATH, value='.//div[2]/div[2]/div[1]').text        
+        text = card.find_element(by=By.XPATH, value='.//div[@data-testid="tweetText"]').text
     except:
         text = ""
 
@@ -820,7 +819,7 @@ def check_exists_by_xpath(xpath, driver):
 
 
 def extract_tweet_info(tweet_tuple):
-    content = tweet_tuple[4]
+    content = tweet_tuple[3]
     author = tweet_tuple[0]
     created_at = tweet_tuple[2]
     title = tweet_tuple[0]
@@ -972,15 +971,10 @@ async def scrape_(
             # ETF será o primeiro dos Estados Unidos de bitcoin à vista.', '', '1', '', '1',
             # ['https://pbs.twimg.com/card_img/12.21654/zd45zz5?format=jpg&name=small'], 'https://twitter.com/xxxxx/status/1231456479')
             # Create a new sha1 hash
-            (
-                content_,
-                author_,
-                created_at_,
-                title_,
-                domain_,
-                url_,
-                external_id_,
-            ) = extract_tweet_info(tweet_tuple)
+            content_, author_, created_at_, title_, domain_, url_, external_id_ = extract_tweet_info(tweet_tuple)            
+            if keyword.lower() in author_.lower() and not keyword.lower() in content_.lower():
+                logging.info("Keyword not found in text, but in author's name, skipping this false positive.")
+                continue
             sha1 = hashlib.sha1()
             # Update the hash with the author string encoded to bytest
             try:
