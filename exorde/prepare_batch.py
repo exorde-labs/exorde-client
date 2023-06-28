@@ -32,7 +32,7 @@ async def prepare_batch(
                 sum(
                     [evaluate_token_count(item.item.content) for item in batch]
                 )
-                >= live_configuration["batch-size"]
+                >= live_configuration["batch_size"]
             ):
                 await generator.aclose()
                 return batch
