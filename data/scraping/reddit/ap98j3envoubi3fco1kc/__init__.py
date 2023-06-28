@@ -133,8 +133,8 @@ async def query(url: str, parameters: dict) -> AsyncGenerator[Item, None]:
     logging.info("[Reddit] Scraping %s", url)
     if "reddit.com" not in url:
         raise ValueError(f"Not a reddit URL {url}")
-    parameters = url.split("reddit.com")[1].split("/")[1:]
-    if "comments" in parameters:
+    url_parameters = url.split("reddit.com")[1].split("/")[1:]
+    if "comments" in url_parameters:
         async for result in scrap_post(url):
             logging.info("[Reddit] found post = %s", result)
             yield result

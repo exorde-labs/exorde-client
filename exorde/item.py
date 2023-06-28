@@ -16,4 +16,3 @@ async def get_item() -> AsyncGenerator[Item, None]:
                     continue
         except Exception as e:
             logging.exception("An error occured retrieving an item: %s", e)
-            raise (e)
