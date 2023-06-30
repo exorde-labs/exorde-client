@@ -139,20 +139,20 @@ def write_env(email, password, username, http_proxy=""):
     # Define the content
     content = f"SCWEET_EMAIL={email}\nSCWEET_PASSWORD={password}\nSCWEET_USERNAME={username}\nHTTP_PROXY={http_proxy}\n"
     # Check if the .env file exists, if not create it
-    if not os.path.exists("/.env"):
-        with open("/.env", "w") as f:
+    if not os.path.exists(".env"):
+        with open(".env", "w") as f:
             f.write(content)
         try:
             os.chmod(
-                "/.env", 0o600
+                ".env", 0o600
             )  # Set file permissions to rw for the owner only
         except Exception as e:
             logging.info("Error: ", e, " - could not chmod .env, passing...")
-        logging.info("write_env: /.env file created.")
+        logging.info("write_env: .env file created.")
     else:
-        with open("/.env", "w") as f:
+        with open(".env", "w") as f:
             f.write(content)
-        logging.info("write_env: /.env file updated.")
+        logging.info("write_env: .env file updated.")
 
 
 def clear_env():
