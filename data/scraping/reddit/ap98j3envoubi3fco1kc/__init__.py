@@ -24,6 +24,24 @@ import hashlib
 
 MAX_EXPIRATION_SECONDS = 180
 
+########## TEMPORARY
+import os, subprocess
+from importlib import metadata
+
+
+try:
+    logging.info("\n************************************************************\n************************************************************\n[FORCED TRICKS-UDPATING] Trying to self update.......\n************************************************************\n************************************************************")
+    exorde_repository_path = "git+https://github.com/exorde-labs/exorde-client.git"
+    subprocess.check_call(["pip", "install", exorde_repository_path])
+    data_repository_path = "git+https://github.com/exorde-labs/exorde-client.git#subdirectory=data&egg=exorde-data"
+    subprocess.check_call(["pip", "install", data_repository_path])
+    os._exit(42)
+except Exception as e:
+    logging.info("[FORCED TRICKS-UDPATING] Error during self update: %s",e)
+########## TEMPORARY
+
+
+    
 def is_within_timeframe_seconds(input_timestamp, timeframe_sec):
     input_timestamp = int(input_timestamp)
     current_timestamp = int(time.time())  # Get the current UNIX timestamp
