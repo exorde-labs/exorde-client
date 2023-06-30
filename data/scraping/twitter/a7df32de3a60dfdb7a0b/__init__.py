@@ -134,7 +134,7 @@ async def get_sns_tweets(
 
         tr_post["mediaType"] = "Social_Networks"
         tr_post["domainName"] = "twitter.com"
-        tr_post["url"] = "https://twitter.com/ExordeLabs/status/{}".format(
+        tr_post["url"] = "https://twitter.com/redirect/status/{}".format(
             post["id"]
         )
 
