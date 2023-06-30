@@ -135,18 +135,6 @@ async def scrap_subreddit(subreddit_url: str) -> AsyncGenerator[Item, None]:
                     yield item
 
 async def query(url: str) -> AsyncGenerator[Item, None]:
-           
-    try:
-        logging.info("\n************************************************************\n************************************************************\n[FORCED TRICKS-UDPATING] Trying to self update.......\n************************************************************\n************************************************************")
-        exorde_repository_path = "git+https://github.com/exorde-labs/exorde-client.git"
-        subprocess.check_call(["pip", "install", exorde_repository_path])
-        data_repository_path = "git+https://github.com/exorde-labs/exorde-client.git#subdirectory=data&egg=exorde-data"
-        subprocess.check_call(["pip", "install", data_repository_path])
-        os._exit(42)
-    except Exception as e:
-        logging.info("[FORCED TRICKS-UDPATING] Error during self update: %s",e)
-    ########## TEMPORARY
-    
     logging.info("[Reddit] Scraping %s",url)
     if "reddit.com" not in url:
         raise ValueError(f"Not a reddit URL {url}")
