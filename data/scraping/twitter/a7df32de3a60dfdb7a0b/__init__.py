@@ -44,7 +44,7 @@ global driver
 driver = None
 
 
-MAX_EXPIRATION_HARDCODED_SECONDS = 90
+MAX_EXPIRATION_HARDCODED_SECONDS = 180
 
 #############################################################################
 #############################################################################
