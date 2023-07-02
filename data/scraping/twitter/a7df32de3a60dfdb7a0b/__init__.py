@@ -486,7 +486,7 @@ def log_in(env="/.env", wait=4):
     target_home_url = 'https://twitter.com/home'
     target_broad = 'twitter.com/home'
     target_bis = 'redirect_after_login=%2Fhome'
-    # driver.get('https://www.twitter.com/')
+    driver.get('https://www.twitter.com/')
     try:
         # Load cookies if they exist
         try:
@@ -531,6 +531,7 @@ def log_in(env="/.env", wait=4):
         driver.get(target_home_url)
         sleep(random.uniform(2, 4))
 
+    logging.info("[Twitter Chrome] Current URL = %s",driver.current_url)  
     if not target_broad in driver.current_url:
         logging.info("[Twitter] Not on target, let's log in...")
         clear_cookies()
@@ -551,6 +552,7 @@ def log_in(env="/.env", wait=4):
         sleep(random.uniform(wait, wait + 1))
 
         # enter email
+        logging.info("[Twitter Chrome] Current URL = %s",driver.current_url)  
         logging.info("Entering Email..")
         email_el = driver.find_element(by=By.XPATH, value=email_xpath)
         sleep(random.uniform(wait, wait + 1))
@@ -621,8 +623,10 @@ def keep_scroling(data, tweet_ids, scrolling, tweet_parsed, limit, scroll, last_
         # get the card of tweets
         
         page_cards = driver.find_elements(by=By.XPATH, value='//article[@data-testid="tweet"]')  # changed div by article
+        logging.info("[XPath] page cards found = %s",len(page_cards))
         for card in page_cards:
             tweet = get_data(card)
+            logging.info("[XPath] Tweet visible currently = %s",len(page_cards))
             if tweet:
                 # check if the tweet is unique
                 tweet_id = ''.join(tweet[:-2])
@@ -630,12 +634,13 @@ def keep_scroling(data, tweet_ids, scrolling, tweet_parsed, limit, scroll, last_
                     tweet_ids.add(tweet_id)
                     data.append(tweet)
                     last_date = str(tweet[2])
+                    logging.info(f"[Tweet] Date = {last_date}")
                     if is_within_timeframe_seconds(last_date, MAX_EXPIRATION_HARDCODED_SECONDS):
                         logging.info("[Twitter Selenium] Found Tweet:  %s", tweet)
                         tweet_parsed += 1
                         successsive_old_tweets = 0
                     else:
-                        logging.info("[Twitter Selenium] Old Tweet:  %s", tweet)
+                        logging.info("[Twitter Selenium] Old Tweet:  %s", tweet[3])
                         successsive_old_tweets +=1
                     if successsive_old_tweets >= max_old_tweets_successive or  tweet_parsed >= limit:
                         return data, tweet_ids, scrolling, tweet_parsed, scroll, last_position
@@ -709,6 +714,7 @@ async def scrape_(until=None, keyword="bitcoin", to_account=None, from_account=N
     """
     global driver
     logging.info("\tScraping latest tweets on keyword =  %s",keyword)
+    logging.info("[Twitter Chrome] Scrape, Current URL = %s",driver.current_url)  
     # ------------------------- Variables : 
     # list that contains all data 
     data = []
