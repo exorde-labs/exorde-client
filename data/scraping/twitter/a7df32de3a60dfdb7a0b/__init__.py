@@ -387,7 +387,7 @@ def init_driver(headless=True, proxy=None, show_images=False, option=None, firef
     options.add_argument("--headless") # Ensure GUI is off. Essential for Docker.
     logging.info("\tHeadless")
     options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("user-data-dir=selenium") 
+    # options.add_argument("user-data-dir=selenium") 
     options.add_argument("disable-infobars")
     selected_user_agent = random.choice(user_agents)
     options.add_argument(f'user-agent={selected_user_agent}')
@@ -484,7 +484,7 @@ def log_in(env="/.env", wait=4):
 
     cookies_added = 0
     target_home_url = 'https://twitter.com/home'
-    target_broad = 'twitter.com/home'
+    target_home = 'twitter.com/home'
     target_bis = 'redirect_after_login=%2Fhome'
     driver.get('https://www.twitter.com/')
     try:
@@ -529,21 +529,23 @@ def log_in(env="/.env", wait=4):
         sleep(random.uniform(1, 5))
         logging.info("[Twitter Chrome] Found ourselves on target bis, retying..")   
         ### trying to close the window:        
-        sign_in_element = wait.until(EC.visibility_of_element_located((By.XPATH, '//span[contains(text(),"Sign in to Twitter")]')))
-
+        sign_in_element = driver.find_element(by=By.XPATH, value='//span[contains(text(),"Sign in to Twitter")]')
+        sleep(random.uniform(1,3))
         # check if the element is found
         if sign_in_element:
             logging.info("[Twitter Debug] Sign In Element found.")
         else:
             logging.info("[Twitter Debug] Sign In Element NOT FOUND.")
 
-        email_xpath = '//input[@autocomplete="username"]'
+        # click on the element
+        sign_in_element.click()
+        sleep(random.uniform(2, 5))
+        logging.info("[Twitter Chrome] Current URL after click = %s",driver.current_url)  
 
         driver.get(target_home_url)
         sleep(random.uniform(2, 4))
 
-    logging.info("[Twitter Chrome] Current URL = %s",driver.current_url)  
-    if not target_broad in driver.current_url:
+    if not target_home in driver.current_url:
         logging.info("[Twitter] Not on target, let's log in...")
         clear_cookies()
         email = get_email(env)  # const.EMAIL
@@ -602,7 +604,7 @@ def log_in(env="/.env", wait=4):
         sleep(random.uniform(wait, wait + 1))
         
         logging.info("[Twitter Chrome] Current URL = %s",str(driver.current_url))   
-        if target_broad in driver.current_url:
+        if target_home in driver.current_url:
             logging.info("Succes!")
             save_cookies(driver)
     else:        
@@ -649,7 +651,7 @@ def keep_scroling(data, tweet_ids, scrolling, tweet_parsed, limit, scroll, last_
         logging.info("[XPath] page cards found = %s",len(page_cards))
         for card in page_cards:
             tweet = get_data(card)
-            logging.info("[XPath] Tweet visible currently = %s",len(page_cards))
+            logging.debug("[XPath] Tweet visible currently = %s",len(page_cards))
             if tweet:
                 # check if the tweet is unique
                 tweet_id = ''.join(tweet[:-2])
@@ -737,7 +739,6 @@ async def scrape_(until=None, keyword="bitcoin", to_account=None, from_account=N
     """
     global driver
     logging.info("\tScraping latest tweets on keyword =  %s",keyword)
-    logging.info("[Twitter Chrome] Scrape, Current URL = %s",driver.current_url)  
     # ------------------------- Variables : 
     # list that contains all data 
     data = []
@@ -852,7 +853,7 @@ SPECIAL_KEYWORDS_LIST = ["bitcoin", "ethereum", "eth", "btc", "usdt", "cryptocur
  "Mexico", "Brazil", "%23price", "market", "%23NYSE","%23NASDAQ", "%23CAC", "CAC40", "%23G20", "%23OilPrice", "FTSE", "NYSE",
  "WallStreet", "money", "forex", "trading", "currency", "%23USD", "WarrenBuffett", "BlackRock", "Berkshire", "%23IPO",
  "Apple", "Tesla","Alphabet%20(GOOG)", "FB%20stock","debt", "%23bonds", "XAUUSD", "%23SP500", "DowJones", "satoshi"]
-NB_SPECIAL_CHECKS = 2
+NB_SPECIAL_CHECKS = 5
 ############
 
 
@@ -877,9 +878,11 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
         select_login_based_scraper = True
     if select_login_based_scraper:
         # Selenium track A: login based
-        try:                     
-            # Usage
-            check_and_kill_processes(["chromium","chromedriver", "google-chrome"])
+        try:          
+            try:
+                check_and_kill_processes(["chromium","chromedriver", "google-chrome"])
+            except Exception as e:
+                logging.info("Could not kill existing processes: %s",e)
             try:
                 logging.info("[Twitter] Open driver")
                 driver = init_driver(headless=True, show_images=False, proxy=None)
@@ -891,7 +894,7 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
                 logging.debug("Exception during Twitter Init:  %s",e)
 
             try:         
-                nb_tweets_wanted = 50
+                nb_tweets_wanted = 20
                 async for result in scrape_( keyword=search_keyword, display_type="latest", limit=nb_tweets_wanted):
                     yield result
                 if special_mode:
