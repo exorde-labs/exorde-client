@@ -813,14 +813,14 @@ def convert_spaces_to_percent20(input_string):
 special_mode = True
 SPECIAL_KEYWORDS_LIST = ["bitcoin", "ethereum", "eth", "btc", "usdt", "cryptocurrency", "solana",
  "doge", "cardano", "monero", "polkadot", "ripple", "xrp", "stablecoin", "defi", "cbdc", "nasdaq",
- "sp500", "s&p500", "BNB", "ETF", "Spot ETF", "Bitcoin ETF", "Crypto", "%23altcoin", "DeFi", "GameFi",
- "NFT", "NFTs", "Cryptocurrencies", "Cryptos", "twitter limit", "digital", "%23airdrop",
+ "sp500", "s&p500", "BNB", "ETF", "Spot%20ETF", "Bitcoin%20ETF", "Crypto", "%23altcoin", "DeFi", "GameFi",
+ "NFT", "NFTs", "Cryptocurrencies", "Cryptos", "twitter%20limit", "digital", "%23airdrop",
  "finance", "liquidity","token", "economy", "markets", "stocks", "crisis", "russia", "war", "ukraine"
- "luxury", "LVMH", "Elon musk", "conflict", "bank", "Gensler", "emeutes", "FaceID", "Riot", "riots", 
- "France riot", "France", "United states", "USA", "China", "Germany", "Europe", "European union (EU)", "Canada",
+ "luxury", "LVMH", "Elon%20musk", "conflict", "bank", "Gensler", "emeutes", "FaceID", "Riot", "riots", 
+ "France%20riot", "France", "United%20states", "USA", "China", "Germany", "Europe", "European%20union%20(EU)", "Canada",
  "Mexico", "Brazil", "%23price", "market", "%23NYSE","%23NASDAQ", "%23CAC", "CAC40", "%23G20", "%23OilPrice", "FTSE", "NYSE",
  "WallStreet", "money", "forex", "trading", "currency", "%23USD", "WarrenBuffett", "BlackRock", "Berkshire", "%23IPO",
- "Apple", "Tesla","Alphabet (GOOG)", "FB stock","debt", "%23bonds", "XAUUSD", "%23SP500", "DowJones", "satoshi"]
+ "Apple", "Tesla","Alphabet%20(GOOG)", "FB stock","debt", "%23bonds", "XAUUSD", "%23SP500", "DowJones", "satoshi"]
 NB_SPECIAL_CHECKS = 2
 ############
 
