@@ -528,19 +528,24 @@ def log_in(env="/.env", wait=4):
     if target_bis in driver.current_url:
         sleep(random.uniform(1, 5))
         logging.info("[Twitter Chrome] Found ourselves on target bis, retying..")   
-        ### trying to close the window:        
-        sign_in_element = driver.find_element(by=By.XPATH, value='//span[contains(text(),"Sign in to Twitter")]')
-        sleep(random.uniform(1,3))
-        # check if the element is found
-        if sign_in_element:
-            logging.info("[Twitter Debug] Sign In Element found.")
-        else:
-            logging.info("[Twitter Debug] Sign In Element NOT FOUND.")
 
-        # click on the element
-        sign_in_element.click()
-        sleep(random.uniform(2, 5))
-        logging.info("[Twitter Chrome] Current URL after click = %s",driver.current_url)  
+        try:
+            ### trying to close the window:        
+            sign_in_element = driver.find_element(by=By.XPATH, value='//span[contains(text(),"Sign in to Twitter")]')
+            sleep(random.uniform(1,3))
+            # check if the element is found
+            if sign_in_element:
+                logging.info("[Twitter Debug] Sign In Element found.")
+            else:
+                logging.info("[Twitter Debug] Sign In Element NOT FOUND.")
+
+            # click on the element
+            sign_in_element.click()
+            sleep(random.uniform(2, 5))
+            logging.info("[Twitter Chrome] Current URL after click = %s",driver.current_url)  
+        except Exception as e:
+            logging.info("[Twitter init] error = %s",e)
+            pass
 
         driver.get(target_home_url)
         sleep(random.uniform(2, 4))
@@ -891,7 +896,7 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
                 log_in()
                 logging.info("[Twitter] Logged in.")
             except Exception as e:
-                logging.debug("Exception during Twitter Init:  %s",e)
+                logging.info("[Twitter] Exception during Twitter Init:  %s",e)
 
             try:         
                 nb_tweets_wanted = 20
