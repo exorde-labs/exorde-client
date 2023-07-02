@@ -635,6 +635,7 @@ def keep_scroling(data, tweet_ids, scrolling, tweet_parsed, limit, scroll, last_
                         tweet_parsed += 1
                         successsive_old_tweets = 0
                     else:
+                        logging.info("[Twitter Selenium] Old Tweet:  %s", tweet)
                         successsive_old_tweets +=1
                     if successsive_old_tweets >= max_old_tweets_successive or  tweet_parsed >= limit:
                         return data, tweet_ids, scrolling, tweet_parsed, scroll, last_position
