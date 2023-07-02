@@ -511,6 +511,7 @@ def log_in(env="/.env", wait=4):
                 except:
                     logging.info("[Twitter Chrome] Error for cookie %s",cookie)   
                     cookies_not_imported += 1  
+        logging.info("[Twitter Chrome] Imported %s cookies.",cookies_added)
     except Exception as e:
         logging.exception("An error occured retrieving cookies: %s",e)
 
@@ -527,7 +528,7 @@ def log_in(env="/.env", wait=4):
     if target_bis in driver.current_url:
         sleep(random.uniform(1, 5))
         logging.info("[Twitter Chrome] Found ourselves on target bis, retying..")   
-        driver.get(target_broad)
+        driver.get(target_home_url)
         sleep(random.uniform(2, 4))
 
     if not target_broad in driver.current_url:
@@ -820,7 +821,7 @@ SPECIAL_KEYWORDS_LIST = ["bitcoin", "ethereum", "eth", "btc", "usdt", "cryptocur
  "France%20riot", "France", "United%20states", "USA", "China", "Germany", "Europe", "European%20union%20(EU)", "Canada",
  "Mexico", "Brazil", "%23price", "market", "%23NYSE","%23NASDAQ", "%23CAC", "CAC40", "%23G20", "%23OilPrice", "FTSE", "NYSE",
  "WallStreet", "money", "forex", "trading", "currency", "%23USD", "WarrenBuffett", "BlackRock", "Berkshire", "%23IPO",
- "Apple", "Tesla","Alphabet%20(GOOG)", "FB stock","debt", "%23bonds", "XAUUSD", "%23SP500", "DowJones", "satoshi"]
+ "Apple", "Tesla","Alphabet%20(GOOG)", "FB%20stock","debt", "%23bonds", "XAUUSD", "%23SP500", "DowJones", "satoshi"]
 NB_SPECIAL_CHECKS = 2
 ############
 
