@@ -446,7 +446,7 @@ def log_search_page(since, until_local, lang, display_type, word, to_account, fr
 def type_slow(string, element):
     for character in str(string):
         element.send_keys(character)
-        sleep(random.uniform(0.05, 0.37))
+        sleep(random.uniform(0.05, 0.27))
 
 def print_first_and_last(s):
     if len(s) < 2:
@@ -529,26 +529,26 @@ def log_in(env="/.env", wait=4):
         sleep(random.uniform(1, 5))
         logging.info("[Twitter Chrome] Found ourselves on target bis, retying..")   
 
-        try:
-            ### trying to close the window:        
-            sign_in_element = driver.find_element(by=By.XPATH, value='//span[contains(text(),"Sign in to Twitter")]')
-            sleep(random.uniform(1,3))
-            # check if the element is found
-            if sign_in_element:
-                logging.info("[Twitter Debug] Sign In Element found.")
-            else:
-                logging.info("[Twitter Debug] Sign In Element NOT FOUND.")
+        # try:
+        #     ### trying to close the window:        
+        #     sign_in_element = driver.find_element(by=By.XPATH, value='//span[contains(text(),"Sign in to Twitter")]')
+        #     sleep(random.uniform(1,3))
+        #     # check if the element is found
+        #     if sign_in_element:
+        #         logging.info("[Twitter Debug] Sign In Element found.")
+        #     else:
+        #         logging.info("[Twitter Debug] Sign In Element NOT FOUND.")
 
-            # click on the element
-            sign_in_element.click()
-            sleep(random.uniform(2, 5))
-            logging.info("[Twitter Chrome] Current URL after click = %s",driver.current_url)  
-        except Exception as e:
-            logging.info("[Twitter init] error = %s",e)
-            pass
+        #     # click on the element
+        #     sign_in_element.click()
+        #     sleep(random.uniform(2, 5))
+        #     logging.info("[Twitter Chrome] Current URL after click = %s",driver.current_url)  
+        # except Exception as e:
+        #     logging.info("[Twitter init] error = %s",e)
+        #     pass
 
         driver.get(target_home_url)
-        sleep(random.uniform(2, 4))
+        sleep(random.uniform(0, 2))
 
     if not target_home in driver.current_url:
         logging.info("[Twitter] Not on target, let's log in...")
@@ -606,9 +606,11 @@ def log_in(env="/.env", wait=4):
         type_slow(password, password_el)
         sleep(random.uniform(wait, wait + 1))
         password_el.send_keys(Keys.RETURN)
-        sleep(random.uniform(wait, wait + 1))
+        sleep(random.uniform(0, 1))
+        driver.get(target_home_url)
+        sleep(random.uniform(1, 1))
         
-        logging.info("[Twitter Chrome] Current URL = %s",str(driver.current_url))   
+        logging.info("[Twitter Login] Current URL after entering password = %s",str(driver.current_url))   
         if target_home in driver.current_url:
             logging.info("Succes!")
             save_cookies(driver)
