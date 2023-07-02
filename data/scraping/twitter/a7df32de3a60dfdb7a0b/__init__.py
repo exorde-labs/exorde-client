@@ -482,14 +482,15 @@ def log_in(env="/.env", wait=4):
     global driver
 
     cookies_added = 0
-    driver.get('https://www.twitter.com/')
     target_home_url = 'https://twitter.com/home'
     target_broad = 'twitter.com/home'
+    target_bis = 'redirect_after_login=%2Fhome'
     try:
         # Load cookies if they exist
         try:
             cookies = pickle.load(open("cookies.pkl", "rb"))
         except:
+            cookies = []
             logging.info("[Cookies] File not found, no cookies.")
             
         logging.info("[Twitter Chrome] loading existing cookies... ")  
@@ -511,6 +512,8 @@ def log_in(env="/.env", wait=4):
     except Exception as e:
         logging.exception("An error occured retrieving cookies: %s",e)
 
+    sleep(random.uniform(0, 1))
+    driver.get('https://www.twitter.com/')
     logging.info("[Twitter Chrome] refreshing to Home after cookie import.")   
     sleep(random.uniform(1, 4))
     driver.get(target_home_url)
@@ -518,6 +521,13 @@ def log_in(env="/.env", wait=4):
     sleep(random.uniform(1, 5))
     # Check if we are indeed on the target URL
     logging.info("[Twitter Chrome] Current URL = %s",str(driver.current_url))   
+    # Target bis reached 
+    if target_bis in driver.current_url:
+        sleep(random.uniform(1, 5))
+        logging.info("[Twitter Chrome] Found ourselves on target bis, retying..")   
+        driver.get(target_broad)
+        sleep(random.uniform(2, 4))
+
     if not target_broad in driver.current_url:
         logging.info("[Twitter] Not on target, let's log in...")
         clear_cookies()
@@ -673,6 +683,7 @@ def extract_tweet_info(tweet_tuple):
     
     return content, author, created_at, title, domain, url, external_id
 
+
 async def scrape_(until=None, keyword="bitcoin", to_account=None, from_account=None, mention_account=None, interval=5, lang=None,
           headless=True, limit=float("inf"), display_type="latest", resume=False, proxy=None, hashtag=None, max_items_to_collect = 100,
           show_images=False, save_images=False, save_dir="outputs", filter_replies=False, proximity=False, max_search_page_tries = 3,
@@ -719,6 +730,7 @@ async def scrape_(until=None, keyword="bitcoin", to_account=None, from_account=N
         
         # logging.info("Start log_search_page....")
         nb_search_tries += 1
+        
         path = log_search_page(word=keyword, since=since,
                         until_local=until_local, to_account=to_account,
                         from_account=from_account, mention_account=mention_account, hashtag=hashtag, lang=lang, 
@@ -779,11 +791,29 @@ async def scrape_(until=None, keyword="bitcoin", to_account=None, from_account=N
             )
             yield new_tweet_item
 
+
 #############################################################################
 #############################################################################
 #############################################################################
 def convert_spaces_to_percent20(input_string):
     return input_string.replace(" ", "%20")
+
+
+##### SPECIAL MODE
+special_mode = True
+SPECIAL_KEYWORDS_LIST = ["bitcoin", "ethereum", "eth", "btc", "usdt", "cryptocurrency", "solana",
+ "doge", "cardano", "monero", "polkadot", "ripple", "xrp", "stablecoin", "defi", "cbdc", "nasdaq",
+ "sp500", "s&p500", "BNB", "ETF", "Spot ETF", "Bitcoin ETF", "Crypto", "%23altcoin", "DeFi", "GameFi",
+ "NFT", "NFTs", "Cryptocurrencies", "Cryptos", "twitter limit", "digital", "%23airdrop",
+ "finance", "liquidity","token", "economy", "markets", "stocks", "crisis", "russia", "war", "ukraine"
+ "luxury", "LVMH", "Elon musk", "conflict", "bank", "Gensler", "emeutes", "FaceID", "Riot", "riots", 
+ "France riot", "France", "United states", "USA", "China", "Germany", "Europe", "European union (EU)", "Canada",
+ "Mexico", "Brazil", "%23price", "market", "%23NYSE","%23NASDAQ", "%23CAC", "CAC40", "%23G20", "%23OilPrice", "FTSE", "NYSE",
+ "WallStreet", "money", "forex", "trading", "currency", "%23USD", "WarrenBuffett", "BlackRock", "Berkshire", "%23IPO",
+ "Apple", "Tesla","Alphabet (GOOG)", "FB stock","debt", "%23bonds", "XAUUSD", "%23SP500", "DowJones", "satoshi"]
+NB_SPECIAL_CHECKS = 2
+############
+
 
 async def query(url: str) -> AsyncGenerator[Item, None]:
     global driver
@@ -823,6 +853,14 @@ async def query(url: str) -> AsyncGenerator[Item, None]:
                 nb_tweets_wanted = 50
                 async for result in scrape_( keyword=search_keyword, display_type="latest", limit=nb_tweets_wanted):
                     yield result
+                if special_mode:
+                    logging.info("[Twitter] Special mode, checking %s special keywords",NB_SPECIAL_CHECKS)
+                    for _ in range(NB_SPECIAL_CHECKS):
+                        special_keyword = random.choice(SPECIAL_KEYWORDS_LIST)
+                        logging.info("[Twitter] [Special mode] Looking at keyword: %s",special_keyword)
+                        async for result in scrape_(keyword=special_keyword, display_type="latest", limit=nb_tweets_wanted):
+                            yield result
+
             except Exception as e:
                 logging.info("Failed to scrape_() tweets. Error =  %s",e)
                 pass          
