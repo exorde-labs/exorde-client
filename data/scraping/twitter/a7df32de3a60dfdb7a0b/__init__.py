@@ -528,6 +528,17 @@ def log_in(env="/.env", wait=4):
     if target_bis in driver.current_url:
         sleep(random.uniform(1, 5))
         logging.info("[Twitter Chrome] Found ourselves on target bis, retying..")   
+        ### trying to close the window:        
+        sign_in_element = wait.until(EC.visibility_of_element_located((By.XPATH, '//span[contains(text(),"Sign in to Twitter")]')))
+
+        # check if the element is found
+        if sign_in_element:
+            logging.info("[Twitter Debug] Sign In Element found.")
+        else:
+            logging.info("[Twitter Debug] Sign In Element NOT FOUND.")
+
+        email_xpath = '//input[@autocomplete="username"]'
+
         driver.get(target_home_url)
         sleep(random.uniform(2, 4))
 
@@ -555,6 +566,9 @@ def log_in(env="/.env", wait=4):
         logging.info("[Twitter Chrome] Current URL = %s",driver.current_url)  
         logging.info("Entering Email..")
         email_el = driver.find_element(by=By.XPATH, value=email_xpath)
+        # enter password
+        if email_el:
+            logging.info("[Login] found email element")
         sleep(random.uniform(wait, wait + 1))
         # email_el.send_keys(email)        
         type_slow(email, email_el)
@@ -566,6 +580,9 @@ def log_in(env="/.env", wait=4):
         if check_exists_by_xpath(username_xpath, driver):
             logging.info("Unusual Activity Mode")
             username_el = driver.find_element(by=By.XPATH, value=username_xpath)
+            if username_el:
+                logging.info("[Unusual Activity] found username element")
+                
             sleep(random.uniform(wait, wait + 1))
             logging.info("\tEntering username..")
             # username_el.send_keys(username)        
@@ -573,15 +590,21 @@ def log_in(env="/.env", wait=4):
             sleep(random.uniform(wait, wait + 1))
             username_el.send_keys(Keys.RETURN)
             sleep(random.uniform(wait, wait + 1))
-        # enter password
         password_el = driver.find_element(by=By.XPATH, value=password_xpath)
+        # enter password
+        if password_el:
+            logging.info("[Login] found password element")
         # password_el.send_keys(password)   
         logging.info("\tEntering password...")
         type_slow(password, password_el)
         sleep(random.uniform(wait, wait + 1))
         password_el.send_keys(Keys.RETURN)
         sleep(random.uniform(wait, wait + 1))
-        save_cookies(driver)
+        
+        logging.info("[Twitter Chrome] Current URL = %s",str(driver.current_url))   
+        if target_broad in driver.current_url:
+            logging.info("Succes!")
+            save_cookies(driver)
     else:        
         logging.info("[Twitter] We are already logged in")
 
