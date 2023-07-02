@@ -387,6 +387,7 @@ def init_driver(headless=True, proxy=None, show_images=False, option=None, firef
     options.add_argument("--headless") # Ensure GUI is off. Essential for Docker.
     logging.info("\tHeadless")
     options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("user-data-dir=selenium") 
     options.add_argument("disable-infobars")
     selected_user_agent = random.choice(user_agents)
     options.add_argument(f'user-agent={selected_user_agent}')
@@ -485,6 +486,7 @@ def log_in(env="/.env", wait=4):
     target_home_url = 'https://twitter.com/home'
     target_broad = 'twitter.com/home'
     target_bis = 'redirect_after_login=%2Fhome'
+    # driver.get('https://www.twitter.com/')
     try:
         # Load cookies if they exist
         try:
@@ -640,7 +642,15 @@ def keep_scroling(data, tweet_ids, scrolling, tweet_parsed, limit, scroll, last_
             # check scroll position
             scroll += 1
             sleep(random.uniform(0.5, 1.5))
-            driver.execute_script('window.scrollTo(0, document.body.scrollHeight);')
+            # get current position and total scroll height
+            curr_position = driver.execute_script("return window.pageYOffset;")
+            total_height = driver.execute_script("return document.body.scrollHeight;")
+
+            # scroll to a random position between current position and total height
+            random_scroll_position = random.uniform(curr_position, total_height)
+            logging.info("Scrolling %s",str(random_scroll_position))
+            driver.execute_script(f"window.scrollTo(0, {random_scroll_position});")
+            # driver.execute_script('window.scrollTo(0, document.body.scrollHeight);')
             curr_position = driver.execute_script("return window.pageYOffset;")
             if last_position == curr_position:
                 scroll_attempt += 1
@@ -649,7 +659,7 @@ def keep_scroling(data, tweet_ids, scrolling, tweet_parsed, limit, scroll, last_
                     scrolling = False
                     break
                 else:
-                    sleep(random.uniform(0.5, 1.5))  # attempt another scroll
+                    sleep(random.uniform(0.3, 1.4))  # attempt another scroll
             else:
                 last_position = curr_position
                 break
