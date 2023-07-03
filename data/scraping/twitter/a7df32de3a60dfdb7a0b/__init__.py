@@ -657,7 +657,7 @@ def keep_scroling(data, tweet_ids, scrolling, tweet_parsed, limit, scroll, last_
         # get the card of tweets        
         page_cards = driver.find_elements(by=By.XPATH, value='//article[@data-testid="tweet"]')  # changed div by article
         logging.info("[XPath] page cards found = %s",len(page_cards))
-        if len(page_cards) == 0:
+        if len(page_cards) == 0 and False:
             # check if we are rate-limited      
             try:
                 # wait for the popup to become visible, up to 4s (1.5s delay + 3.5s visibility)
