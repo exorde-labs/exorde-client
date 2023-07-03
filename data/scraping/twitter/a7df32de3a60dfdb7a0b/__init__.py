@@ -672,7 +672,7 @@ def keep_scroling(data, tweet_ids, scrolling, tweet_parsed, limit, scroll, last_
 
             except TimeoutException:
                 # if we didn't find the element after the given time, print that it was not found
-                print("No popup found.")
+                logging.info("[XPath] Rate limitation - can't find any error popup.")
             
         for card in page_cards:
             tweet = get_data(card)
