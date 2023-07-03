@@ -650,16 +650,16 @@ def keep_scroling(data, tweet_ids, scrolling, tweet_parsed, limit, scroll, last_
         if not os.path.exists(save_images_dir):
             os.mkdir(save_images_dir)
     
+    rate_limitation = False
     successsive_old_tweets = 0
     while scrolling and tweet_parsed < limit:
         sleep(random.uniform(0.5, 1.5))
         # get the card of tweets        
         page_cards = driver.find_elements(by=By.XPATH, value='//article[@data-testid="tweet"]')  # changed div by article
         logging.info("[XPath] page cards found = %s",len(page_cards))
-        rate_limitation = False
         if len(page_cards) == 0:
             # check if we are rate-limited      
-           try:
+            try:
                 # wait for the popup to become visible, up to 4s (1.5s delay + 3.5s visibility)
                 wait = WebDriverWait(driver, 4)
                 element = wait.until(lambda x: x.find_element(By.XPATH, '//*[contains(text(),"Sorry, you are rate limited")]')
@@ -667,13 +667,10 @@ def keep_scroling(data, tweet_ids, scrolling, tweet_parsed, limit, scroll, last_
 
                 # if we found the element, print that it was found
                 logging.info("********\n********\n********\n\t\tYOUR TWITTER ACCOUNT IS NOW RATE LIMITED\n\n********\n********\n********")
-                rate_limitation_popup_found = True
-                return data, tweet_ids, scrolling, tweet_parsed, scroll, last_position, rate_limitation_popup_found
-
-            except TimeoutException:
-                # if we didn't find the element after the given time, print that it was not found
-                logging.info("[XPath] Rate limitation - can't find any error popup.")
-            
+                rate_limitation = True
+                return data, tweet_ids, scrolling, tweet_parsed, scroll, last_position, rate_limitation
+            except Exception as e:
+                logging.info("[XPath] Rate limitation - can't find any error popup - %s",e)
         for card in page_cards:
             tweet = get_data(card)
             logging.debug("[XPath] Tweet visible currently = %s",len(page_cards))
