@@ -42,6 +42,7 @@ import signal
 
 global driver
 driver = None
+global status_rate_limited = False
 
 
 MAX_EXPIRATION_HARDCODED_SECONDS = 180
@@ -652,10 +653,27 @@ def keep_scroling(data, tweet_ids, scrolling, tweet_parsed, limit, scroll, last_
     successsive_old_tweets = 0
     while scrolling and tweet_parsed < limit:
         sleep(random.uniform(0.5, 1.5))
-        # get the card of tweets
-        
+        # get the card of tweets        
         page_cards = driver.find_elements(by=By.XPATH, value='//article[@data-testid="tweet"]')  # changed div by article
         logging.info("[XPath] page cards found = %s",len(page_cards))
+        rate_limitation = False
+        if len(page_cards) == 0:
+            # check if we are rate-limited      
+           try:
+                # wait for the popup to become visible, up to 4s (1.5s delay + 3.5s visibility)
+                wait = WebDriverWait(driver, 4)
+                element = wait.until(lambda x: x.find_element(By.XPATH, '//*[contains(text(),"Sorry, you are rate limited")]')
+                or x.find_element(By.CLASS_NAME, "css-1dbjc4n r-1awozwy r-1kihuf0 r-l5o3uw r-z2wwpe r-18u37iz r-1wtj0ep r-zd98yo r-xyw6el r-105ug2t"))
+
+                # if we found the element, print that it was found
+                logging.info("********\n********\n********\n\t\tYOUR TWITTER ACCOUNT IS NOW RATE LIMITED\n\n********\n********\n********")
+                rate_limitation_popup_found = True
+                return data, tweet_ids, scrolling, tweet_parsed, scroll, last_position, rate_limitation_popup_found
+
+            except TimeoutException:
+                # if we didn't find the element after the given time, print that it was not found
+                print("No popup found.")
+            
         for card in page_cards:
             tweet = get_data(card)
             logging.debug("[XPath] Tweet visible currently = %s",len(page_cards))
@@ -675,7 +693,7 @@ def keep_scroling(data, tweet_ids, scrolling, tweet_parsed, limit, scroll, last_
                         logging.info("[Twitter Selenium] Old Tweet:  %s", tweet[3])
                         successsive_old_tweets +=1
                     if successsive_old_tweets >= max_old_tweets_successive or  tweet_parsed >= limit:
-                        return data, tweet_ids, scrolling, tweet_parsed, scroll, last_position
+                        return data, tweet_ids, scrolling, tweet_parsed, scroll, last_position, rate_limitation
         scroll_attempt = 0
         while tweet_parsed < limit:
             # check scroll position
@@ -702,7 +720,7 @@ def keep_scroling(data, tweet_ids, scrolling, tweet_parsed, limit, scroll, last_
             else:
                 last_position = curr_position
                 break
-    return data, tweet_ids, scrolling, tweet_parsed, scroll, last_position
+    return data, tweet_ids, scrolling, tweet_parsed, scroll, last_position, rate_limitation
 
 
 def check_exists_by_link_text(text, driver):
@@ -745,6 +763,11 @@ async def scrape_(until=None, keyword="bitcoin", to_account=None, from_account=N
     Item: containing all tweets scraped with the associated features.
     """
     global driver
+    global status_rate_limited
+    if status_rate_limited:
+        logging.debug("[Twitter Status: Rate limited] Preventingly not starting scraping.")
+        break
+
     logging.info("\tScraping latest tweets on keyword =  %s",keyword)
     # ------------------------- Variables : 
     # list that contains all data 
@@ -794,8 +817,12 @@ async def scrape_(until=None, keyword="bitcoin", to_account=None, from_account=N
         tweet_parsed = 0
         sleep(random.uniform(0.5, 1.5))
         # logging.info("Start scrolling & get tweets....")
-        data, tweet_ids, scrolling, tweet_parsed, scroll, last_position = \
+        data, tweet_ids, scrolling, tweet_parsed, scroll, last_position, rate_limited = \
             keep_scroling(data, tweet_ids, scrolling, tweet_parsed, limit, scroll, last_position)
+        if rate_limited:
+            logging.info("[Twitter Status: Rate limited] Stopping scraping.")
+            status_rate_limited = True
+            break
 
         if scroll > 50: 
             logging.debug("\tReached 50 scrolls: breaking")
@@ -866,6 +893,7 @@ NB_SPECIAL_CHECKS = 5
 
 async def query(url: str) -> AsyncGenerator[Item, None]:
     global driver
+    global status_rate_limited
     if "twitter.com" not in url:
         raise ValueError("Not a twitter URL")
     url_parts = url.split("twitter.com/")[1].split("&")
