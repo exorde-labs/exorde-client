@@ -42,8 +42,8 @@ import signal
 
 global driver
 driver = None
-global status_rate_limited = False
-
+global status_rate_limited
+status_rate_limited = False
 
 MAX_EXPIRATION_HARDCODED_SECONDS = 180
 
