@@ -763,7 +763,8 @@ async def scrape_(until=None, keyword="bitcoin", to_account=None, from_account=N
     global status_rate_limited
     if status_rate_limited:
         logging.debug("[Twitter Status: Rate limited] Preventingly not starting scraping.")
-        break
+        return
+        yield
 
     logging.info("\tScraping latest tweets on keyword =  %s",keyword)
     # ------------------------- Variables : 
