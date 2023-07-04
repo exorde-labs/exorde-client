@@ -639,7 +639,7 @@ def is_within_timeframe_seconds(dt_str, timeframe_sec):
     else:
         return False
 
-max_old_tweets_successive = 3
+max_old_tweets_successive = 2
 def keep_scroling(data, tweet_ids, scrolling, tweet_parsed, limit, scroll, last_position,
                   save_images=False):
     """ scrolling function for tweets crawling"""
@@ -678,11 +678,11 @@ def keep_scroling(data, tweet_ids, scrolling, tweet_parsed, limit, scroll, last_
                 # check if the tweet is unique
                 tweet_id = ''.join(tweet[:-2])
                 if tweet_id not in tweet_ids:
-                    tweet_ids.add(tweet_id)
-                    data.append(tweet)
-                    last_date = str(tweet[2])
                     logging.info(f"[Tweet] Date = {last_date}")
                     if is_within_timeframe_seconds(last_date, MAX_EXPIRATION_HARDCODED_SECONDS):
+                        tweet_ids.add(tweet_id)
+                        data.append(tweet)
+                        last_date = str(tweet[2])
                         logging.info("[Twitter Selenium] Found Tweet:  %s", tweet)
                         tweet_parsed += 1
                         successsive_old_tweets = 0
