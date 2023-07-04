@@ -16,10 +16,9 @@ async def self_update():
         # Normalize the versions
         latest_tag = normalize_version(latest_tag)
         local_version = normalize_version(local_version)
-
-        logging.info(f"[CLIENT UPDATE] Updating from {local_version} to version  {latest_tag}")
-        
+        logging.info(f"[CLIENT VERSION] Online latest version of the exorde-client: {latest_tag}, local version:  {local_version}")        
         if version.parse(latest_tag) > version.parse(local_version):
+            logging.info(f"[CLIENT UPDATE] Updating from {local_version} to version  {latest_tag}")
             exorde_repository_path = "git+https://github.com/exorde-labs/exorde-client.git"
             subprocess.check_call(["pip", "install", exorde_repository_path])
             data_repository_path = "git+https://github.com/exorde-labs/exorde-client.git#subdirectory=data&egg=exorde-data"
