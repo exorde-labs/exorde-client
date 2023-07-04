@@ -5,6 +5,7 @@ from importlib import metadata
 from exorde_data.models import *
 from madtypes import json_schema
 from importlib import import_module, metadata
+from packaging import version
 import re
 import aiohttp
 from typing import Union
@@ -44,6 +45,10 @@ async def get_module_online_version(module_name: str):
 
 from importlib.metadata import PackageNotFoundError
 
+def normalize_version(version_string):
+    """Normalize the version string and remove leading 'v' if it exists."""
+    return version_string[1:] if version_string.startswith('v') else version_string
+
 
 async def get_scraping_module(module_name):
     from exorde_data.scraping import scraping_modules
@@ -51,11 +56,18 @@ async def get_scraping_module(module_name):
     module_hash = scraping_modules[module_name]
     try:
         old_module_version = metadata.version(module_hash)
+        # Normalize the versions
+        old_module_version = normalize_version(old_module_version)
+
         logging.info(f"Scraping module [{module_name}] Version check")
         logging.info(f"Current version = {old_module_version}")
         online_module_version = await get_module_online_version(module_name)
+        # Normalize the versions
+        online_module_version = normalize_version(online_module_version)
+
         logging.info(f"Latest version = {online_module_version}")
-        if old_module_version < online_module_version:
+        
+        if version.parse(old_module_version) < version.parse(online_module_version):
             logging.info(f"Updating {module_name}")
             logging.info(
                 f"diff in versions : {old_module_version} != {online_module_version}"
@@ -81,9 +93,7 @@ async def get_scraping_module_name_from_url(
         async with aiohttp.ClientSession() as session:
             async with session.get(mapping_url) as resp:
                 if resp.status != 200:
-                    logging.info(
-                        f"get_scraping_module_name_from_url: Unable to fetch data: HTTP {resp.status}"
-                    )
+                    logging.info(f"get_scraping_module_name_from_url: Unable to fetch data: HTTP {resp.status}")
                     return None
 
                 data = await resp.text()
