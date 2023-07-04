@@ -1,4 +1,7 @@
 # Exorde Open Source Bounties
+<p align="center">
+<img alt="logo_exorde" src="https://uploads-ssl.webflow.com/620398f412d5829aa28fbb86/62278b77803be26db0cfb903_mark-logo-color.png" style="float:left; height:69px; width:50px" /></p>
+
 ## Currently open bounties
 
 The currently open bounties are findable in the Issues tab: https://github.com/exorde-labs/exorde-client/issues.
