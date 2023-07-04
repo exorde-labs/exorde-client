@@ -22,4 +22,5 @@ You can look at [CONTRIBUTING.md](CONTRIBUTING.md) to know how to work with the 
   <a href="CONTRIBUTING.md"><img src="https://img.shields.io/badge/how%20to-CONTRIBUTE-blue?style=for-the-badge" /></a>
   <a href="https://docs.exorde.network/run/run_from_container_image"><img src="https://img.shields.io/badge/how%20to-mine%20EXD-yellowgreen?style=for-the-badge" /></a>
   <a href="https://github.com/exorde-labs/TestnetProtocol"><img src="https://img.shields.io/badge/check%20the-%20EXORDE%20PROTOCOL-red?style=for-the-badge" /></a>
+  <a href="https://exorde.network"><img src="https://img.shields.io/badge/check%20the-%20Exorde%20Website-gray?style=for-the-badge" /></a>
 </p>
