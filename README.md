@@ -19,8 +19,7 @@ Check the [Documentation](https://docs.exorde.network/) to know how to build you
 You can look at [CONTRIBUTING.md](CONTRIBUTING.md) to know how to work with the exorde-client internal interface, build & customize scrapers, win open source prizes!
 
 <p align="center">
-  <a href="data"><img src="https://img.shields.io/badge/how%20to-scrap-blue?style=for-the-badge" /></a>
-  <a href="exorde"><img src="https://img.shields.io/badge/how%20to-mine%20EXD-yellowgreen?style=for-the-badge" /></a>
-  <a href="CONTRIBUTING.md"><img src="https://img.shields.io/badge/how%20to-%20CONTRIBUTE-green?style=for-the-badge" /></a>
+  <a href="CONTRIBUTING.md"><img src="https://img.shields.io/badge/how%20to-CONTRIBUTE-blue?style=for-the-badge" /></a>
+  <a href="[exorde](https://docs.exorde.network/run/run_from_container_image)"><img src="https://img.shields.io/badge/how%20to-mine%20EXD-yellowgreen?style=for-the-badge" /></a>
   <a href="https://github.com/exorde-labs/TestnetProtocol"><img src="https://img.shields.io/badge/check%20the-%20EXORDE%20PROTOCOL-red?style=for-the-badge" /></a>
 </p>
