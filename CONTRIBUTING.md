@@ -27,7 +27,7 @@ However, when necessary (such as for managing logins or cookies), scrapers can s
 
 **Each scraper is required to implement an asynchronous method: `async def query(url: str, parameters: dict) -> AsyncGenerator[Item, None]`. This method takes a URL string and yields an asynchronous generator of `Item` objects. Each `Item` has a strict JSON format, as defined in** [Exorde's data schema](https://github.com/exorde-labs/exorde-client/blob/main/exorde/schema_valide.json)**.**
 
-**Parameters is a dict that embed common & specific parameters for scrapers. General parameters like: max_oldness_seconds (when to reject posts based on post date).**
+**Parameters is a dict that embed common & specific parameters for scrapers. General parameters like: max_oldness_seconds (when to reject posts based on post date). If your scraper is login-based, assume to find your logins in this dict (password, email, username, etc).** 
 
 
 Please use: **`from typing import AsyncGenerator`**
@@ -57,7 +57,7 @@ A URL is the general "paradigm" as it usually provide two information:
 	- "http://telegram.com/bitcoin" -> implies to scrape things related to the keyword "bitcoin". If finding latests posts on this platform is hard, then collecting lists of "public groups" and then scraping randomly inside each one is the way to go.
 	- "https://www.instagram.com/bitcoin",  "https://www.TruthSocial.com/bitcoin", ...
 
-Minor (non-blocking) adjustements may be requested once you make your PR on the GitHub repo, to make it fully compatible & usable in the exorde-client.
+Minor (non-blocking) adjustments may be requested once you make your PR on the GitHub repo, to make it fully compatible & usable in the exorde-client.
 
 Expected generator output: the Item object
 ---
