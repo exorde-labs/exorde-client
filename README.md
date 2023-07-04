@@ -22,5 +22,5 @@ You can look at [CONTRIBUTING.md](CONTRIBUTING.md) to know how to work with the 
   <a href="data"><img src="https://img.shields.io/badge/how%20to-scrap-blue?style=for-the-badge" /></a>
   <a href="exorde"><img src="https://img.shields.io/badge/how%20to-mine%20EXD-yellowgreen?style=for-the-badge" /></a>
   <a href="CONTRIBUTING.md"><img src="https://img.shields.io/badge/how%20to-%20CONTRIBUTE-green?style=for-the-badge" /></a>
-  <a href="[protocol](https://github.com/exorde-labs/TestnetProtocol)"><img src="https://img.shields.io/badge/check%20the-%20EXORDE%20PROTOCOL-red?style=for-the-badge" /></a>
+  <a href="https://github.com/exorde-labs/TestnetProtocol"><img src="https://img.shields.io/badge/check%20the-%20EXORDE%20PROTOCOL-red?style=for-the-badge" /></a>
 </p>
