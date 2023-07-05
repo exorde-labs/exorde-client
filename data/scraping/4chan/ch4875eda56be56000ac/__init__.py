@@ -24,12 +24,6 @@ from exorde_data import (
     ExternalParentId,
 )
 
-
-async def generate_url(__keyword__: str):
-    logging.info("[Pre-collect] generating 4chan target URL.")
-    return "https://boards.4channel.org/biz/"
-
-
 #### --------------------------------------------------------------
 
 # List of board JSON API endpoints
@@ -504,7 +498,13 @@ async def scrape_4chan(
             return
 
 
-async def query(url: str, parameters: dict) -> AsyncGenerator[Item, None]:
+async def generate_url(keyword: str = "BTC"):
+    logging.info("[Pre-collect] generating 4chan target URL.")
+    return "https://boards.4channel.org/biz/"
+
+
+async def query(parameters: dict) -> AsyncGenerator[Item, None]:
+    url = await generate_url(**parameters)
     if not has_substring(["4chan", "4channel", "4cdn"], url):
         raise ValueError("Not a 4chan URL")
     async for result in scrape_4chan(

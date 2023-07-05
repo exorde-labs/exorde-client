@@ -26,7 +26,7 @@ import hashlib
 MAX_EXPIRATION_SECONDS = 180
 
 
-async def generate_url(keyword: str):
+async def generate_url(keyword: str = "BTC"):
     """
     Generate a subreddit URL using the search tool with `keyword`.
     It randomly chooses one of the resulting subreddit.
@@ -151,7 +151,8 @@ async def scrap_subreddit(subreddit_url: str) -> AsyncGenerator[Item, None]:
                     yield item
 
 
-async def query(url: str, parameters: dict) -> AsyncGenerator[Item, None]:
+async def query(parameters: dict) -> AsyncGenerator[Item, None]:
+    url = await generate_url(**parameters)
     logging.info("[Reddit] Scraping %s", url)
     if "reddit.com" not in url:
         raise ValueError(f"Not a reddit URL {url}")

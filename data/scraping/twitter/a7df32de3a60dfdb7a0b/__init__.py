@@ -1020,7 +1020,7 @@ def convert_spaces_to_percent20(input_string):
     return input_string.replace(" ", "%20")
 
 
-async def generate_url(keyword: str, live_mode=True):
+async def generate_url(keyword: str = "BTC", live_mode=True):
     logging.info("[Pre-collect] generating Twitter target URL.")
     base_url = f"https://twitter.com/search?q={convert_spaces_to_percent20(keyword)}&src=typed_query"
     if live_mode:
@@ -1028,10 +1028,9 @@ async def generate_url(keyword: str, live_mode=True):
     return base_url
 
 
-async def query(url: str, parameters: dict) -> AsyncGenerator[Item, None]:
+async def query(parameters: dict) -> AsyncGenerator[Item, None]:
     global driver
-    if "twitter.com" not in url:
-        raise ValueError("Not a twitter URL")
+    url = await generate_url(**parameters)
     url_parts = url.split("twitter.com/")[1].split("&")
     search_keyword = ""
     if url_parts[0].startswith("search"):
