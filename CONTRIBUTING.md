@@ -1,3 +1,4 @@
+
 # Exorde Open Source Bounties
 <p align="center">
 <img alt="logo_exorde" src="https://uploads-ssl.webflow.com/620398f412d5829aa28fbb86/62278b77803be26db0cfb903_mark-logo-color.png" style="float:left; height:69px; width:50px" /></p>
@@ -25,39 +26,26 @@ In Exorde's architecture, scrapers function as individual plugins, each tailored
 
 However, when necessary (such as for managing logins or cookies), scrapers can store state in local files, maintaining their inherent autonomy without sacrificing flexibility.
 
-**Each scraper is required to implement an asynchronous method: `async def query(url: str, parameters: dict) -> AsyncGenerator[Item, None]`. This method takes a URL string and yields an asynchronous generator of `Item` objects. Each `Item` has a strict JSON format, as defined in** [Exorde's data schema](https://github.com/exorde-labs/exorde-client/blob/main/exorde/schema_valide.json)**.**
+**Each scraper is required to implement an asynchronous method: `async def query(parameters: dict) -> AsyncGenerator[Item, None]`. This method takes a URL string and yields an asynchronous generator of `Item` objects. Each `Item` has a strict JSON format, as defined in** [Exorde's data schema](https://github.com/exorde-labs/exorde-client/blob/main/exorde/schema_valide.json)**.**
 
-**Parameters is a dict that embed common & specific parameters for scrapers. General parameters like: max_oldness_seconds (when to reject posts based on post date). If your scraper is login-based, assume to find your logins in this dict (password, email, username, etc).** 
+Please use: **`from typing import AsyncGenerator`** to use the AsyncGenerator.
+
+## **Parameters is a dict that embed common & specific parameters for scrapers.**
+
+**1. Common parameters:**
+- **keyword** : (string) the keyword to collect data on. Depending on the searchability of the target website/platform, it could be ignored.
+- **max_oldness_seconds**: (int) the max oldness of a post that is acceptable to be collected. (If timestamp/datetime of the post (comment, tweet, article, etc.) is older than this duration, throw the item)
+- **maximum_items_to_collect**:  (int) maximum number of items to collect and generate before the scrapers stops.
+- **min_post_length**:  (int) minimum post length (in number of characters) required to retain a post.
+
+***Your scraper must use & respect these parameters.***
+
+2. **Specific parameters**:
+**Modules can be fed with specific parameters, if it makes sense, or parameters overriding default values of the common parameters. Modules with login-based techniques can assume to be fed their credentials in this dict (email, password, username, etc.)** 
 
 
-Please use: **`from typing import AsyncGenerator`**
+The Scraper modules configuration (with general & specific parameters) can be found here: https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/modules_configuration.json
 
-##  Context: scraping Keywords/URLs
-**The main goal of Exorde is to track topics across all public platforms online. Topics are represented by a set of keywords. To do so, we are scraping keywords on each platform, when possible.**
-A URL is the general "paradigm" as it usually provide two information:
-- What website are we collecting public information from
-- What keyword are we looking for in the recent posts appearing on the website
-
-**BUT** some social media platforms and other data sources don't work that way, can't allow a search per keyword, or don't easily permit browsing through latest "posts".
-
-*Examples*:
-- url = "https://twitter.com/search?q=nasdaq&src=typed_query&f=live" -> implies to scrape latest tweets mentionning "nasdaq"
-- url = " https://www.reddit.com/r/SuperStonks/"  -> implies to scrape the subreddit SuperStonks, without a particular keyword.
-- url = "https://www.reddit.com/search/?q=bitcoin" -> implies to scrape Reddit for latest posts mentionning "bitcoin"
-- url "https://boards.4channel.org/biz/" -> implies to scrape the latest comments & posts of the "biz" board, without a filter on keywords.
-- url  "https://www.youtube.com/results?search_query=bitcoin" -> implies to scrape the titles & comments related to latest videos mentionning bitcoin (in their title or description).
-- "https://mastodon.social/tags/crypto", "https://www.tiktok.com/tag/finance", ...
-
-**Adapt the logic to your selected target website.**
-**Either assume a URL if it makes sense for the Scraper you are building, or assume URL to be a keyword.**
-
-1. If a public URL with a keyword in it isn't possible for your source (e.g. LinkedIn, Telegram, etc.), **ASSUME** your input "url" to be of the form "**http://{WEBSITE_TARGET}/{keyword}**. An *internal* URL is still meaningful for the exorde-client to express its scraping needs.
-2. Build & test your code with this type of input for your **query**().
-**Examples of internal URLs**:  
-	- "http://telegram.com/bitcoin" -> implies to scrape things related to the keyword "bitcoin". If finding latests posts on this platform is hard, then collecting lists of "public groups" and then scraping randomly inside each one is the way to go.
-	- "https://www.instagram.com/bitcoin",  "https://www.TruthSocial.com/bitcoin", ...
-
-Minor (non-blocking) adjustments may be requested once you make your PR on the GitHub repo, to make it fully compatible & usable in the exorde-client.
 
 Expected generator output: the Item object
 ---
@@ -174,15 +162,9 @@ In the following sections, we delve into a deeper understanding of the scraper s
 
 The scraper interface is crucial to establish a link between the data source and Exorde's ecosystem. It is composed of three primary parts:
 
-1. **`scrape(..)`**  This function implements the main scraping logic. It accepts several parameters, including:
-    - **`max_oldness_seconds`:** Maximum age of posts in seconds.
-    - **`maximum_to_collect`:** Maximum number of posts to scrape.
-    - **`min_post_len`:** Minimum length of posts to be considered.
+1. **`scrape(..)`**  This function implements the main scraping logic. You should express the main logic in this function and keep query() as simple & clear as possible, for maintenability.
     - You can split your scraping logic into multiple functions but the main logic should be in scrape(…)
-2. **`query(URL: str, parameters):`** This function accepts a target-specific URL or a keyword as a string input and uses it to call scrape() correctly.
-    1. For example “URL”= [https://twitter.com/search?q=ethereum&src=typed_query&f=live](https://twitter.com/search?q=ethereum&src=typed_query&f=live)
-        1. **query()** takes this URL, checks if it’s a valid URL for the scraper, and in this example scrapes the keyword *ethereum* on Twitter latest tweets. 
-        2. it can take a “mock URL” such as `exorde://ethereum` if the **target website** doesn’t make sense with URLs (if there is no searchable part in it, for instance, some forums)
+2. **`query(parameters: dict):`** The main interface between the client core & your scraper.
 3. **`Item Class:`** This class represents a data point to be scraped and contains the following attributes:
     - **`content`:** (**REQUIRED)** The content of the post (or comment, etc.), as a **string (str), stripped from any HTML (or equivalent) tags.**
     - **`author`: *(optional)*** The author of the post encoded in SHA1. We do not want an author's name in clear. Suggestion: *use hashlib + sha1.hexdigest()*
@@ -224,32 +206,15 @@ import asyncio
 
 async def test_query():
     keyword = "bitcoin"
-    url = await generate_reddit_url(keyword)
-    print("Url = ",url)
-    async for item in query(url):
+    parameters = {'keyword':keyword,'max_oldness_seconds':180, ...}
+    async for item in query(parameters):
         print("\n",item)
         assert(isinstance(item,Item))
 # Run the async main function
 asyncio.run(test_query())
 ```
+A generate_scraper_url() method is usually useful to implement, to create the target URL your scraper is going to open, based on the input keyword. For example for Reddit, Twitter, LinkedIn, etc.
 
-```python
-import asyncio
-
-< your code ....>
-
-async def test_query():
-    url = "https://a.4cdn.org/news/catalog.json"
-    try:
-        async for item in query(url):
-            print("\n",item)
-            assert(isinstance(item,Item))
-    except ValueError as e:
-        print(f"Error: {str(e)}")
-
-# Run the test function
-asyncio.run(test_query())
-```
 
 ## **Technical Specifications**
 
@@ -354,8 +319,8 @@ Tip: use the checklist below to make sure you didn’t forget anything.
     - logging for event logging (INFO & DEBUG levels accepted)
 3. **Asynchronous Programming:**
     - Use Python's async and await syntax for non-blocking code execution and concurrent scraping
-    - Main query(..) interface: `async def query(url: str, parameters: dict) -> AsyncGenerator[Item, None]`
-    - **`max_oldness_seconds`**, **`maximum_to_collect`**, and **`min_post_len`** in parameters dict of query()
+    - Main query(..) interface: `async def query(parameters: dict) -> AsyncGenerator[Item, None]`
+    - use as input the common_parameters: **`keyword`**,**`max_oldness_seconds`**, **`maximum_to_collect`**, and **`min_post_len`**
     1. Yield valid objects of **`Item`** class with attributes including **`content`**, **`author`**, **`created_at`**, **`title`**, **`domain`**, **`url`**, **`external_id`**, and **`external_parent_id`**
 4. **Data Validation:**
     - Follow Exorde's strict JSON format & field data format (provide **real & unique “url”, “**created_at” must respect UTC+0 format, etc).. **Failure to do so will result in the entire code submission being invalid.**
