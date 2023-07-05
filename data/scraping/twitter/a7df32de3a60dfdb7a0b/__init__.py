@@ -1020,10 +1020,10 @@ def convert_spaces_to_percent20(input_string):
     return input_string.replace(" ", "%20")
 
 
-async def generate_url(keyword: str = "BTC", live_mode=True):
+async def generate_url(keyword: str = "BTC", live=True):
     logging.info("[Pre-collect] generating Twitter target URL.")
     base_url = f"https://twitter.com/search?q={convert_spaces_to_percent20(keyword)}&src=typed_query"
-    if live_mode:
+    if live:
         base_url = base_url + "&f=live"
     return base_url
 
