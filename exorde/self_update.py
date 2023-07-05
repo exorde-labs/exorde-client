@@ -19,9 +19,9 @@ async def self_update():
         logging.info(f"[CLIENT VERSION] Online latest version of the exorde-client: {latest_tag}, local version:  {local_version}")        
         if version.parse(latest_tag) > version.parse(local_version):
             logging.info(f"[CLIENT UPDATE] Updating from {local_version} to version  {latest_tag}")
-            exorde_repository_path = "git+https://github.com/exorde-labs/exorde-client.git"
+            exorde_repository_path = "git+https://github.com/exorde-labs/exorde-client.git@breeze"
             subprocess.check_call(["pip", "install", exorde_repository_path])
-            data_repository_path = "git+https://github.com/exorde-labs/exorde-client.git#subdirectory=data&egg=exorde-data"
+            data_repository_path = "git+https://github.com/exorde-labs/exorde-client.git@breeze#subdirectory=data&egg=exorde-data"
             subprocess.check_call(["pip", "install", data_repository_path])
             os._exit(42)
     except Exception as e:
