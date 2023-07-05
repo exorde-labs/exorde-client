@@ -24,6 +24,12 @@ from exorde_data import (
     ExternalParentId,
 )
 
+
+async def generate_url(__keyword__: str):
+    logging.info("[Pre-collect] generating 4chan target URL.")
+    return "https://boards.4channel.org/biz/"
+
+
 #### --------------------------------------------------------------
 
 # List of board JSON API endpoints

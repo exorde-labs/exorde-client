@@ -1,3 +1,4 @@
+import random
 import aiohttp
 from lxml import html
 from typing import AsyncGenerator
@@ -23,6 +24,27 @@ from exorde_data import (
 import hashlib
 
 MAX_EXPIRATION_SECONDS = 180
+
+
+async def generate_url(keyword: str):
+    """
+    Generate a subreddit URL using the search tool with `keyword`.
+    It randomly chooses one of the resulting subreddit.
+    """
+    logging.info("[Pre-collect] generating Reddit target URL.")
+    async with aiohttp.ClientSession() as session:
+        async with session.get(
+            f"https://www.reddit.com/search/?q={keyword}&type=sr"
+        ) as response:
+            html_content = await response.text()
+            tree = html.fromstring(html_content)
+            urls = [
+                url
+                for url in tree.xpath('//a[contains(@href, "/r/")]//@href')
+                if not "/r/popular" in url
+            ]
+            result = f"https://old.reddit.com{random.choice(urls)}new"
+            return result
 
 
 def is_within_timeframe_seconds(input_timestamp, timeframe_sec):

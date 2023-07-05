@@ -292,8 +292,10 @@ def get_data(card):
         return
 
     try:
-        # text = card.find_element(by=By.XPATH, value='.//div[2]/div[2]/div[1]').text        
-        text = card.find_element(by=By.XPATH, value='.//div[@data-testid="tweetText"]').text
+        # text = card.find_element(by=By.XPATH, value='.//div[2]/div[2]/div[1]').text
+        text = card.find_element(
+            by=By.XPATH, value='.//div[@data-testid="tweetText"]'
+        ).text
     except:
         text = ""
 
@@ -971,9 +973,22 @@ async def scrape_(
             # ETF será o primeiro dos Estados Unidos de bitcoin à vista.', '', '1', '', '1',
             # ['https://pbs.twimg.com/card_img/12.21654/zd45zz5?format=jpg&name=small'], 'https://twitter.com/xxxxx/status/1231456479')
             # Create a new sha1 hash
-            content_, author_, created_at_, title_, domain_, url_, external_id_ = extract_tweet_info(tweet_tuple)            
-            if keyword.lower() in author_.lower() and not keyword.lower() in content_.lower():
-                logging.info("Keyword not found in text, but in author's name, skipping this false positive.")
+            (
+                content_,
+                author_,
+                created_at_,
+                title_,
+                domain_,
+                url_,
+                external_id_,
+            ) = extract_tweet_info(tweet_tuple)
+            if (
+                keyword.lower() in author_.lower()
+                and not keyword.lower() in content_.lower()
+            ):
+                logging.info(
+                    "Keyword not found in text, but in author's name, skipping this false positive."
+                )
                 continue
             sha1 = hashlib.sha1()
             # Update the hash with the author string encoded to bytest
@@ -999,8 +1014,18 @@ async def scrape_(
 #############################################################################
 #############################################################################
 #############################################################################
+
+
 def convert_spaces_to_percent20(input_string):
     return input_string.replace(" ", "%20")
+
+
+async def generate_url(keyword: str, live_mode=True):
+    logging.info("[Pre-collect] generating Twitter target URL.")
+    base_url = f"https://twitter.com/search?q={convert_spaces_to_percent20(keyword)}&src=typed_query"
+    if live_mode:
+        base_url = base_url + "&f=live"
+    return base_url
 
 
 async def query(url: str, parameters: dict) -> AsyncGenerator[Item, None]:

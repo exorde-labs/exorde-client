@@ -1,5 +1,5 @@
 import logging
-import importlib.metadata
+from importlib import metadata, import_module
 import random
 from exorde.get_keywords import get_keywords
 from exorde.urls import generate_url
@@ -50,32 +50,30 @@ def choose_value(weights) -> str:
     return weights.items()[0][0]
 
 
-def get_module_from_name(module_name: str) -> ModuleType:
-    return datetime
+async def choose_keyword():
+    keywords_: list[str] = await get_keywords()
+    selected_keyword: str = random.choice(keywords_)
+    return selected_keyword
 
 
 async def choose_using_ponderation() -> tuple[str, ModuleType, dict]:
     weights = await get_ponderation()
     choosen_module = choose_value(weights)
-    module_instance = get_module_from_name(choosen_module)
-    url = "TODO"
-    parameters = {  # pour prochaine PR
-        # contrainte -> # rajoute rune spec aux contribyuteurs
-    }
-    return (url, module_instance, parameters)
+    module = import_module(choosen_module)
+    keyword = await choose_keyword()
+    url = module.generate_url(keyword)
+    parameters = {}
+    return (url, module, parameters)
 
 
 async def choose_randomly() -> tuple[str, ModuleType, dict]:
-    keywords_: list[str] = await get_keywords()
-    selected_keyword: str = random.choice(keywords_)
-
+    selected_keyword = await choose_keyword()
     logging.info(f"[BRAIN] Selected Keyword : {selected_keyword}")
-
     url = await generate_url(selected_keyword)
     module = await get_scraping_module_for_url(url)
     logging.info(f"[BRAIN] Selected URL : {url}")
     logging.info(
-        f"[BRAIN] Selected Module : {module.__name__} ({importlib.metadata.version(module.__name__)})"
+        f"[BRAIN] Selected Module : {module.__name__} ({metadata.version(module.__name__)})"
     )
     parameters = {}
     return url, module, parameters
