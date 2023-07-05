@@ -1,3 +1,4 @@
+import json
 import logging
 from importlib import metadata, import_module
 import random
@@ -9,23 +10,33 @@ import datetime
 from types import ModuleType
 
 
-memoised = None
-last_call: datetime.datetime = datetime.datetime.now()
+def ponderation_geter():
+    memoised = None
+    last_call = datetime.datetime.now()
+
+    async def get_ponderation() -> tuple[list[str], dict[str, float], dict]:
+        nonlocal memoised, last_call
+        now = datetime.datetime.now()
+        if not memoised or (now - last_call) > datetime.timedelta(minutes=1):
+            last_call = datetime.datetime.now()
+            async with aiohttp.ClientSession() as session:
+                async with session.get(
+                    "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/modules_configuration.json"
+                ) as response:
+                    response.raise_for_status()
+                    raw_data: str = await response.text()
+                    json_data = json.loads(raw_data)
+                    memoised = json_data
+        return (
+            memoised["enabled_modules"],
+            memoised["weights"],
+            memoised["parameters"],
+        )
+
+    return get_ponderation
 
 
-async def get_ponderation() -> tuple[list[str], dict[str, float]]:
-    global memoised, last_call
-    now = datetime.datetime.now()
-    if not memoised or (now - last_call) > datetime.timedelta(minutes=1):
-        last_call: datetime.datetime = datetime.datetime.now()
-        async with aiohttp.ClientSession() as session:
-            async with session.get(
-                "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/modules_configuration.json"
-            ) as response:
-                response.raise_for_status()
-                json_data: dict = await response.json()
-                memoised = json_data
-    return (memoised["enabled_modules"], memoised["weights"])
+get_ponderation = ponderation_geter()
 
 
 def float_normalization(
@@ -57,9 +68,21 @@ async def choose_keyword():
 
 
 async def think() -> tuple[ModuleType, dict]:
-    weights = await get_ponderation()
-    choosen_module = choose_value(weights)
-    module = import_module(choosen_module)
+    __enabled_modules__, weights, _parameters = await get_ponderation()
+    module = None
+    choosen_module = ""
+    while not module:
+        choosen_module = choose_value(weights)
+        try:
+            module = import_module(choosen_module)
+        except:
+            logging.exception(
+                f"An error occured loading module {choosen_module}"
+            )
     keyword = await choose_keyword()
-    parameters = {"keyword": keyword}
+    common_parameters = _parameters["common_parameters"]
+    specific_parameters = _parameters["specific_parameters"][choosen_module]
+    parameters = {"url_parameters": {"keyword": keyword}}
+    parameters.update(common_parameters)
+    parameters.update(specific_parameters)
     return (module, parameters)

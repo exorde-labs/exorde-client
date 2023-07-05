@@ -1030,7 +1030,7 @@ async def generate_url(keyword: str = "BTC", live_mode=True):
 
 async def query(parameters: dict) -> AsyncGenerator[Item, None]:
     global driver
-    url = await generate_url(**parameters)
+    url = await generate_url(**parameters["url_parameters"])
     url_parts = url.split("twitter.com/")[1].split("&")
     search_keyword = ""
     if url_parts[0].startswith("search"):

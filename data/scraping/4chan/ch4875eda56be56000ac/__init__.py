@@ -504,7 +504,7 @@ async def generate_url(keyword: str = "BTC"):
 
 
 async def query(parameters: dict) -> AsyncGenerator[Item, None]:
-    url = await generate_url(**parameters)
+    url = await generate_url(**parameters["url_parameters"])
     if not has_substring(["4chan", "4channel", "4cdn"], url):
         raise ValueError("Not a 4chan URL")
     async for result in scrape_4chan(

@@ -152,7 +152,7 @@ async def scrap_subreddit(subreddit_url: str) -> AsyncGenerator[Item, None]:
 
 
 async def query(parameters: dict) -> AsyncGenerator[Item, None]:
-    url = await generate_url(**parameters)
+    url = await generate_url(**parameters["url_parameters"])
     logging.info("[Reddit] Scraping %s", url)
     if "reddit.com" not in url:
         raise ValueError(f"Not a reddit URL {url}")
