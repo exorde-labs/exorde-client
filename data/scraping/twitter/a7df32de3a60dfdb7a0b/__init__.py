@@ -677,11 +677,11 @@ def keep_scroling(data, tweet_ids, scrolling, tweet_parsed, limit, scroll, last_
             if tweet:
                 # check if the tweet is unique
                 tweet_id = ''.join(tweet[:-2])
+                last_date = str(tweet[2])
                 if tweet_id not in tweet_ids:
                     if is_within_timeframe_seconds(last_date, MAX_EXPIRATION_HARDCODED_SECONDS):
                         tweet_ids.add(tweet_id)
                         data.append(tweet)
-                        last_date = str(tweet[2])
                         logging.info(f"[Tweet] Date = {last_date}")
                         logging.info("[Twitter Selenium] Found Tweet:  %s", tweet)
                         tweet_parsed += 1
