@@ -195,6 +195,17 @@ Please have exorde_data/ & madtypes/ folders in your root directory, if you fail
 
 You can build & test your software like this during your development.
 
+# Example
+
+The following code is an example of how you can develop your scraper, which typical functions to include, how to import necessary modules.
+You can observe how test_query() can work with query() and how to simulate the parameters dict, how to read values from it:
+
+- [Hackernews forum scraper example](https://gist.github.com/MathiasExorde/104e99bcb9f87acaca7ba1c2d98c729f)
+
+And here is a sample setup.py associated with this module:
+
+- [Hackernews forum setup.py  example](https://gist.github.com/MathiasExorde/bc4a4670e4ba6a0fabbade76223b7eb8)
+
 ## **How to embed & test your scraper**
 
 You should write a test_query() function that applies examples URL (or keyword) as input, to show the good behavior of your scraper.
