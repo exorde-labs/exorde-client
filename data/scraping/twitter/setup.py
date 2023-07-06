@@ -9,8 +9,7 @@ setup(
         "aiohttp",
         "python-dotenv",
         "selenium==4.2.0",
-        "pathlib",
-        "chromedriver-autoinstaller==0.4.0"
+        "pathlib"
     ],
     extras_require={"dev": ["pytest", "pytest-cov", "pytest-asyncio"]},
 )
