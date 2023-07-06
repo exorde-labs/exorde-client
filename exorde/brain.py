@@ -1,10 +1,9 @@
 import json
 import logging
-from importlib import metadata, import_module
 import random
 from exorde.get_keywords import get_keywords
 from exorde.urls import generate_url
-from exorde_data import get_scraping_module_for_url
+from exorde_data import get_scraping_module
 import aiohttp
 import datetime
 from types import ModuleType
@@ -74,7 +73,7 @@ async def think() -> tuple[ModuleType, dict]:
     while not module:
         choosen_module = choose_value(weights)
         try:
-            module = import_module(choosen_module)
+            module = await get_scraping_module(choosen_module)
         except:
             logging.exception(
                 f"An error occured loading module {choosen_module}"
