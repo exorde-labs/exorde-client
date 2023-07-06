@@ -35,7 +35,6 @@ from exorde_data import (
     ExternalId,
     ExternalParentId,
 )
-import chromedriver_autoinstaller
 import subprocess
 import signal
 # import geckodriver_autoinstaller
@@ -249,9 +248,6 @@ def get_proxy(env):
     return load_env_variable("HTTP_PROXY", none_allowed=True)
 
 
-# import undetected_chromedriver as uc 
-# chromedriver_autoinstaller.install() 
-
 # current_dir = pathlib.Path(__file__).parent.absolute()
 
 def get_data(card):
@@ -374,7 +370,6 @@ def init_driver(headless=True, proxy=None, show_images=False, option=None, firef
     global driver
     http_proxy = get_proxy(env)
     options = ChromeOptions()
-    # driver_path = chromedriver_autoinstaller.install()
     logging.info("Adding options to Chromium Driver")
     binary_path = get_chrome_path()
     options.binary_location = binary_path
