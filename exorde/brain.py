@@ -11,8 +11,7 @@ from types import ModuleType
 
 LIVE_PONDERATION = "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/modules_configuration.json"
 DEV_PONDERATION = "https://gist.githubusercontent.com/6r17/082bb252f504f80610602b0288baffd6/raw/0ad0b1f720f1ad1e6ce28da53e1550c4f7c146cd/ponderation.json"
-PONDERATION = DEV_PONDERATION
-import os
+PONDERATION = LIVE_PONDERATION
 
 
 def ponderation_geter():

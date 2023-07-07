@@ -75,7 +75,7 @@ async def is_up_to_date(repository_path) -> bool:
         )
     try:
         local_version = metadata.version(module_name)
-    except PackageNotFoundError:
+    except:
         return False
 
     online_version = await fetch_version_from_setup_file(repository_path)
@@ -86,7 +86,7 @@ async def is_up_to_date(repository_path) -> bool:
 
 async def get_scraping_module(repository_path) -> ModuleType:
     module_name = os.path.basename(repository_path.rstrip("/"))
-    if not is_up_to_date(repository_path):
-        subprocess.check_call(["pip", "install", module_name])
+    if not await is_up_to_date(repository_path):
+        subprocess.check_call(["pip", "install", f"git+{repository_path}.git"])
     loaded_module = import_module(module_name)
     return loaded_module
