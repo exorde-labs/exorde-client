@@ -9,6 +9,11 @@ from typing import Union
 from types import ModuleType
 
 
+LIVE_PONDERATION = "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/modules_configuration.json"
+DEV_PONDERATION = "https://gist.githubusercontent.com/6r17/082bb252f504f80610602b0288baffd6/raw/8c34b8beb5d11c6611fb13b0dee985c9da52be9a/ponderation.json"
+PONDERATION = DEV_PONDERATION
+
+
 def ponderation_geter():
     memoised = None
     last_call = datetime.datetime.now()
@@ -19,9 +24,7 @@ def ponderation_geter():
         if not memoised or (now - last_call) > datetime.timedelta(minutes=1):
             last_call = datetime.datetime.now()
             async with aiohttp.ClientSession() as session:
-                async with session.get(
-                    "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/modules_configuration.json"
-                ) as response:
+                async with session.get(PONDERATION) as response:
                     response.raise_for_status()
                     raw_data: str = await response.text()
                     json_data = json.loads(raw_data)
