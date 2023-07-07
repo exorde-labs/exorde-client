@@ -5,3 +5,4 @@ exorde_data.egg-info
 env
 build
 .eggs
+keywords.json

@@ -2,10 +2,10 @@ import json
 import logging
 import random
 from exorde.get_keywords import get_keywords
-from exorde.urls import generate_url
 from exorde_data import get_scraping_module
 import aiohttp
 import datetime
+from typing import Union
 from types import ModuleType
 
 
@@ -60,7 +60,7 @@ def choose_value(weights) -> str:
     return weights.items()[0][0]
 
 
-async def choose_keyword():
+async def choose_keyword() -> str:
     keywords_: list[str] = await get_keywords()
     selected_keyword: str = random.choice(keywords_)
     return selected_keyword
@@ -68,8 +68,8 @@ async def choose_keyword():
 
 async def think() -> tuple[ModuleType, dict]:
     __enabled_modules__, weights, _parameters = await get_ponderation()
-    module = None
-    choosen_module = ""
+    module: Union[ModuleType, None] = None
+    choosen_module: str = ""
     while not module:
         choosen_module = choose_value(weights)
         try:
@@ -81,7 +81,7 @@ async def think() -> tuple[ModuleType, dict]:
     keyword = await choose_keyword()
     common_parameters = _parameters["common_parameters"]
     specific_parameters = _parameters["specific_parameters"][choosen_module]
-    parameters = {"url_parameters": {"keyword": keyword}}
+    parameters: dict[str, dict] = {"url_parameters": {"keyword": keyword}}
     parameters.update(common_parameters)
     parameters.update(specific_parameters)
     return (module, parameters)
