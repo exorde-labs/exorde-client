@@ -24,6 +24,7 @@ setup(
         "HTMLParser",
         "pyyaml",
         "web3",
+        "packaging",
         "fasttext==0.9.2",
         "fasttext-langdetect==1.0.5",
         "huggingface_hub==0.14.1",

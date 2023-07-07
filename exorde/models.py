@@ -2,9 +2,20 @@ from enum import Enum
 from madtypes import MadType
 
 from eth_account.signers.local import LocalAccount
-from exorde_data.models import Item
+from exorde_data import Item
 from web3 import AsyncWeb3
 from typing import Optional
+
+from exorde_data import (
+    CreatedAt,
+    Title,
+    Summary,
+    Url,
+    Author,
+    ExternalId,
+    ExternalParentId,
+    Domain,
+)
 
 
 class Translated(str, metaclass=MadType):
@@ -218,18 +229,6 @@ class CollectionModule(str, metaclass=MadType):
 class BatchKindEnum(Enum):
     SPOTTING = "SPOTTING"
     VALIDATION = "VALIDATION"
-
-
-from exorde_data.models import (
-    CreatedAt,
-    Title,
-    Summary,
-    Url,
-    Author,
-    ExternalId,
-    ExternalParentId,
-    Domain,
-)
 
 
 class ProtocolItem(dict, metaclass=MadType):

@@ -1,12 +1,14 @@
 venv:
 	rm -rf env
 	python3 -m virtualenv env
-	env/bin/pip3 install -e ./data
-	env/bin/pip3 install -e ./data/scraping/reddit
-	env/bin/pip3 install -e ./data/scraping/twitter
-	env/bin/pip3 install -e ./data/scraping/4chan
-	env/bin/pip3 install -e ./exorde
-	env/bin/pip3 install --upgrade git+https://github.com/JustAnotherArchivist/snscrape.git
+	env/bin/pip3 install -e .
+	env/bin/pip3 install -e data
+	@for dir in data/modules/* ; do \
+        if [ -d "$$dir" ]; then \
+            echo "Installing module: $$dir"; \
+            pip install -e "$$dir"; \
+        fi \
+    done
 
 protocol_schema:
 	rm -rf exorde/exorde/schema.json

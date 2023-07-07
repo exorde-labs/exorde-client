@@ -8,8 +8,8 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 RUN pip3.10 install --no-cache-dir \
-        'git+https://github.com/exorde-labs/exorde-client.git#subdirectory=data&egg=exorde-data' \
-        'git+https://github.com/exorde-labs/exorde-client.git' \
+        'git+https://github.com/exorde-labs/exorde_data.git' \
+        'git+https://github.com/exorde-labs/exorde-client.git'\
         selenium==4.2.0 \
     && pip3.10 install --no-cache-dir --upgrade 'git+https://github.com/JustAnotherArchivist/snscrape.git'
 
