@@ -1,4 +1,5 @@
 import subprocess
+import logging
 from importlib import metadata
 from importlib import import_module, metadata
 import re
@@ -78,7 +79,15 @@ async def is_up_to_date(repository_path) -> bool:
     except:
         return False
 
-    online_version = await fetch_version_from_setup_file(repository_path)
+    setup_path = repository_path.replace(
+        "https://github.com/", "https://raw.githubusercontent.com/"
+    )
+    online_version = await fetch_version_from_setup_file(
+        f"{setup_path}/main/setup.py"
+    )
+    logging.info(
+        f"version -> local: '{local_version}' | remote: '{remote_version}'"
+    )
     if is_older_version(online_version, local_version):
         return False
     return True

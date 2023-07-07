@@ -67,6 +67,9 @@ async def choose_keyword() -> str:
     return selected_keyword
 
 
+import os
+
+
 async def think() -> tuple[ModuleType, dict]:
     __enabled_modules__, _parameters, weights = await get_ponderation()
     module: Union[ModuleType, None] = None
@@ -79,6 +82,7 @@ async def think() -> tuple[ModuleType, dict]:
             logging.exception(
                 f"An error occured loading module {choosen_module}"
             )
+            os._exit(-1)
     keyword = await choose_keyword()
     common_parameters = _parameters["common_parameters"]
     specific_parameters = _parameters["specific_parameters"][choosen_module]
