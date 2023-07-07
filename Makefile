@@ -2,7 +2,8 @@ venv:
 	rm -rf env
 	python3 -m virtualenv env
 	env/bin/pip3 install -e .
-	@for dir in modules/* ; do \
+	env/bin/pip3 install -e data
+	@for dir in data/modules/* ; do \
         if [ -d "$$dir" ]; then \
             echo "Installing module: $$dir"; \
             pip install -e "$$dir"; \

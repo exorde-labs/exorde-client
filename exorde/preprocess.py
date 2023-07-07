@@ -1,5 +1,5 @@
 import re
-from exorde_data.models import Content
+from exorde_data import Content
 
 
 def preprocess_text(text: str, remove_stopwords: bool) -> str:
@@ -18,7 +18,7 @@ def preprocess_text(text: str, remove_stopwords: bool) -> str:
     """
 
     def remove_unicode_escapes(s):
-        return re.sub(r'\\u[\da-fA-F]{4}', '', s)
+        return re.sub(r"\\u[\da-fA-F]{4}", "", s)
 
     def contains_only_special_chars(s):
         pattern = r"^[^\w\s]+$"

@@ -10,15 +10,16 @@ from types import ModuleType
 
 
 LIVE_PONDERATION = "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/modules_configuration.json"
-DEV_PONDERATION = "https://gist.githubusercontent.com/6r17/082bb252f504f80610602b0288baffd6/raw/8c34b8beb5d11c6611fb13b0dee985c9da52be9a/ponderation.json"
+DEV_PONDERATION = "https://gist.githubusercontent.com/6r17/082bb252f504f80610602b0288baffd6/raw/0ad0b1f720f1ad1e6ce28da53e1550c4f7c146cd/ponderation.json"
 PONDERATION = DEV_PONDERATION
+import os
 
 
 def ponderation_geter():
     memoised = None
     last_call = datetime.datetime.now()
 
-    async def get_ponderation() -> tuple[list[str], dict[str, float], dict]:
+    async def get_ponderation() -> tuple[list[str], dict, dict[str, float]]:
         nonlocal memoised, last_call
         now = datetime.datetime.now()
         if not memoised or (now - last_call) > datetime.timedelta(minutes=1):
@@ -27,12 +28,16 @@ def ponderation_geter():
                 async with session.get(PONDERATION) as response:
                     response.raise_for_status()
                     raw_data: str = await response.text()
-                    json_data = json.loads(raw_data)
+                    try:
+                        json_data = json.loads(raw_data)
+                    except Exception as error:
+                        logging.error(raw_data)
+                        raise error
                     memoised = json_data
         return (
             memoised["enabled_modules"],
-            memoised["weights"],
             memoised["parameters"],
+            memoised["weights"],
         )
 
     return get_ponderation
@@ -41,14 +46,8 @@ def ponderation_geter():
 get_ponderation = ponderation_geter()
 
 
-def float_normalization(
-    enabled_modules: list[str], weights: dict[str, int]
-) -> dict[str, float]:
-    total = sum(weights[key] for key in enabled_modules)
-    return {key: round(weights[key] / total, 3) for key in enabled_modules}
-
-
 def choose_value(weights) -> str:
+    print(weights)
     total_weight: int = sum(weights.values())
     choice: float = random.uniform(0, total_weight)
     cumulative_weight: int = 0
@@ -70,7 +69,7 @@ async def choose_keyword() -> str:
 
 
 async def think() -> tuple[ModuleType, dict]:
-    __enabled_modules__, weights, _parameters = await get_ponderation()
+    __enabled_modules__, _parameters, weights = await get_ponderation()
     module: Union[ModuleType, None] = None
     choosen_module: str = ""
     while not module:

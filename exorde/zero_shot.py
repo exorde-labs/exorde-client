@@ -1,4 +1,4 @@
-from exorde_data.models import Item
+from exorde_data import Item
 from exorde.models import Classification, Translation
 
 
@@ -36,7 +36,7 @@ def zero_shot(
         return Classification(
             label=output[0]["labels"][0], score=output[0]["scores"][0]
         )
-    
+
     labels_list = list()
 
     for i in range(len(texts)):
