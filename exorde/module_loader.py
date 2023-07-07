@@ -86,7 +86,7 @@ async def is_up_to_date(repository_path) -> bool:
         f"{setup_path}/main/setup.py"
     )
     logging.info(
-        f"version -> local: '{local_version}' | remote: '{remote_version}'"
+        f"version -> local: '{local_version}' | remote: '{online_version}'"
     )
     if is_older_version(online_version, local_version):
         return False
