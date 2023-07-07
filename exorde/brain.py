@@ -2,7 +2,7 @@ import json
 import logging
 import random
 from exorde.get_keywords import get_keywords
-from exorde_data import get_scraping_module
+from exorde.module_loader import get_scraping_module
 import aiohttp
 import datetime
 from typing import Union

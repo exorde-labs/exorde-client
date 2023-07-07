@@ -14,6 +14,38 @@ import os
 
 
 async def is_up_to_date(repository_path) -> bool:
+    def is_older_version(version1, version2):
+        # Remove the "v" prefix if present
+        if version1.startswith("v"):
+            version1 = version1[1:]
+        if version2.startswith("v"):
+            version2 = version2[1:]
+
+        # Split the versions into major, middle, and minor components
+        major1, middle1, minor1 = version1.split(".")
+        major2, middle2, minor2 = version2.split(".")
+
+        # Compare the major components
+        if major1 < major2:
+            return True
+        elif major1 > major2:
+            return False
+
+        # If major components are equal, compare the middle components
+        if middle1 < middle2:
+            return True
+        elif middle1 > middle2:
+            return False
+
+        # If major and middle components are equal, compare the minor components
+        if minor1 < minor2:
+            return True
+        elif minor1 > minor2:
+            return False
+
+        # The versions are equal
+        return False
+
     async def fetch_version_from_setup_file(setup_file_url: str) -> str:
         async with aiohttp.ClientSession() as session:
             async with session.get(setup_file_url) as response:
@@ -47,7 +79,8 @@ async def is_up_to_date(repository_path) -> bool:
         return False
 
     online_version = await fetch_version_from_setup_file(repository_path)
-
+    if is_older_version(online_version, local_version):
+        return False
     return True
 
 
