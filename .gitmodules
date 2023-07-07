@@ -16,3 +16,4 @@
 [submodule "data"]
 	path = data
 	url = https://github.com/exorde-labs/exorde_data/
+	branch = main
