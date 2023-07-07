@@ -279,7 +279,7 @@ scraper-name
 └── README.md
 ```
 
-**Once your scraper module adheres to this structure and guidelines, please submit your work to the appropriate repository: [https://github.com/exorde-labs/exorde-client/tree/main/data/scraping](https://github.com/exorde-labs/exorde-client/tree/main/data/scraping)**
+**Once your scraper module adheres to this structure and guidelines, please submit your work to the appropriate repository: [The Exorde Data Repo](https://github.com/exorde-labs/exorde_data)**
 
 **by performing a pull request (PR).**
 
@@ -289,7 +289,7 @@ scraper-name
 
 **The first step is to make the first pull request on the exorde-client repository.** 
 
-[exorde-client/data/scraping at main · exorde-labs/exorde-client](https://github.com/exorde-labs/exorde-client/tree/main/data/scraping)
+[https://github.com/exorde-labs/exorde-client/tree/main/data/scraping](https://github.com/exorde-labs/exorde_data)
 
 1. A submission is considered **valid** if all constraints, requirements, and rules detailed above are respected. A valid submission should be testable by a team member within minutes if the **setup.py** and **init**.py files are properly written. Being first is based on the PR timestamp on the GitHub repository.
 2. **Minor success:** If you are the first to submit your work on the exorde-client repository but minor changes are required, you can correct them quickly & win the prize. If major changes are required, the submission will be considered incomplete.
@@ -312,7 +312,7 @@ Tip: use the checklist below to make sure you didn’t forget anything.
 1. **Environment:**
     - Python 3.10  (UNIX container)
     - Make a PR (pull request) on https://github.com/exorde-labs/exorde-client
-    Subdirectory [https://github.com/exorde-labs/exorde-client/tree/main/data/scraping](https://github.com/exorde-labs/exorde-client/tree/main/data/scraping). Accepted file structure:
+    Subdirectory [https://github.com/exorde-labs/exorde-client/tree/main/data/scraping](https://github.com/exorde-labs/exorde_data). Accepted file structure:
         
         ```python
         scraper-name
