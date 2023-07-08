@@ -12,16 +12,12 @@ def normalize_version(version_string):
 
 async def self_update():
     try:
+        logging.info("[SELF CLIENT UPDATE] Checking...")
         # Try to get latest tag, if not possible, log and return
         try:
             latest_tag = await get_latest_tag()
         except Exception as e:
             logging.info("[SELF CLIENT UPDATE] Unable to retrieve latest tag from GitHub: %s", e)
-            return
-
-        # If latest_tag is not valid string, log and return
-        if latest_tag is None or not isinstance(latest_tag, str):
-            logging.info("[SELF CLIENT UPDATE] Invalid latest tag retrieved from GitHub")
             return
         
         # Try to get local version, if not found set default version
