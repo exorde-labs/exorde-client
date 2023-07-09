@@ -1,15 +1,10 @@
 import logging
-from importlib import metadata
 from importlib import import_module, metadata
 import re
 import aiohttp
 import subprocess
 from types import ModuleType
-
-
 from importlib.metadata import PackageNotFoundError
-
-
 import os
 
 
