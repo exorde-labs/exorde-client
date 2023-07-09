@@ -27,21 +27,21 @@ async def is_up_to_date(repository_path) -> bool:
         major2, middle2, minor2 = version2.split(".")
 
         # Compare the major components
-        if major1 < major2:
+        if int(major1) < int(major2):
             return True
-        elif major1 > major2:
+        elif int(major1) > int(major2):
             return False
 
         # If major components are equal, compare the middle components
-        if middle1 < middle2:
+        if int(middle1) < int(middle2):
             return True
-        elif middle1 > middle2:
+        elif int(middle1) > int(middle2):
             return False
 
         # If major and middle components are equal, compare the minor components
-        if minor1 < minor2:
+        if int(minor1) < int(minor2):
             return True
-        elif minor1 > minor2:
+        elif int(minor1) > int(minor2):
             return False
 
         # The versions are equal
@@ -98,8 +98,14 @@ async def is_up_to_date(repository_path) -> bool:
     logging.info(
         f"version -> local: '{local_version}' | remote: '{online_version}'"
     )
-    if is_older_version(online_version, local_version):
+    if is_older_version(local_version, online_version):
+        logging.info(
+            "[is_older_version] the online version is newer!"
+        )
         return False
+    logging.info(
+        "[is_older_version] the online version is not newer, no update needed."
+    )
     return True
 
 
