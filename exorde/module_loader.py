@@ -53,7 +53,7 @@ async def is_up_to_date(repository_path) -> bool:
                 # Error handling for non-successful HTTP status codes
                 if response.status != 200:
                     raise ValueError(
-                        "An error occured while fetching the setup file at specified endpoint"
+                        "An error occurred while fetching the setup file at the specified endpoint"
                     )
 
                 # Asynchronously read response data
@@ -65,7 +65,7 @@ async def is_up_to_date(repository_path) -> bool:
                     return version_match.group(1)
                 else:
                     raise ValueError(
-                        "No version were found in the specified setup file"
+                        "No versions were found in the specified setup file"
                     )
 
     try:
@@ -76,15 +76,25 @@ async def is_up_to_date(repository_path) -> bool:
         )
     try:
         local_version = metadata.version(module_name)
-    except:
+    except Exception as e:
+        logging.info(
+            "[MODULE LOADER ERROR] COULD NOT LOAD local_version"
+        )
         return False
 
     setup_path = repository_path.replace(
         "https://github.com/", "https://raw.githubusercontent.com/"
     )
-    online_version = await fetch_version_from_setup_file(
-        f"{setup_path}/main/setup.py"
-    )
+    try:
+        online_version = await fetch_version_from_setup_file(
+            f"{setup_path}/main/setup.py"
+        )
+    except Exception as e:
+        logging.info(
+            "[MODULE LOADER ERROR] COULD NOT LOAD online_version"
+        )
+        return False
+
     logging.info(
         f"version -> local: '{local_version}' | remote: '{online_version}'"
     )
@@ -95,7 +105,21 @@ async def is_up_to_date(repository_path) -> bool:
 
 async def get_scraping_module(repository_path) -> ModuleType:
     module_name = os.path.basename(repository_path.rstrip("/"))
-    if not await is_up_to_date(repository_path):
-        subprocess.check_call(["pip", "install", f"git+{repository_path}.git"])
-    loaded_module = import_module(module_name)
+    try:
+        if not await is_up_to_date(repository_path):
+            subprocess.check_call(["pip", "install", f"git+{repository_path}.git"])
+    except (subprocess.CalledProcessError, PackageNotFoundError):
+        raise RuntimeError("Failed to install or import the module.")
+
+    try:
+        loaded_module = import_module(module_name)
+    except ImportError:
+        logging.info(
+            f"[MODULE LOADER Scraping module] - Could not import or land the module from {repository_path}"
+        )
+    except Exception as e:
+        logging.info(
+            f"[MODULE LOADER Scraping module] Error: {e}"
+        )
+
     return loaded_module
