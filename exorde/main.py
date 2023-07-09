@@ -87,18 +87,22 @@ async def main(command_line_arguments: argparse.Namespace):
         if cursor % 3 == 0:
             try:
                 await self_update()
+            except:
+                logging.info(
+                    "[MAIN] An error occured during self_update"
+                )
+            try:
                 # update/refresh configuration
                 live_configuration: LiveConfiguration = (
                     await get_live_configuration()
                 )
                 if live_configuration["remote_kill"] == True:
                     logging.info("Protocol is shut down (remote kill)")
-                    os._exit(0)
-            except:
-                logging.exception(
-                    "An error occured retrieving the live_configuration"
+                    os._exit(0)      
+            except:  
+                logging.info(
+                    "[MAIN] An error occured during live configuration check."
                 )
-                os._exit(0)
             try:
                 current_reputation = await get_current_rep(
                     command_line_arguments.main_address
