@@ -1,4 +1,3 @@
-import subprocess
 import logging
 from importlib import metadata
 from importlib import import_module, metadata
