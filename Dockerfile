@@ -3,24 +3,17 @@ FROM python:3.10.11
 # Update and install dependencies
 RUN apt-get update \
     && apt-get upgrade -y \
-    && apt-get install -y chromium xvfb \
+    && apt-get install -y chromium chromium-driver xvfb \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && ln -s /usr/bin/chromedriver  /usr/local/bin/chromedriver
+
 
 RUN pip3.10 install --no-cache-dir \
         'git+https://github.com/exorde-labs/exorde_data.git' \
         'git+https://github.com/exorde-labs/exorde-client.git'\
         selenium==4.2.0 \
     && pip3.10 install --no-cache-dir --upgrade 'git+https://github.com/JustAnotherArchivist/snscrape.git'
-
-# Configure Chrome
-RUN CHROME_DRIVER_VERSION=`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE` && \
-    wget -N http://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/chromedriver_linux64.zip -P ~/ && \
-    unzip ~/chromedriver_linux64.zip -d ~/ && \
-    rm ~/chromedriver_linux64.zip && \
-    mv -f ~/chromedriver /usr/local/bin/chromedriver && \
-    chmod 0755 /usr/local/bin/chromedriver && \
-    ln -s /usr/local/bin/chromedriver /usr/bin/chromedriver
 
 # set display port to avoid crash
 ENV DISPLAY=:99
