@@ -17,7 +17,7 @@ from exorde.models import (
 from exorde.tag import tag
 
 
-def merge_chunks(chunks: list[Processed]) -> Processed:
+def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
     # MERGE RULE HERE
     return chunks[0]
 
@@ -78,6 +78,6 @@ async def process_batch(
         complete_processes[id].append(completed)
     aggregated = []
     for __key__, values in complete_processes.items():
-        aggregated = merge_chunks(values)
+        aggregated.append(merge_chunks(values))
     result_batch: Batch = Batch(items=aggregated, kind=BatchKindEnum.SPOTTING)
     return result_batch
