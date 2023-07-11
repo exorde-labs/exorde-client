@@ -1,0 +1,20 @@
+[submodule "modules/ap98j3envoubi3fco1kc"]
+	path = modules/ap98j3envoubi3fco1kc
+	url = https://github.com/exorde-labs/ap98j3envoubi3fco1kc.git
+	branch = main
+[submodule "modules/ch4875eda56be56000ac"]
+	path = modules/ch4875eda56be56000ac
+	url = https://github.com/exorde-labs/ch4875eda56be56000ac.git
+	branch = main
+[submodule "modules/a7df32de3a60dfdb7a0b"]
+	path = modules/a7df32de3a60dfdb7a0b
+	url = https://github.com/exorde-labs/a7df32de3a60dfdb7a0b.git
+	branch = main
+[submodule "modules/hackbc9419ab11eebe56"]
+	path = modules/hackbc9419ab11eebe56
+	url = https://github.com/exorde-labs/hackbc9419ab11eebe56.git
+	branch = main
+[submodule "modules/wei223be19ab11e891bo"]
+	path = modules/wei223be19ab11e891bo
+	url = https://github.com/exorde-labs/wei223be19ab11e891bo.git
+	branch = main
