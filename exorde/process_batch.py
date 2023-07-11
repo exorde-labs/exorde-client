@@ -17,16 +17,18 @@ from exorde.models import (
 from exorde.tag import tag
 
 
-async def process_batch(batch: list[Processed], static_configuration):
-    lab_configuration = static_configuration["lab_configuration"]
+async def process_batch(
+    batch: list[tuple[int, Processed]], static_configuration
+) -> Batch:
+    lab_configuration: dict = static_configuration["lab_configuration"]
     logging.info(f"running batch for {len(batch)}")
     analysis_results: list[Analysis] = tag(
-        [processed.translation.translation for processed in batch],
+        [processed.translation.translation for (__id__, processed) in batch],
         lab_configuration,
     )
     complete_processes: list[ProcessedItem] = []
-    for processed, analysis in zip(batch, analysis_results):
-        prot_item = ProtocolItem(
+    for (id, processed), analysis in zip(batch, analysis_results):
+        prot_item: ProtocolItem = ProtocolItem(
             created_at=processed.item.created_at,
             domain=processed.item.domain,
             url=processed.item.url,
@@ -45,7 +47,7 @@ async def process_batch(batch: list[Processed], static_configuration):
             prot_item.external_id = processed.item.external_id
         if processed.item.external_parent_id:
             prot_item.external_parent_id = processed.item.external_parent_id
-        completed = ProcessedItem(
+        completed: ProcessedItem = ProcessedItem(
             item=prot_item,
             analysis=ProtocolAnalysis(
                 classification=processed.classification,

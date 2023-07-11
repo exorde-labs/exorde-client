@@ -13,7 +13,7 @@ class EnumEncoder(json.JSONEncoder):
 
 async def upload_to_ipfs(
     value, ipfs_path="http://ipfs-api.exorde.network/add"
-):
+) -> str:
     async with aiohttp.ClientSession() as session:
         _value = json.dumps(value, cls=EnumEncoder)
         async with session.post(
@@ -54,7 +54,7 @@ class DownloadError(Exception):
     pass
 
 
-async def download_ipfs_file(cid: str, max_attempts: int = 5):
+async def download_ipfs_file(cid: str, max_attempts: int = 5) -> dict:
     headers = {
         "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.146 Safari/537.36",
         "Connection": "close",
