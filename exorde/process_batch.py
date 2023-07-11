@@ -17,6 +17,11 @@ from exorde.models import (
 from exorde.tag import tag
 
 
+def merge_chunks(chunks: list[Processed]) -> Processed:
+    # MERGE RULE HERE
+    return chunks[0]
+
+
 async def process_batch(
     batch: list[tuple[int, Processed]], static_configuration
 ) -> Batch:
@@ -26,7 +31,7 @@ async def process_batch(
         [processed.translation.translation for (__id__, processed) in batch],
         lab_configuration,
     )
-    complete_processes: list[ProcessedItem] = []
+    complete_processes: dict[int, list[ProcessedItem]] = {}
     for (id, processed), analysis in zip(batch, analysis_results):
         prot_item: ProtocolItem = ProtocolItem(
             created_at=processed.item.created_at,
@@ -68,8 +73,11 @@ async def process_batch(
             collection_module=CollectionModule("unknown"),
             collected_at=CollectedAt(datetime.now().isoformat() + "Z"),
         )
-        complete_processes.append(completed)
-    result_batch: Batch = Batch(
-        items=complete_processes, kind=BatchKindEnum.SPOTTING
-    )
+        if not complete_processes[id]:
+            complete_processes[id] = []
+        complete_processes[id].append(completed)
+    aggregated = []
+    for __key__, values in complete_processes.items():
+        aggregated = merge_chunks(values)
+    result_batch: Batch = Batch(items=aggregated, kind=BatchKindEnum.SPOTTING)
     return result_batch
