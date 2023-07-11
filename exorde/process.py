@@ -5,10 +5,28 @@ from exorde.preprocess import preprocess
 from exorde.translate import translate
 from exorde.extract_keywords import extract_keywords
 from exorde.zero_shot import zero_shot
-from exorde.models import Classification, Translation, Keywords, Processed, Item
+from exorde.models import (
+    Classification,
+    Translation,
+    Keywords,
+    Processed,
+    Item,
+)
 
 
-async def process(item: Item, lab_configuration, max_depth_classification) -> Processed:
+class TooBigError(Exception):
+    pass
+
+
+def evaluate_token_count(item):
+    return len(item.content)
+
+
+async def process(
+    item: Item, lab_configuration, max_depth_classification
+) -> Processed:
+    if evaluate_token_count(item) >= lab_configuration["max_token_count"]:
+        raise TooBigError
     try:
         try:
             item = preprocess(item, False)
@@ -37,10 +55,11 @@ async def process(item: Item, lab_configuration, max_depth_classification) -> Pr
             logging.error(err)
             logging.error(json.dumps(translation, indent=4))
             raise err
-
         try:
             classification: Classification = zero_shot(
-                translation, lab_configuration, max_depth=max_depth_classification
+                translation,
+                lab_configuration,
+                max_depth=max_depth_classification,
             )
         except Exception as err:
             logging.error("An error occured classifying an item")

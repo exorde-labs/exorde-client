@@ -16,9 +16,6 @@ async def spotting(live_configuration, static_configuration):
         static_configuration,
         live_configuration,
     )
-    if len(batch) != live_configuration["batch_size"]:
-        logging.warning("Something weird is going on, batch ignored")
-        return
     try:
         logging.info("Processing batch")
         processed_batch = await process_batch(batch, static_configuration)
