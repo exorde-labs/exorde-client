@@ -1,0 +1,2 @@
+[console_scripts]
+exorde_data = exorde_data.__init__:print_schema
