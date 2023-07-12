@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="exorde",
-    version="v2.3.4",
+    version="v2.3.5",
     author="Exorde Labs",
     author_email="hello@exordelabs.com",
     description="The AI-based client to mine data and power the Exorde Network",
@@ -22,9 +22,13 @@ setup(
         "aiohttp",
         "lxml",
         "HTMLParser",
+        "pytz",
         "pyyaml",
         "web3",
         "packaging",
+        "feedparser==6.0.8",
+        "python_dateutil==2.8.2"
+        "newspaper3k==0.2.8",
         "fasttext==0.9.2",
         "fasttext-langdetect==1.0.5",
         "huggingface_hub==0.14.1",
