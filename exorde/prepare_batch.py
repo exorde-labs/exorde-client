@@ -45,23 +45,24 @@ def aggregate_sents_into_paragraphs(sentences, chunk_size = 500):
 
     try:
         for sent in  sentences:
-            sent_tokens_count = int(evaluate_token_count(str(sent)))
+            sent_ = str(sent).replace("\n", "")
+            sent_tokens_count = int(evaluate_token_count(str(sent_)))
             # Check if adding the current sentence exceeds the maximum token count
             if token_count + sent_tokens_count > chunk_size:
-                paragraphs.append(current_paragraph)
+                current_paragraph_str = " ".join(current_paragraph)
+                paragraphs.append(current_paragraph_str)
                 current_paragraph = []
                 token_count = 0
-
-            sent_ = str(sent).rstrip("\n").replace("\r\n", "").replace("\n", "")
+                
             current_paragraph.append(sent_)
             token_count += sent_tokens_count
 
         # Add the last remaining paragraph
-        if current_paragraph and len(current_paragraph) > 0:
-            merged_paragraph = " ".join(current_paragraph)
-            paragraphs.append(merged_paragraph)
+        if len(current_paragraph) > 0:
+            current_paragraph_str = " ".join(current_paragraph)
+            paragraphs.append(current_paragraph_str)
 
-        logging.info(f"[Paragraph aggregator] aggregated into ")
+        logging.info(f"[Paragraph aggregator] Made {len(paragraphs)} paragraphs ({chunk_size} tokens long)")
     except Exception as e:
         logging.info(f"[Paragraph aggregator] error: {e}")
         paragraphs = []
