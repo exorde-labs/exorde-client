@@ -1,6 +1,7 @@
 import json
 import logging
 import random
+import argparse
 from exorde.get_keywords import get_keywords
 from exorde.module_loader import get_scraping_module
 import aiohttp
@@ -10,8 +11,8 @@ from types import ModuleType
 
 
 LIVE_PONDERATION = "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/modules_configuration.json"
-DEV_PONDERATION = "https://gist.githubusercontent.com/6r17/c844775ea359ce10fcc29a72834a5541/raw/3a89b917b2cea609311aefc95f3a46a6cfc066be/gistfile1.txt"
-PONDERATION_URL = LIVE_PONDERATION
+DEV_PONDERATION = "https://gist.githubusercontent.com/6r17/c844775ea359ce10fcc29a72834a5541/raw/0b969a70375eabc07dec2cb1075b910396a23fed/gistfile1.txt"
+PONDERATION_URL = DEV_PONDERATION
 
 from dataclasses import dataclass
 from typing import Dict, List, Union
@@ -25,7 +26,7 @@ class Ponderation:
     weights: Dict[str, int]
 
 
-async def get_ponderation() -> Ponderation:
+async def _get_ponderation() -> Ponderation:
     async with aiohttp.ClientSession() as session:
         async with session.get(PONDERATION_URL) as response:
             response.raise_for_status()
@@ -60,7 +61,7 @@ def ponderation_geter():
         now = datetime.datetime.now()
         if not memoised or (now - last_call) > datetime.timedelta(minutes=1):
             last_call = datetime.datetime.now()
-            memoised = await get_ponderation()
+            memoised = await _get_ponderation()
         return memoised
 
     return get_ponderation_wrapper
@@ -86,10 +87,9 @@ def choose_domain(
     return next(iter(weights))
 
 
-def choose_module(ponderation: Ponderation) -> str:
-    domain = choose_domain(ponderation.weights)
-    module_name = ponderation.enabled_modules[domain][0]
-    return module_name
+def get_module_path_for_domain(ponderation: Ponderation, domain: str) -> str:
+    module_path = ponderation.enabled_modules[domain][0]
+    return module_path
 
 
 async def choose_keyword() -> str:
@@ -101,14 +101,26 @@ async def choose_keyword() -> str:
 import os
 
 
-async def think() -> tuple[ModuleType, dict]:
+async def think(
+    command_line_arguments: argparse.Namespace,
+) -> tuple[ModuleType, dict]:
     ponderation: Ponderation = await get_ponderation()
     module: Union[ModuleType, None] = None
     choosen_module: str = ""
+    user_module_overwrite: dict[str, str] = {
+        option.split("=")[0]: option.split("=")[1]
+        for option in command_line_arguments.module_overwrite
+    }
     while not module:
-        choosen_module = choose_module(ponderation)
+        domain: str = choose_domain(ponderation.weights)
+        if domain in user_module_overwrite:
+            choosen_module_path = user_module_overwrite[domain]
+        else:
+            choosen_module_path = get_module_path_for_domain(
+                ponderation, domain
+            )
         try:
-            module = await get_scraping_module(choosen_module)
+            module = await get_scraping_module(choosen_module_path)
         except:
             logging.exception(
                 f"An error occured loading module {choosen_module}"

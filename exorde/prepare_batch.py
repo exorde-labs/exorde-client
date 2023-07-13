@@ -1,8 +1,11 @@
 import logging
 import time
+import argparse
+from typing import AsyncGenerator
 from exorde.item import get_item
-from exorde.models import Processed, LiveConfiguration
+from exorde.models import Processed, LiveConfiguration, StaticConfiguration
 from exorde.process import process
+from exorde_data import Item
 
 
 def evaluate_token_count(content: str):
@@ -10,11 +13,13 @@ def evaluate_token_count(content: str):
 
 
 async def prepare_batch(
-    static_configuration, live_configuration: LiveConfiguration
+    static_configuration: StaticConfiguration,
+    live_configuration: LiveConfiguration,
+    command_line_arguments: argparse.Namespace,
 ) -> list[Processed]:
     max_depth_classification: int = live_configuration["max_depth"]
     batch: list[Processed] = []
-    generator = get_item()
+    generator: AsyncGenerator[Item, None] = get_item(command_line_arguments)
     lab_configuration = static_configuration["lab_configuration"]
     async for item in generator:
         try:
