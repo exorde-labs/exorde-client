@@ -15,19 +15,17 @@ sentx_pipe = SentX() if spacy_version < 3 else "sentx"
 ## 1 ) Split in sentences
 nlp_sentencer.add_pipe(sentx_pipe, before="parser")
 
-def evaluate_token_count(__item__: Processed, encoding_name = "r50k_base") -> int:
+def evaluate_token_count(item_content_string: str, encoding_name: str = "r50k_base") -> int:
     """Returns the number of tokens in a text string."""
-    item_content_string = __item__.content
     try:
         encoding = tiktoken.get_encoding(encoding_name)
         num_tokens = len(encoding.encode(item_content_string))
     except Exception as e:
-        logging.info(f"[evaluate_token_count] error: {e}, \
-                     setting a default item count (250)...")
-        num_tokens = 250
+        logging.info(f"[evaluate_token_count] error: {e}")
+        num_tokens = 0
     return num_tokens
 
-def split_in_sentences(string):
+def split_in_sentences(string: str):
     sentences = []
     try:
         doc = nlp_sentencer(string)
@@ -38,7 +36,7 @@ def split_in_sentences(string):
         sentences = []
     return sentences
 
-def aggregate_sents_into_paragraphs(sentences, chunk_size = 500):
+def aggregate_sents_into_paragraphs(sentences: list[str], chunk_size: int = 500):
     paragraphs = []
     current_paragraph = []
     token_count = 0
@@ -68,7 +66,7 @@ def aggregate_sents_into_paragraphs(sentences, chunk_size = 500):
         paragraphs = []
     return paragraphs
 
-def split_string_into_chunks(string, chunk_size):
+def split_string_into_chunks(string: str, chunk_size: int):
     ## 1) Split main text in sentences
     sentences = split_in_sentences(string)
     ## 2) a) Recompose paragraphs from sentences
@@ -93,7 +91,6 @@ def split_item(item: Item, max_token_count: int) -> list[Item]:
             )
         ]
     
-
 async def prepare_batch(
     static_configuration, live_configuration: LiveConfiguration
 ) -> list[tuple[int, Processed]]:
@@ -132,7 +129,7 @@ async def prepare_batch(
                                       *  int(static_configuration["lab_configuration"]["max_token_count"])
             if (
                 # If we have enough items of each enough tokens
-                sum([evaluate_token_count(item) for (__id__, item) in batch]) 
+                sum([evaluate_token_count(item.content) for (__id__, item) in batch]) 
                 > max_batch_total_tokens_
                 # Or If we have enough items overall
                 or len(batch) >= live_configuration["batch_size"]
