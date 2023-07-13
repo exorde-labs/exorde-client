@@ -23,6 +23,7 @@ def evaluate_token_count(item_content_string: str, encoding_name: str = "r50k_ba
             logging.info(f"[evaluate_token_count] the content is empty, that's weird.")
         encoding = tiktoken.get_encoding(encoding_name)
         num_tokens = len(encoding.encode(item_content_string))
+        logging.info(f"[Token count] Item = {item_content_string} - encoding_name = {encoding_name}")
     except Exception as e:
         logging.info(f"[evaluate_token_count] error: {e}")
         num_tokens = 0
@@ -78,7 +79,7 @@ def split_string_into_chunks(string: str, chunk_size: int):
     return paragraphs
 
 def split_item(item: Item, max_token_count: int) -> list[Item]:
-    if not item.content or len(item.content) <= max_token_count:
+    if not item.content or len(str(item.content)) <= max_token_count:
         return [item]
     else:
         return [
@@ -90,7 +91,7 @@ def split_item(item: Item, max_token_count: int) -> list[Item]:
                 url=item.url,
             )
             for chunk in split_string_into_chunks(
-                item.content, max_token_count
+                str(item.content), max_token_count
             )
         ]
     
@@ -124,12 +125,14 @@ async def prepare_batch(
                     )
                     batch.append((item_id, processed_chunk))
             end_time: float = time.perf_counter()
+            item_token_count = evaluate_token_count(str(item.content))
             exec_time_s: float = end_time - start_time
             logging.info(
-                f" + A new item has been processed {len(batch)}/{live_configuration['batch_size']} - ({exec_time_s} s) - Source = {str(item['domain'])}"
+                f" + A new item has been processed {len(batch)}/{live_configuration['batch_size']} - ({exec_time_s} s) - Source = {str(item['domain'])} - Total tokens in batch = {item_token_count}"
             )
             max_batch_total_tokens_ = int(live_configuration["batch_size"]) \
                                       *  int(static_configuration["lab_configuration"]["max_token_count"])
+
             if (
                 # If we have enough items of each enough tokens
                 sum([evaluate_token_count(str(item.item.content)) for (__id__, item) in batch]) 
