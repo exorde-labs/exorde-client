@@ -132,7 +132,7 @@ async def prepare_batch(
                                       *  int(static_configuration["lab_configuration"]["max_token_count"])
             if (
                 # If we have enough items of each enough tokens
-                sum([evaluate_token_count(str(item.content)) for (__id__, item) in batch]) 
+                sum([evaluate_token_count(str(item.item.content)) for (__id__, item) in batch]) 
                 > max_batch_total_tokens_
                 # Or If we have enough items overall
                 or len(batch) >= live_configuration["batch_size"]
