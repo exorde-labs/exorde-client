@@ -15,7 +15,8 @@ from exorde.models import (
     Analysis,
 )
 from exorde.models import (
-    Translation,
+    Classification,
+    Keywords,
     LanguageScore,
     Sentiment,
     Embedding,
@@ -67,43 +68,114 @@ def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
             logging.info("DEBUG merge_chunks")
             ## AGGREGATED VALUES
             ## -> classification: take the majority
-            classification_label_list = [x.label for x in categories_list]
-            category_agg = Most_Common(classification_label_list)
+            most_common_categogy = Most_Common([x.label for x in categories_list])
+            category_avg = Classification(label=most_common_categogy, 
+                                          score=max([[x.score for x in categories_list if x == most_common_categogy]]))
             ## -> top_keywords: concatenate lists
-            keywords_agg = list()
+            top_keywords_avg = list()
             for top_keywords in top_keywords_list:
-                keywords_agg.extend(top_keywords)
-            keywords_agg = Keywords(keywords_agg)
+                top_keywords_avg.extend(top_keywords)
+            top_keywords_avg = Keywords(list(set(top_keywords_avg))) # filter duplicates
             ## -> gender: average tuple
-            gender_male_list = [x.male for x in gender_list]
-            gender_female_list = [x.female for x in gender_list]
-            gender_agg = ()
-            for top_keywords in top_keywords_list:
-                keywords_agg.extend(top_keywords)
-            ## -> sentiment: average all sentiments, or take the MAX/MIN and make the average
+            gender_avg = Gender(
+                np.median([x.male for x in gender_list]),
+                np.median([x.female for x in gender_list])
+            )
+            ## -> sentiment: average all sentiments
+            sentiment_avg = Sentiment(np.median(sentiment_list))
             ## -> source_type: average
+            source_type_avg = SourceType(
+                social=np.median([st.social for st in source_type_list]),
+                computers=np.median([st.computers for st in source_type_list]),
+                games=np.median([st.games for st in source_type_list]),
+                business=np.median([st.business for st in source_type_list]),
+                streaming=np.median([st.streaming for st in source_type_list]),
+                ecommerce=np.median([st.ecommerce for st in source_type_list]),
+                forums=np.median([st.forums for st in source_type_list]),
+                photography=np.median([st.photography for st in source_type_list]),
+                travel=np.median([st.travel for st in source_type_list]),
+                adult=np.median([st.adult for st in source_type_list]),
+                law=np.median([st.law for st in source_type_list]),
+                sports=np.median([st.sports for st in source_type_list]),
+                education=np.median([st.education for st in source_type_list]),
+                food=np.median([st.food for st in source_type_list]),
+                health=np.median([st.health for st in source_type_list]),
+                news=np.median([st.news for st in source_type_list]),
+            )
             ## -> text_type: average
+            text_type_avg = TextType(
+                assumption=np.median([tt.assumption for tt in text_type_list]),
+                anecdote=np.median([tt.anecdote for tt in text_type_list]),
+                none=np.median([tt.none for tt in text_type_list]),
+                definition=np.median([tt.definition for tt in text_type_list]),
+                testimony=np.median([tt.testimony for tt in text_type_list]),
+                other=np.median([tt.other for tt in text_type_list]),
+                study=np.median([tt.study for tt in text_type_list]),
+            )
             ## -> emotion: average
+            emotion_avg = Emotion(
+                love=np.median([e.love for e in emotion_list]),
+                admiration=np.median([e.admiration for e in emotion_list]),
+                joy=np.median([e.joy for e in emotion_list]),
+                approval=np.median([e.approval for e in emotion_list]),
+                caring=np.median([e.caring for e in emotion_list]),
+                excitement=np.median([e.excitement for e in emotion_list]),
+                gratitude=np.median([e.gratitude for e in emotion_list]),
+                desire=np.median([e.desire for e in emotion_list]),
+                anger=np.median([e.anger for e in emotion_list]),
+                optimism=np.median([e.optimism for e in emotion_list]),
+                disapproval=np.median([e.disapproval for e in emotion_list]),
+                grief=np.median([e.grief for e in emotion_list]),
+                annoyance=np.median([e.annoyance for e in emotion_list]),
+                pride=np.median([e.pride for e in emotion_list]),
+                curiosity=np.median([e.curiosity for e in emotion_list]),
+                neutral=np.median([e.neutral for e in emotion_list]),
+                disgust=np.median([e.disgust for e in emotion_list]),
+                disappointment=np.median([e.disappointment for e in emotion_list]),
+                realization=np.median([e.realization for e in emotion_list]),
+                fear=np.median([e.fear for e in emotion_list]),
+                relief=np.median([e.relief for e in emotion_list]),
+                confusion=np.median([e.confusion for e in emotion_list]),
+                remorse=np.median([e.remorse for e in emotion_list]),
+                embarrassement=np.median([e.embarrassement for e in emotion_list]),
+                surprise=np.median([e.surprise for e in emotion_list]),
+                sadness=np.median([e.sadness for e in emotion_list]),
+                nervousness=np.median([e.nervousness for e in emotion_list]),
+            )
             ## -> language_score: average
+            language_score_avg = LanguageScore(np.median(language_score_list))
             ## -> irony: average
+            irony_avg = Irony(
+                irony=np.median([i.irony for i in irony_list]),
+                non_irony=np.median([i.non_irony for i in irony_list]),
+            )
             ## -> age: average
-            ## -> embedding: average
-            mean_embedding = np.mean(annotation, axis=0)
+            age_avg = Age(
+                below_twenty=np.median([a.below_twenty for a in age_list]),
+                twenty_thirty=np.median([a.twenty_thirty for a in age_list]),
+                thirty_forty=np.median([a.thirty_forty for a in age_list]),
+                forty_more=np.median([a.forty_more for a in age_list]),
+            )
+            ## -> embedding: take closest vector to centroid
+            centroid_vector = np.median(embedding_list, axis=0)
+            # Calculate the closest vector in embedding_list to the centroid_vector
+            closest_embedding = Embedding(min(embedding_list, key=lambda x: np.linalg.norm(x - centroid_vector)))
+
             ####   --- REBUILD MERGED ITEM
             merged_item = ProcessedItem(
                     item= chunks[0].item,
                     analysis=ProtocolAnalysis(
-                        classification=category_agg,
-                        top_keywords=processed.top_keywords,
-                        # language_score=analysis.language_score,
-                        # gender=analysis.gender,
-                        # sentiment=analysis.sentiment,
-                        # embedding=analysis.embedding,
-                        # source_type=analysis.source_type,
-                        # text_type=analysis.text_type,
-                        # emotion=analysis.emotion,
-                        # irony=analysis.irony,
-                        # age=analysis.age,
+                        classification=category_avg,
+                        top_keywords=top_keywords_avg,
+                        language_score=language_score_avg,
+                        gender=gender_avg,
+                        sentiment=sentiment_avg,
+                        embedding=closest_embedding,
+                        source_type=source_type_avg,
+                        text_type=text_type_avg,
+                        emotion=emotion_avg,
+                        irony=irony_avg,
+                        age=age_avg,
                     ),
                     collection_client_version=chunks[0].collection_client_version,
                     collection_module=chunks[0].collection_module,
