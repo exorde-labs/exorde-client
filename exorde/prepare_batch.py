@@ -18,12 +18,10 @@ nlp_sentencer.add_pipe(sentx_pipe, before="parser")
 def evaluate_token_count(item_content_string: str, encoding_name: str = "r50k_base") -> int:
     """Returns the number of tokens in a text string."""
     try:
-        logging.info(f"HALLOOOOOOOOOO")
         if item_content_string is None or len(item_content_string)<=1:
             logging.info(f"[evaluate_token_count] the content is empty")
         encoding = tiktoken.get_encoding(encoding_name)
         num_tokens = len(encoding.encode(item_content_string))
-        logging.info(f"[Token count] Item = {item_content_string} - encoding_name = {encoding_name}")
     except Exception as e:
         logging.info(f"[evaluate_token_count] error: {e}")
         num_tokens = 0
@@ -128,7 +126,7 @@ async def prepare_batch(
             item_token_count = evaluate_token_count(str(item.content))
             exec_time_s: float = end_time - start_time
             logging.info(
-                f" + A new item has been processed {len(batch)}/{live_configuration['batch_size']} - ({exec_time_s} s) - Source = {str(item['domain'])} - Total tokens in batch = {item_token_count}"
+                f" + A new item has been processed {len(batch)}/{live_configuration['batch_size']} - ({exec_time_s} s) - Source = {str(item['domain'])} -  token count = {item_token_count}"
             )
             max_batch_total_tokens_ = int(live_configuration["batch_size"]) \
                                       *  int(static_configuration["lab_configuration"]["max_token_count"])
