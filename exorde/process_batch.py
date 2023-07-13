@@ -37,7 +37,6 @@ def Most_Common(lst):
     return data.most_common(1)[0][0]
 
 def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
-    logging.info("Merging chunks")
     try:
         # MERGE RULE HERE
             categories_list = []
@@ -65,26 +64,25 @@ def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
                 age_list.append(item_analysis_.age)
                 embedding_list.append(item_analysis_.embedding)
 
-            logging.info("DEBUG merge_chunks")
             ## AGGREGATED VALUES
             ## -> classification: take the majority
-            most_common_categogy = Most_Common([x.label for x in categories_list])
-            category_avg = Classification(label=most_common_categogy, 
-                                          score=max([[x.score for x in categories_list if x == most_common_categogy]]))
+            most_common_category = Most_Common([x.label for x in categories_list])
+            category_aggregated = Classification(label=most_common_category, 
+                                          score=max([[x.score for x in categories_list if x == most_common_category]]))
             ## -> top_keywords: concatenate lists
-            top_keywords_avg = list()
+            top_keywords_aggregated = list()
             for top_keywords in top_keywords_list:
-                top_keywords_avg.extend(top_keywords)
-            top_keywords_avg = Keywords(list(set(top_keywords_avg))) # filter duplicates
-            ## -> gender: average tuple
-            gender_avg = Gender(
+                top_keywords_aggregated.extend(top_keywords)
+            top_keywords_aggregated = Keywords(list(set(top_keywords_aggregated))) # filter duplicates
+            ## -> gender: Take the median tuple
+            gender_aggregated = Gender(
                 np.median([x.male for x in gender_list]),
                 np.median([x.female for x in gender_list])
             )
-            ## -> sentiment: average all sentiments
-            sentiment_avg = Sentiment(np.median(sentiment_list))
-            ## -> source_type: average
-            source_type_avg = SourceType(
+            ## -> sentiment: Take the median all sentiments
+            sentiment_aggregated = Sentiment(np.median(sentiment_list))
+            ## -> source_type: Take the median
+            source_type_aggregated = SourceType(
                 social=np.median([st.social for st in source_type_list]),
                 computers=np.median([st.computers for st in source_type_list]),
                 games=np.median([st.games for st in source_type_list]),
@@ -102,8 +100,8 @@ def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
                 health=np.median([st.health for st in source_type_list]),
                 news=np.median([st.news for st in source_type_list]),
             )
-            ## -> text_type: average
-            text_type_avg = TextType(
+            ## -> text_type: Take the median
+            text_type_aggregated = TextType(
                 assumption=np.median([tt.assumption for tt in text_type_list]),
                 anecdote=np.median([tt.anecdote for tt in text_type_list]),
                 none=np.median([tt.none for tt in text_type_list]),
@@ -112,8 +110,8 @@ def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
                 other=np.median([tt.other for tt in text_type_list]),
                 study=np.median([tt.study for tt in text_type_list]),
             )
-            ## -> emotion: average
-            emotion_avg = Emotion(
+            ## -> emotion: Take the median
+            emotion_aggregated = Emotion(
                 love=np.median([e.love for e in emotion_list]),
                 admiration=np.median([e.admiration for e in emotion_list]),
                 joy=np.median([e.joy for e in emotion_list]),
@@ -142,15 +140,15 @@ def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
                 sadness=np.median([e.sadness for e in emotion_list]),
                 nervousness=np.median([e.nervousness for e in emotion_list]),
             )
-            ## -> language_score: average
-            language_score_avg = LanguageScore(np.median(language_score_list))
-            ## -> irony: average
-            irony_avg = Irony(
+            ## -> language_score: Take the median
+            language_score_aggregated = LanguageScore(np.median(language_score_list))
+            ## -> irony: Take the median
+            irony_aggregated = Irony(
                 irony=np.median([i.irony for i in irony_list]),
                 non_irony=np.median([i.non_irony for i in irony_list]),
             )
-            ## -> age: average
-            age_avg = Age(
+            ## -> age: Take the median
+            age_aggregated = Age(
                 below_twenty=np.median([a.below_twenty for a in age_list]),
                 twenty_thirty=np.median([a.twenty_thirty for a in age_list]),
                 thirty_forty=np.median([a.thirty_forty for a in age_list]),
@@ -160,27 +158,26 @@ def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
             centroid_vector = np.median(embedding_list, axis=0)
             # Calculate the closest vector in embedding_list to the centroid_vector
             closest_embedding = Embedding(min(embedding_list, key=lambda x: np.linalg.norm(x - centroid_vector)))
-
             ####   --- REBUILD MERGED ITEM
             merged_item = ProcessedItem(
-                    item= chunks[0].item,
-                    analysis=ProtocolAnalysis(
-                        classification=category_avg,
-                        top_keywords=top_keywords_avg,
-                        language_score=language_score_avg,
-                        gender=gender_avg,
-                        sentiment=sentiment_avg,
-                        embedding=closest_embedding,
-                        source_type=source_type_avg,
-                        text_type=text_type_avg,
-                        emotion=emotion_avg,
-                        irony=irony_avg,
-                        age=age_avg,
-                    ),
-                    collection_client_version=chunks[0].collection_client_version,
-                    collection_module=chunks[0].collection_module,
-                    collected_at=chunks[0].collected_at,
-                )
+                item = chunks[0].item,
+                analysis=ProtocolAnalysis(
+                    classification=category_aggregated,
+                    top_keywords=top_keywords_aggregated,
+                    language_score=language_score_aggregated,
+                    gender=gender_aggregated,
+                    sentiment=sentiment_aggregated,
+                    embedding=closest_embedding,
+                    source_type=source_type_aggregated,
+                    text_type=text_type_aggregated,
+                    emotion=emotion_aggregated,
+                    irony=irony_aggregated,
+                    age=age_aggregated,
+                ),
+                collection_client_version=chunks[0].collection_client_version,
+                collection_module=chunks[0].collection_module,
+                collected_at=chunks[0].collected_at,
+            )
     except Exception as e:
         logging.info(f"[Merging items chunks] error: {e}")
     return merged_item
