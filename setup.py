@@ -30,7 +30,7 @@ setup(
         "tiktoken==0.4.0",
         "spikex==0.5.2",
         "feedparser==6.0.8",
-        "python_dateutil==2.8.2"
+        "python_dateutil==2.8.2",
         "newspaper3k==0.2.8",
         "fasttext==0.9.2",
         "fasttext-langdetect==1.0.5",
