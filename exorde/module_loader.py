@@ -70,7 +70,7 @@ async def is_up_to_date(repository_path) -> bool:
         )
     try:
         local_version = metadata.version(module_name)
-    except Exception as e:
+    except Exception:
         logging.info("[MODULE LOADER ERROR] COULD NOT LOAD local_version")
         return False
 
@@ -81,7 +81,7 @@ async def is_up_to_date(repository_path) -> bool:
         online_version = await fetch_version_from_setup_file(
             f"{setup_path}/main/setup.py"
         )
-    except Exception as e:
+    except Exception:
         logging.info("[MODULE LOADER ERROR] COULD NOT LOAD online_version")
         return False
 

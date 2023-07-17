@@ -3,18 +3,35 @@ import argparse
 from typing import AsyncGenerator
 from exorde.brain import think
 from exorde_data import Item
+from types import ModuleType
 
 
 async def get_item(
     command_line_arguments: argparse.Namespace,
 ) -> AsyncGenerator[Item, None]:
+    module: ModuleType
+    parameters: dict
+    error_count: dict[ModuleType, int] = {}
     while True:
         try:
-            module, parameters = await think(command_line_arguments)
-            async for item in module.query(parameters):
-                if isinstance(item, Item):
-                    yield item
-                else:
-                    continue
-        except Exception as e:
-            logging.exception("An error occured retrieving an item: %s", e)
+            try:
+                module, parameters = await think(command_line_arguments)
+            except Exception as error:
+                logging.exception(f"An error occured in the brain function")
+                raise error
+            try:
+                async for item in module.query(parameters):
+                    if isinstance(item, Item):
+                        yield item
+                    else:
+                        continue
+            except Exception as e:
+                logging.exception(
+                    f"An error occured retrieving an item: %s using {module}",
+                    e,
+                )
+                if not error_count[module]:
+                    error_count[module] = 0
+                error_count[module] += 1
+        except:
+            logging.error("An error occured getting an item")

@@ -104,6 +104,7 @@ import os
 async def think(
     command_line_arguments: argparse.Namespace,
 ) -> tuple[ModuleType, dict]:
+    print(command_line_arguments)
     ponderation: Ponderation = await get_ponderation()
     module: Union[ModuleType, None] = None
     choosen_module: str = ""
@@ -114,6 +115,7 @@ async def think(
     while not module:
         domain: str = choose_domain(ponderation.weights)
         if domain in user_module_overwrite:
+            logging.info("{domain} overloaded by user")
             choosen_module_path = user_module_overwrite[domain]
         else:
             choosen_module_path = get_module_path_for_domain(
@@ -126,13 +128,13 @@ async def think(
                 f"An error occured loading module {choosen_module}"
             )
             os._exit(-1)
-    keyword = await choose_keyword()
+    keyword: str = await choose_keyword()
     generic_modules_parameters: dict[
         str, Union[int, str, bool, dict]
     ] = ponderation.generic_modules_parameters
     specific_parameters: dict[
         str, Union[int, str, bool, dict]
-    ] = ponderation.specific_modules_parameters[choosen_module]
+    ] = ponderation.specific_modules_parameters.get(choosen_module, {})
     parameters: dict[str, Union[int, str, bool, dict]] = {
         "url_parameters": {"keyword": keyword}
     }
