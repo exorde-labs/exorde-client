@@ -70,7 +70,7 @@ async def choose_keyword() -> str:
 import os
 
 
-async def think() -> tuple[ModuleType, dict]:
+async def think() -> tuple[ModuleType, dict[str, Union[dict, str]]]:
     __enabled_modules__, _parameters, weights = await get_ponderation()
     module: Union[ModuleType, None] = None
     choosen_module: str = ""
@@ -86,7 +86,10 @@ async def think() -> tuple[ModuleType, dict]:
     keyword = await choose_keyword()
     common_parameters = _parameters["common_parameters"]
     specific_parameters = _parameters["specific_parameters"][choosen_module]
-    parameters: dict[str, dict] = {"url_parameters": {"keyword": keyword}}
+    parameters: dict[str, Union[dict, str]] = {
+        "url_parameters": {"keyword": keyword},
+        "keyword": keyword,
+    }
     parameters.update(common_parameters)
     parameters.update(specific_parameters)
     return (module, parameters)
