@@ -271,6 +271,6 @@ async def process_batch(
     for __key__, values in complete_processes.items():
         merged_ = merge_chunks(values)
         if merged_ is not None:
-            aggregated.append(merged_values)
+            aggregated.append(merged_)
     result_batch: Batch = Batch(items=aggregated, kind=BatchKindEnum.SPOTTING)
     return result_batch
