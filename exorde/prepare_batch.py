@@ -113,9 +113,7 @@ async def prepare_batch(
             except TooBigError:
                 splitted: list[Item] = split_item(
                     item,
-                    static_configuration["lab_configuration"][
-                        "max_token_count"
-                    ],
+                    live_configuration["max_token_count"]
                 )
                 for chunk in splitted:
                     processed_chunk: Processed = await process(
