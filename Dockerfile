@@ -7,9 +7,9 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && ln -s /usr/bin/chromedriver  /usr/local/bin/chromedriver
-
-RUN pip.10 install --no-cache-dir setuptools
-RUN pip.10 install --no-cache-dir cyac
+    
+RUN pip install  --no-cache-dir  --upgrade pip setuptools
+RUN pip.10 install --no-cache-dir cyac==1.7
 RUN pip3.10 install --no-cache-dir \
         'git+https://github.com/exorde-labs/exorde_data.git' \
         'git+https://github.com/exorde-labs/exorde-client.git'\
