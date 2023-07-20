@@ -211,7 +211,7 @@ def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
             collected_at=chunks[0].collected_at,
         )
     except Exception as e:
-        logging.info(f"[Merging items chunks] exception: {e}")
+        logging.exception(f"[Merging items chunks] ERROR:\n {e}")
     return merged_item
 
 
