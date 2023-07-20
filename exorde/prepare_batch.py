@@ -36,6 +36,9 @@ def split_in_sentences(string: str):
     except Exception as e:
         logging.info(f"[Sentence splitter] error: {e}")
         sentences = []
+    
+    
+    logging.info(f"[Sentences DEBUG] {sentences}")
     return sentences
 
 def aggregate_sents_into_paragraphs(sentences: list[str], chunk_size: int = 500):
@@ -66,6 +69,8 @@ def aggregate_sents_into_paragraphs(sentences: list[str], chunk_size: int = 500)
     except Exception as e:
         logging.info(f"[Paragraph aggregator] error: {e}")
         paragraphs = []
+    
+    logging.info(f"[Paragraph DEBUG] {paragraphs}")
     return paragraphs
 
 def split_string_into_chunks(string: str, chunk_size: int):
