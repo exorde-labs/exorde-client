@@ -52,6 +52,8 @@ def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
         irony_list = []
         age_list = []
         embedding_list = []
+        
+        logging.info(f"[Item merging] Merging {len(chunks)} chunks.")
         for processed_item in chunks:
             item_analysis_ = processed_item.analysis
             categories_list.append(item_analysis_.classification)
@@ -78,7 +80,6 @@ def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
                 ]
             ),
         )
-        print("Merge debug  category_aggregated: ",category_aggregated)
         ## -> top_keywords: concatenate lists
         top_keywords_aggregated = list()
         for top_keywords in top_keywords_list:
@@ -86,16 +87,13 @@ def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
         top_keywords_aggregated = Keywords(
             list(set(top_keywords_aggregated))
         )  # filter duplicates
-        print("Merge debug  top_keywords_aggregated: ",top_keywords_aggregated)
         ## -> gender: Take the median tuple
         gender_aggregated = Gender(
             male = np.median([x.male for x in gender_list]),
             female = np.median([x.female for x in gender_list])
         )
-        print("Merge debug  gender_aggregated: ",gender_aggregated)
         ## -> sentiment: Take the median all sentiments
         sentiment_aggregated = Sentiment(np.median(sentiment_list))
-        print("Merge debug  sentiment_aggregated: ",sentiment_aggregated)
         ## -> source_type: Take the median
         source_type_aggregated = SourceType(
             social=np.median([st.social for st in source_type_list]),
@@ -115,7 +113,6 @@ def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
             health=np.median([st.health for st in source_type_list]),
             news=np.median([st.news for st in source_type_list]),
         )
-        print("Merge debug  source_type_aggregated: ",source_type_aggregated)
         ## -> text_type: Take the median
         text_type_aggregated = TextType(
             assumption=np.median([tt.assumption for tt in text_type_list]),
@@ -126,7 +123,6 @@ def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
             other=np.median([tt.other for tt in text_type_list]),
             study=np.median([tt.study for tt in text_type_list]),
         )
-        print("Merge debug  text_type_aggregated: ",text_type_aggregated)
         ## -> emotion: Take the median
         emotion_aggregated = Emotion(
             love=np.median([e.love for e in emotion_list]),
@@ -157,18 +153,15 @@ def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
             sadness=np.median([e.sadness for e in emotion_list]),
             nervousness=np.median([e.nervousness for e in emotion_list]),
         )
-        print("Merge debug  emotion_aggregated: ",emotion_aggregated)
         ## -> language_score: Take the median
         language_score_aggregated = LanguageScore(
             np.median(language_score_list)
         )
-        print("Merge debug  language_score_aggregated: ",language_score_aggregated)
         ## -> irony: Take the median
         irony_aggregated = Irony(
             irony=np.median([i.irony for i in irony_list]),
             non_irony=np.median([i.non_irony for i in irony_list]),
         )
-        print("Merge debug  irony_aggregated: ",irony_aggregated)
         ## -> age: Take the median
         age_aggregated = Age(
             below_twenty=np.median([a.below_twenty for a in age_list]),
@@ -176,7 +169,6 @@ def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
             thirty_forty=np.median([a.thirty_forty for a in age_list]),
             forty_more=np.median([a.forty_more for a in age_list]),
         )
-        print("Merge debug  age_aggregated: ",age_aggregated)
         ## -> embedding: take closest vector to centroid
         centroid_vector = np.median(embedding_list, axis=0)
         # Calculate the closest vector in embedding_list to the centroid_vector
@@ -186,7 +178,6 @@ def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
                 key=lambda x: np.linalg.norm(x - centroid_vector),
             )
         )
-        print("Merge debug  closest_embedding: ",closest_embedding)
         ####   --- REBUILD MERGED ITEM
         merged_item = ProcessedItem(
             item=chunks[0].item,
