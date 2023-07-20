@@ -38,7 +38,6 @@ def split_in_sentences(string: str):
         sentences = []
     
     sentences = [x for x in sentences if x and len(x)>5]
-    logging.info(f"[Sentences DEBUG] {sentences}")
     return sentences
 
 def aggregate_sents_into_paragraphs(sentences: list[str], chunk_size: int = 500):
@@ -71,7 +70,6 @@ def aggregate_sents_into_paragraphs(sentences: list[str], chunk_size: int = 500)
         paragraphs = []
     
     paragraphs = [x for x in paragraphs if x and len(x)>5]
-    logging.info(f"[Paragraph DEBUG] {paragraphs}")
     return paragraphs
 
 def split_string_into_chunks(string: str, chunk_size: int):
