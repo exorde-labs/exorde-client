@@ -75,7 +75,6 @@ def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
                 [
                     x.score
                     for x in categories_list
-                    if x.label == most_common_category.label
                 ]
             ),
         )
