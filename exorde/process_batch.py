@@ -73,11 +73,9 @@ def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
             label=most_common_category,
             score=max(
                 [
-                    [
-                        x.score
-                        for x in categories_list
-                        if x == most_common_category
-                    ]
+                    x.score
+                    for x in categories_list
+                    if x.label == most_common_category.label
                 ]
             ),
         )
