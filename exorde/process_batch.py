@@ -40,7 +40,12 @@ def Most_Common(lst):
 
 def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
     try:
-        # MERGE RULE HERE
+        ## Check if chunks is a list of 1 item, if so, just return it as is
+        if len(chunks) == 1:
+            return chunks[0]
+        
+        #### MERGING for items with more than 1 chunks
+        
         categories_list = []
         top_keywords_list = []
         gender_list = []
