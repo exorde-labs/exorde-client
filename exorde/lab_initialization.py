@@ -41,5 +41,5 @@ def lab_initialization():
         "max_depth": 2,
         "remove_stopwords": False,
         "installed_languages": installed_languages,
-        "max_token_count": 512,
+        "max_token_count": 500,
     }
