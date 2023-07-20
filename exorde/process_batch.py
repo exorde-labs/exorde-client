@@ -88,10 +88,10 @@ def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
         )  # filter duplicates
         print("Merge debug  top_keywords_aggregated: ",top_keywords_aggregated)
         ## -> gender: Take the median tuple
-        gender_aggregated = Gender(
-            np.median([x.male for x in gender_list]),
-            np.median([x.female for x in gender_list]),
-        )
+        gender_aggregated = Gender({
+            "male": np.median([x.male for x in gender_list]),
+            "female": np.median([x.female for x in gender_list])
+            })
         print("Merge debug  gender_aggregated: ",gender_aggregated)
         ## -> sentiment: Take the median all sentiments
         sentiment_aggregated = Sentiment(np.median(sentiment_list))
