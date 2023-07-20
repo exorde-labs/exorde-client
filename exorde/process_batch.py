@@ -212,6 +212,7 @@ def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
         )
     except Exception as e:
         logging.exception(f"[Merging items chunks] ERROR:\n {e}")
+        merged_item = None
     return merged_item
 
 
@@ -271,6 +272,8 @@ async def process_batch(
         complete_processes[id].append(completed)
     aggregated = []
     for __key__, values in complete_processes.items():
-        aggregated.append(merge_chunks(values))
+        merged_ = merge_chunks(values)
+        if merged_ is not None:
+            aggregated.append(merged_values)
     result_batch: Batch = Batch(items=aggregated, kind=BatchKindEnum.SPOTTING)
     return result_batch
