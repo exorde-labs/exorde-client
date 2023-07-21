@@ -17,10 +17,7 @@ models = [
     "cardiffnlp/twitter-roberta-base-irony",
     "salesken/query_wellformedness_score",
     "marieke93/MiniLM-evidence-types",
-    "alimazhar-110/website_classification",
-    "ExordeLabs/SentimentDetection",
-    "ExordeLabs/AgeDetection",
-    "ExordeLabs/GenderDetection"
+    "alimazhar-110/website_classification"
 ]
 
 def install_hugging_face_models(models):
