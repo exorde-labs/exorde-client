@@ -11,9 +11,6 @@ from exorde.get_transaction_receipt import get_transaction_receipt
 from exorde.ipfs import download_ipfs_file, upload_to_ipfs
 
 
-from wtpsplit import WtP
-wtp = WtP("wtp-canine-s-1l")
-
 async def spotting(live_configuration, static_configuration):
     batch: list[tuple[int, Processed]] = await prepare_batch(
         static_configuration,
