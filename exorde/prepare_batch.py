@@ -1,5 +1,6 @@
 import logging
 import time
+from wtpsplit import WtP
 from exorde.item import get_item
 from exorde.models import Processed, LiveConfiguration
 from exorde.process import process, TooBigError
@@ -7,7 +8,6 @@ from exorde_data import Item, Content
 from typing import AsyncGenerator
 import tiktoken
 from ftlangdetect import detect as lang_detect
-from wtpsplit import WtP
 
 wtp = WtP("wtp-canine-s-1l")
 
