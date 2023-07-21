@@ -43,6 +43,7 @@ setup(
         "vaderSentiment==3.3.2",
         "yake==0.4.8",
         "argostranslate==1.8.0",
+        "wtpsplit==1.2.3"
     ],
     python_requires=">=3.10",
 )

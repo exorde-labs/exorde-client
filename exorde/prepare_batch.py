@@ -1,19 +1,15 @@
 import logging
 import time
+from wtpsplit import WtP
 from exorde.item import get_item
 from exorde.models import Processed, LiveConfiguration
 from exorde.process import process, TooBigError
 from exorde_data import Item, Content
 from typing import AsyncGenerator
-from spacy import load as spacy_load
-from spikex.pipes import SentX
-from spikex.defaults import spacy_version
 import tiktoken
+from ftlangdetect import detect as lang_detect
 
-nlp_sentencer = spacy_load("en_core_web_trf")
-sentx_pipe = SentX() if spacy_version < 3 else "sentx"
-## 1 ) Split in sentences
-nlp_sentencer.add_pipe(sentx_pipe, before="parser")
+wtp = WtP("wtp-canine-s-1l")
 
 def evaluate_token_count(item_content_string: str, encoding_name: str = "r50k_base") -> int:
     """Returns the number of tokens in a text string."""
@@ -28,10 +24,16 @@ def evaluate_token_count(item_content_string: str, encoding_name: str = "r50k_ba
     return num_tokens
 
 def split_in_sentences(string: str):
-    sentences = []
+    sentences = []    
+    detected_language = lang_detect(string, low_memory=False)
     try:
-        doc = nlp_sentencer(string)
-        for doc in doc.sents:
+        try:
+            sents = wtp.split(string, lang_code=detected_language['lang'])
+        except:
+            logging.info(f"WTP: could not split with lang: {detected_language}, trying with English...")
+            sents = wtp.split(string, lang_code='en')
+
+        for doc in sents:
             sentences.append(doc)
     except Exception as e:
         logging.info(f"[Sentence splitter] error: {e}")
