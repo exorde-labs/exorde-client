@@ -3,6 +3,13 @@ from transformers import AutoModel, AutoTokenizer
 from argostranslate import package
 from typing import cast
 import logging
+from wtpsplit import WtP
+from sentence_transformers import SentenceTransformer
+from transformers import AutoTokenizer, pipeline
+from huggingface_hub import hf_hub_download
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+
+wtp = WtP("wtp-canine-s-1l")
 
 models = [
     "SamLowe/roberta-base-go_emotions",
@@ -10,7 +17,9 @@ models = [
     "salesken/query_wellformedness_score",
     "marieke93/MiniLM-evidence-types",
     "alimazhar-110/website_classification",
-    # "ExordeLabs/SentimentDetection",
+    "ExordeLabs/SentimentDetection",
+    "ExordeLabs/AgeDetection",
+    "ExordeLabs/GenderDetection"
 ]
 
 def install_hugging_face_models(models):
@@ -18,6 +27,7 @@ def install_hugging_face_models(models):
         __tokenizer__ = AutoTokenizer.from_pretrained(model)
         model = AutoModel.from_pretrained(model)
 
+model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
 install_hugging_face_models(models)
 
 ### install (pre install) models target for English, and exclude low frequency ones to not overload the isntall
