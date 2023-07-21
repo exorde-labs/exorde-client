@@ -1,5 +1,7 @@
 #! python3.10
 
+from wtpsplit import WtP
+wtp = WtP("wtp-canine-s-1l")
 import os
 import argparse
 import asyncio
@@ -15,8 +17,6 @@ from exorde.get_balance import get_balance
 import logging
 
 
-from wtpsplit import WtP
-wtp = WtP("wtp-canine-s-1l")
 
 logger = logging.getLogger()
 logging.basicConfig(level=logging.INFO)
