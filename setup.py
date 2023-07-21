@@ -28,7 +28,6 @@ setup(
         "packaging",
         "numpy==1.23.4",
         "tiktoken==0.4.0",
-        "wtpsplit==1.2.0",
         "feedparser==6.0.8",
         "python_dateutil==2.8.2",
         "newspaper3k==0.2.8",
@@ -44,6 +43,7 @@ setup(
         "vaderSentiment==3.3.2",
         "yake==0.4.8",
         "argostranslate==1.8.0",
+        "wtpsplit"
     ],
     python_requires=">=3.10",
 )
