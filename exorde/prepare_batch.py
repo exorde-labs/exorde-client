@@ -28,7 +28,7 @@ def split_in_sentences(string: str):
     detected_language = lang_detect(string, low_memory=False)
     try:
         try:
-            sents = wtp.split(string, lang_code=detected_language)
+            sents = wtp.split(string, lang_code=detected_language['lang'])
         except:
             logging.info(f"WTP: could not split with lang: {detected_language}, trying with English...")
             sents = wtp.split(string, lang_code='en')
