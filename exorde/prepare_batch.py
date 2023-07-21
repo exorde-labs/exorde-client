@@ -40,7 +40,6 @@ def split_in_sentences(string: str):
         sentences = []
     
     sentences = [x for x in sentences if x and len(x)>5]
-    logging.info(f"Debug sentences : {sentences}")
     return sentences
 
 def aggregate_sents_into_paragraphs(sentences: list[str], chunk_size: int = 500):
