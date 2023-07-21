@@ -1,12 +1,6 @@
 #! python3.10
 
 import os
-
-print("importing wtpsplit....")
-from wtpsplit import WtP
-wtp = WtP("wtp-canine-s-1l")
-print("importing wtpsplit OK")
-
 import argparse
 import asyncio
 import time
