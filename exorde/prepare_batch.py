@@ -6,7 +6,7 @@ from exorde.process import process, TooBigError
 from exorde_data import Item, Content
 from typing import AsyncGenerator
 import tiktoken
-from ftlangdetect import lang_detect
+from ftlangdetect import detect as lang_detect
 from wtpsplit import WtP
 
 wtp = WtP("wtp-canine-s-1l")
