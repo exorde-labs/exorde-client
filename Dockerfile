@@ -1,5 +1,6 @@
 FROM python:3.10.11
 
+RUN pip install  --no-cache-dir  wtpsplit==1.2.3
 # Update and install dependencies
 RUN apt-get update \
     && apt-get upgrade -y \
@@ -8,8 +9,6 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* \
     && ln -s /usr/bin/chromedriver  /usr/local/bin/chromedriver
     
-RUN pip install  --no-cache-dir  --upgrade pip setuptools
-RUN pip.10 install --no-cache-dir cyac==1.7
 RUN pip3.10 install --no-cache-dir \
         'git+https://github.com/exorde-labs/exorde_data.git' \
         'git+https://github.com/exorde-labs/exorde-client.git'\
