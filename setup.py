@@ -28,7 +28,6 @@ setup(
         "packaging",
         "numpy==1.23.4",
         "tiktoken==0.4.0",
-        "skops==0.7.0",
         "wtpsplit==1.2.1",
         "feedparser==6.0.8",
         "python_dateutil==2.8.2",
