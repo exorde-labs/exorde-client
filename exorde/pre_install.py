@@ -9,6 +9,7 @@ from transformers import AutoTokenizer, pipeline
 from huggingface_hub import hf_hub_download
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
+print("importing wtpsplit....")
 wtp = WtP("wtp-canine-s-1l")
 
 models = [
