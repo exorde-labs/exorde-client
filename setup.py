@@ -28,7 +28,6 @@ setup(
         "packaging",
         "numpy==1.23.4",
         "tiktoken==0.4.0",
-        "spikex==0.5.2",
         "feedparser==6.0.8",
         "python_dateutil==2.8.2",
         "newspaper3k==0.2.8",
