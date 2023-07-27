@@ -37,7 +37,7 @@ jobs:
 
       - name: Build and push Docker image
         id: build-and-push
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: .
           file: "./Dockerfile"
@@ -51,7 +51,7 @@ jobs:
 
       - name: Send a message to slack if CI has succeeded
         if: ${{ success() }}
-        uses: slackapi/slack-github-action@v1.18.0
+        uses: slackapi/slack-github-action@v1.24.0
         with:
           payload: |
             {
@@ -60,7 +60,7 @@ jobs:
 
       - name: Send a message to slack if CI has failed
         if: ${{ failure() }}
-        uses: slackapi/slack-github-action@v1.18.0
+        uses: slackapi/slack-github-action@v1.24.0
         with:
           payload: |
             {
