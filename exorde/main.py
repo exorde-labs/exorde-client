@@ -234,6 +234,9 @@ def run():
         help="Overwrite a sub-module (domain=repository_url)",
     )
     parser.add_argument(
+        "--only", type=str, help="Comma-separated list of values", default=None
+    )
+    parser.add_argument(
         "-qo",
         "--quota",
         default=[],
