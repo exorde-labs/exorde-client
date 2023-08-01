@@ -5,12 +5,13 @@ from exorde.models import Processed
 
 
 from exorde.prepare_batch import prepare_batch
-from exorde.process_batch import process_batch
+from exorde.process_batch import process_batch, Batch
 from exorde.spot_data import spot_data
 
 from exorde.get_transaction_receipt import get_transaction_receipt
 from exorde.ipfs import download_ipfs_file, upload_to_ipfs
 from exorde.models import LiveConfiguration, StaticConfiguration
+
 
 
 async def spotting(
@@ -21,18 +22,17 @@ async def spotting(
     batch: list[Processed] = await prepare_batch(
         static_configuration, live_configuration, command_line_arguments
     )
-    if len(batch) != live_configuration["batch_size"]:
-        logging.warning("Something weird is going on, batch ignored")
-        return
     try:
         logging.info("Processing batch")
-        processed_batch = await process_batch(batch, static_configuration)
+        processed_batch: Batch = await process_batch(
+            batch, static_configuration
+        )
     except:
         logging.exception("An error occured during batch processing")
         return
     try:
-        cid = await upload_to_ipfs(processed_batch)
-        post_upload_file = await download_ipfs_file(cid)
+        cid: str = await upload_to_ipfs(processed_batch)
+        post_upload_file: dict = await download_ipfs_file(cid)
         item_count = len(post_upload_file["items"])
     except:
         logging.exception("An error occured during IPFS uploading")

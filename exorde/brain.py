@@ -103,6 +103,7 @@ async def think(
     command_line_arguments: argparse.Namespace,
 ) -> tuple[ModuleType, dict, str]:
     ponderation: Ponderation = await get_ponderation()
+
     module: Union[ModuleType, None] = None
     choosen_module: str = ""
     user_module_overwrite: dict[str, str] = {
@@ -125,6 +126,7 @@ async def think(
                 f"An error occured loading module {choosen_module}"
             )
             os._exit(-1)
+
     keyword: str = await choose_keyword()
     generic_modules_parameters: dict[
         str, Union[int, str, bool, dict]
@@ -133,8 +135,9 @@ async def think(
         str, Union[int, str, bool, dict]
     ] = ponderation.specific_modules_parameters.get(choosen_module, {})
     parameters: dict[str, Union[int, str, bool, dict]] = {
-        "url_parameters": {"keyword": keyword}
+        "url_parameters": {"keyword": keyword}, "keyword": keyword
     }
     parameters.update(generic_modules_parameters)
+
     parameters.update(specific_parameters)
     return (module, parameters, domain)

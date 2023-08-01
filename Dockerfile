@@ -1,5 +1,6 @@
 FROM python:3.10.11
 
+
 # Update and install dependencies
 RUN apt-get update \
     && apt-get upgrade -y \
@@ -13,6 +14,7 @@ RUN pip3.10 install --no-cache-dir \
         'git+https://github.com/exorde-labs/exorde_data.git' \
         'git+https://github.com/exorde-labs/exorde-client.git'\
         selenium==4.2.0 \
+        wtpsplit==1.2.3 \
     && pip3.10 install --no-cache-dir --upgrade 'git+https://github.com/JustAnotherArchivist/snscrape.git'
 
 # set display port to avoid crash

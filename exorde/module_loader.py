@@ -106,7 +106,7 @@ async def get_scraping_module(repository_path) -> ModuleType:
             )
     except (subprocess.CalledProcessError, PackageNotFoundError):
         raise RuntimeError("Failed to install or import the module.")
-
+    loaded_module = None
     try:
         loaded_module = import_module(module_name)
         return loaded_module
