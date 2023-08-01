@@ -7,6 +7,7 @@ from typing import Dict
 class AsyncItemCounter:
     def __init__(self):
         self.data: Dict[str, deque] = {}
+        self.ever: Dict[str, int] = {}
         self.locks: Dict[str, asyncio.Lock] = {}
 
     async def increment(self, key: str) -> None:
@@ -14,6 +15,11 @@ class AsyncItemCounter:
             occurrences = self.data.get(key, deque())
             occurrences.append(datetime.now())
             self.data[key] = occurrences
+            count = self.ever.get(key, 0)
+            self.ever[key] = count + 1
+
+    def count(self, key: str) -> int:
+        return self.ever.get(key, 0)
 
     async def count_occurrences(
         self, key: str, time_period: timedelta = timedelta(hours=24)

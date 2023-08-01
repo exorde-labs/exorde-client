@@ -6,9 +6,9 @@ import argparse
 from exorde.get_keywords import get_keywords
 from exorde.module_loader import get_scraping_module
 import aiohttp
-import datetime
 from typing import Union, Callable
 from types import ModuleType
+from datetime import datetime, timedelta
 from exorde.counter import AsyncItemCounter
 
 LIVE_PONDERATION: str = "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/modules_configuration.json"
@@ -55,13 +55,13 @@ async def _get_ponderation() -> Ponderation:
 
 def ponderation_geter() -> Callable:
     memoised = None
-    last_call = datetime.datetime.now()
+    last_call = datetime.now()
 
     async def get_ponderation_wrapper() -> Ponderation:
         nonlocal memoised, last_call
-        now = datetime.datetime.now()
-        if not memoised or (now - last_call) > datetime.timedelta(minutes=1):
-            last_call = datetime.datetime.now()
+        now = datetime.now()
+        if not memoised or (now - last_call) > timedelta(minutes=1):
+            last_call = datetime.now()
             memoised = await _get_ponderation()
         return memoised
 
@@ -120,8 +120,13 @@ async def choose_keyword() -> str:
 
 async def print_counts(ponderation: dict[str, float], counter):
     for item in ponderation:
-        count = await counter.count_occurrences(item)
-        logging.info(f"{item} : {count} last 24h")
+        twenty_four = await counter.count_occurrences(item)
+        one = await counter.count_occurrences(
+            item, time_period=timedelta(hours=1)
+        )
+        logging.info(
+            f"{item} : {twenty_four} last 24h | {one} last hour | {counter.count(item)} since software launch"
+        )
     logging.info("")
 
 
