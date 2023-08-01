@@ -20,7 +20,7 @@ def weighted_choice(weight_dicts: List[Dict[str, float]]) -> str:
     # multiply weights for each key from all weight dictionaries
     for weights in weight_dicts:
         for key, weight in weights.items():
-            final_weights[key] *= weight
+            final_weights[key] *= weights.get(key, 1.0)
 
     # use the combined weights for making the final choice
     total_weight = sum(final_weights.values())

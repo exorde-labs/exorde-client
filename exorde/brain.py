@@ -73,24 +73,27 @@ get_ponderation: Callable = ponderation_geter()
 from exorde.weighted_choice import weighted_choice
 
 
-def generate_quota_layer(
+async def generate_quota_layer(
     command_line_arguments: argparse.Namespace, counter: AsyncItemCounter
 ) -> dict[str, float]:
     quotas = {k: v for d in command_line_arguments.quota for k, v in d.items()}
-    counts = {k: counter.count_occurences(k) for k, __v__ in quotas.items()}
+    counts = {
+        k: await counter.count_occurrences(k) for k, __v__ in quotas.items()
+    }
     layer = {
         k: 1.0 if counts[k] < quotas[k] else 0.0 for k, __v__ in quotas.items()
     }
     return layer
 
 
-def choose_domain(
+async def choose_domain(
     weights: dict[str, float],
     command_line_arguments: argparse.Namespace,
     counter: AsyncItemCounter,
 ) -> str:  # this will return "twitter" "weibo" etc...
-    quota_layer = generate_quota_layer(command_line_arguments, counter)
-    return weighted_choice([weights, quota_layer])
+    quota_layer = await generate_quota_layer(command_line_arguments, counter)
+    matrix: list[dict[str, float]] = [weights, quota_layer]
+    return weighted_choice(matrix)
 
 
 def get_module_path_for_domain(ponderation: Ponderation, domain: str) -> str:
@@ -117,7 +120,7 @@ async def think(
     }
     domain: str = ""
     while not module:
-        domain = choose_domain(
+        domain = await choose_domain(
             ponderation.weights, command_line_arguments, counter
         )
         if domain in user_module_overwrite:
