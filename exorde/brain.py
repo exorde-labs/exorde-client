@@ -91,7 +91,7 @@ async def generate_only_layer(
     command_line_arguments: argparse.Namespace,
 ) -> dict[str, float]:
     onlies: list[str] = command_line_arguments.only.split(",")
-    if len(onlies) == 0:
+    if onlies == [""]:
         return {}
     return {k: 1.0 if k in onlies else 0.0 for k, __v__ in weights.items()}
 
@@ -118,11 +118,18 @@ async def choose_keyword() -> str:
     return selected_keyword
 
 
+async def print_counts(ponderation: dict[str, float], counter):
+    for item in ponderation:
+        count = await counter.count_occurrences(item)
+        logging.info(f"{item} : {count} last 24h")
+    logging.info("")
+
+
 async def think(
     command_line_arguments: argparse.Namespace, counter: AsyncItemCounter
 ) -> tuple[ModuleType, dict, str]:
     ponderation: Ponderation = await get_ponderation()
-
+    await print_counts(ponderation.weights, counter)
     module: Union[ModuleType, None] = None
     choosen_module: str = ""
     user_module_overwrite: dict[str, str] = {
