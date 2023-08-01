@@ -5,6 +5,8 @@ from exorde.brain import think
 from exorde_data import Item
 from types import ModuleType
 
+from exorde.counter import log_event
+
 
 async def get_item(
     command_line_arguments: argparse.Namespace,
@@ -15,13 +17,16 @@ async def get_item(
     while True:
         try:
             try:
-                module, parameters = await think(command_line_arguments)
+                module, parameters, domain = await think(
+                    command_line_arguments
+                )
             except Exception as error:
                 logging.exception(f"An error occured in the brain function")
                 raise error
             try:
                 async for item in module.query(parameters):
                     if isinstance(item, Item):
+                        await log_event(domain)
                         yield item
                     else:
                         continue

@@ -218,6 +218,14 @@ def run():
         help="Overwrite a sub-module (domain=repository_url)",
     )
     parser.add_argument(
+        "-qo",
+        "--quota",
+        type=validate_module_spec,
+        action="append",  # allow reuse of the option in the same run
+        help="quota a domain per 24h (domain=amount)",
+    )
+
+    parser.add_argument(
         "-d",
         "--debug",
         help="Set verbosity level of logs to DEBUG",

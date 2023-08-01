@@ -1,3 +1,4 @@
+import os
 import json
 import logging
 import random
@@ -6,13 +7,13 @@ from exorde.get_keywords import get_keywords
 from exorde.module_loader import get_scraping_module
 import aiohttp
 import datetime
-from typing import Union
+from typing import Union, Callable
 from types import ModuleType
 
 
-LIVE_PONDERATION = "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/modules_configuration.json"
-DEV_PONDERATION = "https://gist.githubusercontent.com/6r17/c844775ea359ce10fcc29a72834a5541/raw/0b969a70375eabc07dec2cb1075b910396a23fed/gistfile1.txt"
-PONDERATION_URL = DEV_PONDERATION
+LIVE_PONDERATION: str = "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/modules_configuration.json"
+DEV_PONDERATION: str = "https://gist.githubusercontent.com/6r17/c844775ea359ce10fcc29a72834a5541/raw/0b969a70375eabc07dec2cb1075b910396a23fed/gistfile1.txt"
+PONDERATION_URL: str = DEV_PONDERATION
 
 from dataclasses import dataclass
 from typing import Dict, List, Union
@@ -52,7 +53,7 @@ async def _get_ponderation() -> Ponderation:
             )
 
 
-def ponderation_geter():
+def ponderation_geter() -> Callable:
     memoised = None
     last_call = datetime.datetime.now()
 
@@ -67,7 +68,7 @@ def ponderation_geter():
     return get_ponderation_wrapper
 
 
-get_ponderation = ponderation_geter()
+get_ponderation: Callable = ponderation_geter()
 
 
 def choose_domain(
@@ -98,13 +99,9 @@ async def choose_keyword() -> str:
     return selected_keyword
 
 
-import os
-
-
 async def think(
     command_line_arguments: argparse.Namespace,
-) -> tuple[ModuleType, dict]:
-    print(command_line_arguments)
+) -> tuple[ModuleType, dict, str]:
     ponderation: Ponderation = await get_ponderation()
     module: Union[ModuleType, None] = None
     choosen_module: str = ""
@@ -116,9 +113,9 @@ async def think(
         domain: str = choose_domain(ponderation.weights)
         if domain in user_module_overwrite:
             logging.info("{domain} overloaded by user")
-            choosen_module_path = user_module_overwrite[domain]
+            choosen_module_path: str = user_module_overwrite[domain]
         else:
-            choosen_module_path = get_module_path_for_domain(
+            choosen_module_path: str = get_module_path_for_domain(
                 ponderation, domain
             )
         try:
@@ -140,4 +137,4 @@ async def think(
     }
     parameters.update(generic_modules_parameters)
     parameters.update(specific_parameters)
-    return (module, parameters)
+    return (module, parameters, domain)
