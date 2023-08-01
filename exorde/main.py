@@ -1,6 +1,7 @@
 #! python3.10
 
 from wtpsplit import WtP
+
 wtp = WtP("wtp-canine-s-1l")
 import os
 import argparse
@@ -15,7 +16,6 @@ from exorde.self_update import self_update
 from exorde.get_balance import get_balance
 
 import logging
-
 
 
 logger = logging.getLogger()
@@ -200,6 +200,17 @@ def run():
 
         return spec
 
+    def validate_quota_spec(quota_spec: str) -> dict:
+        try:
+            domain, quota = quota_spec.split("=")
+            quota = int(quota)
+        except ValueError:
+            raise argparse.ArgumentTypeError(
+                f"Invalid quota specification '{quota_spec}', "
+                "quota spec must be in the form 'domain=quota', e.g. 'domain=5000'"
+            )
+        return {domain: quota}
+
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--main_address", help="Main wallet", type=str, required=True
@@ -217,6 +228,7 @@ def run():
     parser.add_argument(
         "-mo",
         "--module_overwrite",
+        default=[],
         type=validate_module_spec,
         action="append",  # allow reuse of the option in the same run
         help="Overwrite a sub-module (domain=repository_url)",
@@ -224,7 +236,8 @@ def run():
     parser.add_argument(
         "-qo",
         "--quota",
-        type=validate_module_spec,
+        default=[],
+        type=validate_quota_spec,
         action="append",  # allow reuse of the option in the same run
         help="quota a domain per 24h (domain=amount)",
     )

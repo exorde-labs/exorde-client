@@ -5,7 +5,7 @@ from exorde.brain import think
 from exorde_data import Item
 from types import ModuleType
 
-from exorde.counter import log_event
+from exorde.counter import AsyncItemCounter
 
 
 async def get_item(
@@ -14,11 +14,12 @@ async def get_item(
     module: ModuleType
     parameters: dict
     error_count: dict[ModuleType, int] = {}
+    counter: AsyncItemCounter = AsyncItemCounter()
     while True:
         try:
             try:
                 module, parameters, domain = await think(
-                    command_line_arguments
+                    command_line_arguments, counter
                 )
             except Exception as error:
                 logging.exception(f"An error occured in the brain function")
@@ -26,7 +27,7 @@ async def get_item(
             try:
                 async for item in module.query(parameters):
                     if isinstance(item, Item):
-                        await log_event(domain)
+                        await counter.increment(domain)
                         yield item
                     else:
                         continue

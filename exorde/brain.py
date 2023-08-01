@@ -9,10 +9,10 @@ import aiohttp
 import datetime
 from typing import Union, Callable
 from types import ModuleType
-
+from exorde.counter import AsyncItemCounter
 
 LIVE_PONDERATION: str = "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/modules_configuration.json"
-DEV_PONDERATION: str = "https://gist.githubusercontent.com/6r17/c844775ea359ce10fcc29a72834a5541/raw/0b969a70375eabc07dec2cb1075b910396a23fed/gistfile1.txt"
+DEV_PONDERATION: str = "https://gist.githubusercontent.com/6r17/c844775ea359ce10fcc29a72834a5541/raw/6e615a180946dbc1eb6c0046045c82decd22a0e3/gistfile1.txt"
 PONDERATION_URL: str = DEV_PONDERATION
 
 from dataclasses import dataclass
@@ -24,7 +24,7 @@ class Ponderation:
     enabled_modules: Dict[str, List[str]]
     generic_modules_parameters: Dict[str, Union[int, str, bool]]
     specific_modules_parameters: Dict[str, Dict[str, Union[int, str, bool]]]
-    weights: Dict[str, int]
+    weights: Dict[str, float]
 
 
 async def _get_ponderation() -> Ponderation:
@@ -70,22 +70,27 @@ def ponderation_geter() -> Callable:
 
 get_ponderation: Callable = ponderation_geter()
 
+from exorde.weighted_choice import weighted_choice
+
+
+def generate_quota_layer(
+    command_line_arguments: argparse.Namespace, counter: AsyncItemCounter
+) -> dict[str, float]:
+    quotas = {k: v for d in command_line_arguments.quota for k, v in d.items()}
+    counts = {k: counter.count_occurences(k) for k, __v__ in quotas.items()}
+    layer = {
+        k: 1.0 if counts[k] < quotas[k] else 0.0 for k, __v__ in quotas.items()
+    }
+    return layer
+
 
 def choose_domain(
-    weights: dict[str, int]
+    weights: dict[str, float],
+    command_line_arguments: argparse.Namespace,
+    counter: AsyncItemCounter,
 ) -> str:  # this will return "twitter" "weibo" etc...
-    total_weight: int = sum(weights.values())
-    choice: float = random.uniform(0, total_weight)
-    cumulative_weight: int = 0
-
-    for option, weight in weights.items():
-        cumulative_weight += weight
-        if choice < cumulative_weight:
-            return option
-
-    # This will only execute if the choice exceeds the cumulative weight
-    # Return first item if it occurs
-    return next(iter(weights))
+    quota_layer = generate_quota_layer(command_line_arguments, counter)
+    return weighted_choice([weights, quota_layer])
 
 
 def get_module_path_for_domain(ponderation: Ponderation, domain: str) -> str:
@@ -100,7 +105,7 @@ async def choose_keyword() -> str:
 
 
 async def think(
-    command_line_arguments: argparse.Namespace,
+    command_line_arguments: argparse.Namespace, counter: AsyncItemCounter
 ) -> tuple[ModuleType, dict, str]:
     ponderation: Ponderation = await get_ponderation()
 
@@ -110,8 +115,11 @@ async def think(
         option.split("=")[0]: option.split("=")[1]
         for option in command_line_arguments.module_overwrite
     }
+    domain: str = ""
     while not module:
-        domain: str = choose_domain(ponderation.weights)
+        domain = choose_domain(
+            ponderation.weights, command_line_arguments, counter
+        )
         if domain in user_module_overwrite:
             logging.info("{domain} overloaded by user")
             choosen_module_path: str = user_module_overwrite[domain]
@@ -135,7 +143,8 @@ async def think(
         str, Union[int, str, bool, dict]
     ] = ponderation.specific_modules_parameters.get(choosen_module, {})
     parameters: dict[str, Union[int, str, bool, dict]] = {
-        "url_parameters": {"keyword": keyword}, "keyword": keyword
+        "url_parameters": {"keyword": keyword},
+        "keyword": keyword,
     }
     parameters.update(generic_modules_parameters)
 

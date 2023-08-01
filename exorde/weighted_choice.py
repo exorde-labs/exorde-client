@@ -1,12 +1,13 @@
 import random
+from typing import List, Dict
 
 
-def weighted_choice(weight_dicts: list[dict[str, float]]) -> str:
+def weighted_choice(weight_dicts: List[Dict[str, float]]) -> str:
     """
     Returns a randomly chosen key, considering weights from multiple dictionaries.
 
     Args:
-        weight_dicts (list[dict[str, float]]): A list of dictionaries where
+        weight_dicts (List[Dict[str, float]]): A list of dictionaries where
                                                each dictionary represents a different
                                                feature's weights.
 
@@ -32,5 +33,19 @@ def weighted_choice(weight_dicts: list[dict[str, float]]) -> str:
             return option
 
     # This will only execute if the choice exceeds the cumulative weight
-    # Return first item if it occurs
+    # Return the first item if it occurs
     return next(iter(final_weights))
+
+
+# Example usage:
+if __name__ == "__main__":
+    layer1 = {"A": 0.5, "B": 0.7, "C": 0.3}
+    layer2 = {"A": 0, "B": 0.4, "C": 0}
+    layer3 = {"A": 0.9, "B": 0.5, "C": 0.1}
+
+    weights = [layer1, layer2, layer3]
+
+    num_samples = 10
+    for _ in range(num_samples):
+        choice = weighted_choice(weights)
+        print(f"Chosen: {choice}")
