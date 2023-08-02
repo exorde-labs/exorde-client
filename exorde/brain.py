@@ -12,7 +12,7 @@ from types import ModuleType
 from exorde.counter import AsyncItemCounter
 
 LIVE_PONDERATION: str = "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/modules_configuration.json"
-DEV_PONDERATION: str = "https://gist.githubusercontent.com/MathiasExorde/a0eeec5998504cb8a0e1703b8ec6164d/raw/1b8dfc53ad3cd5f7a00a7a87725baa54d2751104/test_new_config_modules"
+DEV_PONDERATION: str = "https://gist.githubusercontent.com/MathiasExorde/179ce30c736d1e3af924a767fadd2088/raw/d16444bc06cb4028f95647dafb6d55ee201fd8c6/new_module_configuration.json"
 PONDERATION_URL: str = DEV_PONDERATION
 
 from dataclasses import dataclass
