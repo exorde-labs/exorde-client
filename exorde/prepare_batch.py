@@ -33,7 +33,8 @@ def evaluate_token_count(
 
 def split_in_sentences(string: str):
     sentences = []
-    detected_language = lang_detect(string, low_memory=False)
+    string_no_lb = string.replace("\n"," ")
+    detected_language = lang_detect(string_no_lb, low_memory=False)
     try:
         try:
             sents = wtp.split(string, lang_code=detected_language["lang"])
