@@ -23,6 +23,7 @@ setup(
         "lxml",
         "HTMLParser",
         "pytz",
+        "keybert",
         "pyyaml",
         "web3",
         "packaging",
