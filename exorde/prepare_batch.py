@@ -151,7 +151,7 @@ async def prepare_batch(
             logging.info(
                 f" + A new item has been processed {len(batch)}/{live_configuration['batch_size']} - ({exec_time_s} s) - Source = {str(item['domain'])} -  token count = {item_token_count}"
             )
-            # Evaluate the cumulated number of tokens in the batch
+            # Evaluate the maximum allowed cumulated token count in batch
             try:
                 max_batch_total_tokens_ = int(
                     live_configuration["batch_size"]
