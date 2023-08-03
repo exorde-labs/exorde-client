@@ -1,6 +1,7 @@
 #! python3.10
 
 from wtpsplit import WtP
+
 wtp = WtP("wtp-canine-s-1l")
 import os
 import argparse
@@ -15,7 +16,6 @@ from exorde.self_update import self_update
 from exorde.get_balance import get_balance
 
 import logging
-
 
 
 logger = logging.getLogger()
@@ -92,9 +92,7 @@ async def main(command_line_arguments: argparse.Namespace):
             try:
                 await self_update()
             except:
-                logging.info(
-                    "[MAIN] An error occured during self_update"
-                )
+                logging.info("[MAIN] An error occured during self_update")
             try:
                 # update/refresh configuration
                 live_configuration: LiveConfiguration = (
@@ -102,8 +100,8 @@ async def main(command_line_arguments: argparse.Namespace):
                 )
                 if live_configuration["remote_kill"] == True:
                     logging.info("Protocol is shut down (remote kill)")
-                    os._exit(0)      
-            except:  
+                    os._exit(0)
+            except:
                 logging.info(
                     "[MAIN] An error occured during live configuration check."
                 )
@@ -124,7 +122,11 @@ async def main(command_line_arguments: argparse.Namespace):
             # if quality_job:
             #    quality_check(job)
             # else:
-            await spotting(live_configuration, static_configuration)
+            await spotting(
+                live_configuration,
+                static_configuration,
+                command_line_arguments,
+            )
         elif not live_configuration["online"]:
             logging.info(
                 "Protocol is paused (online mode is False), temporarily. Your client will wait for the pause to end and will continue automatically."
@@ -184,7 +186,31 @@ def clear_env():
         logging.info("clear_env: .env file cleared.")
 
 
+import re
+
+
 def run():
+    def validate_module_spec(spec: str) -> str:
+        pattern = r"^[a-zA-Z_][a-zA-Z0-9_]*=https?://github\.com/[a-zA-Z0-9_\-\.]+/[a-zA-Z0-9_\-\.]+$"
+        if not re.match(pattern, spec):
+            raise argparse.ArgumentTypeError(
+                f"Invalid module specification: {spec}. "
+                "Expecting: module_name=https://github.com/user/repo"
+            )
+
+        return spec
+
+    def validate_quota_spec(quota_spec: str) -> dict:
+        try:
+            domain, quota = quota_spec.split("=")
+            quota = int(quota)
+        except ValueError:
+            raise argparse.ArgumentTypeError(
+                f"Invalid quota specification '{quota_spec}', "
+                "quota spec must be in the form 'domain=quota', e.g. 'domain=5000'"
+            )
+        return {domain: quota}
+
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--main_address", help="Main wallet", type=str, required=True
@@ -198,6 +224,25 @@ def run():
     parser.add_argument("--twitter_email", help="Twitter email", type=str)
     parser.add_argument(
         "--http_proxy", help="Twitter Selenium PROXY", type=str
+    )
+    parser.add_argument(
+        "-mo",
+        "--module_overwrite",
+        default=[],
+        type=validate_module_spec,
+        action="append",  # allow reuse of the option in the same run
+        help="Overwrite a sub-module (domain=repository_url)",
+    )
+    parser.add_argument(
+        "--only", type=str, help="Comma-separated list of values", default=""
+    )
+    parser.add_argument(
+        "-qo",
+        "--quota",
+        default=[],
+        type=validate_quota_spec,
+        action="append",  # allow reuse of the option in the same run
+        help="quota a domain per 24h (domain=amount)",
     )
 
     parser.add_argument(

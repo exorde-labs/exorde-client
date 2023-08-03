@@ -1,13 +1,17 @@
 import logging
 import time
+
+from typing import AsyncGenerator
+import argparse
 from wtpsplit import WtP
 from exorde.item import get_item
-from exorde.models import Processed, LiveConfiguration
+from exorde.models import Processed, LiveConfiguration, StaticConfiguration
 from exorde.process import process, TooBigError
 from exorde_data import Item, Content
 from typing import AsyncGenerator
 import tiktoken
 from ftlangdetect import detect as lang_detect
+
 
 wtp = WtP("wtp-canine-s-1l")
 
@@ -100,11 +104,13 @@ def split_item(item: Item, max_token_count: int) -> list[Item]:
         ]
     
 async def prepare_batch(
-    static_configuration, live_configuration: LiveConfiguration
-) -> list[tuple[int, Processed]]:
+    static_configuration: StaticConfiguration,
+    live_configuration: LiveConfiguration,
+    command_line_arguments: argparse.Namespace,
+) -> list[Processed]:
     max_depth_classification: int = live_configuration["max_depth"]
     batch: list[tuple[int, Processed]] = []  # id, item
-    generator: AsyncGenerator[Item, None] = get_item()
+    generator: AsyncGenerator[Item, None] = get_item(command_line_arguments)
     lab_configuration: dict = static_configuration["lab_configuration"]
     item_id = -1
     async for item in generator:

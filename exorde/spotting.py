@@ -1,4 +1,5 @@
 import logging
+import argparse
 
 from exorde.models import Processed
 
@@ -9,12 +10,17 @@ from exorde.spot_data import spot_data
 
 from exorde.get_transaction_receipt import get_transaction_receipt
 from exorde.ipfs import download_ipfs_file, upload_to_ipfs
+from exorde.models import LiveConfiguration, StaticConfiguration
 
 
-async def spotting(live_configuration, static_configuration):
-    batch: list[tuple[int, Processed]] = await prepare_batch(
-        static_configuration,
-        live_configuration,
+
+async def spotting(
+    live_configuration: LiveConfiguration,
+    static_configuration: StaticConfiguration,
+    command_line_arguments: argparse.Namespace,
+):
+    batch: list[Processed] = await prepare_batch(
+        static_configuration, live_configuration, command_line_arguments
     )
     try:
         logging.info("Processing batch")

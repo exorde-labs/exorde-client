@@ -70,10 +70,8 @@ async def is_up_to_date(repository_path) -> bool:
         )
     try:
         local_version = metadata.version(module_name)
-    except Exception as e:
-        logging.info(
-            "[MODULE LOADER ERROR] COULD NOT LOAD local_version"
-        )
+    except Exception:
+        logging.info("[MODULE LOADER ERROR] COULD NOT LOAD local_version")
         return False
 
     setup_path = repository_path.replace(
@@ -83,19 +81,15 @@ async def is_up_to_date(repository_path) -> bool:
         online_version = await fetch_version_from_setup_file(
             f"{setup_path}/main/setup.py"
         )
-    except Exception as e:
-        logging.info(
-            "[MODULE LOADER ERROR] COULD NOT LOAD online_version"
-        )
+    except Exception:
+        logging.info("[MODULE LOADER ERROR] COULD NOT LOAD online_version")
         return False
 
     logging.info(
         f"version -> local: '{local_version}' | remote: '{online_version}'"
     )
     if is_older_version(local_version, online_version):
-        logging.info(
-            "[is_older_version] the online version is newer!"
-        )
+        logging.info("[is_older_version] the online version is newer!")
         return False
     logging.info(
         "[is_older_version] the online version is not newer, no update needed."
@@ -107,19 +101,20 @@ async def get_scraping_module(repository_path) -> ModuleType:
     module_name = os.path.basename(repository_path.rstrip("/"))
     try:
         if not await is_up_to_date(repository_path):
-            subprocess.check_call(["pip", "install", f"git+{repository_path}.git"])
+            subprocess.check_call(
+                ["pip", "install", f"git+{repository_path}.git"]
+            )
     except (subprocess.CalledProcessError, PackageNotFoundError):
         raise RuntimeError("Failed to install or import the module.")
     loaded_module = None
     try:
         loaded_module = import_module(module_name)
-    except ImportError:
+        return loaded_module
+    except ImportError as e:
         logging.info(
             f"[MODULE LOADER Scraping module] - Could not import or land the module from {repository_path}"
         )
+        raise (e)
     except Exception as e:
-        logging.info(
-            f"[MODULE LOADER Scraping module] Error: {e}"
-        )
-
-    return loaded_module
+        logging.info(f"[MODULE LOADER Scraping module] Error: {e}")
+        raise (e)
