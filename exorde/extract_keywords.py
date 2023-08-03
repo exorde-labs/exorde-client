@@ -1,6 +1,7 @@
 import yake
 import re
 import string
+from keybert import KeyBERT
 
 from exorde.models import Keywords, Translation
 
@@ -59,9 +60,14 @@ kw_extractor1 = yake.KeywordExtractor(
 
 _extract_keywords1 = lambda text: kw_extractor1.extract_keywords(text)
 
+_kw_bert_model = KeyBERT(model='all-MiniLM-L6-v2')
+th_kw_bert = 0.175
+_extract_keywords2 = lambda text: [keyword[0] for keyword in _kw_bert_model.extract_keywords(text) if keyword[1] > th_kw_bert]
+
 def extract_keywords(translation: Translation) -> Keywords:
     content: str = translation.translation       
     kx1 = _extract_keywords1(content)
     keywords_weighted = list(set(kx1))
     keywords_ = [e[0] for e in set(keywords_weighted)]
+    keywords_.extend(_extract_keywords2(content))
     return Keywords(filter_strings(keywords_))
