@@ -14,6 +14,7 @@ from exorde.claim_master import claim_master
 from exorde.get_current_rep import get_current_rep
 from exorde.self_update import self_update
 from exorde.get_balance import get_balance
+from exorde.counter import AsyncItemCounter
 
 import logging
 
@@ -23,6 +24,7 @@ logging.basicConfig(level=logging.INFO)
 
 
 async def main(command_line_arguments: argparse.Namespace):
+    counter: AsyncItemCounter = AsyncItemCounter()
     if not Web3.is_address(command_line_arguments.main_address):
         logging.error("The provided address is not a valid Web3 address")
         os._exit(1)
@@ -126,6 +128,7 @@ async def main(command_line_arguments: argparse.Namespace):
                 live_configuration,
                 static_configuration,
                 command_line_arguments,
+                counter,
             )
         elif not live_configuration["online"]:
             logging.info(
