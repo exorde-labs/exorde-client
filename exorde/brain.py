@@ -10,6 +10,7 @@ import datetime
 from typing import Union, Callable
 from types import ModuleType
 from exorde.counter import AsyncItemCounter
+from datetime import datetime, timedelta
 
 LIVE_PONDERATION: str = "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/modules_configuration_v2.json"
 DEV_PONDERATION: str = "https://gist.githubusercontent.com/MathiasExorde/179ce30c736d1e3af924a767fadd2088/raw/d16444bc06cb4028f95647dafb6d55ee201fd8c6/new_module_configuration.json"
@@ -55,13 +56,13 @@ async def _get_ponderation() -> Ponderation:
 
 def ponderation_geter() -> Callable:
     memoised = None
-    last_call = datetime.datetime.now()
+    last_call = datetime.now()
 
     async def get_ponderation_wrapper() -> Ponderation:
         nonlocal memoised, last_call
-        now = datetime.datetime.now()
-        if not memoised or (now - last_call) > datetime.timedelta(minutes=1):
-            last_call = datetime.datetime.now()
+        now = datetime.now()
+        if not memoised or (now - last_call) > timedelta(minutes=1):
+            last_call = datetime.now()
             memoised = await _get_ponderation()
         return memoised
 
@@ -97,12 +98,8 @@ async def generate_only_layer(
 
 
 async def choose_domain(
-    weights: dict[str, float],
-    command_line_arguments: argparse.Namespace,
-    counter: AsyncItemCounter,
+    weights: dict[str, float], quota_layer, only_layer
 ) -> str:  # this will return "twitter" "weibo" etc...
-    quota_layer = await generate_quota_layer(command_line_arguments, counter)
-    only_layer = await generate_only_layer(weights, command_line_arguments)
     matrix: list[dict[str, float]] = [weights, quota_layer, only_layer]
     return weighted_choice(matrix)
 
@@ -118,10 +115,48 @@ async def choose_keyword() -> str:
     return selected_keyword
 
 
-async def print_counts(ponderation: dict[str, float], counter):
-    for item in ponderation:
-        count = await counter.count_occurrences(item)
-        logging.info(f"{item} : {count} last 24h")
+from datetime import timedelta
+import logging
+
+
+async def print_counts(
+    ponderation: Ponderation,
+    counter: AsyncItemCounter,
+    quota_layer: dict[str, float],
+    only_layer: dict[str, float],
+):
+    weights: dict[str, float] = ponderation.weights
+    # Find the length of the longest item in ponderation
+    max_length = max(len(item) for item in weights)
+    max_count_length = 10  # Fixed width for the count columns
+
+    # Get the counts for the last 30 items
+    last_30_items_counts = await counter.count_last_n_items(30)
+
+    logging.info(
+        f"{'  source':>{max_length}} | {'weights':>{max_count_length}} | {'quota':>{max_count_length}} | {'only':>{max_count_length}} | {'last 24 h':>{max_count_length}} | {'last 1 h':>{max_count_length}} | {'last 30 items':>{max_count_length}}"
+    )
+    logging.info(
+        "-"
+        * (
+            max_length + 6 * max_count_length + 15
+        )  # 15 includes spaces, vertical bars, and other characters
+    )
+
+    for item in weights:
+        count_twenty_four = await counter.count_occurrences(item)
+        count_one_hour = await counter.count_occurrences(
+            item, time_period=timedelta(hours=1)
+        )
+        count_last_30_items = last_30_items_counts.get(item, 0)
+        weight_value = weights.get(item, 0)
+        quota_value = quota_layer.get(item, 0)
+        only_value = only_layer.get(item, 0)
+
+        # Use string formatting to right-align all columns
+        logging.info(
+            f"   {item:>{max_length}} | {weight_value:>{max_count_length}} | {quota_value:>{max_count_length}} | {only_value:>{max_count_length}} | {count_twenty_four:>{max_count_length}} | {count_one_hour:>{max_count_length}} | {count_last_30_items:>{max_count_length}}"
+        )
     logging.info("")
 
 
@@ -129,7 +164,11 @@ async def think(
     command_line_arguments: argparse.Namespace, counter: AsyncItemCounter
 ) -> tuple[ModuleType, dict, str]:
     ponderation: Ponderation = await get_ponderation()
-    await print_counts(ponderation.weights, counter)
+    quota_layer = await generate_quota_layer(command_line_arguments, counter)
+    only_layer = await generate_only_layer(
+        ponderation.weights, command_line_arguments
+    )
+    await print_counts(ponderation, counter, quota_layer, only_layer)
     module: Union[ModuleType, None] = None
     choosen_module: str = ""
     user_module_overwrite: dict[str, str] = {
@@ -139,7 +178,7 @@ async def think(
     domain: str = ""
     while not module:
         domain = await choose_domain(
-            ponderation.weights, command_line_arguments, counter
+            ponderation.weights, quota_layer, only_layer
         )
         if domain in user_module_overwrite:
             logging.info("{domain} overloaded by user")

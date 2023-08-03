@@ -9,12 +9,11 @@ from exorde.counter import AsyncItemCounter
 
 
 async def get_item(
-    command_line_arguments: argparse.Namespace,
+    command_line_arguments: argparse.Namespace, counter: AsyncItemCounter
 ) -> AsyncGenerator[Item, None]:
     module: ModuleType
     parameters: dict
     error_count: dict[ModuleType, int] = {}
-    counter: AsyncItemCounter = AsyncItemCounter()
     while True:
         try:
             try:

@@ -11,6 +11,7 @@ from exorde_data import Item, Content
 from typing import AsyncGenerator
 import tiktoken
 from ftlangdetect import detect as lang_detect
+from exorde.counter import AsyncItemCounter
 
 
 wtp = WtP("wtp-canine-s-1l")
@@ -122,10 +123,13 @@ async def prepare_batch(
     static_configuration: StaticConfiguration,
     live_configuration: LiveConfiguration,
     command_line_arguments: argparse.Namespace,
+    counter: AsyncItemCounter,
 ) -> list[tuple[int, Processed]]:
     max_depth_classification: int = live_configuration["max_depth"]
     batch: list[tuple[int, Processed]] = []  # id, item
-    generator: AsyncGenerator[Item, None] = get_item(command_line_arguments)
+    generator: AsyncGenerator[Item, None] = get_item(
+        command_line_arguments, counter
+    )
     lab_configuration: dict = static_configuration["lab_configuration"]
     item_id = -1
     async for item in generator:
@@ -156,12 +160,10 @@ async def prepare_batch(
             try:
                 max_batch_total_tokens_ = int(
                     live_configuration["batch_size"]
-                ) * int(
-                    live_configuration["max_token_count"]
-                )
+                ) * int(live_configuration["max_token_count"])
             except:
-                max_batch_total_tokens_ = 30000 # default value
-                
+                max_batch_total_tokens_ = 30000  # default value
+
             # Evaluate the cumulated number of tokens in the batch
             try:
                 cumulative_token_size = sum(
@@ -172,7 +174,7 @@ async def prepare_batch(
                 )
             except:
                 cumulative_token_size = 150 * len(batch)
-                
+
             if (
                 # If we have enough items of each enough tokens
                 cumulative_token_size > max_batch_total_tokens_
