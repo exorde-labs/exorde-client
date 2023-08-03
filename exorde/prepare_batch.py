@@ -107,7 +107,7 @@ async def prepare_batch(
     static_configuration: StaticConfiguration,
     live_configuration: LiveConfiguration,
     command_line_arguments: argparse.Namespace,
-) -> list[Processed]:
+    ) -> list[tuple[int, Processed]]:
     max_depth_classification: int = live_configuration["max_depth"]
     batch: list[tuple[int, Processed]] = []  # id, item
     generator: AsyncGenerator[Item, None] = get_item(command_line_arguments)
@@ -138,18 +138,21 @@ async def prepare_batch(
             logging.info(
                 f" + A new item has been processed {len(batch)}/{live_configuration['batch_size']} - ({exec_time_s} s) - Source = {str(item['domain'])} -  token count = {item_token_count}"
             )
-            max_batch_total_tokens_ = int(live_configuration["batch_size"]) \
-                                      *  int(static_configuration["lab_configuration"]["max_token_count"])
-
+            try:
+                max_batch_total_tokens_ = int(live_configuration["batch_size"]) \
+                                          *  int(live_configuration["max_token_count"])                
+                cumulative_token_batch_size = sum([evaluate_token_count(str(item.item.content)) for (__id__, item) in batch])
+            except:
+                max_batch_total_tokens_ = 20_000
+                cumulative_token_batch_size = 100 * len(batch) 
+                
             if (
-                # If we have enough items of each enough tokens
-                sum([evaluate_token_count(str(item.item.content)) for (__id__, item) in batch]) 
-                > max_batch_total_tokens_
+                cumulative_token_batch_size > max_batch_total_tokens_
                 # Or If we have enough items overall
                 or len(batch) >= live_configuration["batch_size"]
             ):
                 await generator.aclose()
                 return batch
         except:
-            logging.info("An error occured while processing an item")
+            logging.exception("An error occured while processing an item")
     return []
