@@ -14,6 +14,25 @@ from exorde.models import LiveConfiguration, StaticConfiguration
 from exorde.counter import AsyncItemCounter
 
 
+async def rep_counter(
+    counter: AsyncItemCounter, post_upload_file: dict
+) -> None:
+    """
+    Use the Counter in order to store the rep gained for each source. Instead of
+    spawning a new specific counter for the task it has been choosed to pre_fix
+    each domain with a key `rep_` in order to keep the implementation unique.
+    """
+    # 1 REP is gained for every new item that has been processed by the protocol
+    #   so we have to iterate over the post_upload_file in order to define how
+    #   many new items have been processed per source
+
+    for item in post_upload_file["items"]:
+        # 2 Each `ProcessedItem` has `.item` which is a `ProtocolItem`
+        #   containing the `domain` (models.py)
+        domain = item.item.domain
+        await counter.increment(f"rep_{domain}")
+
+
 async def spotting(
     live_configuration: LiveConfiguration,
     static_configuration: StaticConfiguration,
