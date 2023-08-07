@@ -12,28 +12,29 @@ class EnumEncoder(json.JSONEncoder):
         return super().default(obj)
 
 
-async def upload_to_ipfs(
-    value, ipfs_path="http://ipfs-api.exorde.network/add"
-) -> str:
-    for i in range(0, 5):
+async def upload_to_ipfs(value, ipfs_path="http://ipfs-api.exorde.network/add") -> str:
+    for i in range(5):  # Retry up to 5 times
         try:
             async with aiohttp.ClientSession() as session:
-                _value = json.dumps(value, cls=EnumEncoder)
+                _value = json.dumps(value, cls=EnumEncoder)  # Make sure EnumEncoder is defined
                 async with session.post(
                     ipfs_path,
                     data=_value,
                     headers={"Content-Type": "application/json"},
+                    timeout=10,  # Set a timeout for the request
                 ) as resp:
                     if resp.status == 200:
-                        logging.debug("Upload to ipfs succeeded")
+                        logging.debug("Upload to IPFS succeeded")
                         response = await resp.json()
+                        logging.info(f"[IPFS API] Response = {response}")
                         return response["cid"]
-        except:
-            await asyncio.sleep(i * 1.5 * 1)
-            logging.info(f"Failed upload, retrying ({i}/10)")
-    raise Exception(f"Failed to upload to IPFS")
+        except Exception as e:
+            logging.exception(f"[IPFS API] Error: {e}")
+            await asyncio.sleep(i * 1.5)  # Adjust sleep factor
+            logging.info(f"Failed upload, retrying ({i + 1}/5)")  # Update retry count
 
-
+    raise Exception("Failed to upload to IPFS")
+    
 def rotate_gateways():
     gateways = [
         "http://ipfs-gateway.exorde.network/ipfs/",
