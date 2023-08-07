@@ -26,8 +26,11 @@ async def upload_to_ipfs(value, ipfs_path="http://ipfs-api.exorde.network/add") 
                     if resp.status == 200:
                         logging.debug("Upload to IPFS succeeded")
                         response = await resp.json()
-                        logging.info(f"[IPFS API] Response = {response}")
+                        logging.info(f"[IPFS API] Success, response = {response}")
                         return response["cid"]
+                    else:
+                        logging.info(f"[IPFS API] Failed, response status = {resp.status}, {resp.json()}")
+                        
         except Exception as e:
             logging.exception(f"[IPFS API] Error: {e}")
             await asyncio.sleep(i * 1.5)  # Adjust sleep factor
