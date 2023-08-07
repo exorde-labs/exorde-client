@@ -71,9 +71,11 @@ async def main(command_line_arguments: argparse.Namespace):
                 await faucet(static_configuration)
                 break
             except:
+                timeout = i * 1.5 + 1
                 logging.exception(
-                    f"An error occured during faucet (attempt {i})"
+                    f"An error occured during faucet (attempt {i}) (retry in {timeout})"
                 )
+                await asyncio.sleep(timeout)
 
     try:
         time.sleep(3)

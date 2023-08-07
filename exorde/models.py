@@ -174,7 +174,6 @@ class StaticConfiguration(dict):
     read_web3: AsyncWeb3
     write_web3: AsyncWeb3
     lab_configuration: dict
-    selected_faucet: tuple[int, str]
     gas_cache: dict
 
 
