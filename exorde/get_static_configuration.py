@@ -1,4 +1,3 @@
-from exorde.select_random_faucet import select_random_faucet
 from exorde.get_contracts import get_contracts
 from exorde.read_web3 import read_web3 as _read_web3
 from exorde.write_web3 import write_web3 as _write_web3
@@ -35,7 +34,6 @@ async def get_static_configuration(
         protocol_configuration, network_configuration, live_configuration
     )
     lab_configuration = lab_initialization()
-    selected_faucet = select_random_faucet()
     return StaticConfiguration(
         main_address=main_address,
         worker_account=worker_account,
@@ -46,6 +44,5 @@ async def get_static_configuration(
         read_web3=read_web3,
         write_web3=write_web3,
         lab_configuration=lab_configuration,
-        selected_faucet=selected_faucet,
         gas_cache=gas_cache,
     )

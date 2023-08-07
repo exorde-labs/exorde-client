@@ -1,21 +1,33 @@
+"""
+Used by main.py in order to provide fuel to user account if he does not have any
+to start with.
+
+
+"""
+
+
 import logging, os, asyncio
 from web3 import Web3
 
+from exorde.select_random_faucet import select_random_faucet
 from exorde.models import StaticConfiguration
 
 
 async def faucet(static_configuration: StaticConfiguration):
     write_web3 = static_configuration["write_web3"]
     read_web3 = static_configuration["read_web3"]
-    selected_faucet = static_configuration["selected_faucet"]
     worker_account = static_configuration["worker_account"]
 
+    # checks if the provided address is valid
     if not Web3.is_address(worker_account.address):
         logging.critical("Invalid worker address")
         os._exit(1)
+
+    selected_faucet = select_random_faucet()
     logging.info(
         f"Faucet with '{selected_faucet} and {worker_account.address}"
     )
+
     faucet_address = read_web3.eth.account.from_key(selected_faucet[1]).address
     previous_nounce = await read_web3.eth.get_transaction_count(faucet_address)
     signed_transaction = read_web3.eth.account.sign_transaction(
