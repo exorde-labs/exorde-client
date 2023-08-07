@@ -13,6 +13,7 @@ class EnumEncoder(json.JSONEncoder):
 
 
 async def upload_to_ipfs(value, ipfs_path="http://ipfs-api.exorde.network/add") -> str:
+    empty_content_flag = False
     for i in range(5):  # Retry up to 5 times
         try:
             async with aiohttp.ClientSession() as session:
@@ -32,14 +33,18 @@ async def upload_to_ipfs(value, ipfs_path="http://ipfs-api.exorde.network/add") 
                         error_text = await resp.text()
                         logging.error(f"[IPFS API - Error 500] API rejection: {error_text}")
                         if error_text == "empty content":
-                            raise Exception("[IPFS API] Upload failed because all items are too old")
+                            empty_content_flag = True
+                            raise Exception("[IPFS API] Upload failed because items are too old")
                         await asyncio.sleep(i * 1.5)  # Adjust sleep factor
                         logging.info(f"Failed upload, retrying ({i + 1}/5)")  # Update retry count
                         continue  # Retry after handling the error
                     else:
-                        logging.info(f"[IPFS API] Failed, response status = {resp.status}")
+                        error_text = await resp.text()
+                        logging.info(f"[IPFS API] Failed, response status = {resp.status}, text = {error_text}")
                         
         except Exception as e:
+            if empty_content_flag:
+                break
             logging.exception(f"[IPFS API] Error: {e}")
             await asyncio.sleep(i * 1.5)  # Adjust sleep factor
             logging.info(f"Failed upload, retrying ({i + 1}/5)")  # Update retry count
