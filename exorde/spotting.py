@@ -95,7 +95,6 @@ async def count_rep_for_each_domain(
     for item in batch["items"]:
         domain = item["item"]["domain"]
         alias = aliases.get(domain, "other")
-        print("ADD TO ", f"rep_{alias}")
         await counter.increment(f"rep_{alias}")
 
 
