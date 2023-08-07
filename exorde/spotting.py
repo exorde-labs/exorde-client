@@ -15,7 +15,9 @@ from exorde.models import LiveConfiguration, StaticConfiguration
 from exorde.counter import AsyncItemCounter
 
 
-def count_rep_for_each_domain(counter: AsyncItemCounter, batch: dict) -> None:
+async def count_rep_for_each_domain(
+    counter: AsyncItemCounter, batch: dict
+) -> None:
     """
     Uses the Counter in order to store the rep gained for each source. Instead
     of spawning a new specific counter for the task it has been choosed to pre_fix
@@ -26,7 +28,7 @@ def count_rep_for_each_domain(counter: AsyncItemCounter, batch: dict) -> None:
     #   many new items have been processed per source
     for item in batch["items"]:
         domain = item["item"]["domain"]
-        asyncio.create_task(counter.increment(f"rep_{domain}"))
+        await counter.increment(f"rep_{domain}")
 
 
 async def spotting(
@@ -54,7 +56,7 @@ async def spotting(
         cid: str = await upload_to_ipfs(processed_batch)
         logging.info("Successfully uploaded file to ipfs")
         post_upload_file: dict = await download_ipfs_file(cid)
-        count_rep_for_each_domain(counter, post_upload_file)
+        await count_rep_for_each_domain(counter, post_upload_file)
         item_count = len(post_upload_file["items"])
     except:
         logging.exception("An error occured during IPFS uploading")

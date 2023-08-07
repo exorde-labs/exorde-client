@@ -4,7 +4,6 @@ from typing import AsyncGenerator
 from exorde.brain import think
 from exorde_data import Item
 from types import ModuleType
-import asyncio
 from exorde.counter import AsyncItemCounter
 
 
@@ -26,7 +25,7 @@ async def get_item(
             try:
                 async for item in module.query(parameters):
                     if isinstance(item, Item):
-                        asyncio.create_task(counter.increment(domain))
+                        await counter.increment(domain)
                         yield item
                     else:
                         continue
