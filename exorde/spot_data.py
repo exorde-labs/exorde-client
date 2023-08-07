@@ -53,4 +53,4 @@ async def spot_data(
             # save error
             await asyncio.sleep(i * 1.5 + 1)
             logging.exception(f"An error occured during spot_data ({i}/5)")
-        raise SpottingError()
+    raise SpottingError()
