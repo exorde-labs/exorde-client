@@ -155,11 +155,27 @@ async def print_counts(
         rep_value = await counter.count_occurrences(
             "rep_" + item
         )  # / ! \ this will show the REP gained on last 24hours
-
         # Use string formatting to right-align all columns
         logging.info(
             f"   {item:>{max_length}} | {weight_value:>{max_count_length}} | {quota_value:>{max_count_length}} | {only_value:>{max_count_length}} | {count_twenty_four:>{max_count_length}} | {count_one_hour:>{max_count_length}} | {count_last_30_items:>{max_count_length}} | {rep_value:>{max_count_length}}"
         )
+    item = "other"
+    count_twenty_four = await counter.count_occurrences(item)
+    count_one_hour = await counter.count_occurrences(
+        item, time_period=timedelta(hours=1)
+    )
+    count_last_30_items = last_30_items_counts.get(item, 0)
+    weight_value = weights.get(item, 0)
+    quota_value = quota_layer.get(item, 0)
+    only_value = only_layer.get(item, 0)
+    rep_value = await counter.count_occurrences(
+        "rep_" + item
+    )  # / ! \ this will show the REP gained on last 24hours
+    # Use string formatting to right-align all columns
+    logging.info(
+        f"   {item:>{max_length}} | {weight_value:>{max_count_length}} | {quota_value:>{max_count_length}} | {only_value:>{max_count_length}} | {count_twenty_four:>{max_count_length}} | {count_one_hour:>{max_count_length}} | {count_last_30_items:>{max_count_length}} | {rep_value:>{max_count_length}}"
+    )
+
     logging.info("")
 
 

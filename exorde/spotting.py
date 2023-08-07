@@ -1,6 +1,5 @@
 import logging
 import argparse
-import asyncio
 
 from exorde.models import Processed
 
@@ -14,6 +13,71 @@ from exorde.ipfs import download_ipfs_file, upload_to_ipfs
 from exorde.models import LiveConfiguration, StaticConfiguration
 from exorde.counter import AsyncItemCounter
 
+import json
+import logging
+import argparse
+import aiohttp
+import datetime
+from typing import Callable
+from exorde.counter import AsyncItemCounter
+from datetime import datetime, timedelta
+
+
+ALIASES_URL: str = "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/domain_aliases.json"
+
+
+async def _get_alias() -> dict[str, str]:
+    async with aiohttp.ClientSession() as session:
+        async with session.get(ALIASES_URL) as response:
+            response.raise_for_status()
+            raw_data: str = await response.text()
+            try:
+                json_data = json.loads(raw_data)
+            except Exception:
+                logging.exception(raw_data)
+                return {
+                    "4chan": "4chan",
+                    "4channel.org": "4chan",
+                    "reddit.com": "reddit",
+                    "twitter.com": "twitter",
+                    "t.co": "twitter",
+                    "x.com": "twitter",
+                    "youtube.com": "youtube",
+                    "yt.co": "youtube",
+                    "mastodon.social": "mastodon",
+                    "mastodon": "mastodon",
+                    "weibo.com": "weibo",
+                    "weibo.org": "weibo",
+                    "nostr.social": "nostr",
+                    "nostr.com": "forocoches",
+                    "jeuxvideo.com": "jvc",
+                    "forocoches.com": "forocoches",
+                    "bitcointalk.org": "bitcointalk",
+                    "ycombinator.com": "hackernews",
+                    "tradingview.com": "tradingview",
+                    "followin.in": "followin",
+                    "seekingalpha.io": "seekingalpha",
+                }
+            return json_data
+
+
+def alias_geter() -> Callable:
+    memoised = None
+    last_call = datetime.now()
+
+    async def get_alias_wrapper() -> dict[str, str]:
+        nonlocal memoised, last_call
+        now = datetime.now()
+        if not memoised or (now - last_call) > timedelta(minutes=1):
+            last_call = datetime.now()
+            memoised = await _get_alias()
+        return memoised
+
+    return get_alias_wrapper
+
+
+get_aliases = alias_geter()
+
 
 async def count_rep_for_each_domain(
     counter: AsyncItemCounter, batch: dict
@@ -23,12 +87,16 @@ async def count_rep_for_each_domain(
     of spawning a new specific counter for the task it has been choosed to pre_fix
     each domain with a key `rep_` in order to keep the implementation unique.
     """
+    global get_aliases
+    aliases = await get_aliases()
     # 1 REP is gained for every new item that has been processed by the protocol
     #   so we have to iterate over the post_upload_file in order to define how
     #   many new items have been processed per source
     for item in batch["items"]:
         domain = item["item"]["domain"]
-        await counter.increment(f"rep_{domain}")
+        alias = aliases.get(domain, "other")
+        print("ADD TO ", f"rep_{alias}")
+        await counter.increment(f"rep_{alias}")
 
 
 async def spotting(
