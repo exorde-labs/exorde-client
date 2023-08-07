@@ -28,8 +28,16 @@ async def upload_to_ipfs(value, ipfs_path="http://ipfs-api.exorde.network/add") 
                         response = await resp.json()
                         logging.info(f"[IPFS API] Success, response = {response}")
                         return response["cid"]
+                    if resp.status == 500:
+                        error_text = await resp.text()
+                        logging.error(f"[IPFS API - Error 500] API rejection: {error_text}")
+                        if error_text == "empty content":
+                            raise Exception("[IPFS API] Upload failed because all items are too old")
+                        await asyncio.sleep(i * 1.5)  # Adjust sleep factor
+                        logging.info(f"Failed upload, retrying ({i + 1}/5)")  # Update retry count
+                        continue  # Retry after handling the error
                     else:
-                        logging.info(f"[IPFS API] Failed, response status = {resp.status}, {resp.json()}")
+                        logging.info(f"[IPFS API] Failed, response status = {resp.status}")
                         
         except Exception as e:
             logging.exception(f"[IPFS API] Error: {e}")
