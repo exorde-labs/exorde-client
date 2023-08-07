@@ -1,3 +1,4 @@
+import asyncio
 import json, itertools, logging, aiohttp
 from aiohttp import ClientSession
 
@@ -11,26 +12,45 @@ class EnumEncoder(json.JSONEncoder):
         return super().default(obj)
 
 
-async def upload_to_ipfs(
-    value, ipfs_path="http://ipfs-api.exorde.network/add"
-) -> str:
-    async with aiohttp.ClientSession() as session:
-        _value = json.dumps(value, cls=EnumEncoder)
-        async with session.post(
-            ipfs_path,
-            data=_value,
-            headers={"Content-Type": "application/json"},
-        ) as resp:
-            if resp.status == 200:
-                logging.debug("Upload to ipfs succeeded")
-                response = await resp.json()
-                return response["cid"]
-            else:
-                content = await resp.text()
-                logging.error(json.dumps(content, indent=4))
-                raise Exception(f"Failed to upload to IPFS ({resp.status})")
+async def upload_to_ipfs(value, ipfs_path="http://ipfs-api.exorde.network/add") -> str:
+    empty_content_flag = False
+    for i in range(5):  # Retry up to 5 times
+        try:
+            async with aiohttp.ClientSession() as session:
+                _value = json.dumps(value, cls=EnumEncoder)  # Make sure EnumEncoder is defined
+                async with session.post(
+                    ipfs_path,
+                    data=_value,
+                    headers={"Content-Type": "application/json"},
+                    timeout=10,  # Set a timeout for the request
+                ) as resp:
+                    if resp.status == 200:
+                        logging.debug("Upload to IPFS succeeded")
+                        response = await resp.json()
+                        logging.info(f"[IPFS API] Success, response = {response}")
+                        return response["cid"]
+                    if resp.status == 500:
+                        error_text = await resp.text()
+                        logging.error(f"[IPFS API - Error 500] API rejection: {error_text}")
+                        if error_text == "empty content":
+                            empty_content_flag = True
+                            raise Exception("[IPFS API] Upload failed because items are too old")
+                        await asyncio.sleep(i * 1.5)  # Adjust sleep factor
+                        logging.info(f"Failed upload, retrying ({i + 1}/5)")  # Update retry count
+                        continue  # Retry after handling the error
+                    else:
+                        error_text = await resp.text()
+                        logging.info(f"[IPFS API] Failed, response status = {resp.status}, text = {error_text}")
+                        
+        except Exception as e:
+            if empty_content_flag:
+                break
+            logging.exception(f"[IPFS API] Error: {e}")
+            await asyncio.sleep(i * 1.5)  # Adjust sleep factor
+            logging.info(f"Failed upload, retrying ({i + 1}/5)")  # Update retry count
 
-
+    raise Exception("Failed to upload to IPFS")
+    
 def rotate_gateways():
     gateways = [
         "http://ipfs-gateway.exorde.network/ipfs/",
