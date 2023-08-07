@@ -1,5 +1,6 @@
 import logging
 import argparse
+import asyncio
 
 from exorde.models import Processed
 
@@ -14,23 +15,18 @@ from exorde.models import LiveConfiguration, StaticConfiguration
 from exorde.counter import AsyncItemCounter
 
 
-async def rep_counter(
-    counter: AsyncItemCounter, post_upload_file: dict
-) -> None:
+def count_rep_for_each_domain(counter: AsyncItemCounter, batch: dict) -> None:
     """
-    Use the Counter in order to store the rep gained for each source. Instead of
-    spawning a new specific counter for the task it has been choosed to pre_fix
+    Uses the Counter in order to store the rep gained for each source. Instead
+    of spawning a new specific counter for the task it has been choosed to pre_fix
     each domain with a key `rep_` in order to keep the implementation unique.
     """
     # 1 REP is gained for every new item that has been processed by the protocol
     #   so we have to iterate over the post_upload_file in order to define how
     #   many new items have been processed per source
-
-    for item in post_upload_file["items"]:
-        # 2 Each `ProcessedItem` has `.item` which is a `ProtocolItem`
-        #   containing the `domain` (models.py)
-        domain = item.item.domain
-        await counter.increment(f"rep_{domain}")
+    for item in batch["items"]:
+        domain = item["item"]["domain"]
+        asyncio.create_task(counter.increment(f"rep_{domain}"))
 
 
 async def spotting(
@@ -50,12 +46,15 @@ async def spotting(
         processed_batch: Batch = await process_batch(
             batch, static_configuration
         )
+        logging.info("Successfully processed batch")
     except:
         logging.exception("An error occured during batch processing")
         return
     try:
         cid: str = await upload_to_ipfs(processed_batch)
+        logging.info("Successfully uploaded file to ipfs")
         post_upload_file: dict = await download_ipfs_file(cid)
+        count_rep_for_each_domain(counter, post_upload_file)
         item_count = len(post_upload_file["items"])
     except:
         logging.exception("An error occured during IPFS uploading")

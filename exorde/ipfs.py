@@ -1,3 +1,4 @@
+import asyncio
 import json, itertools, logging, aiohttp
 from aiohttp import ClientSession
 
@@ -14,21 +15,21 @@ class EnumEncoder(json.JSONEncoder):
 async def upload_to_ipfs(
     value, ipfs_path="http://ipfs-api.exorde.network/add"
 ) -> str:
-    async with aiohttp.ClientSession() as session:
-        _value = json.dumps(value, cls=EnumEncoder)
-        async with session.post(
-            ipfs_path,
-            data=_value,
-            headers={"Content-Type": "application/json"},
-        ) as resp:
-            if resp.status == 200:
-                logging.debug("Upload to ipfs succeeded")
-                response = await resp.json()
-                return response["cid"]
-            else:
-                content = await resp.text()
-                logging.error(json.dumps(content, indent=4))
-                raise Exception(f"Failed to upload to IPFS ({resp.status})")
+    for i in range(0, 10):
+        async with aiohttp.ClientSession() as session:
+            _value = json.dumps(value, cls=EnumEncoder)
+            async with session.post(
+                ipfs_path,
+                data=_value,
+                headers={"Content-Type": "application/json"},
+            ) as resp:
+                if resp.status == 200:
+                    logging.debug("Upload to ipfs succeeded")
+                    response = await resp.json()
+                    return response["cid"]
+                else:
+                    await asyncio.sleep(i * 1.5 * 1)
+    raise Exception(f"Failed to upload to IPFS")
 
 
 def rotate_gateways():
