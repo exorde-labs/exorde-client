@@ -49,7 +49,8 @@ async def upload_to_ipfs(value, ipfs_path="http://ipfs-api.exorde.network/add") 
             await asyncio.sleep(i * 1.5)  # Adjust sleep factor
             logging.info(f"Failed upload, retrying ({i + 1}/5)")  # Update retry count
 
-    raise Exception("Failed to upload to IPFS")
+    if empty_content_flag == False:
+        raise Exception("Failed to upload to IPFS")
     
 def rotate_gateways():
     gateways = [
