@@ -74,7 +74,6 @@ def rotate_gateways():
 class DownloadError(Exception):
     pass
 
-
 async def download_ipfs_file(cid: str, max_attempts: int = 5) -> dict:
     headers = {
         "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.146 Safari/537.36",
@@ -85,11 +84,28 @@ async def download_ipfs_file(cid: str, max_attempts: int = 5) -> dict:
     async with ClientSession(headers=headers) as session:
         for i in range(max_attempts):
             url = next(gateways) + cid
-            logging.info("download of %s (%s)", url, i)
-            async with session.get(
-                url, timeout=45, allow_redirects=True
-            ) as response:
-                if response.status == 200:
-                    logging.info("download of %s OK after (%s)", url, i)
-                    return await response.json()
-        raise ValueError("Failed to download file from IPFS")
+            logging.info("[IPFS Download] download of %s (%s)", url, i)
+            try:
+                async with session.get(
+                    url, timeout=45, allow_redirects=True
+                ) as response:
+                    if response.status == 200:
+                        logging.info("download of %s OK after (%s)", url, i)
+                        return await response.json()
+                    else:
+                        logging.info(
+                            "[IPFS Download] Failed download attempt %s of %s, status code: %s",
+                            i + 1,
+                            max_attempts,
+                            response.status,
+                        )
+            except Exception as error:
+                logging.info(
+                    "[IPFS Download] Failed to download from %s: %s (%s)",
+                    url,
+                    error.__class__.__name__,
+                    error,
+                )
+            await asyncio.sleep(i * 1.5)  # Adjust sleep factor
+
+    raise DownloadError("Failed to download file from IPFS after multiple attempts")
