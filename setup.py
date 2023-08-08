@@ -27,6 +27,7 @@ setup(
         "pyyaml",
         "web3",
         "packaging",
+        "safetensors==0.3.1",
         "numpy==1.23.4",
         "tiktoken==0.4.0",
         "feedparser==6.0.8",
