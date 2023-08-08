@@ -22,7 +22,7 @@ async def upload_to_ipfs(value, ipfs_path="http://ipfs-api.exorde.network/add") 
                     ipfs_path,
                     data=_value,
                     headers={"Content-Type": "application/json"},
-                    timeout=30,  # Set a timeout for the request
+                    timeout=60,  # Set a timeout for the request
                 ) as resp:
                     if resp.status == 200:
                         logging.debug("Upload to IPFS succeeded")
