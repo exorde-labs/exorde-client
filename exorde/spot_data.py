@@ -18,7 +18,8 @@ async def spot_data(
     write_web3,
 ):
     for i in range(0, 5):
-        try:
+        try:            
+            logging.exception(f"[Spot Data] transaction attempt ({i}/5)")
             previous_nonce = await read_web3.eth.get_transaction_count(
                 worker_account.address
             )
@@ -48,9 +49,10 @@ async def spot_data(
             transaction_hash = await write_web3.eth.send_raw_transaction(
                 signed_transaction.rawTransaction
             )
+            logging.exception(f"[Spot Data] transaction sent")
             return transaction_hash, previous_nonce
         except Exception as e:
             # save error
             await asyncio.sleep(i * 1.5 + 1)
-            logging.exception(f"An error occured during spot_data ({i}/5)")
+            logging.exception(f"[Spot Data] An error occured during spot_data ({i}/5)")
     raise SpottingError()
