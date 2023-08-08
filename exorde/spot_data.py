@@ -19,7 +19,7 @@ async def spot_data(
 ):
     for i in range(0, 5):
         try:            
-            logging.exception(f"[Spot Data] transaction attempt ({i}/5)")
+            logging.info(f"[Spot Data] transaction attempt ({i}/5)")
             previous_nonce = await read_web3.eth.get_transaction_count(
                 worker_account.address
             )
@@ -49,7 +49,7 @@ async def spot_data(
             transaction_hash = await write_web3.eth.send_raw_transaction(
                 signed_transaction.rawTransaction
             )
-            logging.exception(f"[Spot Data] transaction sent")
+            logging.info(f"[Spot Data] transaction sent")
             return transaction_hash, previous_nonce
         except Exception as e:
             # save error
