@@ -22,7 +22,7 @@ async def upload_to_ipfs(value, ipfs_path="http://ipfs-api.exorde.network/add") 
                     ipfs_path,
                     data=_value,
                     headers={"Content-Type": "application/json"},
-                    timeout=60,  # Set a timeout for the request
+                    timeout=90,  # Set a timeout for the request
                 ) as resp:
                     if resp.status == 200:
                         logging.debug("Upload to IPFS succeeded")
@@ -86,7 +86,7 @@ async def download_ipfs_file(cid: str, max_attempts: int = 5) -> dict:
             url = next(gateways) + cid
             logging.info("download of %s (%s)", url, i)
             async with session.get(
-                url, timeout=20, allow_redirects=True
+                url, timeout=45, allow_redirects=True
             ) as response:
                 if response.status == 200:
                     logging.info("download of %s OK after (%s)", url, i)
