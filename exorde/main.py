@@ -194,6 +194,15 @@ def clear_env():
 import re
 
 
+def batch_size_type(value):
+    ivalue = int(value)
+    if ivalue < 5 or ivalue > 200:
+        raise argparse.ArgumentTypeError(
+            f"custom_batch_size must be between 5 and 200 (got {ivalue})"
+        )
+    return ivalue
+
+
 def run():
     def validate_module_spec(spec: str) -> str:
         pattern = r"^[a-zA-Z_][a-zA-Z0-9_]*=https?://github\.com/[a-zA-Z0-9_\-\.]+/[a-zA-Z0-9_\-\.]+$"
@@ -258,6 +267,11 @@ def run():
         dest="loglevel",
         const=logging.DEBUG,
         default=logging.INFO,
+    )
+    parser.add_argument(
+        "--custom_batch_size",
+        type=batch_size_type,
+        help="Custom batch size (between 5 and 200).",
     )
     args = parser.parse_args()
     logging.basicConfig(level=args.loglevel)
