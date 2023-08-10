@@ -189,12 +189,13 @@ async def think(
     )
     await print_counts(ponderation, counter, quota_layer, only_layer)
     module: Union[ModuleType, None] = None
-    choosen_module: str = ""
+    choosen_module_path: str = ""
     user_module_overwrite: dict[str, str] = {
         option.split("=")[0]: option.split("=")[1]
         for option in command_line_arguments.module_overwrite
     }
     domain: str = ""
+    remaining_iterations_looping = 200
     while not module:
         domain = await choose_domain(
             ponderation.weights, quota_layer, only_layer
@@ -210,9 +211,13 @@ async def think(
             module = await get_scraping_module(choosen_module_path)
         except:
             logging.exception(
-                f"An error occured loading module {choosen_module}"
+                f"An error occured loading module {choosen_module_path}"
             )
             os._exit(-1)
+        ## loop safe guard
+        remaining_iterations_looping -= 1
+        if remaining_iterations_looping <= 0:
+            break
 
     keyword: str = await choose_keyword()
     generic_modules_parameters: dict[
@@ -220,12 +225,11 @@ async def think(
     ] = ponderation.generic_modules_parameters
     specific_parameters: dict[
         str, Union[int, str, bool, dict]
-    ] = ponderation.specific_modules_parameters.get(choosen_module, {})
+    ] = ponderation.specific_modules_parameters.get(choosen_module_path, {})
     parameters: dict[str, Union[int, str, bool, dict]] = {
         "url_parameters": {"keyword": keyword},
         "keyword": keyword,
     }
     parameters.update(generic_modules_parameters)
-
     parameters.update(specific_parameters)
     return (module, parameters, domain)
