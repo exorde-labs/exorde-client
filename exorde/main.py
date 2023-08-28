@@ -251,6 +251,15 @@ def run():
     )
 
     parser.add_argument(
+        "-ntfy",
+        "--ntfy",
+        default="",
+        type=str,
+        action="store_const",
+        help="Provides notification using a ntfy.sh topic",
+    )
+
+    parser.add_argument(
         "-d",
         "--debug",
         help="Set verbosity level of logs to DEBUG",
