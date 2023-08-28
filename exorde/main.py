@@ -18,6 +18,7 @@ from exorde.counter import AsyncItemCounter
 
 import logging
 
+from exorde.ntfy import send_notification
 
 logger = logging.getLogger()
 logging.basicConfig(level=logging.INFO)
@@ -57,6 +58,10 @@ async def main(command_line_arguments: argparse.Namespace):
         )
         os._exit(1)
 
+    await send_notification(
+        command_line_arguments,
+        f"{static_configuration['worker_account'].address} has started",
+    )
     logging.info(
         f"Worker-Address is : {static_configuration['worker_account'].address}"
     )
@@ -255,7 +260,6 @@ def run():
         "--ntfy",
         default="",
         type=str,
-        action="store_const",
         help="Provides notification using a ntfy.sh topic",
     )
 
