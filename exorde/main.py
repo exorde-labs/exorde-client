@@ -18,7 +18,7 @@ from exorde.counter import AsyncItemCounter
 
 import logging
 
-from exorde.ntfy import send_notification
+from exorde.notification import send_notification
 
 logger = logging.getLogger()
 logging.basicConfig(level=logging.INFO)
