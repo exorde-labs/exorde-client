@@ -2,7 +2,11 @@ import yake
 import re
 import string
 from keybert import KeyBERT
-
+try:
+    import nltk
+    nltk.download()
+except:
+    print("nltk already downloaded or error")
 from exorde.models import Keywords, Translation
 
 
@@ -64,10 +68,28 @@ _kw_bert_model = KeyBERT(model='all-MiniLM-L6-v2')
 th_kw_bert = 0.175
 _extract_keywords2 = lambda text: [keyword[0] for keyword in _kw_bert_model.extract_keywords(text) if keyword[1] > th_kw_bert]
 
+def get_extra_special_keywords(text):
+    def is_valid_keyword(word):
+        uppercase_count = sum(1 for char in word if char.isupper())
+        isalpha_count = sum(1 for char in word if char.isalpha())
+        total_chars = len(word)
+        punctuation = re.compile(r'[^\w\s,]')
+        return (uppercase_count / total_chars >= 0.3) and (punctuation.search(word) is not None) and (isalpha_count>1)
+    
+    words = nltk.word_tokenize(text)
+    filtered_words = filter(is_valid_keyword, words)
+    return list(filtered_words)
+
 def extract_keywords(translation: Translation) -> Keywords:
     content: str = translation.translation       
     kx1 = _extract_keywords1(content)
     keywords_weighted = list(set(kx1))
     keywords_ = [e[0] for e in set(keywords_weighted)]
     keywords_.extend(_extract_keywords2(content))
-    return Keywords(filter_strings(keywords_))
+    keywords_ = filter_strings(keywords_)
+    try:
+        bonus_keywords = get_extra_special_keywords(content)
+        keywords_.extend(bonus_keywords)
+    except Exception as e:
+        print(f"Error in get_extra_special_keywords: {e}")
+    return Keywords(list(set(keywords_)))
