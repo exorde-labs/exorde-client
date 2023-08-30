@@ -31,7 +31,10 @@ import aiofiles
 import json
 import asyncio
 import os
+from datetime import datetime
+from collections import deque
 from pathlib import Path
+from typing import Callable, Union
 
 
 async def _persist(data: dict, file_path: str) -> None:
@@ -69,7 +72,9 @@ call in case of many multiple calls.
 def make_persist_function():
     current_task = None
 
-    async def persist(data: dict, file_path: str) -> None:
+    async def persist(
+        data: dict, file_path: str, custom_serializer=None
+    ) -> None:
         nonlocal current_task
 
         # Cancel the previous task if exists
@@ -85,8 +90,11 @@ def make_persist_function():
                 if Path(file_path).is_file():
                     os.rename(file_path, backup_path)
 
+                # Use the custom serializer if provided, otherwise use the default
+                serializer = custom_serializer if custom_serializer else None
+
                 async with aiofiles.open(file_path, "w") as file:
-                    json_data = json.dumps(data, indent=4)
+                    json_data = json.dumps(data, indent=4, default=serializer)
                     await file.write(json_data)
             except asyncio.CancelledError:
                 pass  # Ignore the CancelledError exception
@@ -101,29 +109,45 @@ def make_persist_function():
 persist = make_persist_function()
 
 
-async def load(file_path: str) -> dict:
+def load(
+    file_path: str,
+    custom_object_hook: Union[Callable, None] = None,
+) -> dict:
     """
-    Load data from the specified file path asynchronously.
+    Load data from the specified file path synchronously.
     If a JSON decode error occurs, attempt to load from the backup file.
 
     Args:
         file_path (str): The path to the file to load data from.
+        custom_object_hook (callable, optional): A custom object hook for decoding.
 
     Returns:
         dict: The loaded data as a dictionary.
     """
     try:
-        async with aiofiles.open(file_path, "r") as file:
-            data = await file.read()
-            return json.loads(data)
+        with open(file_path, "r") as file:
+            data = file.read()
+
+            # Use the custom object hook if provided, otherwise use the default
+            object_hook = custom_object_hook if custom_object_hook else None
+
+            return json.loads(data, object_hook=object_hook)
     except (json.JSONDecodeError, FileNotFoundError):
         backup_path = Path(file_path + ".backup")
-        async with aiofiles.open(backup_path, "r") as backup_file:
-            backup_data = await backup_file.read()
-            try:
-                return json.loads(backup_data)
-            except (json.JSONDecodeError, FileNotFoundError):
-                return {}
+        try:
+            with open(backup_path, "r") as backup_file:
+                backup_data = backup_file.read()
+                try:
+                    # Use the custom object hook if provided, otherwise use the default
+                    object_hook = (
+                        custom_object_hook if custom_object_hook else None
+                    )
+
+                    return json.loads(backup_data, object_hook=object_hook)
+                except (json.JSONDecodeError, FileNotFoundError):
+                    return {}
+        except FileNotFoundError:
+            return {}
 
 
 """
@@ -145,7 +169,7 @@ async def test_load_from_backup_on_corrupted():
         json.dump(data_to_persist, backup_file, indent=4)
 
     # Attempt to load from backup
-    loaded_data = await load(file_to_load)
+    loaded_data = load(file_to_load)
     expected_data = {"name": "Jane Smith", "age": 25, "city": "Testington"}
     assert (
         loaded_data == expected_data
@@ -164,7 +188,7 @@ async def test_load_from_backup_on_both_corrupted():
         backup_file.write("Invalid JSON Content")
 
     # Attempt to load from backup
-    loaded_data = await load(file_to_load)
+    loaded_data = load(file_to_load)
     assert loaded_data == {}, f"Expected empty dictionary, got {loaded_data}"
 
 
@@ -223,6 +247,42 @@ async def test_backup_behavior_on_interrupt():
     print("Loaded data from backup after interrupted write:", loaded_data)
 
 
+async def test_custom_serializer():
+    def custom_serializer(obj):
+        if isinstance(obj, datetime):
+            return {"__datetime__": True, "value": obj.timestamp()}
+        if isinstance(obj, deque):
+            return {"__deque__": True, "value": list(obj)}
+        return obj
+
+    def custom_object_hook(obj):
+        if "__datetime__" in obj:
+            return datetime.fromtimestamp(obj["value"])
+        if "__deque__" in obj:
+            return deque(obj["value"])
+        return obj
+
+    file_to_persist = "test_data.json"
+
+    data_to_persist = {
+        "name": "John Doe",
+        "age": 30,
+        "city": "City A",
+        "timestamp": datetime.now(),
+        "events": deque([1, 2, 3, 4, 5]),
+    }
+
+    # Write data using custom serializer
+    await persist(data_to_persist, file_to_persist, custom_serializer)
+
+    # Load data using custom serializer
+    loaded_data = load(file_to_persist, custom_object_hook)
+
+    assert (
+        loaded_data == data_to_persist
+    ), f"Expected {data_to_persist}, got {loaded_data}"
+
+
 # Run all tests
 async def run_tests():
     await test_load_from_backup_on_corrupted()
@@ -233,8 +293,12 @@ async def run_tests():
     print("test_many_concurrent_writes - ok")
     await test_backup_behavior_on_interrupt()
     print("test_backup_behavior_on_interrupt - ok")
+    await test_custom_serializer()
+    print("test_custom_serializer - ok")
 
 
 # Run the event loop for tests
 if __name__ == "__main__":
     asyncio.run(run_tests())
+
+__all__ = ["persist", "load"]
