@@ -164,10 +164,12 @@ class PersistedDict:
         self.data = self._load()
 
     async def _persist(self):
-        await persist(self.data, self.file_path)
+        await persist(
+            self.data, self.file_path, custom_serializer=self.serializer
+        )
 
     def _load(self):
-        return load(self.file_path, self.custom_object_hook)
+        return load(self.file_path, custom_object_hook=self.custom_object_hook)
 
     def __getitem__(self, key):
         return self.data[key]

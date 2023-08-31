@@ -1,60 +1,70 @@
-"""
-Once-Per-Day Async Function Execution Decorator
-
-This script defines an asynchronous decorator that ensures the decorated async function runs only once every 24 hours.
-The decorator tracks the last execution time and enforces the time constraint.
-
-Usage:
-1. Import the decorator: `from once_per_day_decorator import once_per_day`
-2. Apply the decorator to your async functions: `@once_per_day(delay_hours)`
-3. Call the decorated functions, which will only execute once every 24 hours.
-
-Example:
-    @once_per_day(delay_hours=1.5)  # Delays the first execution by 1.5 hours
-    async def my_async_function():
-        # Your async function logic here
-
-    await my_async_function()  # Will execute only once every 24 hours, with initial delay.
-
-Note:
-- This implementation uses an in-memory mechanism to track execution times.
-- If the script is restarted, the execution tracking will be reset.
-"""
+#!env python3.10
 
 import asyncio
 from datetime import datetime, timedelta
 from typing import Callable
+from exorde.persist import PersistedDict
+
+# Import necessary modules for testing
+from unittest.mock import patch, AsyncMock
+from freezegun import freeze_time
+from datetime import datetime
+from collections import deque
 
 
-def once_per_day(delay_hours: float = 0) -> Callable:
+def throttle_to_frequency(frequency_hours: float = 24) -> Callable:
     """
-    An asynchronous decorator that ensures the decorated async function runs only once every 24 hours.
+    An asynchronous decorator that ensures the decorated async function runs only
+    with the specified frequency in hours.
 
     Args:
-        delay_hours (float): The initial delay in hours before the first function call.
+        frequency_hours (float): The frequency in hours for function calls.
 
     Returns:
-        callable: The wrapped async function that enforces the once-per-day execution rule.
+        callable: The wrapped async function that enforces the frequency constraint.
     """
-    last_execution_time = None
-    initial_call = True
+
+    def custom_serializer(obj):
+        if isinstance(obj, datetime):
+            return {"__datetime__": True, "value": obj.timestamp()}
+        if isinstance(obj, deque):
+            return {"__deque__": True, "value": list(obj)}
+        return obj
+
+    def custom_object_hook(obj):
+        if "__datetime__" in obj:
+            return datetime.fromtimestamp(obj["value"])
+        if "__deque__" in obj:
+            return deque(obj["value"])
+        return obj
+
+    persisted = PersistedDict(
+        "/tmp/exorde/throttle.json",
+        serializer=custom_serializer,
+        custom_object_hook=custom_object_hook,
+    )
+    persisted["last_execution_time"] = None
+    persisted["initial_call"] = True
 
     def decorator(func):
-        async def wrapped(*args, **kwargs):
-            nonlocal last_execution_time, initial_call
+        def wrapped(*args, **kwargs):
+            nonlocal persisted
 
-            if initial_call:
-                initial_call = False
-                last_execution_time = datetime.now() - timedelta(
-                    hours=(24 - delay_hours)
+            if persisted["initial_call"]:
+                persisted["initial_call"] = False
+                persisted["last_execution_time"] = datetime.now() - timedelta(
+                    hours=frequency_hours
                 )
 
-            if (
-                last_execution_time is None
-                or datetime.now() - last_execution_time >= timedelta(hours=24)
+            if persisted[
+                "last_execution_time"
+            ] is None or datetime.now() - persisted[
+                "last_execution_time"
+            ] >= timedelta(
+                hours=frequency_hours
             ):
-                last_execution_time = datetime.now()
-                result = await func(*args, **kwargs)
+                persisted["last_execution_time"] = datetime.now()
+                result = func(*args, **kwargs)
                 return result
             else:
                 pass
@@ -64,21 +74,35 @@ def once_per_day(delay_hours: float = 0) -> Callable:
     return decorator
 
 
-# Usage example
-@once_per_day(delay_hours=1.5)  # Delays the first execution by 1.5 hours
-async def my_async_function():
-    """
-    An example async function that demonstrates the once_per_day decorator.
-    """
-    print("Async function executed!")
+async def test_throttler():
+    def counter_builder():
+        counter = 0
+
+        def increment():
+            nonlocal counter
+            counter += 1
+
+        def get():
+            return counter
+
+        return [increment, get]
+
+    increment, get = counter_builder()
+
+    throttled_increment = throttle_to_frequency(frequency_hours=1)(increment)
+    for __i__ in range(0, 10):
+        throttled_increment()
+    await asyncio.sleep(1)
+    assert get() == 1
+    with freeze_time(datetime.now() + timedelta(hours=1, minutes=1)):
+        throttled_increment()
+    assert get() == 2
 
 
-# Testing the decorator
-async def main():
-    await my_async_function()  # This will execute after the initial delay and update the last_execution_time
-    await asyncio.sleep(10)
-    await my_async_function()  # This won't execute due to the 24-hour constraint
+async def run_tests():
+    await test_throttler()
+    print("test_throttler - ok")
 
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(main())
+if __name__ == "__main__":
+    asyncio.run(run_tests())
