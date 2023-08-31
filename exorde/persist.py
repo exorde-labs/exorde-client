@@ -75,6 +75,7 @@ def make_persist_function():
     async def persist(
         data: dict, file_path: str, custom_serializer=None
     ) -> None:
+        """Writes the content of `data` into a file specified at `file_path`"""
         nonlocal current_task
 
         # Cancel the previous task if exists
@@ -148,6 +149,57 @@ def load(
                     return {}
         except FileNotFoundError:
             return {}
+
+
+class PersistedDict:
+    def __init__(
+        self,
+        file_path: str,
+        serializer: Union[Callable, None] = None,
+        custom_object_hook: Union[Callable, None] = None,
+    ):
+        self.file_path = file_path
+        self.serializer = serializer
+        self.custom_object_hook = custom_object_hook
+        self.data = self._load()
+
+    async def _persist(self):
+        await persist(self.data, self.file_path)
+
+    def _load(self):
+        return load(self.file_path, self.custom_object_hook)
+
+    def __getitem__(self, key):
+        return self.data[key]
+
+    def __setitem__(self, key, value):
+        self.data[key] = value
+        asyncio.create_task(self._persist())
+
+    def __delitem__(self, key):
+        del self.data[key]
+        asyncio.create_task(self._persist())
+
+    def __len__(self):
+        return len(self.data)
+
+    def __iter__(self):
+        return iter(self.data)
+
+    def keys(self):
+        return self.data.keys()
+
+    def values(self):
+        return self.data.values()
+
+    def items(self):
+        return self.data.items()
+
+    def __str__(self):
+        return str(self.data)
+
+    def __repr__(self):
+        return repr(self.data)
 
 
 """
@@ -283,6 +335,30 @@ async def test_custom_serializer():
     ), f"Expected {data_to_persist}, got {loaded_data}"
 
 
+async def test_persisted_dict():
+    file_path = "test_data_b.json"
+
+    persisted_dict = PersistedDict(file_path)
+
+    # Test setting and persisting data
+    persisted_dict["name"] = "John"
+    persisted_dict["age"] = 30
+    await asyncio.sleep(1)  # Allow time for the data to persist
+
+    # Test loading persisted data
+    loaded_dict = PersistedDict(file_path)
+    assert loaded_dict["name"] == "John"
+    assert loaded_dict["age"] == 30
+
+    # Test deleting and persisting data
+    del persisted_dict["age"]
+    await asyncio.sleep(1)  # Allow time for the data to persist
+
+    # Test loading after deletion
+    loaded_dict = PersistedDict(file_path)
+    assert "age" not in loaded_dict
+
+
 # Run all tests
 async def run_tests():
     await test_load_from_backup_on_corrupted()
@@ -295,6 +371,8 @@ async def run_tests():
     print("test_backup_behavior_on_interrupt - ok")
     await test_custom_serializer()
     print("test_custom_serializer - ok")
+    await test_persisted_dict()
+    print("test_persisted_dict - ok")
 
 
 # Run the event loop for tests
