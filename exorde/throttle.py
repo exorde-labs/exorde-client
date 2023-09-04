@@ -1,4 +1,28 @@
 #!env python3.10
+"""
+Throttle and Decorator Example
+
+This script provides an example of using a decorator to throttle the execution 
+of an asynchronous function
+to a specified frequency in hours. It uses a custom serialized dictionary to
+persist the last execution time.
+
+The main functionalities in this script are:
+- `throttle_to_frequency`: An asynchronous decorator that limits the frequency 
+    of function calls.
+- `custom_serializer` and `custom_object_hook`: Custom serialization functions 
+    for datetime objects and deques.
+- `test_throttler`: A test function to demonstrate the throttling behavior.
+- `run_tests`: Runs the test functions.
+
+Usage:
+1. Decorate an async function with `throttle_to_frequency` to limit its execution 
+    frequency.
+2. Use the `test_throttler` function to verify the throttling behavior.
+
+Note: This script requires external libraries such as `freezegun` and 
+    `exorde.persist`.
+"""
 
 import asyncio
 from datetime import datetime, timedelta
@@ -14,7 +38,7 @@ from collections import deque
 
 def throttle_to_frequency(frequency_hours: float = 24) -> Callable:
     """
-    An asynchronous decorator that ensures the decorated async function runs only
+    A decorator that ensures the decorated async function runs only
     with the specified frequency in hours.
 
     Args:
@@ -43,11 +67,13 @@ def throttle_to_frequency(frequency_hours: float = 24) -> Callable:
         serializer=custom_serializer,
         custom_object_hook=custom_object_hook,
     )
-    persisted["last_execution_time"] = None
-    persisted["initial_call"] = True
+    persisted[
+        "last_execution_time"
+    ] = None  # ??? BUG: this reset the persisted data every start
+    persisted["initial_call"] = True  # same
 
     def decorator(func):
-        def wrapped(*args, **kwargs):
+        async def wrapped(*args, **kwargs):
             nonlocal persisted
 
             if persisted["initial_call"]:
@@ -64,7 +90,7 @@ def throttle_to_frequency(frequency_hours: float = 24) -> Callable:
                 hours=frequency_hours
             ):
                 persisted["last_execution_time"] = datetime.now()
-                result = func(*args, **kwargs)
+                result = await func(*args, **kwargs)
                 return result
             else:
                 pass

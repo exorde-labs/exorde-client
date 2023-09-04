@@ -26,7 +26,7 @@ detect wether a file is corrupted.
 - load(file_path: str) -> dict
 
 """
-
+import logging
 import aiofiles
 import json
 import asyncio
@@ -53,8 +53,12 @@ async def _persist(data: dict, file_path: str) -> None:
         os.rename(file_path, backup_path)
 
     async with aiofiles.open(file_path, "w") as file:
-        json_data = json.dumps(data, indent=4)
-        await file.write(json_data)
+        try:
+            json_data = json.dumps(data, indent=4)
+            await file.write(json_data)
+        except Exception as err:
+            logging.error(err)
+            logging.error(data)
 
 
 """
@@ -88,6 +92,10 @@ def make_persist_function():
                 backup_extension = ".backup"
                 backup_path = Path(file_path + backup_extension)
 
+                # Check if the directory exists, create it if it doesn't
+                parent_dir = Path(file_path).parent
+                parent_dir.mkdir(parents=True, exist_ok=True)
+
                 if Path(file_path).is_file():
                     os.rename(file_path, backup_path)
 
@@ -95,8 +103,14 @@ def make_persist_function():
                 serializer = custom_serializer if custom_serializer else None
 
                 async with aiofiles.open(file_path, "w") as file:
-                    json_data = json.dumps(data, indent=4, default=serializer)
-                    await file.write(json_data)
+                    try:
+                        json_data = json.dumps(
+                            data, indent=4, default=serializer
+                        )
+                        await file.write(json_data)
+                    except Exception as error:
+                        logging.error(error)
+                        logging.error(data)
             except asyncio.CancelledError:
                 pass  # Ignore the CancelledError exception
 

@@ -10,7 +10,7 @@ import datetime
 from typing import Union, Callable
 from types import ModuleType
 from exorde.counter import AsyncItemCounter
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 
 from exorde.notification import status_notification
 
@@ -109,6 +109,7 @@ async def choose_keyword() -> str:
     return selected_keyword
 
 
+from exorde.at import at
 from datetime import timedelta
 import logging
 
@@ -184,7 +185,13 @@ async def think(
         ponderation.weights, command_line_arguments
     )
     await print_counts(ponderation, counter, quota_layer, only_layer)
-    await status_notification(
+
+    croned_status_notification = at(
+        [time(hour, 0) for hour in command_line_arguments.notify_at],
+        "/tmp/exorde/notifications.json",
+        status_notification,
+    )
+    await croned_status_notification(
         ponderation, counter, quota_layer, only_layer, command_line_arguments
     )
     module: Union[ModuleType, None] = None

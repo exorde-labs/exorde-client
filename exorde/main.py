@@ -18,7 +18,6 @@ from exorde.counter import AsyncItemCounter
 
 import logging
 
-from exorde.notification import send_notification
 
 logger = logging.getLogger()
 logging.basicConfig(level=logging.INFO)
@@ -57,6 +56,8 @@ async def main(command_line_arguments: argparse.Namespace):
             "An error occured retrieving static configuration, exiting"
         )
         os._exit(1)
+
+    from exorde.notification import send_notification
 
     await send_notification(
         command_line_arguments,
@@ -263,6 +264,23 @@ def run():
         help="Provides notification using a ntfy.sh topic",
     )
 
+    def parse_list(s):
+        try:
+            return int(s)
+        except ValueError:
+            raise argparse.ArgumentTypeError(
+                "Invalid list format. Use comma-separated integers."
+            )
+
+    parser.add_argument(
+        "-na",
+        "--notify_at",
+        type=parse_list,
+        action="append",
+        help="List of integers",
+        default=[],
+    )
+
     parser.add_argument(
         "-d",
         "--debug",
@@ -310,6 +328,8 @@ def run():
         clear_env()
 
     command_line_arguments: argparse.Namespace = parser.parse_args()
+    if len(command_line_arguments.notify_at) == 0:
+        command_line_arguments.notify_at = [12, 19]
     try:
         logging.info("Initializing exorde-client...")
         asyncio.run(main(command_line_arguments))

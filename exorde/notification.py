@@ -24,7 +24,6 @@ import argparse
 
 from exorde.counter import AsyncItemCounter
 from exorde.models import Ponderation
-from exorde.once_per_day import once_per_day
 
 
 async def send_notification(
@@ -43,7 +42,6 @@ async def send_notification(
             return response_text
 
 
-@once_per_day(delay_hours=1)
 async def status_notification(
     ponderation: Ponderation,
     counter: AsyncItemCounter,
@@ -52,7 +50,8 @@ async def status_notification(
     command_line_arguments: argparse.Namespace,
 ):
     """
-    - status_notification is called from the `brain.py` right after `print_counts`
+    - status_notification is called from the `brain.py` right
+      after `print_counts`
     """
     rep = 0
     for item in ponderation.weights:
@@ -60,5 +59,5 @@ async def status_notification(
     rep += await counter.count_occurrences("other")
     await send_notification(
         command_line_arguments,
-        f"You collected {rep} items in the last 24 hours",
+        f"You collected {rep} unique posts over the last 24h",
     )
