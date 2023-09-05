@@ -103,7 +103,6 @@ def get_concatened_keywords(strings_list):
 # get $XXXX and XXXX$ words for stocks and crypto
 def get_ticker_symbols(text):
     text = text.replace("\n", "\n ")
-    print(text)
     text = text.replace("$", " $")
     words = text.split(" ")
     words = [word for word in words if word.startswith("$") and len(word) > 1]
