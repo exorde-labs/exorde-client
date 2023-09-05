@@ -51,7 +51,7 @@ deduplication_thresold = 0.9
 deduplication_algo = 'seqm'
 windowSize = 1
 max_ngram_size_1 = 1 # 1-grams are enough for most use cases
-numOfKeywords_1 = 20 # important to keep high enough
+numOfKeywords_1 = 15 # important to keep high enough
 
 kw_extractor1 = yake.KeywordExtractor(
     lan=language,
@@ -80,6 +80,46 @@ def get_extra_special_keywords(text):
     filtered_words = filter(is_valid_keyword, words)
     return list(filtered_words)
 
+def get_concatened_keywords(strings_list):
+    # Check if some keywords are made of concatenated words (of size >=2). Exemple: "$RET#Renewable_Energy_Token" becomes "$RET","#Renewable_Energy_Token"
+    # Find all groups of [$,#,@] followed by uppercase letters and lowercase letters
+    # If the number of groups is greater than 1, split the string into multiple strings
+    # Define the regular expression pattern to match the special characters '$' and '#'
+    output_list = []
+    for s in strings_list:
+        pattern = r'[$#]+'
+        # Use re.split to split the input string based on the pattern
+        parts = re.split(pattern, s)
+        # Filter out empty strings from the result
+        parts = [part for part in parts if part]
+        if len(parts) > 1:
+            for part in parts:
+                if len(part) > 2:
+                    output_list.append(part)
+            continue
+        output_list.append(s)
+    return output_list
+
+# get $XXXX and XXXX$ words for stocks and crypto
+def get_ticker_symbols(text):
+    text = text.replace("\n", "\n ")
+    print(text)
+    text = text.replace("$", " $")
+    words = text.split(" ")
+    words = [word for word in words if word.startswith("$") and len(word) > 1]
+    # remove punctuation like comma and dot
+    words = [word.replace(",", "").replace(".", "") for word in words]
+    return words
+    
+def remove_invalid_keywords(input_list):
+    output_list = []
+    for s in input_list:
+        # remove any double slash and any url. ex: "//CONNECT.COM" and "https://CONNECT.COM"
+        s = re.sub(r'//|https?:\/\/.*[\r\n]*', '', s)
+        if len(s) > 2:
+            output_list.append(s)
+    return output_list
+
 def extract_keywords(translation: Translation) -> Keywords:
     content: str = translation.translation       
     kx1 = _extract_keywords1(content)
@@ -88,8 +128,14 @@ def extract_keywords(translation: Translation) -> Keywords:
     keywords_.extend(_extract_keywords2(content))
     keywords_ = filter_strings(keywords_)
     try:
-        bonus_keywords = get_extra_special_keywords(content)
-        keywords_.extend(bonus_keywords)
+        keywords_.extend(get_ticker_symbols(content))   
     except Exception as e:
-        print(f"Error in get_extra_special_keywords: {e}")
+        print(f"Error in ticker symbols extraction: {e}")
+    try:
+        bonus_keywords = get_extra_special_keywords(content)
+        keywords_.extend(bonus_keywords)         
+        keywords_ = get_concatened_keywords(keywords_)
+        keywords_ = remove_invalid_keywords(keywords_)
+    except Exception as e:
+        print(f"Error in advanced keywords extraction: {e}")
     return Keywords(list(set(keywords_)))
