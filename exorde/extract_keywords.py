@@ -4,7 +4,7 @@ import string
 from keybert import KeyBERT
 try:
     import nltk
-    nltk.download()
+    nltk.download('punkt')
 except:
     print("nltk already downloaded or error")
 from exorde.models import Keywords, Translation
