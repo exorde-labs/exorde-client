@@ -77,24 +77,9 @@ class Gender(dict, metaclass=MadType):
     description = "Probable gender (female or male) of the author"
 
 
-class SourceType(dict, metaclass=MadType):
-    social: float
-    computers: float
-    games: float
-    business: float
-    streaming: float
-    ecommerce: float
-    forums: float
-    photography: float
-    travel: float
-    adult: float
-    law: float
-    sports: float
-    education: float
-    food: float
-    health: float
-    news: float
+class SourceType(str, metaclass=MadType):
     description = "Category of the source that has produced the post"
+    annotation = str
 
 
 class TextType(dict, metaclass=MadType):
@@ -157,7 +142,6 @@ class Analysis(dict, metaclass=MadType):
     sentiment: Sentiment
     embedding: Embedding
     gender: Gender
-    source_type: SourceType
     text_type: TextType
     emotion: Emotion
     irony: Irony
