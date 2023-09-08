@@ -57,6 +57,12 @@ async def main(command_line_arguments: argparse.Namespace):
         )
         os._exit(1)
 
+    from exorde.notification import send_notification
+
+    await send_notification(
+        command_line_arguments,
+        f"{static_configuration['worker_account'].address} has started",
+    )
     logging.info(
         f"Worker-Address is : {static_configuration['worker_account'].address}"
     )
@@ -260,6 +266,31 @@ def run():
     )
 
     parser.add_argument(
+        "-ntfy",
+        "--ntfy",
+        default="",
+        type=str,
+        help="Provides notification using a ntfy.sh topic",
+    )
+
+    def parse_list(s):
+        try:
+            return int(s)
+        except ValueError:
+            raise argparse.ArgumentTypeError(
+                "Invalid list format. Use comma-separated integers."
+            )
+
+    parser.add_argument(
+        "-na",
+        "--notify_at",
+        type=parse_list,
+        action="append",
+        help="List of integers",
+        default=[],
+    )
+
+    parser.add_argument(
         "-d",
         "--debug",
         help="Set verbosity level of logs to DEBUG",
@@ -311,6 +342,8 @@ def run():
         clear_env()
 
     command_line_arguments: argparse.Namespace = parser.parse_args()
+    if len(command_line_arguments.notify_at) == 0:
+        command_line_arguments.notify_at = [12, 19]
     try:
         logging.info("Initializing exorde-client...")
         asyncio.run(main(command_line_arguments))

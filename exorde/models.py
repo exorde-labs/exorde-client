@@ -16,6 +16,17 @@ from exorde_data import (
     ExternalParentId,
     Domain,
 )
+from dataclasses import dataclass
+
+from typing import Dict, List, Union
+
+
+@dataclass
+class Ponderation:
+    enabled_modules: Dict[str, List[str]]
+    generic_modules_parameters: Dict[str, Union[int, str, bool]]
+    specific_modules_parameters: Dict[str, Dict[str, Union[int, str, bool]]]
+    weights: Dict[str, float]
 
 
 class Translated(str, metaclass=MadType):

@@ -6,6 +6,9 @@ from eth_account import Account
 def get_worker_account(worker_name: str) -> Account:
     """Return a worker key based on a name, key stored in .config"""
     keys_file = Path.home() / ".config" / "exorde" / f"{worker_name}.json"
+    logging.info(
+        f"config directory is : {Path.home() / '.config' / 'exorde' }"
+    )
     if keys_file.exists():
         with open(keys_file, "r") as f:
             keys = json.load(f)

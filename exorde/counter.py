@@ -3,15 +3,40 @@ from collections import deque
 from datetime import datetime, timedelta
 from typing import Dict
 
+from exorde.persist import persist, load
+
+STATS_FILE_PATH = "/tmp/exorde/stats.json"
+
+
+def ItemCounterSerializer(obj):
+    if isinstance(obj, datetime):
+        return {"__datetime__": True, "value": obj.timestamp()}
+    if isinstance(obj, deque):
+        return {"__deque__": True, "value": list(obj)}
+    return obj
+
+
+def ItemCounterObjectHook(obj):
+    if "__datetime__" in obj:
+        return datetime.fromtimestamp(obj["value"])
+    if "__deque__" in obj:
+        return deque(obj["value"])
+    return obj
+
 
 class AsyncItemCounter:
     def __init__(self):
-        self.data: Dict[str, deque] = {}
+        self.data: Dict[str, deque] = load(
+            STATS_FILE_PATH, ItemCounterObjectHook
+        )
 
     async def increment(self, key: str) -> None:
         occurrences = self.data.get(key, deque())
         occurrences.append(datetime.now())
         self.data[key] = occurrences
+        await persist(
+            self.data, STATS_FILE_PATH, custom_serializer=ItemCounterSerializer
+        )
 
     async def count_last_n_items(self, n_items: int) -> Dict[str, int]:
         result = {}
