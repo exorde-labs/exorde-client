@@ -7,6 +7,14 @@ from huggingface_hub import hf_hub_download
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import tensorflow as tf
 import swifter
+import logging
+import string
+import nltk
+try:
+    nltk.download("stopwords")
+    from nltk.corpus import stopwords
+except Exception as e:
+    logging.info("Error: NLTK - stopwords install")
 from exorde.models import (
     Translation,
     LanguageScore,
@@ -19,6 +27,7 @@ from exorde.models import (
     Age,
     Gender,
     Analysis,
+    TextStats
 )
 
 
@@ -65,6 +74,29 @@ class TransformerBlock(tf.keras.layers.Layer):
         ffn_output = self.dropout2(ffn_output, training=training)
         return self.layernorm2(out1 + ffn_output)
 
+def count_text_statistics(text):
+    # Count total characters
+    char_count = len(text)
+    # Count alphanumeric characters
+    alphanumeric_char_count = sum(1 for char in text if char.isalnum())
+    # Count special characters
+    special_char_count = sum(1 for char in text if char in string.punctuation)
+    # Tokenize text into words
+    words = nltk.word_tokenize(text)
+    # Count total words
+    words_count = len(words)
+    # Count stop words
+    stop_words = set(stopwords.words("english"))
+    stop_words_count = sum(1 for word in words if word.lower() in stop_words)
+    # Create a dictionary with the counts
+    text_stats = TextStats(
+        char_count = char_count,
+        alphanumeric_char_count = alphanumeric_char_count,
+        special_char_count = special_char_count,
+        words_count = words_count,
+        stop_words_count = stop_words_count,
+    )
+    return text_stats
 
 def tag(documents: list[str], lab_configuration):
     """
@@ -246,6 +278,8 @@ def tag(documents: list[str], lab_configuration):
             study=types["Statistics/Study"],
         )
 
+        textStats = count_text_statistics(tmp[i]["Translation"])
+
         emotions = {item[0]: item[1] for item in tmp[i]["Emotion"]}
         emotion = Emotion(
             love=emotions["love"],
@@ -297,6 +331,7 @@ def tag(documents: list[str], lab_configuration):
             gender=gender,
             source_type=sourceType,
             text_type=textType,
+            text_stats=textStats,
             emotion=emotion,
             irony=irony,
             age=age,
