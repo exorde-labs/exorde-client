@@ -36,7 +36,7 @@
                                 "type": "string"
                             },
                             "external_parent_id": {
-                                "description": "Identifier of parent item, as used by source",
+                                "description": "Identifier of the parent item, as used by the source",
                                 "type": "string"
                             },
                             "domain": {
@@ -59,16 +59,19 @@
                         "type": "object",
                         "properties": {
                             "classification": {
-                                "description": "label and score of zero_shot",
-                                "type": "object",
-                                "properties": {
-                                    "label": {
-                                        "type": "string"
+                                "description": "List of label-score tuples for zero_shot",
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "label": {
+                                            "type": "string"
+                                        },
+                                        "score": {
+                                            "type": "number"
+                                        }
                                     },
-                                    "score":
-                                    {
-                                        "type": "number"
-                                    }
+                                    "required": ["label", "score"]
                                 }
                             },
                             "language_score": {
@@ -80,7 +83,7 @@
                                 "type": "number"
                             },
                             "embedding": {
-                                "description": "Vector/numerical representation of the translated content (field: translation), produced by a NLP encoder model",
+                                "description": "Vector/numerical representation of the translated content (field: translation), produced by an NLP encoder model",
                                 "type": "array",
                                 "items": {
                                     "type": "number"
@@ -104,75 +107,8 @@
                             },
                             "source_type": {
                                 "description": "Category of the source that has produced the post",
-                                "type": "object",
-                                "properties": {
-                                    "social": {
-                                        "type": "number"
-                                    },
-                                    "computers": {
-                                        "type": "number"
-                                    },
-                                    "games": {
-                                        "type": "number"
-                                    },
-                                    "business": {
-                                        "type": "number"
-                                    },
-                                    "streaming": {
-                                        "type": "number"
-                                    },
-                                    "ecommerce": {
-                                        "type": "number"
-                                    },
-                                    "forums": {
-                                        "type": "number"
-                                    },
-                                    "photography": {
-                                        "type": "number"
-                                    },
-                                    "travel": {
-                                        "type": "number"
-                                    },
-                                    "adult": {
-                                        "type": "number"
-                                    },
-                                    "law": {
-                                        "type": "number"
-                                    },
-                                    "sports": {
-                                        "type": "number"
-                                    },
-                                    "education": {
-                                        "type": "number"
-                                    },
-                                    "food": {
-                                        "type": "number"
-                                    },
-                                    "health": {
-                                        "type": "number"
-                                    },
-                                    "news": {
-                                        "type": "number"
-                                    }
-                                },
-                                "required": [
-                                    "social",
-                                    "computers",
-                                    "games",
-                                    "business",
-                                    "streaming",
-                                    "ecommerce",
-                                    "forums",
-                                    "photography",
-                                    "travel",
-                                    "adult",
-                                    "law",
-                                    "sports",
-                                    "education",
-                                    "food",
-                                    "health",
-                                    "news"
-                                ]
+                                "type": "string",
+                                "enum": ["news", "social"]
                             },
                             "text_type": {
                                 "description": "Type (category) of the post (article, etc)",
@@ -211,7 +147,7 @@
                                 ]
                             },
                             "emotion": {
-                                "description": "",
+                                "description": "Emotion scores",
                                 "type": "object",
                                 "properties": {
                                     "love": {
@@ -283,7 +219,7 @@
                                     "remorse": {
                                         "type": "number"
                                     },
-                                    "embarrassement": {
+                                    "embarrassment": {
                                         "type": "number"
                                     },
                                     "surprise": {
@@ -320,7 +256,7 @@
                                     "relief",
                                     "confusion",
                                     "remorse",
-                                    "embarrassement",
+                                    "embarrassment",
                                     "surprise",
                                     "sadness",
                                     "nervousness"
@@ -366,6 +302,27 @@
                                     "forty_more"
                                 ]
                             },
+                            "text_stats": {
+                                "description": "Text statistics",
+                                "type": "object",
+                                "properties": {
+                                    "char_count": {
+                                        "type": "number"
+                                    },
+                                    "alphanumeric_char_count": {
+                                        "type": "number"
+                                    },
+                                    "special_char_count": {
+                                        "type": "number"
+                                    },
+                                    "words_count": {
+                                        "type": "number"
+                                    },
+                                    "stop_words_count": {
+                                        "type": "number"
+                                    }
+                                }
+                            },
                             "language": {
                                 "description": "ISO639-1 language code that consists of two lowercase letters",
                                 "type": "string"
@@ -390,6 +347,7 @@
                             "emotion",
                             "irony",
                             "age",
+                            "text_stats",
                             "top_keywords"
                         ]
                     },
