@@ -32,6 +32,11 @@ RUN python3.10 -m spacy download en_core_web_trf \
 ## INSTALL THE APP
 COPY data /exorde
 
+## Set the release version
+ARG RELEASE_VERSION
+RUN echo ${RELEASE_VERSION} > .release
+ 
+
 ## ENTRY POINT IS MAIN.PY
 ENV PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
 COPY keep_alive.sh /exorde/keep_alive.sh

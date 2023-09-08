@@ -41,6 +41,8 @@ jobs:
         with:
           context: .
           file: "./Dockerfile"
+          build-args: |
+            "RELEASE_VERSION=${{ github.event.release.tag_name || github.ref }}"
           platforms: |
             linux/amd64
             linux/arm64
