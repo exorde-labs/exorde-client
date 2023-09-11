@@ -193,6 +193,7 @@ class LiveConfiguration(dict):
     default_gas_amount: Optional[int]
     gas_cap_min: Optional[int]
     inter_spot_delay_seconds: int
+    last_notification: str
 
 
 class Processed(dict, metaclass=MadType):
