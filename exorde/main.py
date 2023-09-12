@@ -16,6 +16,7 @@ from exorde.self_update import self_update
 from exorde.get_balance import get_balance
 from exorde.counter import AsyncItemCounter
 from exorde.last_notification import last_notification
+from exorde.docker_version_notifier import docker_version_notifier
 
 import logging
 
@@ -128,6 +129,9 @@ async def main(command_line_arguments: argparse.Namespace):
                     "An error occured while logging the current reputation"
                 )
         cursor += 1
+        await docker_version_notifier(
+            live_configuration, command_line_arguments
+        )
         await last_notification(live_configuration, command_line_arguments)
         if live_configuration and live_configuration["online"]:
             # quality_job = await get_available_quality_job()
