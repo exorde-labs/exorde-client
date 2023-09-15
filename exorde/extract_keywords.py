@@ -135,6 +135,8 @@ def extract_keywords(translation: Translation) -> Keywords:
         keywords_.extend(bonus_keywords)         
         keywords_ = get_concatened_keywords(keywords_)
         keywords_ = remove_invalid_keywords(keywords_)
+        # clean keywords strings from / \ or _ chars
+        keywords_ = [re.sub(r'[\\/_]', '', e) for e in keywords_]
     except Exception as e:
         print(f"Error in advanced keywords extraction: {e}")
     return Keywords(list(set(keywords_)))
