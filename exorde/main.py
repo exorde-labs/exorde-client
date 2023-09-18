@@ -56,13 +56,6 @@ async def main(command_line_arguments: argparse.Namespace):
             "An error occured retrieving static configuration, exiting"
         )
         os._exit(1)
-
-    from exorde.notification import send_notification
-
-    await send_notification(
-        command_line_arguments,
-        f"{static_configuration['worker_account'].address} has started",
-    )
     logging.info(
         f"Worker-Address is : {static_configuration['worker_account'].address}"
     )
