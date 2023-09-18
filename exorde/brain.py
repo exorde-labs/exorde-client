@@ -12,7 +12,9 @@ from types import ModuleType
 from exorde.counter import AsyncItemCounter
 from datetime import datetime, timedelta, time
 
-from exorde.notification import status_notification
+from exorde.statistics_notification import statistics_notification
+from exorde.inactivity_notification import inactivity_notification
+from exorde.time_generation import generate_times
 
 LIVE_PONDERATION: str = "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/modules_configuration_v2.json"
 DEV_PONDERATION: str = "https://gist.githubusercontent.com/MathiasExorde/179ce30c736d1e3af924a767fadd2088/raw/d16444bc06cb4028f95647dafb6d55ee201fd8c6/new_module_configuration.json"
@@ -137,6 +139,7 @@ async def print_counts(
             max_length + 6 * max_count_length + 15
         )  # 15 includes spaces, vertical bars, and other characters
     )
+    total_earned_reputation: int = 0
 
     for item in weights:
         count_twenty_four = await counter.count_occurrences(item)
@@ -186,14 +189,23 @@ async def think(
     )
     await print_counts(ponderation, counter, quota_layer, only_layer)
 
-    croned_status_notification = at(
+    croned_statistics_notification = at(
         [time(hour, 0) for hour in command_line_arguments.notify_at],
         "/tmp/exorde/notifications.json",
-        status_notification,
+        statistics_notification,
     )
-    await croned_status_notification(
+    await croned_statistics_notification(
         ponderation, counter, quota_layer, only_layer, command_line_arguments
     )
+    croned_inactivity_notification = at(
+        generate_times(30),
+        "/tmp/exorde/inactivity_notifications.json",
+        inactivity_notification,
+    )
+    await croned_inactivity_notification(
+        ponderation, counter, command_line_arguments
+    )
+
     module: Union[ModuleType, None] = None
     choosen_module_path: str = ""
     user_module_overwrite: dict[str, str] = {
