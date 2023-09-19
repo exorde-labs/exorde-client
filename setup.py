@@ -26,6 +26,7 @@ setup(
         "pyyaml",
         "web3",
         "packaging",
+        "aiofiles==23.2.1",
         "keybert==0.7.0",
         "nltk==3.8.1",
         "safetensors==0.3.1",
