@@ -64,6 +64,23 @@ kw_extractor1 = yake.KeywordExtractor(
 
 _extract_keywords1 = lambda text: kw_extractor1.extract_keywords(text)
 
+language = "en"
+deduplication_thresold = 0.9
+deduplication_algo = 'seqm'
+windowSize = 7
+max_ngram_size_2 = 2 # 2-grams
+numOfKeywords_2 = 10 # important to keep high enough
+
+kw_extractor2 = yake.KeywordExtractor(
+    lan=language,
+    n=max_ngram_size_2,
+    dedupLim=deduplication_thresold,
+    dedupFunc=deduplication_algo,
+    windowsSize=windowSize,
+    top=numOfKeywords_2,
+)
+_extract_keywords_bis = lambda text: kw_extractor2.extract_keywords(text)
+
 _kw_bert_model = KeyBERT(model='all-MiniLM-L6-v2')
 th_kw_bert = 0.175
 _extract_keywords2 = lambda text: [keyword[0] for keyword in _kw_bert_model.extract_keywords(text) if keyword[1] > th_kw_bert]
@@ -110,6 +127,28 @@ def get_ticker_symbols(text):
     words = [word.replace(",", "").replace(".", "") for word in words]
     return words
     
+def get_symbol_acronyms(text):
+    # GET "S&P" "SP500" "5G" "AI" types of acronyms
+    # it must have at least 40% upper  case letters
+    # up to 80% digits
+    # and up to 50% special characters
+    # and at least 2 characters
+    def is_valid_acronym(word):
+        uppercase_count = sum(1 for char in word if char.isupper())
+        isalpha_count = sum(1 for char in word if char.isalpha())
+        total_chars = len(word)
+        return (uppercase_count / total_chars >= 0.3) and (isalpha_count>=1) and len(word) >= 2
+    
+    # split by space and special punctuation: comma, point, period
+    # not nltk tokenize
+    words = text.split(" ")
+    words = [word for word in words if len(word) > 1]
+    # remove punctuation like comma and dot
+    words = [word.replace(",", "").replace(".", "") for word in words]    
+    filtered_words = filter(is_valid_acronym, words)   
+    acronyms = list(filtered_words) # make it a normal python list
+    return acronyms
+
 def remove_invalid_keywords(input_list):
     output_list = []
     for s in input_list:
@@ -124,7 +163,10 @@ def extract_keywords(translation: Translation) -> Keywords:
     kx1 = _extract_keywords1(content)
     keywords_weighted = list(set(kx1))
     keywords_ = [e[0] for e in set(keywords_weighted)]
-    keywords_.extend(_extract_keywords2(content))
+    keywords_.extend(_extract_keywords2(content))    
+    kx2 = _extract_keywords_bis(content)
+    keywords_weighted = list(set(kx2))
+    keywords_.extend([e[0] for e in set(keywords_weighted)])
     keywords_ = filter_strings(keywords_)
     try:
         keywords_.extend(get_ticker_symbols(content))   
@@ -133,6 +175,8 @@ def extract_keywords(translation: Translation) -> Keywords:
     try:
         bonus_keywords = get_extra_special_keywords(content)
         keywords_.extend(bonus_keywords)         
+        acronyms = get_symbol_acronyms(content)
+        keywords_.extend(acronyms)
         keywords_ = get_concatened_keywords(keywords_)
         keywords_ = remove_invalid_keywords(keywords_)
     except Exception as e:
