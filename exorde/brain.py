@@ -10,22 +10,16 @@ import datetime
 from typing import Union, Callable
 from types import ModuleType
 from exorde.counter import AsyncItemCounter
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
+
+from exorde.statistics_notification import statistics_notification
 
 LIVE_PONDERATION: str = "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/modules_configuration_v2.json"
 DEV_PONDERATION: str = "https://gist.githubusercontent.com/MathiasExorde/179ce30c736d1e3af924a767fadd2088/raw/d16444bc06cb4028f95647dafb6d55ee201fd8c6/new_module_configuration.json"
 PONDERATION_URL: str = LIVE_PONDERATION
 
-from dataclasses import dataclass
-from typing import Dict, List, Union
-
-
-@dataclass
-class Ponderation:
-    enabled_modules: Dict[str, List[str]]
-    generic_modules_parameters: Dict[str, Union[int, str, bool]]
-    specific_modules_parameters: Dict[str, Dict[str, Union[int, str, bool]]]
-    weights: Dict[str, float]
+from typing import Union
+from exorde.models import Ponderation
 
 
 async def _get_ponderation() -> Ponderation:
@@ -115,6 +109,7 @@ async def choose_keyword() -> str:
     return selected_keyword
 
 
+from exorde.at import at
 from datetime import timedelta
 import logging
 
@@ -183,11 +178,22 @@ async def think(
     command_line_arguments: argparse.Namespace, counter: AsyncItemCounter
 ) -> tuple[ModuleType, dict, str]:
     ponderation: Ponderation = await get_ponderation()
-    quota_layer = await generate_quota_layer(command_line_arguments, counter)
-    only_layer = await generate_only_layer(
+    quota_layer: dict[str, float] = await generate_quota_layer(
+        command_line_arguments, counter
+    )
+    only_layer: dict[str, float] = await generate_only_layer(
         ponderation.weights, command_line_arguments
     )
     await print_counts(ponderation, counter, quota_layer, only_layer)
+
+    croned_statistics_notification = at(
+        [time(hour, 0) for hour in command_line_arguments.notify_at],
+        "/tmp/exorde/statistics_notifications.json",
+        statistics_notification,
+    )
+    await croned_statistics_notification(
+        ponderation, counter, quota_layer, only_layer, command_line_arguments
+    )
     module: Union[ModuleType, None] = None
     choosen_module_path: str = ""
     user_module_overwrite: dict[str, str] = {

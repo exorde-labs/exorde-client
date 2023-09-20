@@ -34,7 +34,7 @@ def evaluate_token_count(
 
 def split_in_sentences(string: str):
     sentences = []
-    string_no_lb = string.replace("\n"," ")
+    string_no_lb = string.replace("\n", " ")
     detected_language = lang_detect(string_no_lb, low_memory=False)
     try:
         try:
@@ -132,6 +132,12 @@ async def prepare_batch(
     )
     lab_configuration: dict = static_configuration["lab_configuration"]
     item_id = -1
+    selected_batch_size = (
+        command_line_arguments.custom_batch_size
+        if command_line_arguments.custom_batch_size
+        else live_configuration["batch_size"]
+    )
+
     async for item in generator:
         item_id = item_id + 1
         try:
@@ -154,7 +160,7 @@ async def prepare_batch(
             item_token_count = evaluate_token_count(str(item.content))
             exec_time_s: float = end_time - start_time
             logging.info(
-                f" + A new item has been processed {len(batch)}/{live_configuration['batch_size']} - ({exec_time_s} s) - Source = {str(item['domain'])} -  token count = {item_token_count}"
+                f" + A new item has been processed {len(batch)}/{selected_batch_size} - ({exec_time_s} s) - Source = {str(item['domain'])} -  token count = {item_token_count}"
             )
             # Evaluate the maximum allowed cumulated token count in batch
             try:
@@ -174,12 +180,11 @@ async def prepare_batch(
                 )
             except:
                 cumulative_token_size = 150 * len(batch)
-
             if (
                 # If we have enough items of each enough tokens
                 cumulative_token_size > max_batch_total_tokens_
                 # Or If we have enough items overall
-                or len(batch) >= live_configuration["batch_size"]
+                or len(batch) >= selected_batch_size
             ):
                 return batch
         except:

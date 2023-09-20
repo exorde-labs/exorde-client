@@ -15,6 +15,8 @@ from exorde.get_current_rep import get_current_rep
 from exorde.self_update import self_update
 from exorde.get_balance import get_balance
 from exorde.counter import AsyncItemCounter
+from exorde.last_notification import last_notification
+from exorde.docker_version_notifier import docker_version_notifier
 
 import logging
 
@@ -57,6 +59,12 @@ async def main(command_line_arguments: argparse.Namespace):
         )
         os._exit(1)
 
+    from exorde.notification import send_notification
+
+    await send_notification(
+        command_line_arguments,
+        f"{static_configuration['worker_account'].address} has started",
+    )
     logging.info(
         f"Worker-Address is : {static_configuration['worker_account'].address}"
     )
@@ -121,6 +129,10 @@ async def main(command_line_arguments: argparse.Namespace):
                     "An error occured while logging the current reputation"
                 )
         cursor += 1
+        await docker_version_notifier(
+            live_configuration, command_line_arguments
+        )
+        await last_notification(live_configuration, command_line_arguments)
         if live_configuration and live_configuration["online"]:
             # quality_job = await get_available_quality_job()
             # if quality_job:
@@ -194,6 +206,15 @@ def clear_env():
 import re
 
 
+def batch_size_type(value):
+    ivalue = int(value)
+    if ivalue < 5 or ivalue > 200:
+        raise argparse.ArgumentTypeError(
+            f"custom_batch_size must be between 5 and 200 (got {ivalue})"
+        )
+    return ivalue
+
+
 def run():
     def validate_module_spec(spec: str) -> str:
         pattern = r"^[a-zA-Z_][a-zA-Z0-9_]*=https?://github\.com/[a-zA-Z0-9_\-\.]+/[a-zA-Z0-9_\-\.]+$"
@@ -251,6 +272,31 @@ def run():
     )
 
     parser.add_argument(
+        "-ntfy",
+        "--ntfy",
+        default="",
+        type=str,
+        help="Provides notification using a ntfy.sh topic",
+    )
+
+    def parse_list(s):
+        try:
+            return int(s)
+        except ValueError:
+            raise argparse.ArgumentTypeError(
+                "Invalid list format. Use comma-separated integers."
+            )
+
+    parser.add_argument(
+        "-na",
+        "--notify_at",
+        type=parse_list,
+        action="append",
+        help="List of integers",
+        default=[],
+    )
+
+    parser.add_argument(
         "-d",
         "--debug",
         help="Set verbosity level of logs to DEBUG",
@@ -258,6 +304,11 @@ def run():
         dest="loglevel",
         const=logging.DEBUG,
         default=logging.INFO,
+    )
+    parser.add_argument(
+        "--custom_batch_size",
+        type=batch_size_type,
+        help="Custom batch size (between 5 and 200).",
     )
     args = parser.parse_args()
     logging.basicConfig(level=args.loglevel)
@@ -297,6 +348,8 @@ def run():
         clear_env()
 
     command_line_arguments: argparse.Namespace = parser.parse_args()
+    if len(command_line_arguments.notify_at) == 0:
+        command_line_arguments.notify_at = [12, 19]
     try:
         logging.info("Initializing exorde-client...")
         asyncio.run(main(command_line_arguments))

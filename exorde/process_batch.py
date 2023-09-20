@@ -3,6 +3,7 @@ from importlib import metadata
 from datetime import datetime
 import numpy as np
 from exorde.models import (
+    Domain,
     ProtocolItem,
     ProtocolAnalysis,
     ProcessedItem,
@@ -43,9 +44,9 @@ def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
         ## Check if chunks is a list of 1 item, if so, just return it as is
         if len(chunks) == 1:
             return chunks[0]
-        
+
         #### MERGING for items with more than 1 chunks
-        
+
         categories_list = []
         top_keywords_list = []
         gender_list = []
@@ -57,7 +58,7 @@ def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
         irony_list = []
         age_list = []
         embedding_list = []
-        
+
         logging.info(f"[Item merging] Merging {len(chunks)} chunks.")
         for processed_item in chunks:
             item_analysis_ = processed_item.analysis
@@ -78,12 +79,7 @@ def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
         most_common_category = Most_Common([x.label for x in categories_list])
         category_aggregated = Classification(
             label=most_common_category,
-            score=max(
-                [
-                    x.score
-                    for x in categories_list
-                ]
-            ),
+            score=max([x.score for x in categories_list]),
         )
         ## -> top_keywords: concatenate lists
         top_keywords_aggregated = list()
@@ -94,8 +90,8 @@ def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
         )  # filter duplicates
         ## -> gender: Take the median tuple
         gender_aggregated = Gender(
-            male = np.median([x.male for x in gender_list]),
-            female = np.median([x.female for x in gender_list])
+            male=np.median([x.male for x in gender_list]),
+            female=np.median([x.female for x in gender_list]),
         )
         ## -> sentiment: Take the median all sentiments
         sentiment_aggregated = Sentiment(np.median(sentiment_list))
@@ -153,7 +149,7 @@ def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
             relief=np.median([e.relief for e in emotion_list]),
             confusion=np.median([e.confusion for e in emotion_list]),
             remorse=np.median([e.remorse for e in emotion_list]),
-            embarrassement=np.median([e.embarrassement for e in emotion_list]),
+            embarrassment=np.median([e.embarrassment for e in emotion_list]),
             surprise=np.median([e.surprise for e in emotion_list]),
             sadness=np.median([e.sadness for e in emotion_list]),
             nervousness=np.median([e.nervousness for e in emotion_list]),
@@ -209,6 +205,36 @@ def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
     return merged_item
 
 
+SOCIAL_DOMAINS = [
+    "4chan",
+    "4channel.org",
+    "reddit.com",
+    "twitter.com",
+    "t.com",
+    "x.com",
+    "youtube.com",
+    "yt.co",
+    "mastodon.social",
+    "mastodon",
+    "weibo.com",
+    "nostr.social",
+    "nostr.com",
+    "jeuxvideo.com",
+    "forocoches.com",
+    "bitcointalk.org",
+    "ycombinator.com",
+    "tradingview.com",
+    "followin.in",
+    "seekingalpha.io",
+]
+
+
+def get_source_type(item: ProtocolItem) -> SourceType:
+    if item.domain in SOCIAL_DOMAINS:
+        return SourceType("social")
+    return SourceType("news")
+
+
 async def process_batch(
     batch: list[tuple[int, Processed]], static_configuration
 ) -> Batch:
@@ -248,7 +274,7 @@ async def process_batch(
                 gender=analysis.gender,
                 sentiment=analysis.sentiment,
                 embedding=analysis.embedding,
-                source_type=analysis.source_type,
+                source_type=get_source_type(prot_item),
                 text_type=analysis.text_type,
                 emotion=analysis.emotion,
                 irony=analysis.irony,

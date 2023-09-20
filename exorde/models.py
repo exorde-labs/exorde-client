@@ -16,6 +16,17 @@ from exorde_data import (
     ExternalParentId,
     Domain,
 )
+from dataclasses import dataclass
+
+from typing import Dict, List, Union
+
+
+@dataclass
+class Ponderation:
+    enabled_modules: Dict[str, List[str]]
+    generic_modules_parameters: Dict[str, Union[int, str, bool]]
+    specific_modules_parameters: Dict[str, Dict[str, Union[int, str, bool]]]
+    weights: Dict[str, float]
 
 
 class Translated(str, metaclass=MadType):
@@ -77,24 +88,9 @@ class Gender(dict, metaclass=MadType):
     description = "Probable gender (female or male) of the author"
 
 
-class SourceType(dict, metaclass=MadType):
-    social: float
-    computers: float
-    games: float
-    business: float
-    streaming: float
-    ecommerce: float
-    forums: float
-    photography: float
-    travel: float
-    adult: float
-    law: float
-    sports: float
-    education: float
-    food: float
-    health: float
-    news: float
+class SourceType(str, metaclass=MadType):
     description = "Category of the source that has produced the post"
+    annotation = str
 
 
 class TextType(dict, metaclass=MadType):
@@ -132,7 +128,7 @@ class Emotion(dict, metaclass=MadType):
     relief: float
     confusion: float
     remorse: float
-    embarrassement: float
+    embarrassment: float
     surprise: float
     sadness: float
     nervousness: float
@@ -157,7 +153,6 @@ class Analysis(dict, metaclass=MadType):
     sentiment: Sentiment
     embedding: Embedding
     gender: Gender
-    source_type: SourceType
     text_type: TextType
     emotion: Emotion
     irony: Irony
@@ -198,6 +193,7 @@ class LiveConfiguration(dict):
     default_gas_amount: Optional[int]
     gas_cap_min: Optional[int]
     inter_spot_delay_seconds: int
+    last_notification: str
 
 
 class Processed(dict, metaclass=MadType):
