@@ -19,7 +19,12 @@ their notification channel.
 https://www.notion.so/exordelabs/a52da9b348b148f687a85f6fab366e7e?v=e17138b296ef4dc1b9cf52dd758c1bb4&p=9e58c4e9fc334778a545dfff66bc34ae&pm=s
 """
 
-import aiohttp, argparse
+import logging
+import aiohttp
+import argparse
+
+from exorde.counter import AsyncItemCounter
+from exorde.models import Ponderation
 
 
 async def send_notification(
@@ -29,6 +34,9 @@ async def send_notification(
     - In exorde-client, the `topic` is passed using the `ntfy` key and
     retrieved here using the command_line_arguments variable.
     """
+    logging.info(
+        "If you like ntfy, please consider sponsoring me via GitHub Sponsors or Liberapay , or subscribing to ntfy Pro."
+    )
     async with aiohttp.ClientSession() as session:
         url = f"https://ntfy.sh/{command_line_arguments.ntfy}"
         payload = data.encode(encoding="utf-8")

@@ -2,7 +2,11 @@ import yake
 import re
 import string
 from keybert import KeyBERT
-
+try:
+    import nltk
+    nltk.download('punkt')
+except:
+    print("nltk already downloaded or error")
 from exorde.models import Keywords, Translation
 
 
@@ -47,7 +51,7 @@ deduplication_thresold = 0.9
 deduplication_algo = 'seqm'
 windowSize = 1
 max_ngram_size_1 = 1 # 1-grams are enough for most use cases
-numOfKeywords_1 = 20 # important to keep high enough
+numOfKeywords_1 = 15 # important to keep high enough
 
 kw_extractor1 = yake.KeywordExtractor(
     lan=language,
@@ -60,14 +64,121 @@ kw_extractor1 = yake.KeywordExtractor(
 
 _extract_keywords1 = lambda text: kw_extractor1.extract_keywords(text)
 
+language = "en"
+deduplication_thresold = 0.9
+deduplication_algo = 'seqm'
+windowSize = 7
+max_ngram_size_2 = 2 # 2-grams
+numOfKeywords_2 = 10 # important to keep high enough
+
+kw_extractor2 = yake.KeywordExtractor(
+    lan=language,
+    n=max_ngram_size_2,
+    dedupLim=deduplication_thresold,
+    dedupFunc=deduplication_algo,
+    windowsSize=windowSize,
+    top=numOfKeywords_2,
+)
+_extract_keywords_bis = lambda text: kw_extractor2.extract_keywords(text)
+
 _kw_bert_model = KeyBERT(model='all-MiniLM-L6-v2')
 th_kw_bert = 0.175
 _extract_keywords2 = lambda text: [keyword[0] for keyword in _kw_bert_model.extract_keywords(text) if keyword[1] > th_kw_bert]
+
+def get_extra_special_keywords(text):
+    def is_valid_keyword(word):
+        uppercase_count = sum(1 for char in word if char.isupper())
+        isalpha_count = sum(1 for char in word if char.isalpha())
+        total_chars = len(word)
+        punctuation = re.compile(r'[^\w\s,]')
+        return (uppercase_count / total_chars >= 0.3) and (punctuation.search(word) is not None) and (isalpha_count>1)
+    
+    words = nltk.word_tokenize(text)
+    filtered_words = filter(is_valid_keyword, words)
+    return list(filtered_words)
+
+def get_concatened_keywords(strings_list):
+    # Check if some keywords are made of concatenated words (of size >=2). Exemple: "$RET#Renewable_Energy_Token" becomes "$RET","#Renewable_Energy_Token"
+    # Find all groups of [$,#,@] followed by uppercase letters and lowercase letters
+    # If the number of groups is greater than 1, split the string into multiple strings
+    # Define the regular expression pattern to match the special characters '$' and '#'
+    output_list = []
+    for s in strings_list:
+        pattern = r'[$#]+'
+        # Use re.split to split the input string based on the pattern
+        parts = re.split(pattern, s)
+        # Filter out empty strings from the result
+        parts = [part for part in parts if part]
+        if len(parts) > 1:
+            for part in parts:
+                if len(part) > 2:
+                    output_list.append(part)
+            continue
+        output_list.append(s)
+    return output_list
+
+# get $XXXX and XXXX$ words for stocks and crypto
+def get_ticker_symbols(text):
+    text = text.replace("\n", "\n ")
+    text = text.replace("$", " $")
+    words = text.split(" ")
+    words = [word for word in words if word.startswith("$") and len(word) > 1]
+    # remove punctuation like comma and dot
+    words = [word.replace(",", "").replace(".", "") for word in words]
+    return words
+    
+def get_symbol_acronyms(text):
+    # GET "S&P" "SP500" "5G" "AI" types of acronyms
+    # it must have at least 40% upper  case letters
+    # up to 80% digits
+    # and up to 50% special characters
+    # and at least 2 characters
+    def is_valid_acronym(word):
+        uppercase_count = sum(1 for char in word if char.isupper())
+        isalpha_count = sum(1 for char in word if char.isalpha())
+        total_chars = len(word)
+        return (uppercase_count / total_chars >= 0.3) and (isalpha_count>=1) and len(word) >= 2
+    
+    # split by space and special punctuation: comma, point, period
+    # not nltk tokenize
+    words = text.split(" ")
+    words = [word for word in words if len(word) > 1]
+    # remove punctuation like comma and dot
+    words = [word.replace(",", "").replace(".", "") for word in words]    
+    filtered_words = filter(is_valid_acronym, words)   
+    acronyms = list(filtered_words) # make it a normal python list
+    return acronyms
+
+def remove_invalid_keywords(input_list):
+    output_list = []
+    for s in input_list:
+        # remove any double slash and any url. ex: "//CONNECT.COM" and "https://CONNECT.COM"
+        s = re.sub(r'//|https?:\/\/.*[\r\n]*', '', s)
+        if len(s) > 2:
+            output_list.append(s)
+    return output_list
 
 def extract_keywords(translation: Translation) -> Keywords:
     content: str = translation.translation       
     kx1 = _extract_keywords1(content)
     keywords_weighted = list(set(kx1))
     keywords_ = [e[0] for e in set(keywords_weighted)]
-    keywords_.extend(_extract_keywords2(content))
-    return Keywords(filter_strings(keywords_))
+    keywords_.extend(_extract_keywords2(content))    
+    kx2 = _extract_keywords_bis(content)
+    keywords_weighted = list(set(kx2))
+    keywords_.extend([e[0] for e in set(keywords_weighted)])
+    keywords_ = filter_strings(keywords_)
+    try:
+        keywords_.extend(get_ticker_symbols(content))   
+    except Exception as e:
+        print(f"Error in ticker symbols extraction: {e}")
+    try:
+        bonus_keywords = get_extra_special_keywords(content)
+        keywords_.extend(bonus_keywords)         
+        acronyms = get_symbol_acronyms(content)
+        keywords_.extend(acronyms)
+        keywords_ = get_concatened_keywords(keywords_)
+        keywords_ = remove_invalid_keywords(keywords_)
+    except Exception as e:
+        print(f"Error in advanced keywords extraction: {e}")
+    return Keywords(list(set(keywords_)))

@@ -13,8 +13,10 @@ from exorde.counter import AsyncItemCounter
 from datetime import datetime, timedelta, time
 
 from exorde.statistics_notification import statistics_notification
+
 from exorde.inactivity_notification import inactivity_notification
 from exorde.time_generation import generate_times
+
 
 LIVE_PONDERATION: str = "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/modules_configuration_v2.json"
 DEV_PONDERATION: str = "https://gist.githubusercontent.com/MathiasExorde/179ce30c736d1e3af924a767fadd2088/raw/d16444bc06cb4028f95647dafb6d55ee201fd8c6/new_module_configuration.json"
@@ -191,7 +193,7 @@ async def think(
 
     croned_statistics_notification = at(
         [time(hour, 0) for hour in command_line_arguments.notify_at],
-        "/tmp/exorde/notifications.json",
+        "/tmp/exorde/statistics_notifications.json",
         statistics_notification,
     )
     await croned_statistics_notification(

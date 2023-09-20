@@ -104,75 +104,7 @@
                             },
                             "source_type": {
                                 "description": "Category of the source that has produced the post",
-                                "type": "object",
-                                "properties": {
-                                    "social": {
-                                        "type": "number"
-                                    },
-                                    "computers": {
-                                        "type": "number"
-                                    },
-                                    "games": {
-                                        "type": "number"
-                                    },
-                                    "business": {
-                                        "type": "number"
-                                    },
-                                    "streaming": {
-                                        "type": "number"
-                                    },
-                                    "ecommerce": {
-                                        "type": "number"
-                                    },
-                                    "forums": {
-                                        "type": "number"
-                                    },
-                                    "photography": {
-                                        "type": "number"
-                                    },
-                                    "travel": {
-                                        "type": "number"
-                                    },
-                                    "adult": {
-                                        "type": "number"
-                                    },
-                                    "law": {
-                                        "type": "number"
-                                    },
-                                    "sports": {
-                                        "type": "number"
-                                    },
-                                    "education": {
-                                        "type": "number"
-                                    },
-                                    "food": {
-                                        "type": "number"
-                                    },
-                                    "health": {
-                                        "type": "number"
-                                    },
-                                    "news": {
-                                        "type": "number"
-                                    }
-                                },
-                                "required": [
-                                    "social",
-                                    "computers",
-                                    "games",
-                                    "business",
-                                    "streaming",
-                                    "ecommerce",
-                                    "forums",
-                                    "photography",
-                                    "travel",
-                                    "adult",
-                                    "law",
-                                    "sports",
-                                    "education",
-                                    "food",
-                                    "health",
-                                    "news"
-                                ]
+                                "type": "string",
                             },
                             "text_type": {
                                 "description": "Type (category) of the post (article, etc)",
