@@ -18,6 +18,7 @@ their notification channel.
 - followup : 
 https://www.notion.so/exordelabs/a52da9b348b148f687a85f6fab366e7e?v=e17138b296ef4dc1b9cf52dd758c1bb4&p=9e58c4e9fc334778a545dfff66bc34ae&pm=s
 """
+
 import logging
 import aiohttp
 import argparse

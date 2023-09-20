@@ -1,4 +1,6 @@
+
 """Notify the user with spotting statistics"""
+
 import argparse
 
 from exorde.counter import AsyncItemCounter
