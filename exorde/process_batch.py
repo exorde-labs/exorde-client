@@ -149,7 +149,7 @@ def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
             relief=np.median([e.relief for e in emotion_list]),
             confusion=np.median([e.confusion for e in emotion_list]),
             remorse=np.median([e.remorse for e in emotion_list]),
-            embarrassement=np.median([e.embarrassement for e in emotion_list]),
+            embarrassment=np.median([e.embarrassment for e in emotion_list]),
             surprise=np.median([e.surprise for e in emotion_list]),
             sadness=np.median([e.sadness for e in emotion_list]),
             nervousness=np.median([e.nervousness for e in emotion_list]),

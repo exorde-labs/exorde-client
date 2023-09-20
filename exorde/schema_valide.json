@@ -215,7 +215,7 @@
                                     "remorse": {
                                         "type": "number"
                                     },
-                                    "embarrassement": {
+                                    "embarrassment": {
                                         "type": "number"
                                     },
                                     "surprise": {

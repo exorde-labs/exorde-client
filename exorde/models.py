@@ -128,7 +128,7 @@ class Emotion(dict, metaclass=MadType):
     relief: float
     confusion: float
     remorse: float
-    embarrassement: float
+    embarrassment: float
     surprise: float
     sadness: float
     nervousness: float

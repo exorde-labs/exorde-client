@@ -251,7 +251,7 @@ def tag(documents: list[str], lab_configuration):
             relief=emotions["relief"],
             confusion=emotions["confusion"],
             remorse=emotions["remorse"],
-            embarrassement=emotions["embarrassment"],
+            embarrassment=emotions["embarrassment"],
             surprise=emotions["surprise"],
             sadness=emotions["sadness"],
             nervousness=emotions["nervousness"],
