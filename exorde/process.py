@@ -22,7 +22,7 @@ class TooBigError(Exception):
 async def process(
     item: Item, lab_configuration, max_depth_classification
 ) -> Processed:
-    if evaluate_token_count(item) >= lab_configuration["max_token_count"]:
+    if evaluate_token_count(item['content']) >= lab_configuration["max_token_count"]:
         print(".............................................................................................")
         print("\tItem too big, skipping")
         print("\tevaluate_token_count(item):", evaluate_token_count(item))
