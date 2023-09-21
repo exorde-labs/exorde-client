@@ -27,8 +27,9 @@ from exorde.models import (
     Irony,
     Age,
     Gender,
-    Analysis,
+    Analysis
 )
+from exorde_data import Url
 
 from exorde.tag import tag
 from collections import Counter
