@@ -97,7 +97,7 @@ def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
         sentiment_aggregated = Sentiment(np.median(sentiment_list))
         ## -> source_type: Take the majority of source_type (if there is a tie, take "social"). Possible values = "social" or "news"
         source_type_aggregated =  SourceType(
-            Most_Common([x.label for x in source_type_list])
+            Most_Common(source_type_list)
         )
         
         ## -> text_type: Take the median
