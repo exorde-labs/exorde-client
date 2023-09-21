@@ -94,7 +94,7 @@ def split_item(item: Item, max_token_count: int) -> list[Item]:
         return [
             Item(
                 content=Content(str(chunk)),
-                author=Author(item.author),
+                author=item.author,
                 created_at=CreatedAt(item.created_at),
                 domain=Domain(item.domain),
                 url=Url(item.url),
