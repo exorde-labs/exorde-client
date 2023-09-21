@@ -128,32 +128,39 @@ async def prepare_batch(
         item_id = item_id + 1
         try:
             start_time: float = time.perf_counter()
+            splitted_mode = False
             try:
                 processed_item: Processed = await process(
                     item, lab_configuration, max_depth_classification
                 )
                 batch.append((item_id, processed_item))
             except TooBigError:
-                print("\n\n\n........... HANDLING THE TOO BIG ERROR:\n\n\n")
+                logging.info("\n_________ Paragraph maker __________________")
                 splitted: list[Item] = split_item(
                     item, live_configuration["max_token_count"]
                 )
                 # print all splitted items with index
                 for i, item in enumerate(splitted):
-                    print(f"\t\tSub-split item {i} = {item}")
-                print("")
+                    logging.info(f"\t\t[Paragraph] Sub-split item {i} = {item}")
                 for chunk in splitted:
-                    print("\t\tProcessing chunk")
                     processed_chunk: Processed = await process(
                         chunk, lab_configuration, max_depth_classification
                     )
-                    batch.append((item_id, processed_chunk))
-            end_time: float = time.perf_counter()
-            item_token_count = evaluate_token_count(str(item.content))
-            exec_time_s: float = end_time - start_time
-            logging.info(
-                f" + A new item has been processed {len(batch)}/{selected_batch_size} - ({exec_time_s} s) - Source = {str(item['domain'])} -  token count = {item_token_count}"
-            )
+                    batch.append((item_id, processed_chunk))                   
+                    item_token_count_ = evaluate_token_count(str(chunk.content)) 
+                    end_time: float = time.perf_counter()
+                    exec_time_s: float = end_time - start_time
+                    logging.info(
+                        f"[PARAGRAPH MODE] + A new sub-item has been processed {len(batch)}/{selected_batch_size} - ({exec_time_s} s) - Source = {str(item['domain'])} -  token count = {item_token_count_}"
+                    )
+
+            if splitted_mode == False:
+                end_time: float = time.perf_counter()
+                item_token_count = evaluate_token_count(str(item.content))
+                exec_time_s: float = end_time - start_time
+                logging.info(
+                    f" + A new item has been processed {len(batch)}/{selected_batch_size} - ({exec_time_s} s) - Source = {str(item['domain'])} -  token count = {item_token_count}"
+                )
             # Evaluate the maximum allowed cumulated token count in batch
             try:
                 max_batch_total_tokens_ = int(
