@@ -98,6 +98,7 @@ def split_string_into_chunks(string: str, chunk_size: int):
     ## 2) a) Recompose paragraphs from sentences
     ##    b) while keeping each paragram token count under "max_token_count"
     paragraphs = aggregate_sents_into_paragraphs(sentences, chunk_size)
+    print("paragraphs = ", paragraphs)
     return paragraphs
 
 
@@ -151,6 +152,9 @@ async def prepare_batch(
                 splitted: list[Item] = split_item(
                     item, live_configuration["max_token_count"]
                 )
+                # print all splitted items with index
+                for i, item in enumerate(splitted):
+                    print(f"\t\tsub-item {i} = {item}")
                 for chunk in splitted:
                     processed_chunk: Processed = await process(
                         chunk, lab_configuration, max_depth_classification
