@@ -25,7 +25,7 @@ async def process(
     if evaluate_token_count(item['content']) >= lab_configuration["max_token_count"]:
         print(".............................................................................................")
         print("\tItem too big, skipping")
-        print("\tevaluate_token_count(item):", evaluate_token_count(item))
+        print("\t\t->Item token count = ", evaluate_token_count(item['content']))
 
         raise TooBigError
     try:
