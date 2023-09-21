@@ -95,25 +95,11 @@ def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
         )
         ## -> sentiment: Take the median all sentiments
         sentiment_aggregated = Sentiment(np.median(sentiment_list))
-        ## -> source_type: Take the median
-        source_type_aggregated = SourceType(
-            social=np.median([st.social for st in source_type_list]),
-            computers=np.median([st.computers for st in source_type_list]),
-            games=np.median([st.games for st in source_type_list]),
-            business=np.median([st.business for st in source_type_list]),
-            streaming=np.median([st.streaming for st in source_type_list]),
-            ecommerce=np.median([st.ecommerce for st in source_type_list]),
-            forums=np.median([st.forums for st in source_type_list]),
-            photography=np.median([st.photography for st in source_type_list]),
-            travel=np.median([st.travel for st in source_type_list]),
-            adult=np.median([st.adult for st in source_type_list]),
-            law=np.median([st.law for st in source_type_list]),
-            sports=np.median([st.sports for st in source_type_list]),
-            education=np.median([st.education for st in source_type_list]),
-            food=np.median([st.food for st in source_type_list]),
-            health=np.median([st.health for st in source_type_list]),
-            news=np.median([st.news for st in source_type_list]),
+        ## -> source_type: Take the majority of source_type (if there is a tie, take "social"). Possible values = "social" or "news"
+        source_type_aggregated =  SourceType(
+            Most_Common([x.label for x in source_type_list])
         )
+        
         ## -> text_type: Take the median
         text_type_aggregated = TextType(
             assumption=np.median([tt.assumption for tt in text_type_list]),
