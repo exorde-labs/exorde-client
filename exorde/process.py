@@ -12,20 +12,21 @@ from exorde.models import (
     Processed,
     Item,
 )
+from exorde.evaluate_token_count import evaluate_token_count
 
 
 class TooBigError(Exception):
     pass
 
 
-def evaluate_token_count(item):
-    return len(item.content)
-
-
 async def process(
     item: Item, lab_configuration, max_depth_classification
 ) -> Processed:
     if evaluate_token_count(item) >= lab_configuration["max_token_count"]:
+        print(".............................................................................................")
+        print("\tItem too big, skipping")
+        print("\tevaluate_token_count(item):", evaluate_token_count(item))
+
         raise TooBigError
     try:
         try:
