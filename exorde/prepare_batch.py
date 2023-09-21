@@ -139,6 +139,7 @@ async def prepare_batch(
                 splitted: list[Item] = split_item(
                     item, live_configuration["max_token_count"]
                 )
+                splitted_mode = True
                 # print all splitted items with index
                 for i, item in enumerate(splitted):
                     logging.info(f"\t\t[Paragraph] Sub-split item {i} = {item}")
