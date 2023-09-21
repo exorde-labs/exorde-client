@@ -28,7 +28,9 @@ async def get_item(
                         await counter.increment(domain)
                         yield item
                     else:
-                        continue
+                        continue                        
+            except GeneratorExit:
+                pass
             except Exception as e:
                 logging.exception(
                     f"An error occured retrieving an item: %s using {module}",
