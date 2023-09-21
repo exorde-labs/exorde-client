@@ -148,13 +148,16 @@ async def prepare_batch(
                 )
                 batch.append((item_id, processed_item))
             except TooBigError:
+                print("\n\n\n........... HANDLING THE TOO BIG ERROR:\n\n\n")
                 splitted: list[Item] = split_item(
                     item, live_configuration["max_token_count"]
                 )
                 # print all splitted items with index
                 for i, item in enumerate(splitted):
-                    print(f"\t\tsub-item {i} = {item}")
+                    print(f"\t\tSub-split item {i} = {item}")
+                print("")
                 for chunk in splitted:
+                    print("\t\tProcessing chunk")
                     processed_chunk: Processed = await process(
                         chunk, lab_configuration, max_depth_classification
                     )
