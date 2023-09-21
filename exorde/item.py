@@ -30,7 +30,6 @@ async def get_item(
                     else:
                         continue                        
             except GeneratorExit:
-                print("[Main loop] Generator exited, continuing...")
                 pass
             except Exception as e:
                 logging.exception(
