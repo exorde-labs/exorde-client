@@ -187,6 +187,6 @@ async def prepare_batch(
                 or len(batch) >= selected_batch_size
             ):
                 return batch
-        except:
-            logging.info("An error occured while processing an item")
+        except Exception as e:
+            logging.exception("An error occured while processing an item")
     return []
