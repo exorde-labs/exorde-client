@@ -7,7 +7,7 @@ from wtpsplit import WtP
 from exorde.item import get_item
 from exorde.models import Processed, LiveConfiguration, StaticConfiguration
 from exorde.process import process, TooBigError
-from exorde_data import Item, Content
+from exorde_data import Item, Content, Url, Author, Domain, CreatedAt
 from typing import AsyncGenerator
 import tiktoken
 from ftlangdetect import detect as lang_detect
@@ -107,11 +107,11 @@ def split_item(item: Item, max_token_count: int) -> list[Item]:
     else:
         return [
             Item(
-                content=Content(chunk),
-                author=item.author,
-                created_at=item.created_at,
-                domain=item.domain,
-                url=item.url,
+                content=Content(str(chunk)),
+                author=Author(item.author),
+                created_at=CreatedAt(item.created_at),
+                domain=Domain(item.domain),
+                url=Url(item.url),
             )
             for chunk in split_string_into_chunks(
                 str(item.content), max_token_count
