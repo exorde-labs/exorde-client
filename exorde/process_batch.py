@@ -235,7 +235,7 @@ async def process_batch(
         prot_item: ProtocolItem = ProtocolItem(
             created_at=processed.item.created_at,
             domain=processed.item.domain,
-            url=processed.item.url,
+            url=Url(processed.item.url),
             language=processed.translation.language,
         )
 
