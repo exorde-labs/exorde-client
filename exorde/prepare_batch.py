@@ -98,7 +98,6 @@ def split_string_into_chunks(string: str, chunk_size: int):
     ## 2) a) Recompose paragraphs from sentences
     ##    b) while keeping each paragram token count under "max_token_count"
     paragraphs = aggregate_sents_into_paragraphs(sentences, chunk_size)
-    print("paragraphs = ", paragraphs)
     return paragraphs
 
 
