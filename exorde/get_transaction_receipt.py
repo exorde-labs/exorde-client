@@ -6,10 +6,10 @@ async def get_transaction_receipt(
 ):
     worker_account = static_configuration["worker_account"]
     read_web3 = static_configuration["read_web3"]
-    await asyncio.sleep(3)
+    await asyncio.sleep(2)
     logging.info("Waiting for transaction confirmation")
-    for i in range(10):
-        sleep_time = i * 1.5 + 1
+    for i in range(5):
+        sleep_time = i + 1
         logging.debug(
             f"Waiting {sleep_time} seconds for faucet transaction confirmation"
         )
@@ -23,6 +23,6 @@ async def get_transaction_receipt(
             break
 
     transaction_receipt = await read_web3.eth.wait_for_transaction_receipt(
-        transaction_hash, timeout=120, poll_latency=20
+        transaction_hash, timeout=30, poll_latency=5
     )
     return transaction_receipt
