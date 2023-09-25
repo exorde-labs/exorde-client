@@ -116,11 +116,30 @@ from datetime import timedelta
 import logging
 
 
+def deep_merge_dict(dict1, dict2):
+    if not isinstance(dict1, dict) or not isinstance(dict2, dict):
+        return dict2
+
+    merged = dict1.copy()
+    for key, value2 in dict2.items():
+        if (
+            key in merged
+            and isinstance(merged[key], dict)
+            and isinstance(value2, dict)
+        ):
+            merged[key] = deep_merge_dict(merged[key], value2)
+        else:
+            merged[key] = value2
+
+    return merged
+
+
 async def print_counts(
     ponderation: Ponderation,
     counter: AsyncItemCounter,
     quota_layer: dict[str, float],
     only_layer: dict[str, float],
+    websocket_send: Callable,
 ):
     weights: dict[str, float] = ponderation.weights
     # Find the length of the longest item in ponderation
@@ -140,7 +159,7 @@ async def print_counts(
         )  # 15 includes spaces, vertical bars, and other characters
     )
     total_earned_reputation: int = 0
-
+    update = {}
     for item in weights:
         count_twenty_four = await counter.count_occurrences(item)
         count_one_hour = await counter.count_occurrences(
@@ -154,6 +173,20 @@ async def print_counts(
             "rep_" + item
         )  # / ! \ this will show the REP gained on last 24hours
         # Use string formatting to right-align all columns
+        update = deep_merge_dict(
+            update,
+            {
+                "statistics": {
+                    item: {
+                        "24": count_twenty_four,
+                        "1": count_one_hour,
+                        "30": count_last_30_items,
+                        "rep": rep_value,
+                    }
+                }
+            },
+        )
+
         logging.info(
             f"   {item:>{max_length}} | {weight_value:>{max_count_length}} | {quota_value:>{max_count_length}} | {only_value:>{max_count_length}} | {count_twenty_four:>{max_count_length}} | {count_one_hour:>{max_count_length}} | {count_last_30_items:>{max_count_length}} | {rep_value:>{max_count_length}}"
         )
@@ -170,6 +203,20 @@ async def print_counts(
         "rep_" + item
     )  # / ! \ this will show the REP gained on last 24hours
     # Use string formatting to right-align all columns
+    update = deep_merge_dict(
+        update,
+        {
+            "statistics": {
+                "other": {
+                    "24": count_twenty_four,
+                    "1": count_one_hour,
+                    "30": count_last_30_items,
+                    "rep": rep_value,
+                }
+            }
+        },
+    )
+    await websocket_send(update)
     logging.info(
         f"   {item:>{max_length}} | {weight_value:>{max_count_length}} | {quota_value:>{max_count_length}} | {only_value:>{max_count_length}} | {count_twenty_four:>{max_count_length}} | {count_one_hour:>{max_count_length}} | {count_last_30_items:>{max_count_length}} | {rep_value:>{max_count_length}}"
     )
@@ -177,8 +224,13 @@ async def print_counts(
     logging.info("")
 
 
+import asyncio
+
+
 async def think(
-    command_line_arguments: argparse.Namespace, counter: AsyncItemCounter
+    command_line_arguments: argparse.Namespace,
+    counter: AsyncItemCounter,
+    websocket_send: Callable,
 ) -> tuple[ModuleType, dict, str]:
     ponderation: Ponderation = await get_ponderation()
     quota_layer: dict[str, float] = await generate_quota_layer(
@@ -187,7 +239,18 @@ async def think(
     only_layer: dict[str, float] = await generate_only_layer(
         ponderation.weights, command_line_arguments
     )
-    await print_counts(ponderation, counter, quota_layer, only_layer)
+    tasks = asyncio.all_tasks()
+    await websocket_send(
+        {
+            "quota": quota_layer,
+            "only": only_layer,
+            "weights": ponderation.weights,
+            "tasks": str(list(tasks)[0].get_stack()),
+        }
+    )
+    await print_counts(
+        ponderation, counter, quota_layer, only_layer, websocket_send
+    )
 
     croned_statistics_notification = at(
         [time(hour, 0) for hour in command_line_arguments.notify_at],

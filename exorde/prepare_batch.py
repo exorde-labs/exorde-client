@@ -12,7 +12,8 @@ from typing import AsyncGenerator
 import tiktoken
 from ftlangdetect import detect as lang_detect
 from exorde.counter import AsyncItemCounter
-
+from typing import Callable
+import datetime
 
 wtp = WtP("wtp-canine-s-1l")
 
@@ -34,7 +35,7 @@ def evaluate_token_count(
 
 def split_in_sentences(string: str):
     sentences = []
-    string_no_lb = string.replace("\n"," ")
+    string_no_lb = string.replace("\n", " ")
     detected_language = lang_detect(string_no_lb, low_memory=False)
     try:
         try:
@@ -124,23 +125,40 @@ async def prepare_batch(
     live_configuration: LiveConfiguration,
     command_line_arguments: argparse.Namespace,
     counter: AsyncItemCounter,
+    identified_websocket_send: Callable,
+    websocket_send: Callable,
 ) -> list[tuple[int, Processed]]:
     max_depth_classification: int = live_configuration["max_depth"]
     batch: list[tuple[int, Processed]] = []  # id, item
     generator: AsyncGenerator[Item, None] = get_item(
-        command_line_arguments, counter
+        command_line_arguments,
+        counter,
+        websocket_send,
     )
     lab_configuration: dict = static_configuration["lab_configuration"]
     item_id = -1
     async for item in generator:
-        item_id = item_id + 1
         try:
             start_time: float = time.perf_counter()
             try:
                 processed_item: Processed = await process(
                     item, lab_configuration, max_depth_classification
                 )
+                item_id = item_id + 1
                 batch.append((item_id, processed_item))
+                await identified_websocket_send(
+                    {
+                        "items": {
+                            item_id: {
+                                "collection_time": datetime.datetime.now().strftime(
+                                    "%Y-%m-%d %H:%M:%S"
+                                ),
+                                "domain": item.domain,
+                                "url": item.url,
+                            }
+                        }
+                    }
+                )
             except TooBigError:
                 splitted: list[Item] = split_item(
                     item, live_configuration["max_token_count"]
@@ -149,7 +167,22 @@ async def prepare_batch(
                     processed_chunk: Processed = await process(
                         chunk, lab_configuration, max_depth_classification
                     )
+                    item_id = item_id + 1
                     batch.append((item_id, processed_chunk))
+                    await identified_websocket_send(
+                        {
+                            "items": {
+                                item_id: {
+                                    "collection_time": datetime.datetime.now().strftime(
+                                        "%Y-%m-%d %H:%M:%S"
+                                    ),
+                                    "domain": item.domain,
+                                    "url": item.url,
+                                }
+                            }
+                        }
+                    )
+
             end_time: float = time.perf_counter()
             item_token_count = evaluate_token_count(str(item.content))
             exec_time_s: float = end_time - start_time

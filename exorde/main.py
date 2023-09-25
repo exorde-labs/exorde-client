@@ -15,7 +15,7 @@ from exorde.get_current_rep import get_current_rep
 from exorde.self_update import self_update
 from exorde.get_balance import get_balance
 from exorde.counter import AsyncItemCounter
-
+from exorde.web import setup_web
 import logging
 
 
@@ -90,6 +90,7 @@ async def main(command_line_arguments: argparse.Namespace):
     cursor = 1
     from exorde.spotting import spotting
 
+    websocket_send = await setup_web()
     while True:
         if cursor % 3 == 0:
             try:
@@ -130,6 +131,7 @@ async def main(command_line_arguments: argparse.Namespace):
                 static_configuration,
                 command_line_arguments,
                 counter,
+                websocket_send,
             )
         elif not live_configuration["online"]:
             logging.info(

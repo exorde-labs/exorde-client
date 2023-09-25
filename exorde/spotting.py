@@ -17,11 +17,10 @@ import json
 import logging
 import argparse
 import aiohttp
-import datetime
 from typing import Callable
 from exorde.counter import AsyncItemCounter
 from datetime import datetime, timedelta
-
+from uuid import uuid4, UUID
 
 ALIASES_URL: str = "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/domain_aliases.json"
 
@@ -98,41 +97,113 @@ async def count_rep_for_each_domain(
         await counter.increment(f"rep_{alias}")
 
 
+def generate_spotting_identifier() -> UUID:
+    """
+    - Spotting identifier are references meant for the web interface.
+        - They are used to communicate the state of the spotting job before
+            the transaction has been established with the protocol.
+        - It allows to follow the progress of the client trough the scope of a
+            particular spotting job.
+    - (Are NOT equal to the transaction identifier.)
+    """
+    return uuid4()
+
+
+def tie_uuid_to_ws_send(uuid: UUID, ws_send: Callable) -> Callable:
+    async def identified_websocket_send(state: dict) -> None:
+        await ws_send(json.dumps({"jobs": {str(uuid): state}}))
+
+    return identified_websocket_send
+
+
 async def spotting(
     live_configuration: LiveConfiguration,
     static_configuration: StaticConfiguration,
     command_line_arguments: argparse.Namespace,
     counter: AsyncItemCounter,
-):
+    websocket_send: Callable,
+) -> None:
+    spotting_identifier: UUID = generate_spotting_identifier()
+    identified_websocket_send = tie_uuid_to_ws_send(
+        spotting_identifier, websocket_send
+    )
+
     batch: list[tuple[int, Processed]] = await prepare_batch(
         static_configuration,
         live_configuration,
         command_line_arguments,
         counter,
+        identified_websocket_send,
+        websocket_send,
     )
     try:
+        await identified_websocket_send(
+            {
+                "steps": {
+                    "process_batch": {
+                        "start": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    }
+                }
+            }
+        )
         logging.info("Processing batch")
         processed_batch: Batch = await process_batch(
             batch, static_configuration
         )
         logging.info("Successfully processed batch")
+        await identified_websocket_send(
+            {
+                "steps": {
+                    "process_batch": {
+                        "end": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    }
+                }
+            }
+        )
     except:
         logging.exception("An error occured during batch processing")
         return
     try:
+        await identified_websocket_send(
+            {
+                "steps": {
+                    "ipfs_upload": {
+                        "start": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    }
+                }
+            }
+        )
         cid: str = await upload_to_ipfs(processed_batch)
         logging.info("Successfully uploaded file to ipfs")
         post_upload_file: dict = await download_ipfs_file(cid)
         await count_rep_for_each_domain(counter, post_upload_file)
         item_count = len(post_upload_file["items"])
+        await identified_websocket_send(
+            {
+                "steps": {
+                    "ipfs_upload": {
+                        "end": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    }
+                }
+            }
+        )
     except:
         logging.exception("An error occured during IPFS uploading")
         return
     if item_count == 0:
+        await identified_websocket_send({"new_items_collected": item_count})
         logging.error(
             "All items of previous batch are already discovered, skipped."
         )
         return
+    await identified_websocket_send(
+        {
+            "steps": {
+                "filter": {"end": datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+            }
+        }
+    )
+
     try:
         logging.info(f"Building a spot-data transaction ({item_count} items)")
         transaction_hash, previous_nonce = await spot_data(
@@ -145,14 +216,46 @@ async def spotting(
             static_configuration["read_web3"],
             static_configuration["write_web3"],
         )
+        await identified_websocket_send({"steps": {"send_spot": "ok"}})
     except:
         logging.exception("An error occured during transaction building")
         return
     try:
+        await identified_websocket_send(
+            {
+                "steps": {
+                    "receipt": {
+                        "start": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    }
+                }
+            }
+        )
+
         logging.info("Looking for transaction receipt")
-        await get_transaction_receipt(
+        receipt = await get_transaction_receipt(
             transaction_hash, previous_nonce, static_configuration
         )
+        await identified_websocket_send(
+            {
+                "steps": {
+                    "receipt": {
+                        "value": str(receipt.blockNumber),
+                        "end": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    }
+                }
+            }
+        )
+        await websocket_send(
+            {
+                "receipt": {
+                    str(spotting_identifier): {
+                        "value": str(receipt.blockNumber),
+                        "end": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    }
+                }
+            }
+        )
+
     except:
         logging.exception("An error occured during transaction validation")
         return

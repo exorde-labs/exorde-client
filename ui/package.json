@@ -8,6 +8,7 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
+		"lodash": "^4.17.21",
 		"preact": "^10.13.1"
 	},
 	"devDependencies": {

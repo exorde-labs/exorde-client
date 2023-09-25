@@ -2,11 +2,13 @@ from aiohttp import web
 import logging
 import asyncio
 import os
+from typing import Callable
+import json
 
 
-# WebSocket handler closure
 def websocket_handler_factory():
     to_send = []  # Create a local list within the closure
+    connected_clients = set()  # Keep track of connected clients
 
     async def websocket_handler(request):
         nonlocal to_send  # Access the local list from the closure
@@ -15,29 +17,46 @@ def websocket_handler_factory():
         await ws.prepare(request)
 
         try:
+            # Send all messages to the new user when they connect
+            for message in to_send:
+                await ws.send_str(message)
+
+            # Add the client to the set of connected clients
+            connected_clients.add(ws)
+
             while True:
-                if to_send:
-                    message = to_send.pop(
-                        0
-                    )  # Get the oldest message from the local list
-                    await ws.send_str(message)
-                else:
-                    await asyncio.sleep(
-                        1
-                    )  # Sleep if there are no messages to send
+                # Sleep briefly to allow handling other tasks
+                await asyncio.sleep(0.1)
+
         except asyncio.CancelledError:
             pass
         finally:
+            # Remove the client from the set of connected clients
+            connected_clients.remove(ws)
             await ws.close()
+        return
 
     async def ws_push(message):
         nonlocal to_send  # Access the local list from the closure
-        to_send.append(message)
+        if isinstance(message, str):
+            to_send.append(message)
+        else:
+            to_send.append(json.dumps(message))
+
+        # Send the new message to all connected clients
+        for client in connected_clients:
+            try:
+                if isinstance(message, str):
+                    await client.send_str(message)
+                else:
+                    await client.send_str(json.dumps(message))
+            except:
+                pass
 
     return (
         websocket_handler,
         ws_push,
-    )  # Return both the handler and the push function
+    )
 
 
 async def index_handler(request):
@@ -46,7 +65,7 @@ async def index_handler(request):
     return web.Response(text=html_content, content_type="text/html")
 
 
-async def setup_web():
+async def setup_web() -> Callable:
     # Create an aiohttp application
     app = web.Application()
 
