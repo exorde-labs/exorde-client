@@ -405,13 +405,9 @@ button:hover {
     border-radius: 3px;
     background: rgba(24, 24, 24, .9);
     font-weight:bold;
-    text-align: center;
     width: 24%;
-    justify-content: center;
-    display: flex;
-    align-items: center !important;
-    text-align: center;
-
+    padding: 10px;
+    overflow: hidden;
 }
 .errors.inactive, .jobs.inactive {
 }
@@ -464,4 +460,81 @@ button:hover {
     background:rgba(244,244,244, .1);
     margin: 10px;
     border-radius:3px;
+}
+
+.row {
+    display: flex;
+    padding: 5px;
+}
+
+.row span {
+    padding: 5px;
+    margin: 5px;
+    background: rgba(244,244,244, .2); 
+    color: white;
+    width: 100%;
+    text-align: center;
+    font-weight: bold
+}
+
+.right {
+    float:right;
+}
+
+.filter a {
+    background: rgba(33,33,33,1);
+    color:rgba(244,244,244,.7);
+    margin-right: 10px;
+    border-radius: 5px;
+    transition: all .2s;
+    text-decoration: none;
+}
+
+.filter a:hover {
+    background:rgba(44,44,44,1);
+    color:rgba(244,244,244,1);
+}
+.filter a:hover svg {
+    fill:rgba(244,244,244,1);
+}
+
+.filter a svg {
+    fill:rgba(244,244,244,.5);
+    padding: 5px;
+    left: 5px;
+    position: relative;
+    top: 8px;
+    height: 16px;
+    width: 16px;
+}
+.filter a span {
+    padding: 10px;
+    top: -px;
+    position: relative
+}
+.latest {
+    padding: 10px;
+    position: relative;
+}
+.author_pic {
+    width:50px;
+    height: 50px;
+    float: right;
+    position: relative;
+    top: -40px;
+}
+
+.latest.error {
+    background:rgba(200, 0, 0, .7) !important;
+}
+
+.module.erred {
+    text-align:center;
+}
+.module.loading {
+    text-align:center;
+}
+
+.step.failed {
+    background-color: rgba(244, 0, 0, .5) !important;
 }

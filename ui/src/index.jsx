@@ -50,11 +50,11 @@ const Job = ({ id, job }) => <div class="job">
         }
     </div>
     <div class="steps">
-        <div class={"step " + (deep_get(job, 'steps.process_batch.end') ? 'done' : '')}>process</div>
-        <div class={"step " + (deep_get(job, 'steps.ipfs_upload.end') ? 'done' : '')}>upload</div>
+        <div class={"step " + (deep_get(job, 'steps.process_batch.start') ? 'start' : '') + " " + (deep_get(job, 'steps.process_batch.failed') ? 'failed' : '')  + " " + (deep_get(job, 'steps.process_batch.end') ? 'done' : '')}>process <span>{deep_get(job, 'steps.process_batch.end') ? '(' + (Date.parse(deep_get(job, 'steps.process_batch.end')) - Date.parse(deep_get(job, 'steps.process_batch.start'))) / 1000 + 's)' : ''}</span></div>
+        <div class={"step " + (deep_get(job, 'steps.ipfs_upload.start') ? 'start' : '') + " " + (deep_get(job, 'steps.ipfs_upload.failed') ? 'failed' : '') + " " +(deep_get(job, 'steps.ipfs_upload.end') ? ' done' : '')}>upload <span>{deep_get(job, 'steps.ipfs_upload.end') ? '(' + (Date.parse(deep_get(job, 'steps.ipfs_upload.end')) - Date.parse(deep_get(job, 'steps.ipfs_upload.start'))) / 1000 + 's)' : ''}</span></div>
         <div class={"step " + (deep_get(job, 'steps.filter.end') ? 'done' : '')}>filter</div>
         <div class={"step " + (deep_get(job, 'steps.send_spot') ? 'done' : '')}>send</div>
-        <div class={"step " + (deep_get(job, 'steps.receipt.start') ? 'start' : '') + " " + (deep_get(job, 'steps.receipt.value') ? 'done' : '')}>receipt</div>
+        <div class={"step " + (deep_get(job, 'steps.receipt.start') ? 'start' : '') + " " + (deep_get(job, 'steps.receipt.value') ? 'done' : '')}>receipt  <span>{deep_get(job, 'steps.receipt.end') ? '(' + (Date.parse(deep_get(job, 'steps.receipt.end')) - Date.parse(deep_get(job, 'steps.receipt.start'))) / 1000 + 's)' : ''}</span> </div>
     </div>
 </div>;
 
@@ -91,6 +91,99 @@ function shortenStringWithEllipsis(inputString, maxLength) {
 
     return leftHalf + "..." + rightHalf;
 }
+
+function displayRelativeDate(targetDate) {
+  const now = new Date();
+  const diffInMilliseconds = now - targetDate;
+
+  // Define time intervals in milliseconds
+  const minute = 60 * 1000;
+  const hour = minute * 60;
+  const day = hour * 24;
+  const week = day * 7;
+  const month = day * 30; // Approximate
+
+  if (diffInMilliseconds < minute) {
+    return 'Just now';
+  } else if (diffInMilliseconds < hour) {
+    const minutesAgo = Math.floor(diffInMilliseconds / minute);
+    return `${minutesAgo} minute${minutesAgo > 1 ? 's' : ''} ago`;
+  } else if (diffInMilliseconds < day) {
+    const hoursAgo = Math.floor(diffInMilliseconds / hour);
+    return `${hoursAgo} hour${hoursAgo > 1 ? 's' : ''} ago`;
+  } else if (diffInMilliseconds < week) {
+    const daysAgo = Math.floor(diffInMilliseconds / day);
+    return `${daysAgo} day${daysAgo > 1 ? 's' : ''} ago`;
+  } else if (diffInMilliseconds < month) {
+    const weeksAgo = Math.floor(diffInMilliseconds / week);
+    return `${weeksAgo} week${weeksAgo > 1 ? 's' : ''} ago`;
+  } else {
+    const monthsAgo = Math.floor(diffInMilliseconds / month);
+    return `${monthsAgo} month${monthsAgo > 1 ? 's' : ''} ago`;
+  }
+}
+
+function Latest({ url, live_version, name }) {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const jsonData = await response.json();
+        setData(jsonData);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, [url]);
+
+  if (loading) {
+    return <div class="module latest loading">
+        <div>{name}</div>
+        <h2>Loading...</h2>
+    </div>;
+  }
+
+  if (error) {
+    return <div class="module latest erred">
+      <div>{name}</div>
+      <h2>{error.message}</h2>
+    </div>;
+  }
+
+  if (!data) {
+    return <div class="module latest">
+      <div>{name}</div>
+      <h2>No data available</h2>
+    </div>;
+  }
+
+  return (
+    <div class={"module latest " + (data["tag_name"] !== live_version  ? "error" : "")}>
+      <a target="_blank" href={"https://github.com/exorde-labs/" + name + "/blob/main/" + name + "/__init__.py"}>
+          <svg width="98" height="96" viewBox="0 0 100 100" ><path fill-rule="evenodd" clip-rule="evenodd" d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z" /></svg>
+          <span>main</span>
+      </a>
+      <div>{name}</div>
+      <img src={data["author"]["avatar_url"]} class="author_pic" />
+      <div>latest : {data["tag_name"]}</div>
+      <div>used : {live_version}</div>
+      <div>{displayRelativeDate(Date.parse(data["published_at"]))}</div>
+      <div>{data["name"]}</div>
+    </div>
+  );
+}
+
 
 export function App() {
     const [messages, setMessages] = useState([]);
@@ -181,7 +274,7 @@ export function App() {
     const error_displayed = are_error_displayed ? '0fr 1fr' : '1fr 0fr';
     const layout_style = {
         background: connected ? "#4E937A" : "#B4656F",
-        'grid-template-rows': (are_messages_displayed ? '1.0fr 2.5fr ' + '90px 0fr ' : '1.0fr 0fr ' + (is_filter_displayed ? ' 90px 1fr' : ' 90px 0fr')),
+        'grid-template-rows': (are_messages_displayed ? '1.0fr 2.5fr ' + '90px 0fr ' : '1.0fr 0fr ' + (is_filter_displayed ? ' 90px 2.5fr' : ' 90px 0fr')),
         'grid-template-columns': is_matrix_displayed ? '0fr 0fr 1fr 1fr 0fr' : error_displayed + ' 0fr 0fr 1fr'
     }
     const reversed_messages = [...messages].reverse();
@@ -202,11 +295,16 @@ export function App() {
                 </div>
             </div>
             <div class={"errors " + (are_error_displayed ? "active" : "inactive")}>
-                { 
+                {
                     state['errors'] ? Object.keys(state['errors']).map((key) => <div class="errblock">
-                        <div>{key}</div>
+                        <div class="row">
+                            <span>{key}</span>
+                            <span>{state['errors'][key]['module']}</span>
+                            <span>{Object.keys(state['errors'][key]['intents']).length}</span>
+                        </div>
                         {state['errors'][key]['traceback'].map((value) => <div class="fullline">{value}</div>)}
-                </div>) : <div />}
+                    </div>) : <div />
+                }
             </div>
             <div class={"mat " + (is_matrix_displayed ? "active" : "inactive")}>
                 <div class="matrix" id="brain">
@@ -280,7 +378,7 @@ export function App() {
                     <div>{shortenStringWithEllipsis(reversed_messages[0], 100)}</div>
                     <div class="lastupdate">{timeDifferenceInSeconds} seconds ago</div>
                 </div>
-                <button id="errors" class={"rawbtn " + (are_error_displayed ? "active" : "")} onClick={() => setErrorDisplay(!are_error_displayed)} disabled={state['errors'] && Object.keys(state['errors']).length !== 0 ? false : true } > {state['errors'] ? Object.keys(state['errors']).length : 0} ERR</button>
+                <button id="errors" class={"rawbtn " + (are_error_displayed ? "active" : "")} onClick={() => setErrorDisplay(!are_error_displayed)} disabled={state['errors'] && Object.keys(state['errors']).length !== 0 ? false : true} > {state['errors'] ? Object.keys(state['errors']).length : 0} ERR</button>
                 <button class={"rawbtn " + (are_messages_displayed ? "active" : "")} onClick={() => { setMessagesDisplay(!are_messages_displayed) }} disabled={is_matrix_displayed ? true : ''} >{messages.length} LOG</button>
                 <button class={"rawbtn " + (is_matrix_displayed ? "active" : "")} onClick={() => { setMatrixDisplay(!is_matrix_displayed); setMessagesDisplay(false); setFilterDisplay(false) }}>
                     <svg height="48" viewBox="0 -960 960 960" width="48"><path d="M427-120v-225h60v83h353v60H487v82h-60Zm-307-82v-60h247v60H120Zm187-166v-82H120v-60h187v-84h60v226h-60Zm120-82v-60h413v60H427Zm166-165v-225h60v82h187v60H653v83h-60Zm-473-83v-60h413v60H120Z" /></svg>
@@ -295,7 +393,7 @@ export function App() {
                         {state['receipt'] ? Object.keys(state['receipt']).length : 0} REC
                     </button>
                     <div class="separator rawbtn">-</div>
-                    <button disabled={is_matrix_displayed ? true : Object.keys(jobs).length === 0 ? true : false } class="rawbtn"  >
+                    <button disabled={is_matrix_displayed ? true : Object.keys(jobs).length === 0 ? true : false} class="rawbtn"  >
                         {jobs ? Object.keys(jobs).length : 0} JOBS
                     </button>
                 </div>
@@ -305,9 +403,9 @@ export function App() {
 
             </div>
             <div class={"filter " + (is_filter_displayed ? "active" : "inactive")}>
-                {
-                    state['modules'] ? Object.keys(state['modules']).map((key) => <div class="module">{key}</div>) : ''
-                }
+                {state['modules'] ? Object.keys(state['modules']).map(
+                    (key) => <Latest url={"https://api.github.com/repos/exorde-labs/" + key + "/releases/latest"} live_version={state['modules'][key]['version']} name={key} />
+                ) : ''}
             </div>
         </div>
     );

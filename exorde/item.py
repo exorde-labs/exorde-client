@@ -1,4 +1,5 @@
 import logging
+import asyncio
 import argparse
 from typing import AsyncGenerator
 from exorde.brain import think
@@ -9,23 +10,21 @@ from typing import Callable
 import uuid
 from datetime import datetime
 import traceback
-import hashlib
+import pkg_resources
+from exorde.create_error_identifier import create_error_identifier
 
 
-def create_exception_identifier(traceback_list: list[str]) -> str:
-    # Concatenate the list of strings into a single string
-    traceback_str = "\n".join(traceback_list)
+def get_module_version(module_name):
+    try:
+        # Use pkg_resources to retrieve the distribution object for the module
+        distribution = pkg_resources.get_distribution(module_name)
 
-    # Create a hashlib object (SHA-256 in this example, but you can choose other hash algorithms)
-    hasher = hashlib.sha256()
+        # Get the version from the distribution object
+        module_version = distribution.version
 
-    # Update the hash object with the traceback string
-    hasher.update(traceback_str.encode("utf-8"))
-
-    # Get the hexadecimal representation of the hash
-    exception_identifier = hasher.hexdigest()
-
-    return exception_identifier
+        return module_version
+    except Exception as e:
+        return f"Unable to retrieve version for {module_name}: {str(e)}"
 
 
 async def get_item(
@@ -61,7 +60,11 @@ async def get_item(
                         "intents": {
                             intent_id: {"module": module.__name__},
                         },
-                        "modules": {module.__name__: {}},
+                        "modules": {
+                            module.__name__: {
+                                "version": get_module_version(module.__name__)
+                            }
+                        },
                     }
                 )
 
@@ -71,7 +74,14 @@ async def get_item(
                 )
                 logging.exception(f"An error occured in the brain function")
                 raise error
-            collection_id = str(uuid.uuid4())
+
+            async def query_with_timeout(
+                module, parameters, timeout_seconds: int
+            ):
+                return await asyncio.wait_for(
+                    module.query(parameters), timeout=timeout_seconds
+                )
+
             try:
                 async for item in module.query(parameters):
                     await websocket_send(
@@ -79,7 +89,7 @@ async def get_item(
                             "intents": {
                                 intent_id: {
                                     "collections": {
-                                        collection_id: {
+                                        str(uuid.uuid4()): {
                                             "url": item.url,
                                             "end": datetime.now().strftime(
                                                 "%Y-%m-%d %H:%M:%S"
@@ -100,14 +110,25 @@ async def get_item(
                 traceback_list = traceback.format_exception(
                     type(e), e, e.__traceback__
                 )
-                error_id = create_exception_identifier(traceback_list)
+                error_id = create_error_identifier(traceback_list)
 
                 await websocket_send(
                     {
-                        "intents": {intent_id: {"errors": error_id}},
+                        "intents": {intent_id: {"errors": {error_id: {}}}},
+                        "modules": {
+                            module.__name__: {"errors": {error_id: {}}}
+                        },
                         "errors": {
                             error_id: {
                                 "traceback": traceback_list,
+                                "module": module.__name__,
+                                "intents": {
+                                    intent_id: {
+                                        datetime.now().strftime(
+                                            "%Y-%m-%d %H:%M:%S"
+                                        ): {}
+                                    }
+                                },
                             }
                         },
                     }

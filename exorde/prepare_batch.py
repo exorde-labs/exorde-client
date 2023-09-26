@@ -125,8 +125,8 @@ async def prepare_batch(
     live_configuration: LiveConfiguration,
     command_line_arguments: argparse.Namespace,
     counter: AsyncItemCounter,
-    identified_websocket_send: Callable,
     websocket_send: Callable,
+    spotting_identifier: str,
 ) -> list[tuple[int, Processed]]:
     max_depth_classification: int = live_configuration["max_depth"]
     batch: list[tuple[int, Processed]] = []  # id, item
@@ -146,15 +146,19 @@ async def prepare_batch(
                 )
                 item_id = item_id + 1
                 batch.append((item_id, processed_item))
-                await identified_websocket_send(
+                await websocket_send(
                     {
-                        "items": {
-                            item_id: {
-                                "collection_time": datetime.datetime.now().strftime(
-                                    "%Y-%m-%d %H:%M:%S"
-                                ),
-                                "domain": item.domain,
-                                "url": item.url,
+                        "jobs": {
+                            spotting_identifier: {
+                                "items": {
+                                    item_id: {
+                                        "collection_time": datetime.datetime.now().strftime(
+                                            "%Y-%m-%d %H:%M:%S"
+                                        ),
+                                        "domain": item.domain,
+                                        "url": item.url,
+                                    }
+                                }
                             }
                         }
                     }
@@ -169,15 +173,19 @@ async def prepare_batch(
                     )
                     item_id = item_id + 1
                     batch.append((item_id, processed_chunk))
-                    await identified_websocket_send(
+                    await websocket_send(
                         {
-                            "items": {
-                                item_id: {
-                                    "collection_time": datetime.datetime.now().strftime(
-                                        "%Y-%m-%d %H:%M:%S"
-                                    ),
-                                    "domain": item.domain,
-                                    "url": item.url,
+                            "jobs": {
+                                spotting_identifier: {
+                                    "items": {
+                                        item_id: {
+                                            "collection_time": datetime.datetime.now().strftime(
+                                                "%Y-%m-%d %H:%M:%S"
+                                            ),
+                                            "domain": item.domain,
+                                            "url": item.url,
+                                        }
+                                    }
                                 }
                             }
                         }
