@@ -186,7 +186,10 @@ class PersistedDict:
         return load(self.file_path, custom_object_hook=self.custom_object_hook)
 
     def __getitem__(self, key):
-        return self.data[key]
+        try:
+            return self.data[key]
+        except:
+            return None
 
     def __setitem__(self, key, value):
         self.data[key] = value

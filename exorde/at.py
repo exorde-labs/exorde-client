@@ -66,7 +66,7 @@ def at(hours: list[time], path: str, action: Callable):
         nonlocal result, persisted
         current_date = datetime.now().date().strftime("%Y-%m-%d")
         assert_integrity(persisted, current_date)
-        run: bool = False
+        print(persisted)
         for hour in hours:
             hour_as_datetime = datetime.combine(date.today(), hour)
             if (
@@ -74,9 +74,7 @@ def at(hours: list[time], path: str, action: Callable):
                 and hour not in persisted[current_date]
             ):
                 persisted[current_date] = persisted[current_date] + [hour]
-                run = True
-        if run:
-            result = await action(*args, **kwargs)
+                result = await action(*args, **kwargs)
 
         # returned result is a non-feature
         return result

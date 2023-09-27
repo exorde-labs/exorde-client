@@ -104,7 +104,9 @@ async def get_item(
                         await counter.increment(domain)
                         yield item
                     else:
-                        continue
+                        continue                        
+            except GeneratorExit:
+                pass
             except Exception as e:
                 # Retrieve and format the traceback as a list of strings
                 traceback_list = traceback.format_exception(

@@ -122,7 +122,6 @@ def tag(documents: list[str], lab_configuration):
         ("Irony", "cardiffnlp/twitter-roberta-base-irony"),
         ("LanguageScore", "salesken/query_wellformedness_score"),
         ("TextType", "marieke93/MiniLM-evidence-types"),
-        ("SourceType", "alimazhar-110/website_classification"),
     ]
     for col_name, model_name in text_classification_models:
         pipe = pipeline(
@@ -216,27 +215,8 @@ def tag(documents: list[str], lab_configuration):
             male=tmp[i]["Gender"][0][1], female=tmp[i]["Gender"][1][1]
         )
 
-        sources = {item[0]: item[1] for item in tmp[i]["SourceType"]}
-        sourceType = SourceType(
-            social=sources["Social Networking and Messaging"],
-            computers=sources["Computers and Technology"],
-            games=sources["Games"],
-            business=sources["Business/Corporate"],
-            streaming=sources["Streaming Services"],
-            ecommerce=sources["E-Commerce"],
-            forums=sources["Forums"],
-            photography=sources["Photography"],
-            travel=sources["Travel"],
-            adult=sources["Adult"],
-            law=sources["Law and Government"],
-            sports=sources["Sports"],
-            education=sources["Education"],
-            food=sources["Food"],
-            health=sources["Health and Fitness"],
-            news=sources["News"],
-        )
         types = {item[0]: item[1] for item in tmp[i]["TextType"]}
-        textType = TextType(
+        text_type = TextType(
             assumption=types["Assumption"],
             anecdote=types["Anecdote"],
             none=types["None"],
@@ -271,7 +251,7 @@ def tag(documents: list[str], lab_configuration):
             relief=emotions["relief"],
             confusion=emotions["confusion"],
             remorse=emotions["remorse"],
-            embarrassement=emotions["embarrassment"],
+            embarrassment=emotions["embarrassment"],
             surprise=emotions["surprise"],
             sadness=emotions["sadness"],
             nervousness=emotions["nervousness"],
@@ -295,8 +275,7 @@ def tag(documents: list[str], lab_configuration):
             sentiment=sentiment,
             embedding=embedding,
             gender=gender,
-            source_type=sourceType,
-            text_type=textType,
+            text_type=text_type,
             emotion=emotion,
             irony=irony,
             age=age,

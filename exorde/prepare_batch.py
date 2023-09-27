@@ -7,30 +7,17 @@ from wtpsplit import WtP
 from exorde.item import get_item
 from exorde.models import Processed, LiveConfiguration, StaticConfiguration
 from exorde.process import process, TooBigError
-from exorde_data import Item, Content
+from exorde_data import Item, Content, Url, Author, Domain, CreatedAt
 from typing import AsyncGenerator
 import tiktoken
 from ftlangdetect import detect as lang_detect
 from exorde.counter import AsyncItemCounter
+from exorde.evaluate_token_count import evaluate_token_count
 from typing import Callable
 import datetime
 
+
 wtp = WtP("wtp-canine-s-1l")
-
-
-def evaluate_token_count(
-    item_content_string: str, encoding_name: str = "r50k_base"
-) -> int:
-    """Returns the number of tokens in a text string."""
-    try:
-        if item_content_string is None or len(item_content_string) <= 1:
-            logging.info(f"[evaluate_token_count] the content is empty")
-        encoding = tiktoken.get_encoding(encoding_name)
-        num_tokens = len(encoding.encode(item_content_string))
-    except Exception as e:
-        logging.info(f"[evaluate_token_count] error: {e}")
-        num_tokens = 0
-    return num_tokens
 
 
 def split_in_sentences(string: str):
@@ -108,11 +95,11 @@ def split_item(item: Item, max_token_count: int) -> list[Item]:
     else:
         return [
             Item(
-                content=Content(chunk),
+                content=Content(str(chunk)),
                 author=item.author,
-                created_at=item.created_at,
-                domain=item.domain,
-                url=item.url,
+                created_at=CreatedAt(item.created_at),
+                domain=Domain(item.domain),
+                url=Url(item.url),
             )
             for chunk in split_string_into_chunks(
                 str(item.content), max_token_count
@@ -131,20 +118,25 @@ async def prepare_batch(
     max_depth_classification: int = live_configuration["max_depth"]
     batch: list[tuple[int, Processed]] = []  # id, item
     generator: AsyncGenerator[Item, None] = get_item(
-        command_line_arguments,
-        counter,
-        websocket_send,
+        command_line_arguments, counter, websocket_send
     )
     lab_configuration: dict = static_configuration["lab_configuration"]
     item_id = -1
+    selected_batch_size = (
+        command_line_arguments.custom_batch_size
+        if command_line_arguments.custom_batch_size
+        else live_configuration["batch_size"]
+    )
+
     async for item in generator:
+        item_id = item_id + 1
         try:
             start_time: float = time.perf_counter()
+            splitted_mode = False
             try:
                 processed_item: Processed = await process(
                     item, lab_configuration, max_depth_classification
                 )
-                item_id = item_id + 1
                 batch.append((item_id, processed_item))
                 await websocket_send(
                     {
@@ -163,15 +155,22 @@ async def prepare_batch(
                         }
                     }
                 )
+
             except TooBigError:
+                logging.info("\n_________ Paragraph maker __________________")
                 splitted: list[Item] = split_item(
                     item, live_configuration["max_token_count"]
                 )
+                splitted_mode = True
+                # print all splitted items with index
+                for i, item in enumerate(splitted):
+                    logging.info(
+                        f"\t\t[Paragraph] Sub-split item {i} = {item}"
+                    )
                 for chunk in splitted:
                     processed_chunk: Processed = await process(
                         chunk, lab_configuration, max_depth_classification
                     )
-                    item_id = item_id + 1
                     batch.append((item_id, processed_chunk))
                     await websocket_send(
                         {
@@ -191,12 +190,22 @@ async def prepare_batch(
                         }
                     )
 
-            end_time: float = time.perf_counter()
-            item_token_count = evaluate_token_count(str(item.content))
-            exec_time_s: float = end_time - start_time
-            logging.info(
-                f" + A new item has been processed {len(batch)}/{live_configuration['batch_size']} - ({exec_time_s} s) - Source = {str(item['domain'])} -  token count = {item_token_count}"
-            )
+                    item_token_count_ = evaluate_token_count(
+                        str(chunk.content)
+                    )
+                    end_time: float = time.perf_counter()
+                    exec_time_s: float = end_time - start_time
+                    logging.info(
+                        f"[PARAGRAPH MODE] + A new sub-item has been processed {len(batch)}/{selected_batch_size} - ({exec_time_s} s) - Source = {str(item['domain'])} -  token count = {item_token_count_}"
+                    )
+
+            if splitted_mode == False:
+                end_time: float = time.perf_counter()
+                item_token_count = evaluate_token_count(str(item.content))
+                exec_time_s: float = end_time - start_time
+                logging.info(
+                    f" + A new item has been processed {len(batch)}/{selected_batch_size} - ({exec_time_s} s) - Source = {str(item['domain'])} -  token count = {item_token_count}"
+                )
             # Evaluate the maximum allowed cumulated token count in batch
             try:
                 max_batch_total_tokens_ = int(
@@ -215,14 +224,13 @@ async def prepare_batch(
                 )
             except:
                 cumulative_token_size = 150 * len(batch)
-
             if (
                 # If we have enough items of each enough tokens
                 cumulative_token_size > max_batch_total_tokens_
                 # Or If we have enough items overall
-                or len(batch) >= live_configuration["batch_size"]
+                or len(batch) >= selected_batch_size
             ):
                 return batch
-        except:
-            logging.info("An error occured while processing an item")
+        except Exception as e:
+            logging.exception("An error occured while processing an item")
     return []

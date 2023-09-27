@@ -16,6 +16,9 @@ from exorde.self_update import self_update
 from exorde.get_balance import get_balance
 from exorde.counter import AsyncItemCounter
 from exorde.web import setup_web
+from exorde.last_notification import last_notification
+from exorde.docker_version_notifier import docker_version_notifier
+
 import logging
 
 
@@ -56,6 +59,9 @@ async def main(command_line_arguments: argparse.Namespace):
             "An error occured retrieving static configuration, exiting"
         )
         os._exit(1)
+
+    from exorde.notification import send_notification
+
     logging.info(
         f"Worker-Address is : {static_configuration['worker_account'].address}"
     )
@@ -121,6 +127,10 @@ async def main(command_line_arguments: argparse.Namespace):
                     "An error occured while logging the current reputation"
                 )
         cursor += 1
+        await docker_version_notifier(
+            live_configuration, command_line_arguments
+        )
+        await last_notification(live_configuration, command_line_arguments)
         if live_configuration and live_configuration["online"]:
             # quality_job = await get_available_quality_job()
             # if quality_job:
@@ -193,6 +203,15 @@ def clear_env():
 
 
 import re
+
+
+def batch_size_type(value):
+    ivalue = int(value)
+    if ivalue < 5 or ivalue > 200:
+        raise argparse.ArgumentTypeError(
+            f"custom_batch_size must be between 5 and 200 (got {ivalue})"
+        )
+    return ivalue
 
 
 def run():
@@ -284,6 +303,11 @@ def run():
         dest="loglevel",
         const=logging.DEBUG,
         default=logging.INFO,
+    )
+    parser.add_argument(
+        "--custom_batch_size",
+        type=batch_size_type,
+        help="Custom batch size (between 5 and 200).",
     )
     args = parser.parse_args()
     logging.basicConfig(level=args.loglevel)

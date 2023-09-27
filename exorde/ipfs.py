@@ -1,7 +1,7 @@
 import asyncio
 import json, itertools, logging, aiohttp
 from aiohttp import ClientSession
-
+import traceback
 from datetime import datetime
 from enum import Enum
 from typing import Callable, Union
@@ -35,42 +35,6 @@ async def upload_to_ipfs(
                     headers={"Content-Type": "application/json"},
                     timeout=90,  # Set a timeout for the request
                 ) as resp:
-                    try:
-                        text = await resp.json()
-                    except:
-                        text = await resp.text()
-                    error_identifier = create_error_identifier(text)
-                    await websocket_send(
-                        {
-                            "jobs": {
-                                job_id: {
-                                    "steps": {
-                                        "ipfs_upload": {
-                                            "attempts": {
-                                                i: {
-                                                    "status": resp.status,
-                                                    "text": text,
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            },
-                            "errors": {
-                                error_identifier: {
-                                    "traceback": [text],
-                                    "module": "upload_to_ipfs",
-                                    "intents": {
-                                        job_id: {
-                                            datetime.now().strftime(
-                                                "%Y-%m-%d %H:%M:%S"
-                                            ): {}
-                                        }
-                                    },
-                                }
-                            },
-                        }
-                    )
                     if resp.status == 200:
                         logging.debug("Upload to IPFS succeeded")
                         response = await resp.json()
@@ -79,6 +43,39 @@ async def upload_to_ipfs(
                         )
                         return response["cid"]
                     if resp.status == 500:
+                        text = await resp.json()
+                        error_identifier = create_error_identifier(text)
+                        await websocket_send(
+                            {
+                                "jobs": {
+                                    job_id: {
+                                        "steps": {
+                                            "ipfs_upload": {
+                                                "attempts": {
+                                                    i: {
+                                                        "status": resp.status,
+                                                        "text": text,
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "errors": {
+                                    error_identifier: {
+                                        "traceback": [text],
+                                        "module": "upload_to_ipfs",
+                                        "intents": {
+                                            job_id: {
+                                                datetime.now().strftime(
+                                                    "%Y-%m-%d %H:%M:%S"
+                                                ): {}
+                                            }
+                                        },
+                                    }
+                                },
+                            }
+                        )
                         logging.error(
                             f"[IPFS API - Error 500] API rejection: {text}"
                         )
@@ -94,6 +91,41 @@ async def upload_to_ipfs(
                         continue  # Retry after handling the error
                     else:
                         error_text = await resp.text()
+                        error_identifier = create_error_identifier(
+                            [error_text]
+                        )
+                        await websocket_send(
+                            {
+                                "jobs": {
+                                    job_id: {
+                                        "steps": {
+                                            "ipfs_upload": {
+                                                "attempts": {
+                                                    i: {
+                                                        "status": resp.status,
+                                                        "text": error_text,
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "errors": {
+                                    error_identifier: {
+                                        "traceback": [error_text],
+                                        "module": "upload_to_ipfs",
+                                        "intents": {
+                                            job_id: {
+                                                datetime.now().strftime(
+                                                    "%Y-%m-%d %H:%M:%S"
+                                                ): {}
+                                            }
+                                        },
+                                    }
+                                },
+                            }
+                        )
+
                         logging.info(
                             f"[IPFS API] Failed, response status = {resp.status}, text = {error_text}"
                         )
@@ -103,6 +135,44 @@ async def upload_to_ipfs(
                 break
             logging.exception(f"[IPFS API] Error: {e}")
             await asyncio.sleep(i * 1.5)  # Adjust sleep factor
+            # Retrieve and format the traceback as a list of strings
+            traceback_list = traceback.format_exception(
+                type(e), e, e.__traceback__
+            )
+            error_identifier = create_error_identifier(traceback_list)
+
+            await websocket_send(
+                {
+                    "jobs": {
+                        job_id: {
+                            "steps": {
+                                "ipfs_upload": {
+                                    "attempts": {
+                                        i: {
+                                            "status": "error",
+                                            "error": error_identifier,
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "errors": {
+                        error_identifier: {
+                            "traceback": traceback_list,
+                            "module": "upload_to_ipfs",
+                            "intents": {
+                                job_id: {
+                                    datetime.now().strftime(
+                                        "%Y-%m-%d %H:%M:%S"
+                                    ): {}
+                                }
+                            },
+                        }
+                    },
+                }
+            )
+
             logging.info(
                 f"Failed upload, retrying ({i + 1}/5)"
             )  # Update retry count

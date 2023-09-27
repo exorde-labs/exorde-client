@@ -230,6 +230,7 @@ async def spotting(
                                         "%Y-%m-%d %H:%M:%S"
                                     ),
                                     "cid": cid,
+                                    "count": item_count,
                                 }
                             }
                         }
@@ -280,7 +281,7 @@ async def spotting(
             static_configuration["write_web3"],
         )
         await websocket_send(
-            {"jobs": {"spotting_identifier": {"steps": {"send_spot": "ok"}}}}
+            {"jobs": {spotting_identifier: {"steps": {"send_spot": "ok"}}}}
         )
     except:
         logging.exception("An error occured during transaction building")
@@ -329,7 +330,34 @@ async def spotting(
             }
         )
 
-    except:
+    except Exception as e:
+        traceback_list = traceback.format_exception(
+            type(e), e, e.__traceback__
+        )
+        error_identifier = create_error_identifier(traceback_list)
+
+        await websocket_send(
+            {
+                "jobs": {
+                    spotting_identifier: {
+                        "steps": {"receipt": {"failed": error_identifier}}
+                    }
+                },
+                "errors": {
+                    error_identifier: {
+                        "traceback": traceback_list,
+                        "module": "upload_to_ipfs",
+                        "intents": {
+                            spotting_identifier: {
+                                datetime.now().strftime(
+                                    "%Y-%m-%d %H:%M:%S"
+                                ): {}
+                            }
+                        },
+                    }
+                },
+            }
+        )
         logging.exception("An error occured during transaction validation")
         return
     logging.info("+ A receipt for previous transaction has been confirmed")

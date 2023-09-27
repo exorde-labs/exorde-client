@@ -1,3 +1,4 @@
+"""Notify the user with spotting statistics"""
 import argparse
 
 from exorde.counter import AsyncItemCounter
@@ -24,3 +25,6 @@ async def statistics_notification(
         command_line_arguments,
         f"You collected {rep} unique posts over the last 24h",
     )
+
+
+__all__ = ["statistics_notification"]
