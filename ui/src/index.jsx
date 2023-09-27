@@ -294,6 +294,8 @@ export function App() {
     intents_keys.reverse();
     job_keys.reverse();
     const domains = state['weights'] ? Object.keys(state['weights']) : []
+    let module_requests = state['module_request'] ? Object.keys(state['module_request']) : []
+    module_requests = module_requests.reverse()
     return (
         <div class="layout" style={layout_style}>
             <div class={"jobs " + (is_matrix_displayed ? "inactive" : "")}>
@@ -401,9 +403,12 @@ export function App() {
             </div>
 
             <div class={"updates " + (is_filter_displayed ? "active" : "inactive")}>
-                <div class="update">
-                    Hello World
-                </div>
+                {module_requests.map((mod_req) => <div class="update">
+                    <span class="title">{state['module_request'][mod_req]['module']}</span>
+                    <span class="badge">{displayRelativeDate(Date.parse(state['module_request'][mod_req]['start']))}</span>
+                    <span class="badge">L:{state['module_request'][mod_req]['local']}</span>
+                    <span class="badge">O:{state['module_request'][mod_req]['online']}</span>
+                </div>)}
             </div>
 
             <div class={"filter " + (is_filter_displayed ? "active" : "inactive")}>

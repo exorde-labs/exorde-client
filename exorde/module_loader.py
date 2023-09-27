@@ -137,8 +137,10 @@ async def get_scraping_module(
                     "start": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                     "module": module_name,
                 },
-                module_name: {module_request_id: {}},
-            }
+            },
+            "modules": {
+                module_name: {"module_request": {module_request_id: {}}}
+            },
         }
     )
     try:

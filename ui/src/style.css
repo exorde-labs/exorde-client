@@ -575,3 +575,21 @@ button:hover {
 .item_count {
     background: rgba(044,144,044, .3) !important;
 }
+.updates .title {
+    background: rgba(244,244,244,.1);
+    padding: 5px;
+    top: 5px;
+    position: relative;
+    border-radius:5px;
+}
+.updates .badge {
+    width: 150px;
+    padding: 5px;
+    background: rgba(244,244,244,.1);
+    margin-left: 10px;
+    position: relative;
+    top: 1px;
+    border-radius:5px;
+    float:right;
+    text-align: center;
+}
