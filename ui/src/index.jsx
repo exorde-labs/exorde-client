@@ -10,7 +10,7 @@ const Item = ({ item, index, items }) => {
         return null; // Return null if item is undefined
     }
 
-    const timeDifference = index === 0 ? 0 : Date.parse(item.collection_time) - Date.parse(items[index - 1].collection_time);
+    const timeDifference = index === 0 ? 0 : items[index - 1] ? Date.parse(item.collection_time) - Date.parse(items[index - 1].collection_time) : 0;
 
     const formattedTimeDifference = timeDifference / 1000;
 
@@ -43,7 +43,9 @@ function deep_get(obj, path) {
 }
 
 const Job = ({ id, job }) => <div class="job">
-    <div class="title">{id} : {deep_get(job, 'steps.ipfs_upload.cid')} ({deep_get(job, 'steps.receipt.value')}) </div>
+    <div class="title">
+        {id} : <a href={"http://ipfs-gateway.exorde.network/ipfs/" + deep_get(job, 'steps.ipfs_upload.cid')} target="_blank">{deep_get(job, 'steps.ipfs_upload.cid')}</a> (<a href={"https://light-vast-diphda.explorer.mainnet.skalenodes.com/block/" + deep_get(job, 'steps.receipt.value') + "/transactions"} target="_blank">{deep_get(job, 'steps.receipt.value')}</a>)
+    </div>
     <div class="items">
         {
             Array(30).fill().map((_, index) => <Item items={job['items']} index={index} item={job['items'][index]} />)
@@ -63,10 +65,6 @@ const Job = ({ id, job }) => <div class="job">
     </div>
 </div>;
 
-const Collection = () => {
-    return <div class="collection">
-    </div>
-}
 const Intent = ({ id, intent, intents, intents_keys, index }) => {
     const timeDifference = index === intents_keys.length - 1 ? '' : Date.parse(intent.start) - Date.parse(intents[intents_keys[index + 1]].start)
     return <div class="intent">
@@ -175,9 +173,9 @@ function Latest({ url, live_version, name }) {
             <div>latest : {data["tag_name"]}</div>
             <div>{displayRelativeDate(Date.parse(data["published_at"]))}</div>
             <div>{data["name"]}</div>
-            <br />
-            <br />
             <img src={data["author"]["avatar_url"]} class="author_pic" />
+            <br />
+            <br />
         </div>
     }
     return (
@@ -298,7 +296,7 @@ export function App() {
     const domains = state['weights'] ? Object.keys(state['weights']) : []
     return (
         <div class="layout" style={layout_style}>
-            <div class={"jobs "}>
+            <div class={"jobs " + (is_matrix_displayed ? "inactive" : "")}>
                 <div id="jobs">
                     {
                         job_keys.map((key) => <Job id={key} job={jobs[key]} />)
@@ -401,6 +399,13 @@ export function App() {
                     {state['modules'] ? Object.keys(state['modules']).length : 0} SCRAPERS
                 </button>
             </div>
+
+            <div class={"updates " + (is_filter_displayed ? "active" : "inactive")}>
+                <div class="update">
+                    Hello World
+                </div>
+            </div>
+
             <div class={"filter " + (is_filter_displayed ? "active" : "inactive")}>
                 {state['modules'] ? Object.keys(state['modules']).map(
                     (key) => <Latest url={"https://api.github.com/repos/exorde-labs/" + key + "/releases/latest"} live_version={state['modules'][key]['version']} name={key} />

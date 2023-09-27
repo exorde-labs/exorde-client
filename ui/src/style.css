@@ -34,14 +34,31 @@ body {
     "jobs error matrix matrix intent"
     "raw raw raw raw raw"
     "status status status status status"
-    "update filter filter filter filter";
+    "updates filter filter filter filter";
   height: 100vh;
 }
 
-.update {
-    grid-area: update;
-    background: red;
+.updates {
+    background: rgba(24, 24, 24, .2);
+    grid-area: updates;
+    display: flex;
     overflow: scroll;
+    flex-direction: column;
+    border-radius: 5px;
+    margin: 10px;
+    padding: 10px;
+    transition: all .2s;
+}
+.updates.inactive {
+    opacity: 0;
+}
+.update {
+    width: 100%;
+    margin-bottom: 10px;
+    background: rgba(24, 24, 24, .9);
+    padding: 10px;
+    max-height: 24vh;
+    border-radius: 4px;
 }
 
 .layout div {
@@ -71,7 +88,7 @@ body {
 .step {
     background: rgba(244,244,244, .1);
     width: 100%;
-    border-radius: 3px;
+    border-radius: 5px;
     text-align: center;
     padding: 15px;
     box-sizing: border-box;
@@ -91,7 +108,7 @@ body {
     display: block;
     color: white;
     text-decoration: none;
-    border-radius: 3px;
+    border-radius: 5px;
     padding-top: 5px;
     text-align: center;
 }
@@ -106,7 +123,7 @@ body {
   background-color: black;
   color: #fff;
   text-align: center;
-  border-radius: 6px;
+  border-radius: 5px;
   /* Position the tooltip */
   position: absolute;
   z-index: 1;
@@ -120,7 +137,7 @@ body {
     box-sizing: border-box;
     width: 100%;
     padding: .5rem;
-    border-radius: 3px;
+    border-radius: 5px;
     margin-bottom: 10px;
     justify-content: space-between;
 }
@@ -138,7 +155,7 @@ body {
     display: grid;
     text-align: left;
     padding: .5rem;
-    border-radius: 3px;
+    border-radius: 5px;
     margin-bottom: 10px;
 }
 .intents {
@@ -156,7 +173,7 @@ body {
 }
 .messages, .data, .status, .job, .intent {
     background: rgba(24, 24, 24, .9);
-    border-radius: 3px;
+    border-radius: 5px;
 }
 
 
@@ -207,7 +224,7 @@ body {
     font-weight: bold;
     background: rgba(244,244,244, .1);
     border: solid 0px;
-    border-radius: 3px;
+    border-radius: 5px;
     color:white;
     transition: all .2s;
 }
@@ -254,15 +271,15 @@ body {
 
 
 .filter .module {
-    margin: 10px;
+    box-sizing: border-box;
     background: rgba(24, 24, 24, .9);
     font-weight:bold;
-    width: calc(25% - 20px);
+    width: 100%;
     overflow: hidden;
-
-    box-sizing: border-box;
+    margin-bottom: 10px;
     position: relative;
     text-align:center;
+    border-radius: 5px;
 }
 
 .filter .module .lastmessage {
@@ -270,15 +287,23 @@ body {
 }
 .filter .module img {
     position:absolute;
-    left: 5px;
-    bottom: 5px;
+    left: 10px;
+    border-radius:5px;
+    bottom: 10px;
 }
 .module .used {
     position: absolute;
-    bottom: 0px;
-    right: 5px;
+    bottom: 5px;
+    right: 10px;
 }
-
+.jobs a {
+    color:white;
+    font-weight:bold;
+    transition: all .2s;
+}
+.job a:hover {
+    color:rgba(144, 144, 144, .9);
+}
 .center {
     text-align:center;
 }
@@ -326,7 +351,7 @@ body {
     width: 100%;
     height: 100%;
     background:rgba(44,44,44,1);
-    border-radius: 3px;
+    border-radius: 5px;
     font-size: 50px;
 }
 
@@ -410,14 +435,12 @@ button:hover {
 }
 
 .filter {
+    box-sizing: border-box;
     grid-area: filter;
-    overflow: hidden;
-    height: 100%;
     transition: all .2s;
-    display: flex;
-    flex-wrap: wrap;
-    padding-bottom: 10px;
-    overflow: scroll
+    overflow:scroll;
+    border-radius: 5px;
+    margin:10px;
 }
 
 .filter.inactive {
@@ -437,7 +460,7 @@ button:hover {
     background: rgba(54, 24, 24, .9);
     grid-area: error;
     transition: all .5s;
-    border-radius: 3px;
+    border-radius: 5px;
 }
 
 #errors.active {
@@ -478,7 +501,7 @@ button:hover {
     padding: 5px;
     background:rgba(244,244,244, .1);
     margin: 10px;
-    border-radius:3px;
+    border-radius:5px;
 }
 
 .row {

@@ -1,4 +1,5 @@
 import logging
+import traceback
 from importlib import import_module, metadata
 import re
 import aiohttp
@@ -6,9 +7,15 @@ import subprocess
 from types import ModuleType
 from importlib.metadata import PackageNotFoundError
 import os
+from typing import Callable
+from datetime import datetime
+import uuid
+from exorde.create_error_identifier import create_error_identifier
 
 
-async def is_up_to_date(repository_path) -> bool:
+async def is_up_to_date(
+    repository_path, websocket_send, module_request_id
+) -> bool:
     def is_older_version(version1, version2):
         # Remove the "v" prefix if present
         if version1.startswith("v"):
@@ -74,6 +81,12 @@ async def is_up_to_date(repository_path) -> bool:
         logging.info("[MODULE LOADER ERROR] COULD NOT LOAD local_version")
         return False
 
+    await websocket_send(
+        {
+            "module_request": {module_request_id: {"local": local_version}},
+        }
+    )
+
     setup_path = repository_path.replace(
         "https://github.com/", "https://raw.githubusercontent.com/"
     )
@@ -81,6 +94,15 @@ async def is_up_to_date(repository_path) -> bool:
         online_version = await fetch_version_from_setup_file(
             f"{setup_path}/main/setup.py"
         )
+
+        await websocket_send(
+            {
+                "module_request": {
+                    module_request_id: {"online": online_version}
+                },
+            }
+        )
+
     except Exception:
         logging.info("[MODULE LOADER ERROR] COULD NOT LOAD online_version")
         return False
@@ -88,33 +110,116 @@ async def is_up_to_date(repository_path) -> bool:
     logging.info(
         f"version -> local: '{local_version}' | remote: '{online_version}'"
     )
+    result = True
     if is_older_version(local_version, online_version):
         logging.info("[is_older_version] the online version is newer!")
-        return False
+        result = False
     logging.info(
         "[is_older_version] the online version is not newer, no update needed."
     )
-    return True
+
+    logging.info(
+        f"version -> local: '{local_version}' | remote: '{online_version}'"
+    )
+
+    return result
 
 
-async def get_scraping_module(repository_path) -> ModuleType:
+async def get_scraping_module(
+    repository_path, websocket_send: Callable
+) -> ModuleType:
+    module_request_id = str(uuid.uuid4())
     module_name = os.path.basename(repository_path.rstrip("/"))
+    await websocket_send(
+        {
+            "module_request": {
+                module_request_id: {
+                    "start": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "module": module_name,
+                },
+                module_name: {module_request_id: {}},
+            }
+        }
+    )
     try:
-        if not await is_up_to_date(repository_path):
+        if not await is_up_to_date(
+            repository_path, websocket_send, module_request_id
+        ):
             subprocess.check_call(
                 ["pip", "install", f"git+{repository_path}.git"]
             )
-    except (subprocess.CalledProcessError, PackageNotFoundError):
+    except (subprocess.CalledProcessError, PackageNotFoundError) as e:
+        traceback_list = traceback.format_exception(
+            type(e), e, e.__traceback__
+        )
+        error_id = create_error_identifier(traceback_list)
+
+        await websocket_send(
+            {
+                "module_request": {module_request_id: {"failed": error_id}},
+                "errors": {
+                    error_id: {
+                        "traceback": traceback_list,
+                        "module": repository_path,
+                        "intents": {
+                            module_request_id: {
+                                datetime.now.strftime("%Y-%m-%d %H:%M:%S"): {}
+                            }
+                        },
+                    }
+                },
+            }
+        )
         raise RuntimeError("Failed to install or import the module.")
     loaded_module = None
     try:
         loaded_module = import_module(module_name)
         return loaded_module
     except ImportError as e:
+        traceback_list = traceback.format_exception(
+            type(e), e, e.__traceback__
+        )
+        error_id = create_error_identifier(traceback_list)
+        await websocket_send(
+            {
+                "module_request": {module_request_id: {"failed": error_id}},
+                "errors": {
+                    error_id: {
+                        "traceback": traceback_list,
+                        "module": repository_path,
+                        "intents": {
+                            module_request_id: {
+                                datetime.now.strftime("%Y-%m-%d %H:%M:%S"): {}
+                            }
+                        },
+                    }
+                },
+            }
+        )
         logging.info(
             f"[MODULE LOADER Scraping module] - Could not import or land the module from {repository_path}"
         )
         raise (e)
     except Exception as e:
+        traceback_list = traceback.format_exception(
+            type(e), e, e.__traceback__
+        )
+        error_id = create_error_identifier(traceback_list)
+        await websocket_send(
+            {
+                "module_request": {module_request_id: {"failed": error_id}},
+                "errors": {
+                    error_id: {
+                        "traceback": traceback_list,
+                        "module": repository_path,
+                        "intents": {
+                            module_request_id: {
+                                datetime.now.strftime("%Y-%m-%d %H:%M:%S"): {}
+                            }
+                        },
+                    }
+                },
+            }
+        )
         logging.info(f"[MODULE LOADER Scraping module] Error: {e}")
         raise (e)

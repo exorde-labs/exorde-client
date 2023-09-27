@@ -278,7 +278,9 @@ async def think(
                 ponderation, domain
             )
         try:
-            module = await get_scraping_module(choosen_module_path)
+            module = await get_scraping_module(
+                choosen_module_path, websocket_send
+            )
         except:
             logging.exception(
                 f"An error occured loading module {choosen_module_path}"
