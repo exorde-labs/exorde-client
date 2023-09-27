@@ -1,9 +1,8 @@
 import os
 import json
 import logging
-import random
 import argparse
-from exorde.get_keywords import get_keywords
+from exorde.get_keywords import choose_keyword
 from exorde.module_loader import get_scraping_module
 import aiohttp
 import datetime
@@ -11,6 +10,11 @@ from typing import Union, Callable
 from types import ModuleType
 from exorde.counter import AsyncItemCounter
 from datetime import datetime, timedelta, time
+
+from exorde.at import at
+from datetime import timedelta
+import logging
+
 
 from exorde.statistics_notification import statistics_notification
 
@@ -45,6 +49,8 @@ async def _get_ponderation() -> Ponderation:
                 generic_modules_parameters=generic_modules_parameters,
                 specific_modules_parameters=specific_modules_parameters,
                 weights=weights,
+                lang_map=json_data["lang_map"],
+                new_keyword_alg=60,
             )
 
 
@@ -101,17 +107,6 @@ async def choose_domain(
 def get_module_path_for_domain(ponderation: Ponderation, domain: str) -> str:
     module_path = ponderation.enabled_modules[domain][0]
     return module_path
-
-
-async def choose_keyword() -> str:
-    keywords_: list[str] = await get_keywords()
-    selected_keyword: str = random.choice(keywords_)
-    return selected_keyword
-
-
-from exorde.at import at
-from datetime import timedelta
-import logging
 
 
 async def print_counts(
@@ -175,9 +170,10 @@ async def print_counts(
 
 
 async def think(
-    command_line_arguments: argparse.Namespace, counter: AsyncItemCounter
+    command_line_arguments: argparse.Namespace,
+    counter: AsyncItemCounter,
 ) -> tuple[ModuleType, dict, str]:
-    ponderation: Ponderation = await get_ponderation()
+    ponderation: Ponderation = await get_ponderation()  # module_configuration
     quota_layer: dict[str, float] = await generate_quota_layer(
         command_line_arguments, counter
     )
@@ -225,7 +221,7 @@ async def think(
         if remaining_iterations_looping <= 0:
             break
 
-    keyword: str = await choose_keyword()
+    keyword: str = await choose_keyword(module.__name__, ponderation)
     generic_modules_parameters: dict[
         str, Union[int, str, bool, dict]
     ] = ponderation.generic_modules_parameters

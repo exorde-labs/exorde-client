@@ -17,7 +17,6 @@ from exorde.evaluate_token_count import evaluate_token_count
 wtp = WtP("wtp-canine-s-1l")
 
 
-
 def split_in_sentences(string: str):
     sentences = []
     string_no_lb = string.replace("\n", " ")
@@ -114,7 +113,7 @@ async def prepare_batch(
     max_depth_classification: int = live_configuration["max_depth"]
     batch: list[tuple[int, Processed]] = []  # id, item
     generator: AsyncGenerator[Item, None] = get_item(
-        command_line_arguments, counter
+        command_line_arguments, counter, live_configuration
     )
     lab_configuration: dict = static_configuration["lab_configuration"]
     item_id = -1
@@ -142,13 +141,17 @@ async def prepare_batch(
                 splitted_mode = True
                 # print all splitted items with index
                 for i, item in enumerate(splitted):
-                    logging.info(f"\t\t[Paragraph] Sub-split item {i} = {item}")
+                    logging.info(
+                        f"\t\t[Paragraph] Sub-split item {i} = {item}"
+                    )
                 for chunk in splitted:
                     processed_chunk: Processed = await process(
                         chunk, lab_configuration, max_depth_classification
                     )
-                    batch.append((item_id, processed_chunk))                   
-                    item_token_count_ = evaluate_token_count(str(chunk.content)) 
+                    batch.append((item_id, processed_chunk))
+                    item_token_count_ = evaluate_token_count(
+                        str(chunk.content)
+                    )
                     end_time: float = time.perf_counter()
                     exec_time_s: float = end_time - start_time
                     logging.info(

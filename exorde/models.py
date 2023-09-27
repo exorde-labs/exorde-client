@@ -27,6 +27,8 @@ class Ponderation:
     generic_modules_parameters: Dict[str, Union[int, str, bool]]
     specific_modules_parameters: Dict[str, Dict[str, Union[int, str, bool]]]
     weights: Dict[str, float]
+    lang_map: Dict[str, list]  # module_name as key
+    new_keyword_alg: int  # weight for #986
 
 
 class Translated(str, metaclass=MadType):
