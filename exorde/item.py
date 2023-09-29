@@ -58,11 +58,17 @@ async def get_item(
                 await websocket_send(
                     {
                         "intents": {
-                            intent_id: {"module": module.__name__},
+                            intent_id: {
+                                "module": module.__name__,
+                                "parameters": parameters,
+                            },
                         },
                         "modules": {
                             module.__name__: {
-                                "version": get_module_version(module.__name__)
+                                "version": get_module_version(module.__name__),
+                                "intents": {
+                                    intent_id: {"parameters": parameters}
+                                },
                             }
                         },
                     }
@@ -74,13 +80,6 @@ async def get_item(
                 )
                 logging.exception(f"An error occured in the brain function")
                 raise error
-
-            async def query_with_timeout(
-                module, parameters, timeout_seconds: int
-            ):
-                return await asyncio.wait_for(
-                    module.query(parameters), timeout=timeout_seconds
-                )
 
             try:
                 async for item in module.query(parameters):
@@ -104,7 +103,7 @@ async def get_item(
                         await counter.increment(domain)
                         yield item
                     else:
-                        continue                        
+                        continue
             except GeneratorExit:
                 pass
             except Exception as e:

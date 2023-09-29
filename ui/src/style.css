@@ -34,8 +34,19 @@ body {
     "jobs error matrix matrix intent"
     "raw raw raw raw raw"
     "status status status status status"
-    "updates filter filter filter filter";
+    "updates keywords filter filter filter";
   height: 100vh;
+}
+
+.keywords {
+    overflow: scroll;
+    grid-area: keywords;
+    background: rgba(33,33,33,.2);
+    margin-top: 10px;
+    height: calc(100% - 20px);
+    margin-left: -10px;
+    border-radius:5px;
+    padding: 20px;
 }
 
 .updates {
@@ -49,9 +60,7 @@ body {
     padding: 10px;
     transition: all .2s;
 }
-.updates.inactive {
-    opacity: 0;
-}
+
 .update {
     width: 100%;
     margin-bottom: 10px;
@@ -69,10 +78,10 @@ body {
     display: flex;
 }
 .raw {
-  overflow: scroll;
-  grid-area: raw;
-  display: grid;
-  grid-template-columns: 1fr 1fr; 
+    overflow: scroll;
+    grid-area: raw;
+    display: grid;
+    grid-template-columns: 1fr 1fr; 
 }
 
 .jobs {
@@ -142,8 +151,8 @@ body {
     justify-content: space-between;
 }
 .intent div {
-    padding: 5px !important;
     text-align: center;
+    line-height: 45px;
 }
 .intent .items {
     padding: 0px !important;
@@ -168,6 +177,10 @@ body {
     overflow: scroll;
     margin: 10px;
 }
+.errors {
+
+    margin-left: -10px;
+}
 .messages, .status, .data, .intent {
     padding: 10px;
 }
@@ -175,8 +188,6 @@ body {
     background: rgba(24, 24, 24, .9);
     border-radius: 5px;
 }
-
-
 
 .status {
     margin: 10px;
@@ -265,10 +276,45 @@ body {
     float: left;
     margin-right: 10px;
 }
+
+
+.intent_keyword {
+    margin-right: 10px;
+    background: rgba(64,64,64,1);
+    min-width: 220px;
+    float:left;
+    text-align: center;
+    border-radius: 3px;
+}
 .intent_date {
     float:left;
+    width: 200px;
 }
-
+.kw_stat .progress_container {
+    display: flex;
+}
+.kw_stat .progress{
+    background: rgba(33, 33, 133, .5);
+    margin: 5px;
+    border-radius: 3px;
+    display: block;
+    transition: all .2s;
+}
+.kw_stat {
+    display: flex;
+}
+.kw_stat .intent_keyword {
+    min-width: 350px;
+    border-radius: 0px;
+    border-color: rgba(33,33,33,1);
+    margin-right:0px;
+}
+.kw_value {
+    padding-left:8px;
+    padding-right:8px;
+    background: rgba(33, 33, 133, .5);
+    text-align: center;
+}
 
 .filter .module {
     box-sizing: border-box;
@@ -280,6 +326,11 @@ body {
     position: relative;
     text-align:center;
     border-radius: 5px;
+    transition: background .2s;
+}
+.filter .module:hover {
+    background: rgba(44, 44,44, .8) !important;
+    cursor: pointer;
 }
 
 .filter .module .lastmessage {
@@ -442,18 +493,11 @@ button:hover {
     border-radius: 5px;
     margin:10px;
 }
-
-.filter.inactive {
+.keywords.inactive, .updates.inactive, .errors.inactive, .jobs.inactive, .filter.inactive {
     opacity: 0;
+    display:none;
 }
-
-.filter.active {
-    opacity: 1;
-}
-
-.errors.inactive, .jobs.inactive {
-}
-.errors.active {
+.errors.active, .jobsactive, .filter.active {
     opacity: 1;
 }
 .errors {
@@ -559,6 +603,9 @@ button:hover {
     width:50px;
     height: 50px;
 }
+.latest:hover {
+    background: rgba(44,44,44,1);
+}
 
 .latest.error {
     background:rgba(200, 0, 0, .7) !important;
@@ -592,4 +639,52 @@ button:hover {
     border-radius:5px;
     float:right;
     text-align: center;
+}
+
+
+.box {
+    width: 200px;
+    height: 45px;
+    overflow: hidden;
+    border-radius: 3px;
+}
+
+.line {
+    width: 3200px;
+    display: flex;
+    flex-direction: row;
+}
+
+.line .wordchoice {
+    background: rgba(144,144,144,.1);
+    min-width: 200px !important;
+    line-height: 45px;
+}
+
+.moving {
+  position: relative;
+  animation-name: moveLeft;
+  animation-duration: 3s;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+@keyframes moveLeft {
+  0% {
+    left: 150px;
+  }
+  100% {
+    left: -3000px;
+  }
+}
+
+.box .moved {
+    position: relative;
+    left: -3000px !important;
+}
+
+.kw_stat {
+    padding: 5px;
+    background: rgba(33,33,33,.1);
+    margin-bottom: 5px;
 }
