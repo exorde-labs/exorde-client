@@ -115,7 +115,10 @@ def make_persist_function():
 
         # Set the current task to the new task
         current_task = asyncio.create_task(write_task())
-        await current_task
+        try:
+            await current_task
+        except:
+            pass
 
     return persist
 
