@@ -267,7 +267,7 @@ export function App() {
 
     // Function to create a WebSocket connection
     function connectWebSocket() {
-        socket = new WebSocket('ws://localhost:8080/ws'); // Replace with your server's WebSocket URL
+        socket = new WebSocket('ws://' + window.location.host + '/ws'); // Replace with your server's WebSocket URL
         // Handle incoming messages from the WebSocket server
         socket.addEventListener('message', (event) => {
             const message = event.data;
