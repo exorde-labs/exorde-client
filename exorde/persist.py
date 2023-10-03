@@ -113,6 +113,8 @@ def make_persist_function():
                         logging.error(data)
             except asyncio.CancelledError:
                 pass  # Ignore the CancelledError exception
+            except Exception:
+                logging.exception("An error occured in persist")
 
         # Set the current task to the new task
         current_task = asyncio.create_task(write_task())
@@ -164,7 +166,9 @@ def load(
         except FileNotFoundError:
             return {}
 
+
 import os
+
 
 class PersistedDict:
     def __init__(
