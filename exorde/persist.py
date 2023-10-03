@@ -108,11 +108,8 @@ def make_persist_function():
                             data, indent=4, default=serializer
                         )
                         await file.write(json_data)
-                    except Exception as error:
-                        logging.error(error)
-                        logging.error(data)
-            except asyncio.CancelledError:
-                pass  # Ignore the CancelledError exception
+                    except asyncio.CancelledError:
+                        pass  # Ignore the CancelledError exception
             except Exception:
                 logging.exception("An error occured in persist")
 
