@@ -316,6 +316,11 @@ body {
     text-align: center;
 }
 
+.kw_value div {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
 .filter .module {
     box-sizing: border-box;
     background: rgba(24, 24, 24, .9);
@@ -494,8 +499,7 @@ button:hover {
     margin:10px;
 }
 .keywords.inactive, .updates.inactive, .errors.inactive, .jobs.inactive, .filter.inactive {
-    opacity: 0;
-    display:none;
+    display: none;
 }
 .errors.active, .jobsactive, .filter.active {
     opacity: 1;
@@ -687,4 +691,7 @@ button:hover {
     padding: 5px;
     background: rgba(33,33,33,.1);
     margin-bottom: 5px;
+}
+.kw_value .active {
+    background: rgba(33,133,33,.5);
 }

@@ -4,22 +4,40 @@ import asyncio
 import os
 from typing import Callable
 import json
+from exorde.persist import PersistedDict
+
+
+def deep_merge(original_context: dict, update_context: dict) -> dict:
+    for key, value in update_context.items():
+        if (
+            key in original_context
+            and isinstance(original_context[key], dict)
+            and isinstance(value, dict)
+        ):
+            deep_merge(original_context[key], value)
+        else:
+            original_context[key] = value
+    return original_context
 
 
 def websocket_handler_factory():
     to_send = []  # Create a local list within the closure
     connected_clients = set()  # Keep track of connected clients
+    merged: PersistedDict = PersistedDict("/tmp/exorde/slog.json")
+    # merged: dict = {}
 
     async def websocket_handler(request):
         nonlocal to_send  # Access the local list from the closure
+        nonlocal merged
 
         ws = web.WebSocketResponse()
         await ws.prepare(request)
 
         try:
             # Send all messages to the new user when they connect
-            for message in to_send:
-                await ws.send_str(message)
+            # for message in to_send:
+            #    await ws.send_str(message)
+            await ws.send_json(dict(merged))
 
             # Add the client to the set of connected clients
             connected_clients.add(ws)
@@ -38,20 +56,21 @@ def websocket_handler_factory():
 
     async def ws_push(message):
         nonlocal to_send  # Access the local list from the closure
+        nonlocal merged
+        logging.info(f"WS_PUSH:'{message}'")
         if isinstance(message, str):
-            to_send.append(message)
+            raise TypeError(f"Accept only dict ({message})")
         else:
-            to_send.append(json.dumps(message))
+            await merged.deep_merge(message)
+            # merged = deep_merge(merged, message)
+            # to_send.append(json.dumps(message))
 
         # Send the new message to all connected clients
         for client in connected_clients:
             try:
-                if isinstance(message, str):
-                    await client.send_str(message)
-                else:
-                    await client.send_str(json.dumps(message))
-            except:
-                pass
+                await client.send_json(message)
+            except Exception:
+                logging.exception(f'An error occured sending: "{message}"')
 
     return (
         websocket_handler,

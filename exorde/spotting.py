@@ -99,13 +99,6 @@ async def count_rep_for_each_domain(
         await counter.increment(f"rep_{alias}")
 
 
-def tie_uuid_to_ws_send(uuid: UUID, ws_send: Callable) -> Callable:
-    async def identified_websocket_send(state: dict) -> None:
-        await ws_send(json.dumps({"jobs": {str(uuid): state}}))
-
-    return identified_websocket_send
-
-
 async def spotting(
     live_configuration: LiveConfiguration,
     static_configuration: StaticConfiguration,
@@ -114,6 +107,18 @@ async def spotting(
     websocket_send: Callable,
 ) -> None:
     spotting_identifier: str = str(uuid4())
+    await websocket_send(
+        {
+            "jobs": {
+                spotting_identifier: {
+                        "start": datetime.now().strftime(
+                            "%Y-%m-%d %H:%M:%S"
+                        )
+                    }
+                }
+            }
+    )
+
     batch: list[tuple[int, Processed]] = await prepare_batch(
         static_configuration,
         live_configuration,

@@ -24,7 +24,7 @@ import logging
 
 logger = logging.getLogger()
 logging.basicConfig(level=logging.INFO)
-
+# logging.disable()
 
 async def main(command_line_arguments: argparse.Namespace):
     counter: AsyncItemCounter = AsyncItemCounter()
@@ -354,6 +354,8 @@ def run():
         asyncio.run(main(command_line_arguments))
     except KeyboardInterrupt:
         logging.info("Exiting exorde-client...")
+    except Exception:
+        logging.exception('A critical error occured')
 
 
 if __name__ == "__main__":

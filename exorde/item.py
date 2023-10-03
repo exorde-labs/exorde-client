@@ -1,5 +1,4 @@
 import logging
-import asyncio
 import argparse
 from typing import AsyncGenerator
 from exorde.brain import think
@@ -83,23 +82,23 @@ async def get_item(
 
             try:
                 async for item in module.query(parameters):
-                    await websocket_send(
-                        {
-                            "intents": {
-                                intent_id: {
-                                    "collections": {
-                                        str(uuid.uuid4()): {
-                                            "url": item.url,
-                                            "end": datetime.now().strftime(
-                                                "%Y-%m-%d %H:%M:%S"
-                                            ),
+                    if isinstance(item, Item):
+                        await websocket_send(
+                            {
+                                "intents": {
+                                    intent_id: {
+                                        "collections": {
+                                            str(uuid.uuid4()): {
+                                                "url": str(item.url),
+                                                "end": datetime.now().strftime(
+                                                    "%Y-%m-%d %H:%M:%S"
+                                                ),
+                                            }
                                         }
                                     }
                                 }
                             }
-                        }
-                    )
-                    if isinstance(item, Item):
+                        )
                         await counter.increment(domain)
                         yield item
                     else:

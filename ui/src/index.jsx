@@ -7,16 +7,18 @@ import { merge } from 'lodash';
 
 const Item = ({ item, index, items }) => {
     if (!item) {
-        return null; // Return null if item is undefined
+        return <div>
+            <a class={'item'} >
+                <div class="timedifference"></div>
+            </a>
+        </div>
+
     }
-
     const timeDifference = index === 0 ? 0 : items[index - 1] ? Date.parse(item.collection_time) - Date.parse(items[index - 1].collection_time) : 0;
-
     const formattedTimeDifference = timeDifference / 1000;
-
     return (
         <div>
-            <a class={'item ' + (item ? 'active' : '')} href={item.url} target="_blank">
+            <a class={'item active'} href={item.url} target="_blank">
                 <div class="timedifference">{formattedTimeDifference}</div>
                 <div class="tooltip">
                     <p>{item['url']}</p>
@@ -48,7 +50,7 @@ const Job = ({ id, job }) => <div class="job">
     </div>
     <div class="items">
         {
-            Array(30).fill().map((_, index) => <Item items={job['items']} index={index} item={job['items'][index]} />)
+            Array(15).fill().map((_, index) => <Item items={job['items']} index={index} item={job['items'] ? job['items'][index] : undefined} />)
         }
         <div class="">
             <a class="item item_count">
@@ -213,11 +215,14 @@ const KeyWordSpread = ({state, targetModule}) => {
             }
         }
     }
-    console.log(stats);
     return <div>
         {Object.keys(stats).map((key) => <div class="kw_stat">
             <div class="kw_value">{ stats[key] }</div>
             <div class="intent_keyword" >{ key }</div>
+            <div class="kw_value">
+                <div class="active">N</div>
+                <div>D</div>
+            </div>
             <div class="kw_value" style="width:180px">{ ((stats[key] / total) * 100).toFixed(2) } %</div>
             <div class="progress_container" style="width:100%;">
                 <div class="progress" style={{"width": ((stats[key] / total) * 100) + "%" }} />
@@ -416,14 +421,12 @@ export function App() {
                     </div>
                 </div>
             </div>
-            
             <div class="status">
                 <div class="left">
                     <div>{connected ? "connected" : "disconnected"}</div>
                     <div>{shortenStringWithEllipsis(reversed_messages[0], 100)}</div>
                     <div class="lastupdate">{timeDifferenceInSeconds} seconds ago</div>
                 </div>
-
                 <button id="errors" class={"rawbtn " + (are_error_displayed ? "active" : "")} onClick={() => setErrorDisplay(!are_error_displayed)} disabled={state['errors'] && Object.keys(state['errors']).length !== 0 ? false : true} > {state['errors'] ? Object.keys(state['errors']).length : 0} ERR</button>
                 <button class={"rawbtn " + (are_messages_displayed ? "active" : "")} onClick={() => { setMessagesDisplay(!are_messages_displayed) }} disabled={is_matrix_displayed ? true : ''} >{messages.length} LOG</button>
                 <button class={"rawbtn " + (is_matrix_displayed ? "active" : "")} onClick={() => { setMatrixDisplay(!is_matrix_displayed); setMessagesDisplay(false); setFilterDisplay(false) }}>
@@ -434,7 +437,6 @@ export function App() {
                     {state['modules'] ? Object.keys(state['modules']).length : 0} SCRAPERS
                 </button>
             </div>
-
             <div class={"updates " + (is_filter_displayed ? are_error_displayed || targetModule !== null ? "inactive" : "active" : "inactive")}>
                 {module_requests.map((mod_req) => <div class="update">
                     <span class="title">{state['module_request'][mod_req]['module']}</span>

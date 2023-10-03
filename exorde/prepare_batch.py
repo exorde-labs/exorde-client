@@ -115,6 +115,7 @@ async def prepare_batch(
     websocket_send: Callable,
     spotting_identifier: str,
 ) -> list[tuple[int, Processed]]:
+    print('PREPARE_BATCH')
     max_depth_classification: int = live_configuration["max_depth"]
     batch: list[tuple[int, Processed]] = []  # id, item
     generator: AsyncGenerator[Item, None] = get_item(
@@ -128,8 +129,10 @@ async def prepare_batch(
         else live_configuration["batch_size"]
     )
 
+    print('FOR ITEM IN GENERATOR')
     async for item in generator:
         item_id = item_id + 1
+        print('ITEM_ID', item_id)
         try:
             start_time: float = time.perf_counter()
             splitted_mode = False
@@ -138,17 +141,18 @@ async def prepare_batch(
                     item, lab_configuration, max_depth_classification
                 )
                 batch.append((item_id, processed_item))
+                print('BATCH_APPEND')
                 await websocket_send(
                     {
                         "jobs": {
                             spotting_identifier: {
                                 "items": {
-                                    item_id: {
+                                    str(item_id): {
                                         "collection_time": datetime.datetime.now().strftime(
                                             "%Y-%m-%d %H:%M:%S"
                                         ),
-                                        "domain": item.domain,
-                                        "url": item.url,
+                                        "domain": str(item.domain),
+                                        "url": str(item.url),
                                     }
                                 }
                             }
@@ -177,12 +181,12 @@ async def prepare_batch(
                             "jobs": {
                                 spotting_identifier: {
                                     "items": {
-                                        item_id: {
+                                        str(item_id): {
                                             "collection_time": datetime.datetime.now().strftime(
                                                 "%Y-%m-%d %H:%M:%S"
                                             ),
-                                            "domain": item.domain,
-                                            "url": item.url,
+                                            "domain": str(item.domain),
+                                            "url": str(item.url),
                                         }
                                     }
                                 }
