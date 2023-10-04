@@ -87,7 +87,7 @@ const Intent = ({ id, intent, intents, intents_keys, index }) => {
             <div class="kw_details" style={open_keyword ? "height:100%": "0%"}>
                 <span>Algorithm = {intent['keyword_alg'] }</span>
                 <span>Roll = {intent['number'] }</span>
-                <span>Cursor = {intent['cursor'] }</span>
+                <span>Threshold = {intent['cursor'] }</span>
                 <span>Lang = {intent['lang']}</span>
                 <span>Topic = {intent['topic']}</span>
                 <span>Error = {intent['error'] ? 'true' : 'false'}</span>
