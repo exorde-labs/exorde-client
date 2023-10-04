@@ -1,4 +1,5 @@
-import logging, os, json, aiohttp, time, re, random, asyncio
+import logging, os, json, aiohttp, time, re, random, asyncio, traceback
+from datetime import datetime
 
 from exorde.models import Ponderation
 
@@ -30,14 +31,18 @@ async def fetch_keywords(keywords_raw_url) -> str:
         await asyncio.sleep(i * i)
         try:
             async with aiohttp.ClientSession() as session:
-                async with session.get(keywords_raw_url, timeout=10) as response:
+                async with session.get(
+                    keywords_raw_url, timeout=10
+                ) as response:
                     return await response.text()
         except Exception as e:
             logging.info(
                 "[KEYWORDS] Failed to download keywords.txt from Github repo exorde-labs/TestnetProtocol: %s",
                 e,
             )
-    raise ValueError("[KEYWORDS] Failed to download keywords.txt from Github repo exorde-labs/TestnetProtocol: %s")
+    raise ValueError(
+        "[KEYWORDS] Failed to download keywords.txt from Github repo exorde-labs/TestnetProtocol: %s"
+    )
 
 
 ## CACHING MECHANISM
@@ -129,7 +134,7 @@ def create_topic_lang_fetcher(refresh_frequency: int = 3600):
     cached_data: Optional[Dict[str, list[str]]] = None
     last_fetch_time: float = 0
 
-    async def fetch_data() -> dict[str, list[str]]:
+    async def fetch_data() -> dict[str, dict[str, list[str]]]:
         nonlocal cached_data, last_fetch_time
         current_time: float = time.time()
 
@@ -142,7 +147,7 @@ def create_topic_lang_fetcher(refresh_frequency: int = 3600):
                 async with aiohttp.ClientSession() as session:
                     async with session.get(url) as response:
                         response.raise_for_status()
-                        data = await response.json()
+                        data = json.loads(await response.text())
                         cached_data = data
                         last_fetch_time = current_time
                         logging.info(
@@ -163,18 +168,41 @@ def create_topic_lang_fetcher(refresh_frequency: int = 3600):
 
 topic_lang_fetcher = create_topic_lang_fetcher()
 
+import os
+import itertools
+
 
 async def new_choose_keyword(
-    module_name: str, module_configuration: Ponderation
+    module_name: str,
+    module_configuration: Ponderation,
+    websocket_send: Callable,
+    intent_id: str,
 ):
     """New keyword_choose alg takes into account the module language"""
-    topic_lang: dict[str, list[str]] = await topic_lang_fetcher()
     module_languages = module_configuration.lang_map[module_name]
+
+    topic_lang: dict[str, dict[str, list[str]]] = await topic_lang_fetcher()
     topics: list[str] = list(topic_lang.keys())
     choosed_topic = random.choice(topics)
     choosed_language = random.choice(module_languages)
-    translated_keyword = choosed_topic[choosed_language]
-    return translated_keyword
+
+    await websocket_send(
+        {
+            "intents": {
+                intent_id: {"lang": choosed_language, "topic": choosed_topic}
+            }
+        }
+    )
+
+    if choosed_language == "all":
+        merged_keywords = list(itertools.chain(*choosed_topic))
+        return random.choice(merged_keywords)
+    else:
+        try:
+            translated_keyword = choosed_topic[choosed_language]
+        except:
+            return choosed_topic
+        return translated_keyword
 
 
 async def default_choose_keyword():
@@ -183,14 +211,75 @@ async def default_choose_keyword():
     return selected_keyword
 
 
+from exorde.create_error_identifier import create_error_identifier
+
+
 async def choose_keyword(
-    module_name: str, module_configuration: Ponderation
+    module_name: str,
+    module_configuration: Ponderation,
+    websocket_send: Callable,
+    intent_id: str,
 ) -> str:
     algorithm_choose_cursor = module_configuration.new_keyword_alg
     random_number = random.randint(0, 99)
     if random_number <= algorithm_choose_cursor:
         try:
-            return await new_choose_keyword(module_name, module_configuration)
-        except:
+            await websocket_send(
+                {
+                    "intents": {
+                        intent_id: {
+                            "keyword_alg": "new",
+                            "cursor": algorithm_choose_cursor,
+                            "number": random_number,
+                        }
+                    }
+                }
+            )
+            return await new_choose_keyword(
+                module_name, module_configuration, websocket_send, intent_id
+            )
+        except Exception as e:
+            traceback_list = traceback.format_exception(
+                type(e), e, e.__traceback__
+            )
+            error_id = create_error_identifier(traceback_list)
+
+            await websocket_send(
+                {
+                    "intents": {
+                        intent_id: {
+                            "keyword_alg": "old",
+                            "cursor": algorithm_choose_cursor,
+                            "number": random_number,
+                            "error": error_id,
+                        }
+                    },
+                    "errors": {
+                        error_id: {
+                            "traceback": traceback_list,
+                            "module": "get_keywords",
+                            "intents": {
+                                intent_id: {
+                                    datetime.now().strftime(
+                                        "%Y-%m-%d %H:%M:%S"
+                                    ): {}
+                                }
+                            },
+                        }
+                    },
+                }
+            )
             return await default_choose_keyword()
+    await websocket_send(
+        {
+            "intents": {
+                intent_id: {
+                    "keyword_alg": "old",
+                    "cursor": algorithm_choose_cursor,
+                    "number": random_number,
+                }
+            }
+        }
+    )
+
     return await default_choose_keyword()

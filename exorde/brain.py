@@ -228,6 +228,7 @@ async def think(
     command_line_arguments: argparse.Namespace,
     counter: AsyncItemCounter,
     websocket_send: Callable,
+    intent_id: str,
 ) -> tuple[ModuleType, dict, str]:
     ponderation: Ponderation = await get_ponderation()  # module_configuration
     quota_layer: dict[str, float] = await generate_quota_layer(
@@ -290,7 +291,9 @@ async def think(
         if remaining_iterations_looping <= 0:
             break
 
-    keyword: str = await choose_keyword(module.__name__, ponderation)
+    keyword: str = await choose_keyword(
+        module.__name__, ponderation, websocket_send, intent_id
+    )
     generic_modules_parameters: dict[
         str, Union[int, str, bool, dict]
     ] = ponderation.generic_modules_parameters

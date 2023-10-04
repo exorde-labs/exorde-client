@@ -71,15 +71,28 @@ const Job = ({ id, job }) => <div class="job">
 
 const Intent = ({ id, intent, intents, intents_keys, index }) => {
     const timeDifference = index === intents_keys.length - 1 ? '' : Date.parse(intent.start) - Date.parse(intents[intents_keys[index + 1]].start)
-    return <div class="intent">
-        <div>
-            <span class="intent_diff">{timeDifference / 1000}</span>
-            <div class="intent_keyword">{ intent.parameters ? intent.parameters.url_parameters.keyword : "" }</div>
-            <span class="intent_date">{displayRelativeDate(Date.parse(intent.start))}</span>
+    const [open_keyword, setOpenKeyword] = useState(true);
+    return <div class="intent_box">
+        <div class="intent">
+            <div>
+                <span class="intent_diff">{timeDifference / 1000}</span>
+                <button class="intent_keyword" onClick={() => setOpenKeyword(!open_keyword)} >{ intent.parameters ? intent.parameters.url_parameters.keyword : "" }</button>
+                <span class="intent_date">{displayRelativeDate(Date.parse(intent.start))}</span>
+            </div>
+            <div>{intent.collections ? `${Object.keys(intent.collections).length} clct` : '0 clct'}</div>
+            <div>{intent.errors ? `${Object.keys(intent.errors).length} err` : '0 err'}</div>
+            <div class="module">{intent.module}</div>
         </div>
-        <div>{intent.collections ? `${Object.keys(intent.collections).length} clct` : '0 clct'}</div>
-        <div>{intent.errors ? `${Object.keys(intent.errors).length} err` : '0 err'}</div>
-        <div class="module">{intent.module}</div>
+        <div class="ver">
+            <div class="kw_details" style={open_keyword ? "height:100%": "0%"}>
+                <span>Algorithm = {intent['keyword_alg'] }</span>
+                <span>Roll = {intent['number'] }</span>
+                <span>Cursor = {intent['cursor'] }</span>
+                <span>Lang = {intent['lang']}</span>
+                <span>Topic = {intent['topic']}</span>
+                <span>Error = {intent['error'] ? 'true' : 'false'}</span>
+            </div>
+        </div>
     </div>
 }
 function shortenStringWithEllipsis(inputString, maxLength) {
@@ -219,10 +232,6 @@ const KeyWordSpread = ({state, targetModule}) => {
         {Object.keys(stats).map((key) => <div class="kw_stat">
             <div class="kw_value">{ stats[key] }</div>
             <div class="intent_keyword" >{ key }</div>
-            <div class="kw_value">
-                <div class="active">N</div>
-                <div>D</div>
-            </div>
             <div class="kw_value" style="width:180px">{ ((stats[key] / total) * 100).toFixed(2) } %</div>
             <div class="progress_container" style="width:100%;">
                 <div class="progress" style={{"width": ((stats[key] / total) * 100) + "%" }} />

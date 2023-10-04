@@ -70,7 +70,7 @@ def websocket_handler_factory():
             try:
                 await client.send_json(message)
             except Exception:
-                logging.exception(f'An error occured sending: "{message}"')
+                pass
 
     return (
         websocket_handler,

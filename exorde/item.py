@@ -52,7 +52,7 @@ async def get_item(
 
             try:
                 module, parameters, domain = await think(
-                    command_line_arguments, counter, websocket_send
+                    command_line_arguments, counter, websocket_send, intent_id
                 )
                 await websocket_send(
                     {

@@ -140,14 +140,17 @@ body {
 .item:hover .tooltip {
   visibility: visible;
 }
+.intent_box {
 
-.intent {
-    display: flex;
+    margin-bottom: 5px;
     box-sizing: border-box;
-    width: 100%;
     padding: .5rem;
     border-radius: 5px;
-    margin-bottom: 10px;
+}
+.intent, .kw_details {
+    width: 100%;
+    padding: .5rem;
+    display: flex;
     justify-content: space-between;
 }
 .intent div {
@@ -184,7 +187,7 @@ body {
 .messages, .status, .data, .intent {
     padding: 10px;
 }
-.messages, .data, .status, .job, .intent {
+.messages, .data, .status, .job, .intent_box {
     background: rgba(24, 24, 24, .9);
     border-radius: 5px;
 }
@@ -269,15 +272,34 @@ body {
 .step.done {
     background: rgba(044,144,044, .3) !important;
 }
-
+.kw_details {
+    width:100%;
+    padding: .5rem;
+}
+.intent button {
+    height: 100%;
+    border: solid 0px;
+    color: white;
+}
 .intent_diff {
     width: 30px;
     background: rgba(44,44,44,1);
     float: left;
     margin-right: 10px;
 }
+.intent_kw {
+    color: white;
+    border: solid 0px;
+    height: 100%;
+    float:left;
+    margin-right: 10px;
+    background: rgba(64,64,64,1);
+    min-width: 70px;
+    float:left;
+    text-align: center;
+    border-radius: 3px;
 
-
+}
 .intent_keyword {
     margin-right: 10px;
     background: rgba(64,64,64,1);
@@ -542,7 +564,7 @@ button:hover {
     width: 100%;
     padding: 10px;
     padding-top: 0px;
-    pading-bottom: 0px;
+    padding-bottom: 0px;
 }
 
 .errblock {
