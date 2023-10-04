@@ -184,25 +184,32 @@ async def new_choose_keyword(
     topic_lang: dict[str, dict[str, list[str]]] = await topic_lang_fetcher()
     topics: list[str] = list(topic_lang.keys())
     choosed_topic = random.choice(topics)
-    choosed_language = random.choice(module_languages)
+    try:
+        choosed_language = random.choice(module_languages)
 
-    await websocket_send(
-        {
-            "intents": {
-                intent_id: {"lang": choosed_language, "topic": choosed_topic}
+        await websocket_send(
+            {
+                "intents": {
+                    intent_id: {
+                        "lang": choosed_language,
+                        "topic": choosed_topic,
+                    }
+                }
             }
-        }
-    )
+        )
 
-    if choosed_language == "all":
-        merged_keywords = list(itertools.chain(*choosed_topic))
-        return random.choice(merged_keywords)
-    else:
-        try:
+        if choosed_language == "all":
+            topic_data: dict[str, list[str]] = topic_lang[choosed_topic]
+            all_keywords_lists = [
+                topic_data[language] for language in topic_data
+            ]
+            merged_keywords = list(itertools.chain(*all_keywords_lists))
+            return random.choice(merged_keywords)
+        else:
             translated_keyword = choosed_topic[choosed_language]
-        except:
-            return choosed_topic
         return translated_keyword
+    except:
+        return choosed_topic
 
 
 async def default_choose_keyword():
