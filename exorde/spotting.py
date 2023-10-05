@@ -111,12 +111,10 @@ async def spotting(
         {
             "jobs": {
                 spotting_identifier: {
-                        "start": datetime.now().strftime(
-                            "%Y-%m-%d %H:%M:%S"
-                        )
-                    }
+                    "start": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 }
             }
+        }
     )
 
     batch: list[tuple[int, Processed]] = await prepare_batch(
@@ -284,6 +282,7 @@ async def spotting(
             static_configuration["contracts"],
             static_configuration["read_web3"],
             static_configuration["write_web3"],
+            static_configuration,
         )
         await websocket_send(
             {"jobs": {spotting_identifier: {"steps": {"send_spot": "ok"}}}}

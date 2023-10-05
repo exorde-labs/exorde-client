@@ -17,6 +17,7 @@ async def spot_data(
     contracts,
     read_web3,
     write_web3,
+    static_configuration,
 ):
     for i in range(0, 5):
         try:
@@ -54,7 +55,7 @@ async def spot_data(
             return transaction_hash, previous_nonce
 
         except ValueError as ve:
-            if ve.args[0].get("code", None) == -32004:
+            if "balance is too low" in ve.args[0].get("message", ""):
                 # Account balance is too low
                 for i in range(0, 3):
                     try:
