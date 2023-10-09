@@ -1,1 +1,1 @@
-sudo supervisorctl stop gateway
+sudo supervisorctl stop exorde

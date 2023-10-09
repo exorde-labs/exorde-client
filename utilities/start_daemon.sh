@@ -1,1 +1,1 @@
-sudo supervisorctl start gateway
+sudo supervisorctl start exorde

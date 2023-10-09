@@ -1,1 +1,1 @@
-sudo supervisorctl restart gateway
+sudo supervisorctl restart exorde
