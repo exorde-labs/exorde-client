@@ -84,6 +84,10 @@ async def index_handler(request):
     return web.Response(text=html_content, content_type="text/html")
 
 
+import ssl
+import os
+
+
 async def setup_web() -> Callable:
     # Create an aiohttp application
     app = web.Application()
@@ -97,6 +101,14 @@ async def setup_web() -> Callable:
     logging.info(f"serving static from {dist_folder}")
     app.router.add_get("/", index_handler)
     app.router.add_static("/", dist_folder)
+
+    # Load SSL/TLS context with the generated certificate and private key
+    ssl_context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+    CERT_PATH = os.getenv("CERT_PATH")
+    if CERT_PATH:
+        ssl_context.load_cert_chain(
+            CERT_PATH, keyfile=os.getenv("CERT_KEYFILE")
+        )
 
     # Combine the WebSocket app with the existing app
     runner = web.AppRunner(app)
