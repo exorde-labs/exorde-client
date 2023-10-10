@@ -109,11 +109,6 @@ async def setup_web() -> Callable:
         ssl_context.load_cert_chain(
             CERT_PATH, keyfile=os.getenv("CERT_KEYFILE")
         )
-        print("FOUND SSL")
-        os._exit(-1)
-    else:
-        print("DID NOT FIND SSL")
-        os._exit(-1)
 
     # Combine the WebSocket app with the existing app
     runner = web.AppRunner(app)
