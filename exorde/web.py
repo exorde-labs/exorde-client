@@ -115,7 +115,9 @@ async def setup_web() -> Callable:
     await runner.setup()
 
     # Start the server
-    site = web.TCPSite(runner, "0.0.0.0", 8080)
+    site = web.TCPSite(
+        runner, "0.0.0.0", 443 if CERT_PATH else 8080, ssl_context=ssl_context
+    )
     await site.start()
 
     logging.info("serving on 8080")
