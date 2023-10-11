@@ -165,7 +165,9 @@ async def get_scraping_module(
                         "module": repository_path,
                         "intents": {
                             module_request_id: {
-                                datetime.now.strftime("%Y-%m-%d %H:%M:%S"): {}
+                                datetime.now().strftime(
+                                    "%Y-%m-%d %H:%M:%S"
+                                ): {}
                             }
                         },
                     }
