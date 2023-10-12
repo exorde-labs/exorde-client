@@ -46,11 +46,6 @@ def extract_imports(directory) -> dict[str, list[str]]:
         if imports:
             all_imports[file_as_module] = imports
 
-    for file_path, imports in all_imports.items():
-        print(f"File: {file_path}")
-        print("Imports:")
-        for imp in imports:
-            print(f"\t{imp}")
     return all_imports
 
 
