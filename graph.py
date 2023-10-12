@@ -1,6 +1,7 @@
 import ast
 import os
 import sys
+import json
 
 
 def extract_imports_from_file(file_path):
@@ -34,7 +35,7 @@ def find_python_files(directory):
     return python_files
 
 
-def main(directory):
+def extract_imports(directory) -> dict[str, list[str]]:
     python_files = find_python_files(directory)
     all_imports = {}
     for file_path in python_files:
@@ -50,6 +51,7 @@ def main(directory):
         print("Imports:")
         for imp in imports:
             print(f"\t{imp}")
+    return all_imports
 
 
 if __name__ == "__main__":
@@ -57,4 +59,6 @@ if __name__ == "__main__":
         print("Usage: python script_name.py <directory_path>")
     else:
         directory_path = sys.argv[1]
-        main(directory_path)
+        import_map = extract_imports(directory_path)
+
+        print(json.dumps(import_map, indent=4))
