@@ -8,20 +8,20 @@ import argparse
 import asyncio
 import time
 from exorde.models import LiveConfiguration, StaticConfiguration
-from exorde.faucet import faucet
 from web3 import Web3
 from exorde.claim_master import claim_master
 from exorde.get_current_rep import get_current_rep
 from exorde.self_update import self_update
-from exorde.get_balance import get_balance
 from exorde.counter import AsyncItemCounter
 from exorde.web import setup_web
 from exorde.last_notification import last_notification
 from exorde.docker_version_notifier import docker_version_notifier
 from exorde.get_static_configuration import get_static_configuration
+from exorde.get_live_configuration import get_live_configuration
+from exorde.arguments import setup_arguments
+from exorde.verify_balance import verify_balance
 
 import logging
-import re
 
 
 logger = logging.getLogger()
@@ -36,9 +36,6 @@ async def main(command_line_arguments: argparse.Namespace):
     if not Web3.is_address(command_line_arguments.main_address):
         logging.error("The provided address is not a valid Web3 address")
         os._exit(1)
-
-    # imports are heavy and prevent an instantaneous answer to previous checks
-    from exorde.get_live_configuration import get_live_configuration
 
     try:
         live_configuration: LiveConfiguration = await get_live_configuration()
@@ -67,37 +64,17 @@ async def main(command_line_arguments: argparse.Namespace):
         f"Worker-Address is : {static_configuration['worker_account'].address}"
     )
 
-    try:
-        balance = await get_balance(static_configuration)
-    except:
-        balance = None
-    if not balance or balance < 0.001:
-        for i in range(0, 3):
-            try:
-                await faucet(static_configuration)
-                break
-            except:
-                timeout = i * 1.5 + 1
-                logging.exception(
-                    f"An error occured during faucet (attempt {i}) (retry in {timeout})"
-                )
-                await asyncio.sleep(timeout)
+    await verify_balance(
+        static_configuration, live_configuration, command_line_arguments
+    )
 
-    try:
-        time.sleep(3)
-        await claim_master(
-            command_line_arguments.main_address,
-            static_configuration,
-            live_configuration,
-        )
-    except:
-        logging.exception("An error occurred claiming Master address")
-        os._exit(1)
-    # print main address REP
     cursor = 1
     from exorde.spotting import spotting
 
     while True:
+        cursor += 1
+        if cursor == 10:
+            cursor = 0
         if cursor % 3 == 0:
             try:
                 await self_update()
@@ -126,7 +103,6 @@ async def main(command_line_arguments: argparse.Namespace):
                 logging.exception(
                     "An error occured while logging the current reputation"
                 )
-        cursor += 1
         await docker_version_notifier(
             live_configuration, command_line_arguments
         )
@@ -202,150 +178,8 @@ def clear_env():
         logging.info("clear_env: .env file cleared.")
 
 
-def batch_size_type(value):
-    ivalue = int(value)
-    if ivalue < 5 or ivalue > 200:
-        raise argparse.ArgumentTypeError(
-            f"custom_batch_size must be between 5 and 200 (got {ivalue})"
-        )
-    return ivalue
-
-
 def run():
-    def validate_module_spec(spec: str) -> str:
-        pattern = r"^[a-zA-Z_][a-zA-Z0-9_]*=https?://github\.com/[a-zA-Z0-9_\-\.]+/[a-zA-Z0-9_\-\.]+$"
-        if not re.match(pattern, spec):
-            raise argparse.ArgumentTypeError(
-                f"Invalid module specification: {spec}. "
-                "Expecting: module_name=https://github.com/user/repo"
-            )
-
-        return spec
-
-    def validate_quota_spec(quota_spec: str) -> dict:
-        try:
-            domain, quota = quota_spec.split("=")
-            quota = int(quota)
-        except ValueError:
-            raise argparse.ArgumentTypeError(
-                f"Invalid quota specification '{quota_spec}', "
-                "quota spec must be in the form 'domain=quota', e.g. 'domain=5000'"
-            )
-        return {domain: quota}
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--main_address", help="Main wallet", type=str, required=True
-    )
-    parser.add_argument(
-        "--twitter_username", help="Twitter username", type=str
-    )
-    parser.add_argument(
-        "--twitter_password", help="Twitter password", type=str
-    )
-    parser.add_argument("--twitter_email", help="Twitter email", type=str)
-    parser.add_argument(
-        "--http_proxy", help="Twitter Selenium PROXY", type=str
-    )
-    parser.add_argument(
-        "-mo",
-        "--module_overwrite",
-        default=[],
-        type=validate_module_spec,
-        action="append",  # allow reuse of the option in the same run
-        help="Overwrite a sub-module (domain=repository_url)",
-    )
-    parser.add_argument(
-        "--only", type=str, help="Comma-separated list of values", default=""
-    )
-    parser.add_argument(
-        "-qo",
-        "--quota",
-        default=[],
-        type=validate_quota_spec,
-        action="append",  # allow reuse of the option in the same run
-        help="quota a domain per 24h (domain=amount)",
-    )
-
-    parser.add_argument(
-        "-ntfy",
-        "--ntfy",
-        default="",
-        type=str,
-        help="Provides notification using a ntfy.sh topic",
-    )
-
-    def parse_list(s):
-        try:
-            return int(s)
-        except ValueError:
-            raise argparse.ArgumentTypeError(
-                "Invalid list format. Use comma-separated integers."
-            )
-
-    parser.add_argument(
-        "-na",
-        "--notify_at",
-        type=parse_list,
-        action="append",
-        help="List of integers",
-        default=[],
-    )
-
-    parser.add_argument(
-        "-d",
-        "--debug",
-        help="Set verbosity level of logs to DEBUG",
-        action="store_const",
-        dest="loglevel",
-        const=logging.DEBUG,
-        default=logging.INFO,
-    )
-    parser.add_argument(
-        "--custom_batch_size",
-        type=batch_size_type,
-        help="Custom batch size (between 5 and 200).",
-    )
-    args = parser.parse_args()
-    logging.basicConfig(level=args.loglevel)
-
-    # Check that either all or none of Twitter arguments are provided
-    args_list = [
-        args.twitter_username,
-        args.twitter_password,
-        args.twitter_email,
-    ]
-    if (
-        args.twitter_username is not None
-        and args.twitter_password is not None
-        and args.twitter_email is not None
-    ):
-        logging.info(
-            "[Init] Twitter login arguments detected: selecting auth-based scraping."
-        )
-        http_proxy = ""
-        if args.http_proxy is not None:
-            http_proxy = args.http_proxy
-            logging.info("[Init] Selecting Provided Selenium HTTP Proxy")
-        write_env(
-            email=args.twitter_email,
-            password=args.twitter_password,
-            username=args.twitter_username,
-            http_proxy=http_proxy,
-        )
-    elif args_list.count(None) in [1, 2]:
-        parser.error(
-            "--twitter_username, --twitter_password, and --twitter_email must be given together"
-        )
-    else:
-        logging.info(
-            "[Init] No login arguments detected: using login-less scraping"
-        )
-        clear_env()
-
-    command_line_arguments: argparse.Namespace = parser.parse_args()
-    if len(command_line_arguments.notify_at) == 0:
-        command_line_arguments.notify_at = [12, 19]
+    command_line_arguments = setup_arguments(write_env, clear_env)
     try:
         logging.info("Initializing exorde-client...")
         asyncio.run(main(command_line_arguments))
