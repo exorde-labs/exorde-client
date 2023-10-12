@@ -3,8 +3,9 @@ import logging
 import asyncio
 import os
 from typing import Callable
-import json
 from exorde.persist import PersistedDict
+import ssl
+import os
 
 
 def deep_merge(original_context: dict, update_context: dict) -> dict:
@@ -84,10 +85,6 @@ async def index_handler(request):
     return web.Response(text=html_content, content_type="text/html")
 
 
-import ssl
-import os
-
-
 async def setup_web() -> Callable:
     # Create an aiohttp application
     app = web.Application()
@@ -103,24 +100,31 @@ async def setup_web() -> Callable:
     app.router.add_static("/", dist_folder)
 
     # Load SSL/TLS context with the generated certificate and private key
-    ssl_context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
     CERT_PATH = os.getenv("CERT_PATH")
     if CERT_PATH:
+        ssl_context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
         ssl_context.load_cert_chain(
             CERT_PATH, keyfile=os.getenv("CERT_KEYFILE")
         )
-
+        PORT = 443
+    else:
+        ssl_context = None
+        PORT = 8080
     # Combine the WebSocket app with the existing app
     runner = web.AppRunner(app)
     await runner.setup()
 
     # Start the server
-    site = web.TCPSite(
-        runner, "0.0.0.0", 443 if CERT_PATH else 8080, ssl_context=ssl_context
-    )
+    site = web.TCPSite(runner, "0.0.0.0", PORT, ssl_context=ssl_context)
     await site.start()
 
-    logging.info("serving on 8080")
+    logging.info("")
+    logging.info("")
+    logging.info("")
+    logging.info(f"serving on {PORT} (ssl_context={ssl_context})")
+    logging.info("")
+    logging.info("")
+    logging.info("")
 
     # Return the ws_push function
     return ws_push

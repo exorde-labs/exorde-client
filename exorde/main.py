@@ -18,8 +18,10 @@ from exorde.counter import AsyncItemCounter
 from exorde.web import setup_web
 from exorde.last_notification import last_notification
 from exorde.docker_version_notifier import docker_version_notifier
+from exorde.get_static_configuration import get_static_configuration
 
 import logging
+import re
 
 
 logger = logging.getLogger()
@@ -28,7 +30,9 @@ logging.basicConfig(level=logging.INFO)
 
 
 async def main(command_line_arguments: argparse.Namespace):
+    websocket_send = await setup_web()
     counter: AsyncItemCounter = AsyncItemCounter()
+
     if not Web3.is_address(command_line_arguments.main_address):
         logging.error("The provided address is not a valid Web3 address")
         os._exit(1)
@@ -47,8 +51,6 @@ async def main(command_line_arguments: argparse.Namespace):
         )
         os._exit(1)
 
-    from exorde.get_static_configuration import get_static_configuration
-
     try:
         static_configuration: StaticConfiguration = (
             await get_static_configuration(
@@ -60,8 +62,6 @@ async def main(command_line_arguments: argparse.Namespace):
             "An error occured retrieving static configuration, exiting"
         )
         os._exit(1)
-
-    from exorde.notification import send_notification
 
     logging.info(
         f"Worker-Address is : {static_configuration['worker_account'].address}"
@@ -97,7 +97,6 @@ async def main(command_line_arguments: argparse.Namespace):
     cursor = 1
     from exorde.spotting import spotting
 
-    websocket_send = await setup_web()
     while True:
         if cursor % 3 == 0:
             try:
@@ -201,9 +200,6 @@ def clear_env():
         with open(".env", "w") as f:
             f.write(content)
         logging.info("clear_env: .env file cleared.")
-
-
-import re
 
 
 def batch_size_type(value):
