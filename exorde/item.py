@@ -9,21 +9,39 @@ from typing import Callable
 import uuid
 from datetime import datetime
 import traceback
-import pkg_resources
 from exorde.create_error_identifier import create_error_identifier
+from exorde.get_module_version import get_module_version
 
 
-def get_module_version(module_name):
+async def choose_module(
+    command_line_arguments, counter, websocket_send, intent_id
+):
     try:
-        # Use pkg_resources to retrieve the distribution object for the module
-        distribution = pkg_resources.get_distribution(module_name)
+        module, parameters, domain = await think(
+            command_line_arguments, counter, websocket_send, intent_id
+        )
+        await websocket_send(
+            {
+                "intents": {
+                    intent_id: {
+                        "module": module.__name__,
+                        "parameters": parameters,
+                    },
+                },
+                "modules": {
+                    module.__name__: {
+                        "version": get_module_version(module.__name__),
+                        "intents": {intent_id: {"parameters": parameters}},
+                    }
+                },
+            }
+        )
+        return (module, parameters, domain)
 
-        # Get the version from the distribution object
-        module_version = distribution.version
-
-        return module_version
-    except Exception as e:
-        return f"Unable to retrieve version for {module_name}: {str(e)}"
+    except Exception as error:
+        await websocket_send({"intents": {intent_id: {"error": str(error)}}})
+        logging.exception(f"An error occured in the brain function")
+        raise error
 
 
 async def get_item(
@@ -31,6 +49,10 @@ async def get_item(
     counter: AsyncItemCounter,
     websocket_send: Callable,
 ) -> AsyncGenerator[Item, None]:
+    """
+    1. Retrieve module & domain using `brain.think`
+    2. Use module.query AsyncGenerator to retrieve items
+    """
     module: ModuleType
     parameters: dict
     error_count: dict[ModuleType, int] = {}
@@ -49,36 +71,9 @@ async def get_item(
                     }
                 }
             )
-
-            try:
-                module, parameters, domain = await think(
-                    command_line_arguments, counter, websocket_send, intent_id
-                )
-                await websocket_send(
-                    {
-                        "intents": {
-                            intent_id: {
-                                "module": module.__name__,
-                                "parameters": parameters,
-                            },
-                        },
-                        "modules": {
-                            module.__name__: {
-                                "version": get_module_version(module.__name__),
-                                "intents": {
-                                    intent_id: {"parameters": parameters}
-                                },
-                            }
-                        },
-                    }
-                )
-
-            except Exception as error:
-                await websocket_send(
-                    {"intents": {intent_id: {"error": str(error)}}}
-                )
-                logging.exception(f"An error occured in the brain function")
-                raise error
+            (module, parameters, domain) = await choose_module(
+                command_line_arguments, counter, websocket_send, intent_id
+            )
 
             try:
                 async for item in module.query(parameters):
@@ -106,12 +101,10 @@ async def get_item(
             except GeneratorExit:
                 pass
             except Exception as e:
-                # Retrieve and format the traceback as a list of strings
                 traceback_list = traceback.format_exception(
                     type(e), e, e.__traceback__
                 )
                 error_id = create_error_identifier(traceback_list)
-
                 await websocket_send(
                     {
                         "intents": {intent_id: {"errors": {error_id: {}}}},
@@ -133,7 +126,6 @@ async def get_item(
                         },
                     }
                 )
-
                 logging.exception(
                     f"An error occured retrieving an item: %s using {module}",
                     e,

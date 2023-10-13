@@ -2,11 +2,62 @@ import argparse
 import re
 import logging
 from typing import Callable
+import os
 
 
-def setup_arguments(
-    write_env: Callable, clear_env: Callable
-) -> argparse.Namespace:
+def write_env(email, password, username, http_proxy=""):
+    # Check the conditions for each field
+    if email is None or len(email) <= 3:
+        logging.info("write_env: Invalid email. Operation aborted.")
+        return
+    if password is None or len(password) <= 3:
+        logging.info("write_env: Invalid password. Operation aborted.")
+        return
+    if username is None or len(username) <= 3:
+        logging.info("write_env: Invalid username. Operation aborted.")
+        return
+
+    # Define the content
+    content = f"SCWEET_EMAIL={email}\nSCWEET_PASSWORD={password}\nSCWEET_USERNAME={username}\nHTTP_PROXY={http_proxy}\n"
+    # Check if the .env file exists, if not create it
+    if not os.path.exists(".env"):
+        with open(".env", "w") as f:
+            f.write(content)
+        try:
+            os.chmod(
+                ".env", 0o600
+            )  # Set file permissions to rw for the owner only
+        except Exception as e:
+            logging.info("Error: ", e, " - could not chmod .env, passing...")
+        logging.info("write_env: .env file created.")
+    else:
+        with open(".env", "w") as f:
+            f.write(content)
+        logging.info("write_env: .env file updated.")
+
+
+def clear_env():
+    # Define the content
+    content = (
+        f"SCWEET_EMAIL=\nSCWEET_PASSWORD=\nSCWEET_USERNAME=\nHTTP_PROXY=\n"
+    )
+    if not os.path.exists(".env"):
+        with open(".env", "w") as f:
+            f.write(content)
+        try:
+            os.chmod(
+                ".env", 0o600
+            )  # Set file permissions to rw for the owner only
+        except Exception as e:
+            logging.info("Error: ", e, " - could not chmod .env, passing...")
+        logging.info("clear_env: .env file created & cleared.")
+    else:
+        with open(".env", "w") as f:
+            f.write(content)
+        logging.info("clear_env: .env file cleared.")
+
+
+def setup_arguments() -> argparse.Namespace:
     def batch_size_type(value):
         ivalue = int(value)
         if ivalue < 5 or ivalue > 200:
