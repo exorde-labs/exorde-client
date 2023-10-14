@@ -26,6 +26,7 @@ setup(
         "pyyaml",
         "web3",
         "packaging",
+        "finvader==1.0.2",
         "aiofiles==23.2.1",
         "keybert==0.7.0",
         "nltk==3.8.1",
