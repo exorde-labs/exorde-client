@@ -233,15 +233,15 @@ def tag(documents: list[str], lab_configuration):
         #  65% financial distil roberta model + 35% fin_vader_score
         fin_vader_sent = fin_vader_sentiment(text)
         fin_distil_score = fdb_sentiment(text)
-        fin_compounded_score = round((0.65 * fin_distil_score + 0.35 * fin_vader_sent),2)
+        fin_compounded_score = round((0.80 * fin_distil_score + 0.20 * fin_vader_sent),2)
         return fin_compounded_score
 
     def compounded_sentiment(text):
-        # compounded_total_score: gen_distilbert_sentiment * 60% + vader_sentiment * 20% + compounded_fin_sentiment * 20%
+        # compounded_total_score: gen_distilbert_sentiment * 65% + vader_sentiment * 15% + compounded_fin_sentiment * 20%
         gen_distilbert_sentiment = gdb_sentiment(text)
-        vader_sentiment = vader_sentiment(text)
+        vader_sent = vader_sentiment(text)
         compounded_fin_sentiment = compounded_financial_sentiment(text)
-        compounded_total_score = round((0.6 * gen_distilbert_sentiment + 0.2 * vader_sentiment + 0.2 * compounded_fin_sentiment),2)
+        compounded_total_score = round((0.65 * gen_distilbert_sentiment + 0.15 * vader_sent + 0.2 * compounded_fin_sentiment),2)
         return compounded_total_score
     
     # sentiment swifter apply compounded_sentiment
