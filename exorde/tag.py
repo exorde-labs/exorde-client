@@ -89,15 +89,7 @@ def tag(documents: list[str], lab_configuration):
     """
     nlp = lab_configuration["nlp"]
     device = lab_configuration["device"]
-    mappings = lab_configuration["mappings"]
-
-    def predict(text, pipe, tag, mappings):
-        preds = pipe.predict(text, verbose=0)[0]
-        result = []
-        for i in range(len(preds)):
-            result.append((mappings[tag][i], float(preds[i])))
-        return result
-
+    
     # get text content attribute from all items
     for doc in documents:
         assert isinstance(doc, str)
