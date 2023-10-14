@@ -191,8 +191,7 @@ def tag(documents: list[str], lab_configuration):
 
     def vader_sentiment(text):
         # predict financial sentiment 
-        fin_vader_sent = round(sentiment_analyzer.polarity_scores(text)["compound"],2)
-        return fin_vader_sent
+        return round(sentiment_analyzer.polarity_scores(text)["compound"],2)
     
     def fin_vader_sentiment(text):
         # predict general sentiment 
