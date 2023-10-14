@@ -2,9 +2,10 @@ import json
 import pandas as pd
 import numpy as np
 from sentence_transformers import SentenceTransformer
-from transformers import AutoTokenizer, pipeline
+from transformers import AutoTokenizer, AutoModelForSequenceClassification, pipeline
 from huggingface_hub import hf_hub_download
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+from finvader import finvader
 import tensorflow as tf
 import swifter
 from exorde.models import (
@@ -168,34 +169,95 @@ def tag(documents: list[str], lab_configuration):
     sentiment_analyzer = SentimentIntensityAnalyzer()
     sentiment_analyzer.lexicon.update(Loughran_dict)
     sentiment_analyzer.lexicon.update(unic_emoji_dict)
-    tmp["Sentiment"] = tmp["Translation"].swifter.apply(
-        lambda x: float(sentiment_analyzer.polarity_scores(x)["compound"])
+    ############################
+    # financial distilroberta
+    fdb_tokenizer = AutoTokenizer.from_pretrained("mrm8488/distilroberta-finetuned-financial-news-sentiment-analysis")
+    fdb_model = AutoModelForSequenceClassification.from_pretrained("mrm8488/distilroberta-finetuned-financial-news-sentiment-analysis")
+    ############################
+    # distilbert sentiment
+    gdb_tokenizer = AutoTokenizer.from_pretrained("lxyuan/distilbert-base-multilingual-cased-sentiments-student")
+    gdb_model = AutoModelForSequenceClassification.from_pretrained("lxyuan/distilbert-base-multilingual-cased-sentiments-student")
+    ############################
+
+    fdb_pipe = pipeline(
+        "text-classification",
+        model=fdb_model,
+        tokenizer=fdb_tokenizer,
+        top_k=None, 
+        max_length=512,
+        padding=True,
     )
 
-    # Custom model pipelines
-    custom_model_data = [
-        ("Age", "ExordeLabs/AgeDetection", "ageDetection.h5"),
-        ("Gender", "ExordeLabs/GenderDetection", "genderDetection.h5"),
-        # (
-        #     "HateSpeech",
-        #     "ExordeLabs/HateSpeechDetection",
-        #     "hateSpeechDetection.h5",
-        # ),
-    ]
+    gdb_pipe = pipeline(
+        "text-classification",
+        model=gdb_model,
+        tokenizer=gdb_tokenizer,
+        top_k=None, 
+        max_length=512,
+        padding=True,
+    )
 
-    for col_name, repo_id, file_name in custom_model_data:
-        model_file = hf_hub_download(repo_id=repo_id, filename=file_name)
-        custom_model = tf.keras.models.load_model(
-            model_file,
-            custom_objects={
-                "TokenAndPositionEmbedding": TokenAndPositionEmbedding,
-                "TransformerBlock": TransformerBlock,
-            },
-        )
-        tmp[col_name] = tmp["Embedded"].swifter.apply(
-            lambda x: predict(x, custom_model, col_name, mappings)
-        )
-        del custom_model  # free ram for latest custom_model
+    def vader_sentiment(text):
+        # predict financial sentiment 
+        fin_vader_sent = round(sentiment_analyzer.polarity_scores(text)["compound"],2)
+        return fin_vader_sent
+    
+    def fin_vader_sentiment(text):
+        # predict general sentiment 
+        return round(finvader(text, 
+                        use_sentibignomics = True, 
+                        use_henry = True, 
+                        indicator = 'compound' ),2)
+
+    def fdb_sentiment(text):
+        prediction = fdb_pipe(text)
+        fdb_sentiment_dict = {}
+        for e in prediction[0]:
+            if e["label"] == "negative":
+                fdb_sentiment_dict["negative"] = round(e["score"],3)
+            elif e["label"] == "neutral":
+                fdb_sentiment_dict["neutral"] =  round(e["score"],3)
+            elif e["label"] == "positive":
+                fdb_sentiment_dict["positive"] =  round(e["score"],3)
+        # compounded score
+        fdb_compounded_score = round((fdb_sentiment_dict["positive"] - fdb_sentiment_dict["negative"]),3)
+        return fdb_compounded_score
+
+    def gdb_sentiment(text):
+        # predict general sentiment 
+        prediction = gdb_pipe(text)
+        gen_distilbert_sent = {}
+        for e in prediction[0]:
+            if e["label"] == "negative":
+                gen_distilbert_sent["negative"] = round(e["score"],3)
+            elif e["label"] == "neutral":
+                gen_distilbert_sent["neutral"] =  round(e["score"],3)
+            elif e["label"] == "positive":
+                gen_distilbert_sent["positive"] =  round(e["score"],3)
+        # compounded score
+        gdb_score = round((gen_distilbert_sent["positive"] - gen_distilbert_sent["negative"]),3)
+        return gdb_score
+    
+    def compounded_financial_sentiment(text):
+        #  65% financial distil roberta model + 35% fin_vader_score
+        fin_vader_sent = fin_vader_sentiment(text)
+        fin_distil_score = fdb_sentiment(text)
+        fin_compounded_score = round((0.65 * fin_distil_score + 0.35 * fin_vader_sent),2)
+        return fin_compounded_score
+
+    def compounded_sentiment(text):
+        # compounded_total_score: gen_distilbert_sentiment * 60% + vader_sentiment * 20% + compounded_fin_sentiment * 20%
+        gen_distilbert_sentiment = gdb_sentiment(text)
+        vader_sentiment = vader_sentiment(text)
+        compounded_fin_sentiment = compounded_financial_sentiment(text)
+        compounded_total_score = round((0.6 * gen_distilbert_sentiment + 0.2 * vader_sentiment + 0.2 * compounded_fin_sentiment),2)
+        return compounded_total_score
+    
+    # sentiment swifter apply compounded_sentiment
+    tmp["Sentiment"] = tmp["Translation"].swifter.apply(compounded_sentiment)
+    
+    # financial sentiment swifter apply compounded_financial_sentiment
+    tmp["FinancialSentiment"] = tmp["Translation"].swifter.apply(compounded_financial_sentiment)
 
     del tmp["Embedded"]
     # The output is a list of dictionaries, where each dictionary represents a single input text and contains
@@ -208,6 +270,8 @@ def tag(documents: list[str], lab_configuration):
         language_score = LanguageScore(tmp[i]["LanguageScore"][0][1])
 
         sentiment = Sentiment(tmp[i]["Sentiment"])
+
+        # financial_sentiment = Sentiment(tmp[i]["FinancialSentiment"])
 
         embedding = Embedding(tmp[i]["Embedding"])
 
