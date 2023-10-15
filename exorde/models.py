@@ -81,13 +81,6 @@ class LanguageScore(float, metaclass=MadType):
     description = "Readability score of the text"
     annotation = float
 
-
-class Gender(dict, metaclass=MadType):
-    male: float
-    female: float
-    description = "Probable gender (female or male) of the author"
-
-
 class SourceType(str, metaclass=MadType):
     description = "Category of the source that has produced the post"
     annotation = str
@@ -140,23 +133,13 @@ class Irony(dict, metaclass=MadType):
     description = "Measure of how much a post is ironic (in %)"
 
 
-class Age(dict, metaclass=MadType):
-    below_twenty: float
-    twenty_thirty: float
-    thirty_forty: float
-    forty_more: float
-    description = "Measure author's age"
-
-
 class Analysis(dict, metaclass=MadType):
     language_score: LanguageScore
     sentiment: Sentiment
     embedding: Embedding
-    gender: Gender
     text_type: TextType
     emotion: Emotion
     irony: Irony
-    age: Age
 
 
 class StaticConfiguration(dict):
@@ -257,12 +240,10 @@ class ProtocolAnalysis(dict, metaclass=MadType):
     language_score: LanguageScore
     sentiment: Sentiment
     embedding: Embedding
-    gender: Gender
     source_type: SourceType
     text_type: TextType
     emotion: Emotion
     irony: Irony
-    age: Age
 
 
 class ProcessedItem(dict, metaclass=MadType):
