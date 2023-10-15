@@ -260,7 +260,7 @@ def tag(documents: list[str], lab_configuration):
 
         sentiment = Sentiment(tmp[i]["Sentiment"])
 
-        # financial_sentiment = Sentiment(tmp[i]["FinancialSentiment"])
+        financial_sentiment = Sentiment(tmp[i]["FinancialSentiment"])
 
         embedding = Embedding(tmp[i]["Embedding"])
 
