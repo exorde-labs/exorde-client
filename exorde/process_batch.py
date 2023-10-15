@@ -25,8 +25,6 @@ from exorde.models import (
     TextType,
     Emotion,
     Irony,
-    Age,
-    Gender,
     Analysis
 )
 from exorde_data import Url
@@ -50,14 +48,12 @@ def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
 
         categories_list = []
         top_keywords_list = []
-        gender_list = []
         sentiment_list = []
         source_type_list = []
         text_type_list = []
         emotion_list = []
         language_score_list = []
         irony_list = []
-        age_list = []
         embedding_list = []
 
         logging.info(f"[Item merging] Merging {len(chunks)} chunks.")
@@ -65,14 +61,12 @@ def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
             item_analysis_ = processed_item.analysis
             categories_list.append(item_analysis_.classification)
             top_keywords_list.append(item_analysis_.top_keywords)
-            gender_list.append(item_analysis_.gender)
             sentiment_list.append(item_analysis_.sentiment)
             source_type_list.append(item_analysis_.source_type)
             text_type_list.append(item_analysis_.text_type)
             emotion_list.append(item_analysis_.emotion)
             language_score_list.append(item_analysis_.language_score)
             irony_list.append(item_analysis_.irony)
-            age_list.append(item_analysis_.age)
             embedding_list.append(item_analysis_.embedding)
 
         ## AGGREGATED VALUES
@@ -89,11 +83,6 @@ def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
         top_keywords_aggregated = Keywords(
             list(set(top_keywords_aggregated))
         )  # filter duplicates
-        ## -> gender: Take the median tuple
-        gender_aggregated = Gender(
-            male=np.median([x.male for x in gender_list]),
-            female=np.median([x.female for x in gender_list]),
-        )
         ## -> sentiment: Take the median all sentiments
         sentiment_aggregated = Sentiment(np.median(sentiment_list))
         ## -> source_type: Take the majority of source_type (if there is a tie, take "social"). Possible values = "social" or "news"
@@ -150,13 +139,6 @@ def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
             irony=np.median([i.irony for i in irony_list]),
             non_irony=np.median([i.non_irony for i in irony_list]),
         )
-        ## -> age: Take the median
-        age_aggregated = Age(
-            below_twenty=np.median([a.below_twenty for a in age_list]),
-            twenty_thirty=np.median([a.twenty_thirty for a in age_list]),
-            thirty_forty=np.median([a.thirty_forty for a in age_list]),
-            forty_more=np.median([a.forty_more for a in age_list]),
-        )
         ## -> embedding: take closest vector to centroid
         centroid_vector = np.median(embedding_list, axis=0)
         # Calculate the closest vector in embedding_list to the centroid_vector
@@ -173,14 +155,12 @@ def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
                 classification=category_aggregated,
                 top_keywords=top_keywords_aggregated,
                 language_score=language_score_aggregated,
-                gender=gender_aggregated,
                 sentiment=sentiment_aggregated,
                 embedding=closest_embedding,
                 source_type=source_type_aggregated,
                 text_type=text_type_aggregated,
                 emotion=emotion_aggregated,
                 irony=irony_aggregated,
-                age=age_aggregated,
             ),
             collection_client_version=chunks[0].collection_client_version,
             collection_module=chunks[0].collection_module,
@@ -258,14 +238,12 @@ async def process_batch(
                 classification=processed.classification,
                 top_keywords=processed.top_keywords,
                 language_score=analysis.language_score,
-                gender=analysis.gender,
                 sentiment=analysis.sentiment,
                 embedding=analysis.embedding,
                 source_type=get_source_type(prot_item),
                 text_type=analysis.text_type,
                 emotion=analysis.emotion,
                 irony=analysis.irony,
-                age=analysis.age,
             ),
             collection_client_version=CollectionClientVersion(
                 f"exorde:v.{metadata.version('exorde_data')}"
