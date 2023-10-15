@@ -83,6 +83,10 @@
                         "description":"Measure of post sentiment from negative to positive (-1 = negative, +1 = positive, 0 = neutral)",
                         "type":"number"
                      },
+                     "financial_sentiment":{
+                        "description":"Measure of post financial-only sentiment from negative to positive (-1 = negative, +1 = positive, 0 = neutral)",
+                        "type":"number"
+                     },
                      "embedding":{
                         "description":"Vector/numerical representation of the translated content (field: translation), produced by a NLP encoder model",
                         "type":"array",
@@ -312,16 +316,13 @@
                      }
                   },
                   "required":[
-                     "classification",
                      "language_score",
                      "sentiment",
                      "embedding",
-                     "gender",
                      "source_type",
                      "text_type",
                      "emotion",
                      "irony",
-                     "age",
                      "top_keywords"
                   ]
                },
