@@ -29,7 +29,7 @@ setup(
         "finvader==1.0.2",
         "aiofiles==23.2.1",
         "keybert==0.7.0",
-        "nltk==3.8.1",
+        "nltk==3.6.2",
         "safetensors==0.3.1",
         "numpy==1.23.4",
         "tiktoken==0.4.0",
