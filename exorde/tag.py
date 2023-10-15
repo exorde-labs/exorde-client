@@ -17,8 +17,6 @@ from exorde.models import (
     TextType,
     Emotion,
     Irony,
-    Age,
-    Gender,
     Analysis,
 )
 
@@ -72,8 +70,8 @@ def tag(documents: list[str], lab_configuration):
     Analyzes and tags a list of text documents using various NLP models and techniques.
 
     The function processes the input documents using pre-trained models for tasks such as
-    sentence embeddings, text classification, sentiment analysis, and custom models for age,
-    gender, and hate speech detection. It returns a list of dictionaries containing the
+    sentence embeddings, text classification, sentiment analysis, and custom models for
+    hate speech detection. It returns a list of dictionaries containing the
     processed data for each input document.
 
     Args:
@@ -266,10 +264,6 @@ def tag(documents: list[str], lab_configuration):
 
         embedding = Embedding(tmp[i]["Embedding"])
 
-        gender = Gender(
-            male=tmp[i]["Gender"][0][1], female=tmp[i]["Gender"][1][1]
-        )
-
         types = {item[0]: item[1] for item in tmp[i]["TextType"]}
         text_type = TextType(
             assumption=types["Assumption"],
@@ -316,24 +310,13 @@ def tag(documents: list[str], lab_configuration):
 
         irony = Irony(irony=ironies["irony"], non_irony=ironies["non_irony"])
 
-        ages = {item[0]: item[1] for item in tmp[i]["Age"]}
-
-        age = Age(
-            below_twenty=ages["<20"],
-            twenty_thirty=ages["20<30"],
-            thirty_forty=ages["30<40"],
-            forty_more=ages[">=40"],
-        )
-
         analysis = Analysis(
             language_score=language_score,
             sentiment=sentiment,
             embedding=embedding,
-            gender=gender,
             text_type=text_type,
             emotion=emotion,
-            irony=irony,
-            age=age,
+            irony=irony
         )
 
         _out.append(analysis)
