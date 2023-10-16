@@ -35,6 +35,13 @@ async def upload_to_ipfs(
                     headers={"Content-Type": "application/json"},
                     timeout=90,  # Set a timeout for the request
                 ) as resp:
+                    logging.info(f"[IPFS API Initial trace] Response status = {resp.status}, content = {await resp.text()}")
+                    # if empty content in response, raise exception
+                    if "empty content" in await resp.text():
+                        empty_content_flag = True
+                        raise Exception(
+                            "[IPFS API] Upload failed because items are too old"
+                        )
                     if resp.status == 200:
                         logging.debug("Upload to IPFS succeeded")
                         response = await resp.json()
