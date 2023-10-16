@@ -215,13 +215,6 @@ async def spotting(
                 }
             }
         )
-        # write processed_batch to local file: 
-        #   - use spotting_identifier as filename
-        #   - use processed_batch as content
-        # write to /exorde/files/{spotting_identifier}.json
-        with open(f"/exorde/files/{spotting_identifier}.json", "w") as f:
-            json.dump(processed_batch, f)
-        logging.info(f"[DEBUG] Successfully wrote file to local filesystem to /exorde/files/{spotting_identifier}.json")
         cid: Union[str, None] = await upload_to_ipfs(
             processed_batch, str(spotting_identifier), websocket_send
         )
