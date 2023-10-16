@@ -85,51 +85,55 @@ async def index_handler(request):
     return web.Response(text=html_content, content_type="text/html")
 
 
-async def setup_web() -> Callable:
-    # Create an aiohttp application
-    app = web.Application()
-
-    # Get both the WebSocket handler and the push function from the factory
-    websocket_handler, ws_push = websocket_handler_factory()
-
-    # Add a WebSocket route, using the handler from the factory
-    app.router.add_get("/ws", websocket_handler)
-    dist_folder = os.path.abspath("./ui/dist")
-    logging.info(f"serving static from {dist_folder}")
-    app.router.add_get("/", index_handler)
-    app.router.add_static("/", dist_folder)
-
-    # Load SSL/TLS context with the generated certificate and private key
-    CERT_PATH = os.getenv("CERT_PATH")
-    if CERT_PATH:
-        ssl_context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
-        ssl_context.load_cert_chain(
-            CERT_PATH, keyfile=os.getenv("CERT_KEYFILE")
-        )
-        PORT = 443
-    else:
-        ssl_context = None
-        PORT = 8080
-    # Combine the WebSocket app with the existing app
-    runner = web.AppRunner(app)
-    await runner.setup()
-
-    # Start the server
-    site = web.TCPSite(runner, "0.0.0.0", PORT, ssl_context=ssl_context)
-    await site.start()
-
-    logging.info("")
-    logging.info("")
-    logging.info("")
-    logging.info(f"serving on {PORT} (ssl_context={ssl_context})")
-    logging.info("")
-    logging.info("")
-    logging.info("")
-
-    # Return the ws_push function
-    return ws_push
+import argparse
 
 
-if __name__ == "__main__":
-    ws_push_function = asyncio.get_event_loop().run_until_complete(setup_web())
-    asyncio.get_event_loop().run_forever()
+async def setup_web(command_line_arguments: argparse.Namespace) -> Callable:
+    if command_line_arguments.web:
+        # Create an aiohttp application
+        app = web.Application()
+
+        # Get both the WebSocket handler and the push function from the factory
+        websocket_handler, ws_push = websocket_handler_factory()
+
+        # Add a WebSocket route, using the handler from the factory
+        app.router.add_get("/ws", websocket_handler)
+        dist_folder = os.path.abspath("./ui/dist")
+        logging.info(f"serving static from {dist_folder}")
+        app.router.add_get("/", index_handler)
+        app.router.add_static("/", dist_folder)
+
+        # Load SSL/TLS context with the generated certificate and private key
+        CERT_PATH = os.getenv("CERT_PATH")
+        if CERT_PATH:
+            ssl_context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+            ssl_context.load_cert_chain(
+                CERT_PATH, keyfile=os.getenv("CERT_KEYFILE")
+            )
+            PORT = 443
+        else:
+            ssl_context = None
+            PORT = 8080
+        # Combine the WebSocket app with the existing app
+        runner = web.AppRunner(app)
+        await runner.setup()
+
+        # Start the server
+        site = web.TCPSite(runner, "0.0.0.0", PORT, ssl_context=ssl_context)
+        await site.start()
+
+        logging.info("")
+        logging.info("")
+        logging.info("")
+        logging.info(f"serving on {PORT} (ssl_context={ssl_context})")
+        logging.info("")
+        logging.info("")
+        logging.info("")
+
+        # Return the ws_push function
+        return ws_push
+
+    async def do_nothing(message):
+        pass
+
+    return do_nothing

@@ -1,7 +1,6 @@
 import argparse
 import re
 import logging
-from typing import Callable
 import os
 
 
@@ -154,6 +153,9 @@ def setup_arguments() -> argparse.Namespace:
         dest="loglevel",
         const=logging.DEBUG,
         default=logging.INFO,
+    )
+    parser.add_argument(
+        "--web", type=bool, help="Experimental web interface for debugging"
     )
     parser.add_argument(
         "--custom_batch_size",

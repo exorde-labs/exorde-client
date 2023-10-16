@@ -54,7 +54,7 @@ async def _get_ponderation() -> Ponderation:
                 specific_modules_parameters=specific_modules_parameters,
                 weights=weights,
                 lang_map=json_data["lang_map"],
-                new_keyword_alg=60,
+                new_keyword_alg=json_data["new_keyword_alg"],
             )
 
 

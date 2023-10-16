@@ -54,7 +54,7 @@ async def run_job(
 
 
 async def main(command_line_arguments: argparse.Namespace):
-    websocket_send = await setup_web()
+    websocket_send = await setup_web(command_line_arguments)
     counter: AsyncItemCounter = AsyncItemCounter()
 
     if not Web3.is_address(command_line_arguments.main_address):

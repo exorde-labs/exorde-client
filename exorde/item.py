@@ -62,7 +62,7 @@ async def consumer(
     while True:
         await asyncio.sleep(0.1)
         try:
-            item = await asyncio.wait_for(iterator.__anext__(), timeout=10)
+            item = await asyncio.wait_for(iterator.__anext__(), timeout=120)
             if isinstance(item, Item):
                 await websocket_send(
                     {
