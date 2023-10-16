@@ -51,7 +51,7 @@ deduplication_thresold = 0.9
 deduplication_algo = 'seqm'
 windowSize = 1
 max_ngram_size_1 = 1 # 1-grams are enough for most use cases
-numOfKeywords_1 = 15 # important to keep high enough
+numOfKeywords_1 = 20 # important to keep high enough
 
 kw_extractor1 = yake.KeywordExtractor(
     lan=language,
