@@ -9,7 +9,6 @@ from transformers import AutoTokenizer, pipeline
 from huggingface_hub import hf_hub_download
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
-print("importing wtpsplit....")
 wtp = WtP("wtp-canine-s-1l")
 
 models = [
@@ -32,7 +31,7 @@ install_hugging_face_models(models)
 def is_english_target(s):
     return '→ English' in s
 
-langs_to_exclude_from_preinstall = ["Azerbaijani", "Catalan", "Esperanto", "Persian"]
+langs_to_exclude_from_preinstall = ["Azerbaijani", "Catalan", "Esperanto"]
 
 def is_to_exclude(s):
     for lang in langs_to_exclude_from_preinstall:
