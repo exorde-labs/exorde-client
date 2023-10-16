@@ -84,10 +84,15 @@ async def consumer(
                 yield item
             else:
                 continue
-        except GeneratorExit:
+
+        except GeneratorExit:   
             raise
         except TimeoutError:
             raise GeneratorExit
+        except StopAsyncIteration:
+            logging.info(f"End of iterator {module.__name__} - StopAsyncIteration")
+        except asyncio.TimeoutError:
+            logging.info(f"End of iterator {module.__name__} - TimeoutError")
         except Exception as e:
             traceback_list = traceback.format_exception(
                 type(e), e, e.__traceback__
