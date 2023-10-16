@@ -211,9 +211,9 @@ async def prepare_batch(
                 logging.info(
                     f" + A new item has been processed {len(batch)}/{selected_batch_size} - ({exec_time_s} s) - Source = {str(item['domain'])} -  token count = {item_token_count}"
                 )
-            if diff > 50 and len(batch) > 5:
-                logging.info("Early-Stop current batch to prevent data-aging")
-                return batch
+            # if diff > 50 and len(batch) > 5:
+            #    logging.info("Early-Stop current batch to prevent data-aging")
+            #    return batch
             # Evaluate the maximum allowed cumulated token count in batch
             try:
                 max_batch_total_tokens_ = int(

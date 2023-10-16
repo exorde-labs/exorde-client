@@ -43,8 +43,8 @@ async def upload_to_ipfs(
                         )
                         return response["cid"]
                     if resp.status == 500:
-                        text = await resp.json()
-                        error_identifier = create_error_identifier(text)
+                        text = await resp.text()
+                        error_identifier = create_error_identifier([text])
                         await websocket_send(
                             {
                                 "jobs": {
