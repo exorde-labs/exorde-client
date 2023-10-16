@@ -17,7 +17,9 @@ models = [
     "cardiffnlp/twitter-roberta-base-irony",
     "salesken/query_wellformedness_score",
     "marieke93/MiniLM-evidence-types",
-    "alimazhar-110/website_classification"
+    "alimazhar-110/website_classification",
+    "mrm8488/distilroberta-finetuned-financial-news-sentiment-analysis",
+    "lxyuan/distilbert-base-multilingual-cased-sentiments-student"
 ]
 
 def install_hugging_face_models(models):
