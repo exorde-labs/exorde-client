@@ -128,7 +128,12 @@ async def prepare_batch(
         else live_configuration["batch_size"]
     )
 
+    gather_time = time.time()
+    times = [time.time()]  # [prepare_batch_start_time, ... item.recolt_time]
     async for item in generator:
+        diff = time.time() - gather_time
+        gather_time = time.time()
+        times.append(gather_time)
         item_id = item_id + 1
         try:
             start_time: float = time.perf_counter()
@@ -206,6 +211,9 @@ async def prepare_batch(
                 logging.info(
                     f" + A new item has been processed {len(batch)}/{selected_batch_size} - ({exec_time_s} s) - Source = {str(item['domain'])} -  token count = {item_token_count}"
                 )
+            if diff > 50 and len(batch) > 5:
+                logging.info("Early-Stop current batch to prevent data-aging")
+                return batch
             # Evaluate the maximum allowed cumulated token count in batch
             try:
                 max_batch_total_tokens_ = int(
@@ -228,7 +236,7 @@ async def prepare_batch(
                 # If we have enough items of each enough tokens
                 cumulative_token_size > max_batch_total_tokens_
                 # Or If we have enough items overall
-                or len(batch) >= selected_batch_size
+                or len(batch) >= selected_batch_size  # add spent_time notion
             ):
                 return batch
         except Exception as e:
