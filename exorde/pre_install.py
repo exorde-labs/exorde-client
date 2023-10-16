@@ -34,7 +34,7 @@ install_hugging_face_models(models)
 def is_english_target(s):
     return '→ English' in s
 
-langs_to_exclude_from_preinstall = ["Azerbaijani", "Catalan", "Esperanto", "Persian"]
+langs_to_exclude_from_preinstall = ["Catalan", "Esperanto"]
 
 def is_to_exclude(s):
     for lang in langs_to_exclude_from_preinstall:
