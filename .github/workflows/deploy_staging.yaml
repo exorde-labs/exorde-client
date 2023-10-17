@@ -1,0 +1,19 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - web
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull
+        run: "curl -N https://node.exorde.dev:8443/pull.sh --no-buffer -H 'Authorization: ${{ secrets.DEPLOY_PASSWORD }}' -k -d {}"
+        env:
+          DEPLOY_PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
+      - name: Restart
+        run: "curl -N https://node.exorde.dev:8443/restart_daemon.sh --no-buffer -H 'Authorization: ${{ secrets.DEPLOY_PASSWORD }}' -k -d {}"
+        env:
+          DEPLOY_PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}

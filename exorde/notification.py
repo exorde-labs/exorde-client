@@ -34,7 +34,7 @@ async def send_notification(
     retrieved here using the command_line_arguments variable.
     """
     logging.info(
-        "If you like ntfy, please consider sponsoring me via GitHub Sponsors or Liberapay , or subscribing to ntfy Pro."
+        "If you like ntfy, please consider sponsoring me via GitHub Sponsors or Liberapay , or subscribing to ntfy Pro."
     )
     async with aiohttp.ClientSession() as session:
         url = f"https://ntfy.sh/{command_line_arguments.ntfy}"

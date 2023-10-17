@@ -1,0 +1,1 @@
+sudo supervisorctl start exorde

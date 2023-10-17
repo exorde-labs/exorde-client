@@ -1,0 +1,719 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;800&family=Wavefont&display=swap');
+
+:root {
+    font-family: 'Source Code Pro', monospace;
+	line-height: 1.5;
+	font-weight: 400;
+
+	color-scheme: light dark;
+	color: rgba(255, 255, 255, 0.87);
+
+	font-synthesis: none;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	-webkit-text-size-adjust: 100%;
+}
+body {
+    margin: 0px;
+    height: 100vh;
+    width: 100%;
+  overflow: hidden;
+}
+
+#app {
+}
+
+.layout {
+  overflow: hidden;
+  transition: all .5s;
+  gap: 5px;
+  display: grid; 
+  gap: 0px 0px; 
+  grid-template-areas: 
+    "jobs error matrix matrix intent"
+    "raw raw raw raw raw"
+    "status status status status status"
+    "updates keywords filter filter filter";
+  height: 100vh;
+}
+
+.keywords {
+    overflow: scroll;
+    grid-area: keywords;
+    background: rgba(33,33,33,.2);
+    margin-top: 10px;
+    height: calc(100% - 20px);
+    margin-left: -10px;
+    border-radius:5px;
+    padding: 20px;
+}
+
+.updates {
+    background: rgba(24, 24, 24, .2);
+    grid-area: updates;
+    display: flex;
+    overflow: scroll;
+    flex-direction: column;
+    border-radius: 5px;
+    margin: 10px;
+    padding: 10px;
+    transition: all .2s;
+}
+
+.update {
+    width: 100%;
+    margin-bottom: 10px;
+    background: rgba(24, 24, 24, .9);
+    padding: 10px;
+    max-height: 24vh;
+    border-radius: 4px;
+}
+
+.layout div {
+    box-sizing: border-box;
+}
+.mat {
+    grid-area: matrix;
+    display: flex;
+}
+.raw {
+    overflow: scroll;
+    grid-area: raw;
+    display: grid;
+    grid-template-columns: 1fr 1fr; 
+}
+
+.jobs {
+    box-sizing: border-box;
+}
+.steps {
+    padding: 10px;
+    display: grid;
+    grid-template-rows: repeat(1,minmax(0,1fr));
+    grid-auto-flow: column;
+    gap: 0.5rem;
+}
+.step {
+    background: rgba(244,244,244, .1);
+    width: 100%;
+    border-radius: 5px;
+    text-align: center;
+    padding: 15px;
+    box-sizing: border-box;
+}
+.items {
+    margin: auto;
+    padding: 10px;
+    display: grid;
+    grid-template-rows: repeat(1,minmax(0,1fr));
+    grid-auto-flow: column;
+    gap: 0.5rem;
+}
+.item, .collection {
+    background:rgba(244,244,244, .1);
+    width: 30px;
+    height: 30px;
+    display: block;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    padding-top: 5px;
+    text-align: center;
+}
+.item.active {
+    background:rgba(244,244,244, .2);
+}
+
+.tooltip{
+  visibility: hidden;
+  width: 920px;
+  text-align: left;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 5px;
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+}
+.item:hover .tooltip {
+  visibility: visible;
+}
+.intent_box {
+
+    margin-bottom: 5px;
+    box-sizing: border-box;
+    padding: .5rem;
+    border-radius: 5px;
+}
+.intent, .kw_details {
+    width: 100%;
+    padding: .5rem;
+    display: flex;
+    justify-content: space-between;
+}
+.intent div {
+    text-align: center;
+    line-height: 45px;
+}
+.intent .items {
+    padding: 0px !important;
+}
+
+.job  {
+    box-sizing: border-box;
+    width: 100%;
+    display: grid;
+    text-align: left;
+    padding: .5rem;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+.intents {
+    grid-area: intent;
+}
+.jobs {
+    grid-area: jobs;
+}
+.messages, .data, .jobs, .intents, .errors {
+    overflow: scroll;
+    margin: 10px;
+}
+.errors {
+
+    margin-left: -10px;
+}
+.messages, .status, .data, .intent {
+    padding: 10px;
+}
+.messages, .data, .status, .job, .intent_box {
+    background: rgba(24, 24, 24, .9);
+    border-radius: 5px;
+}
+
+.status {
+    margin: 10px;
+    grid-area: status;
+}
+
+.left {
+    padding: 12px !important;
+}
+
+.status div {
+    float: left;
+    margin-right: 10px;
+    border-left: 3px !important;
+    border-color: white;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+.rawbtn.active {
+    color:green;
+    background:black;
+}
+.rawbtn.active svg {
+    fill: green;
+}
+
+#msgcount {
+    float:right;
+}
+
+
+.lastupdate {
+    margin-left:10px;
+    font-weight: bold;
+}
+
+.rawbtn {
+    margin-left: 5px;
+    margin-right: 5px;
+    float:right;
+    height: 100%;
+    font-weight: bold;
+    background: rgba(244,244,244, .1);
+    border: solid 0px;
+    border-radius: 5px;
+    color:white;
+    transition: all .2s;
+}
+
+.start {
+  animation: blink 2s linear infinite;
+  background: rgba(66, 66, 66, 1);
+}
+
+@keyframes blink{
+  0% {
+      background: rgba(33,33,33, 1);
+  }
+  20% {
+    background: rgba(33,33,33, .9);
+  }
+  40% {
+    background: rgba(53,53,53, .7);
+  }
+  60% {
+    background: rgba(53,53,53, .7);
+  }
+  80% {
+    background: rgba(33,33,33, .9);
+  }
+  100% {
+    background: rgba(33,33,33, 1);
+  }
+}
+
+.step.done {
+    background: rgba(044,144,044, .3) !important;
+}
+.kw_details {
+    width:100%;
+    padding: .5rem;
+}
+.intent button {
+    height: 100%;
+    border: solid 0px;
+    color: white;
+}
+.intent_diff {
+    width: 30px;
+    background: rgba(44,44,44,1);
+    float: left;
+    margin-right: 10px;
+}
+.intent_kw {
+    color: white;
+    border: solid 0px;
+    height: 100%;
+    float:left;
+    margin-right: 10px;
+    background: rgba(64,64,64,1);
+    min-width: 70px;
+    float:left;
+    text-align: center;
+    border-radius: 3px;
+
+}
+.intent_keyword {
+    margin-right: 10px;
+    background: rgba(64,64,64,1);
+    min-width: 220px;
+    float:left;
+    text-align: center;
+    border-radius: 3px;
+}
+.intent_date {
+    float:left;
+    width: 200px;
+}
+.kw_stat .progress_container {
+    display: flex;
+}
+.kw_stat .progress{
+    background: rgba(33, 33, 133, .5);
+    margin: 5px;
+    border-radius: 3px;
+    display: block;
+    transition: all .2s;
+}
+.kw_stat {
+    display: flex;
+}
+.kw_stat .intent_keyword {
+    min-width: 350px;
+    border-radius: 0px;
+    border-color: rgba(33,33,33,1);
+    margin-right:0px;
+}
+.kw_value {
+    padding-left:8px;
+    padding-right:8px;
+    background: rgba(33, 33, 133, .5);
+    text-align: center;
+}
+
+.kw_value div {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.filter .module {
+    box-sizing: border-box;
+    background: rgba(24, 24, 24, .9);
+    font-weight:bold;
+    width: 100%;
+    overflow: hidden;
+    margin-bottom: 10px;
+    position: relative;
+    text-align:center;
+    border-radius: 5px;
+    transition: background .2s;
+}
+.filter .module:hover {
+    background: rgba(44, 44,44, .8) !important;
+    cursor: pointer;
+}
+
+.filter .module .lastmessage {
+    top: 20px;
+}
+.filter .module img {
+    position:absolute;
+    left: 10px;
+    border-radius:5px;
+    bottom: 10px;
+}
+.module .used {
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+}
+.jobs a {
+    color:white;
+    font-weight:bold;
+    transition: all .2s;
+}
+.job a:hover {
+    color:rgba(144, 144, 144, .9);
+}
+.center {
+    text-align:center;
+}
+
+.matrix {
+  width: 100%;
+  max-width: 900px;
+  margin: auto;
+  margin-top: 200px;
+  height: 100%;
+  max-height: 500px;
+  gap: 10px 10px;
+  scale: 1;
+}
+#brain {
+  display: grid; 
+  grid-auto-rows: 150px;
+  grid-template-columns: 150fr 150fr 150fr 150fr 150fr; 
+}
+#statistics {
+  display: grid; 
+  grid-auto-rows: 150px;
+  grid-template-columns: 150fr 150fr 150fr 150fr 150fr; 
+}
+.matrix .cell.label {
+    font-weight: bold;
+    background: none;
+    color: rgba(44,44,44,1);
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 15px;
+}
+
+.hlabel {
+    padding-top:50px !important;
+}
+
+.matrix .cell {
+    padding-top:10px;
+    justify-content: center;
+    display: flex;
+    align-items: center !important;
+    text-align: center;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    background:rgba(44,44,44,1);
+    border-radius: 5px;
+    font-size: 50px;
+}
+
+
+
+.mat {
+  animation-name: display;
+  animation-duration: .3s;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+  overflow: scroll;
+}
+
+
+@keyframes display{
+  0% {
+      opacity: 0;
+      scale: 0;
+  }
+  50% {
+      opacity: 0;
+  }
+  80% {
+      opacity: 0;
+  }
+  100% {
+      opacity: 1;
+      scale: 1;
+  }
+}
+
+.mat.inactive {
+    opacity: 0 !important;
+    scale: 0 !important;
+    animation-name: displayout;
+    animation-duration: 2s;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+}
+
+
+@keyframes displayout{
+  0% {
+      opacity: 1;
+      scale: 1;
+  }
+  50% {
+      opacity: 0;
+  }
+  80% {
+      opacity: 0;
+  }
+  100% {
+      opacity: 0;
+      scale: 0;
+  }
+}
+
+button:disabled {
+    background: rgba(33,33,33,1);
+    color: rgba(66,66,66,1);
+    cursor: not-allowed !important;
+}
+button:disabled svg {
+
+    fill: rgba(63,63,63,1);
+}
+button:hover {
+    background: rgba(43,43,43,1);
+    cursor: pointer;
+}
+
+.rawbtn svg{
+    height: 30px !important;
+    float: left;
+    fill: white;
+}
+
+.rawbtn div {
+    padding-top: 8px;
+}
+
+.filter {
+    box-sizing: border-box;
+    grid-area: filter;
+    transition: all .2s;
+    overflow:scroll;
+    border-radius: 5px;
+    margin:10px;
+}
+.keywords.inactive, .updates.inactive, .errors.inactive, .jobs.inactive, .filter.inactive {
+    display: none;
+}
+.errors.active, .jobsactive, .filter.active {
+    opacity: 1;
+}
+.errors {
+    background: rgba(54, 24, 24, .9);
+    grid-area: error;
+    transition: all .5s;
+    border-radius: 5px;
+}
+
+#errors.active {
+    color: red;
+}
+
+#errors.active svg {
+    fill:red;
+}
+
+.separator {
+    font-weight: bold;
+    font-size: 20px;
+    float:right !important;
+    margin: 0px !important;
+    display: flex;
+    align-items: center !important;
+    text-align: center;
+    box-sizing: border-box;
+    background: none;
+}
+
+.group {
+    padding: 3px;
+    margin: 0px !important;
+    height: 100%;
+    float: right !important;
+}
+
+.fullline {
+    width: 100%;
+    padding: 10px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
+.errblock {
+    padding: 5px;
+    background:rgba(244,244,244, .1);
+    margin: 10px;
+    border-radius:5px;
+}
+
+.row {
+    display: flex;
+    padding: 5px;
+}
+
+.row span {
+    padding: 5px;
+    margin: 5px;
+    background: rgba(244,244,244, .2); 
+    color: white;
+    width: 100%;
+    text-align: center;
+    font-weight: bold
+}
+
+.right {
+    float:right;
+}
+
+.filter a {
+    background: rgba(33,33,33,1);
+    color:rgba(244,244,244,.7);
+    transition: all .2s;
+    text-decoration: none;
+    width: 100%;
+    display: block;
+    padding-bottom:5px;
+}
+
+.filter a:hover {
+    background:rgba(44,44,44,1);
+    color:rgba(244,244,244,1);
+}
+.filter a:hover svg {
+    fill:rgba(244,244,244,1);
+}
+
+.filter a svg {
+    fill:rgba(244,244,244,.5);
+    padding: 5px;
+    left: 5px;
+    position: relative;
+    top: 8px;
+    height: 16px;
+    width: 16px;
+    margin-right: 10px;
+}
+.filter a span {
+    top: -px;
+    position: relative
+}
+.author_pic {
+    width:50px;
+    height: 50px;
+}
+.latest:hover {
+    background: rgba(44,44,44,1);
+}
+
+.latest.error {
+    background:rgba(200, 0, 0, .7) !important;
+}
+
+.step.failed {
+    background-color: rgba(244, 0, 0, .5) !important;
+}
+
+.job .title {
+    text-align: center;
+}
+
+.item_count {
+    background: rgba(044,144,044, .3) !important;
+}
+.updates .title {
+    background: rgba(244,244,244,.1);
+    padding: 5px;
+    top: 5px;
+    position: relative;
+    border-radius:5px;
+}
+.updates .badge {
+    width: 150px;
+    padding: 5px;
+    background: rgba(244,244,244,.1);
+    margin-left: 10px;
+    position: relative;
+    top: 1px;
+    border-radius:5px;
+    float:right;
+    text-align: center;
+}
+
+
+.box {
+    width: 200px;
+    height: 45px;
+    overflow: hidden;
+    border-radius: 3px;
+}
+
+.line {
+    width: 3200px;
+    display: flex;
+    flex-direction: row;
+}
+
+.line .wordchoice {
+    background: rgba(144,144,144,.1);
+    min-width: 200px !important;
+    line-height: 45px;
+}
+
+.moving {
+  position: relative;
+  animation-name: moveLeft;
+  animation-duration: 3s;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+@keyframes moveLeft {
+  0% {
+    left: 150px;
+  }
+  100% {
+    left: -3000px;
+  }
+}
+
+.box .moved {
+    position: relative;
+    left: -3000px !important;
+}
+
+.kw_stat {
+    padding: 5px;
+    background: rgba(33,33,33,.1);
+    margin-bottom: 5px;
+}
+.kw_value .active {
+    background: rgba(33,133,33,.5);
+}

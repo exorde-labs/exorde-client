@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Client</title>
+</head>
+<body>
+    <div id="messages"></div>
+
+    <script>
+        const messagesDiv = document.getElementById('messages');
+        const socket = new WebSocket('ws://localhost:8080/ws'); // Replace with your server's WebSocket URL
+
+        // Function to display a message in the HTML
+        function displayMessage(message) {
+            const messageElement = document.createElement('p');
+            messageElement.textContent = message;
+            messagesDiv.appendChild(messageElement);
+        }
+
+        // Handle incoming messages from the WebSocket server
+        socket.addEventListener('message', (event) => {
+            const message = event.data;
+            displayMessage(message);
+        });
+
+        // Handle WebSocket connection open
+        socket.addEventListener('open', (event) => {
+            displayMessage('WebSocket connection opened');
+        });
+
+        // Handle WebSocket connection close
+        socket.addEventListener('close', (event) => {
+            if (event.wasClean) {
+                displayMessage(`WebSocket connection closed cleanly, code=${event.code}, reason=${event.reason}`);
+            } else {
+                displayMessage('WebSocket connection abruptly closed');
+            }
+        });
+
+        // Handle WebSocket errors
+        socket.addEventListener('error', (error) => {
+            displayMessage(`WebSocket error: ${error.message}`);
+        });
+
+        // Function to send a message to the WebSocket server
+        function sendMessage() {
+            const inputMessage = document.getElementById('inputMessage').value;
+            socket.send(inputMessage);
+            displayMessage(`You: ${inputMessage}`);
+            document.getElementById('inputMessage').value = ''; // Clear the input field
+        }
+    </script>
+</body>
+</html>

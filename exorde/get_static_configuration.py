@@ -8,9 +8,10 @@ from exorde.get_network_configuration import get_network_configuration
 from exorde.models import StaticConfiguration
 from argparse import Namespace
 from exorde.lab_initialization import lab_initialization
+import logging, os
 
 
-async def get_static_configuration(
+async def do_get_static_configuration(
     command_line_arguments: Namespace, live_configuration
 ) -> StaticConfiguration:
     main_address: str = command_line_arguments.main_address
@@ -46,3 +47,20 @@ async def get_static_configuration(
         lab_configuration=lab_configuration,
         gas_cache=gas_cache,
     )
+
+
+async def get_static_configuration(
+    command_line_arguments: Namespace, live_configuration
+) -> StaticConfiguration:
+    try:
+        static_configuration: StaticConfiguration = (
+            await do_get_static_configuration(
+                command_line_arguments, live_configuration
+            )
+        )
+        return static_configuration
+    except:
+        logging.exception(
+            "An error occured retrieving static configuration, exiting"
+        )
+        os._exit(1)

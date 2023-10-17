@@ -108,15 +108,17 @@ def make_persist_function():
                             data, indent=4, default=serializer
                         )
                         await file.write(json_data)
-                    except Exception as error:
-                        logging.error(error)
-                        logging.error(data)
-            except asyncio.CancelledError:
-                pass  # Ignore the CancelledError exception
+                    except asyncio.exceptions.CancelledError:
+                        pass  # Ignore the CancelledError exception
+            except Exception:
+                logging.exception("An error occured in persist")
 
         # Set the current task to the new task
         current_task = asyncio.create_task(write_task())
-        await current_task
+        try:
+            await current_task
+        except:
+            pass
 
     return persist
 
@@ -165,6 +167,9 @@ def load(
             return {}
 
 
+import os
+
+
 class PersistedDict:
     def __init__(
         self,
@@ -176,6 +181,7 @@ class PersistedDict:
         self.serializer = serializer
         self.custom_object_hook = custom_object_hook
         self.data = self._load()
+        self.hold_persist: bool = False
 
     async def _persist(self):
         await persist(
@@ -193,11 +199,38 @@ class PersistedDict:
 
     def __setitem__(self, key, value):
         self.data[key] = value
-        asyncio.create_task(self._persist())
+        if not self.hold_persist:
+            asyncio.create_task(self._persist())
 
     def __delitem__(self, key):
         del self.data[key]
-        asyncio.create_task(self._persist())
+        if not self.hold_persist:
+            asyncio.create_task(self._persist())
+
+    async def deep_merge(self, update_context: dict) -> None:
+        """
+        Merge the update_context dictionary into the PersistedDict object deeply.
+
+        Args:
+            update_context (dict): The dictionary to merge into the PersistedDict object.
+        """
+        self.hold_persist = True
+        self.data = self._deep_merge_dicts(self.data, update_context)
+        self.hold_persist = False
+        await self._persist()
+        await asyncio.sleep(0.01)
+
+    def _deep_merge_dicts(self, target, source):
+        for key, value in source.items():
+            if (
+                key in target
+                and isinstance(target[key], dict)
+                and isinstance(value, dict)
+            ):
+                target[key] = self._deep_merge_dicts(target[key], value)
+            else:
+                target[key] = value
+        return target
 
     def __len__(self):
         return len(self.data)

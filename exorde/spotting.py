@@ -3,7 +3,7 @@ import argparse
 
 from exorde.models import Processed
 
-
+from typing import Union
 from exorde.prepare_batch import prepare_batch
 from exorde.process_batch import process_batch, Batch
 from exorde.spot_data import spot_data
@@ -17,11 +17,12 @@ import json
 import logging
 import argparse
 import aiohttp
-import datetime
 from typing import Callable
 from exorde.counter import AsyncItemCounter
 from datetime import datetime, timedelta
-
+from uuid import uuid4, UUID
+from exorde.create_error_identifier import create_error_identifier
+import traceback
 
 ALIASES_URL: str = "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/domain_aliases.json"
 
@@ -103,36 +104,173 @@ async def spotting(
     static_configuration: StaticConfiguration,
     command_line_arguments: argparse.Namespace,
     counter: AsyncItemCounter,
-):
+    websocket_send: Callable,
+) -> None:
+    spotting_identifier: str = str(uuid4())
+    await websocket_send(
+        {
+            "jobs": {
+                spotting_identifier: {
+                    "start": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                }
+            }
+        }
+    )
+
     batch: list[tuple[int, Processed]] = await prepare_batch(
         static_configuration,
         live_configuration,
         command_line_arguments,
         counter,
+        websocket_send,
+        spotting_identifier,
     )
+    await websocket_send(
+        {
+            "jobs": {
+                spotting_identifier: {
+                    "steps": {
+                        "process_batch": {
+                            "start": datetime.now().strftime(
+                                "%Y-%m-%d %H:%M:%S"
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    )
+    logging.info("Processing batch")
     try:
-        logging.info("Processing batch")
         processed_batch: Batch = await process_batch(
             batch, static_configuration
         )
         logging.info("Successfully processed batch")
-    except:
+        await websocket_send(
+            {
+                "jobs": {
+                    spotting_identifier: {
+                        "steps": {
+                            "process_batch": {
+                                "end": datetime.now().strftime(
+                                    "%Y-%m-%d %H:%M:%S"
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        )
+    except Exception as e:
+        traceback_list = traceback.format_exception(
+            type(e), e, e.__traceback__
+        )
+        error_id = create_error_identifier(traceback_list)
+
+        await websocket_send(
+            {
+                "jobs": {
+                    spotting_identifier: {
+                        "steps": {
+                            "process_batch": {
+                                "end": datetime.now().strftime(
+                                    "%Y-%m-%d %H:%M:%S"
+                                ),
+                                "failed": "will not retry",
+                            }
+                        }
+                    }
+                },
+                "errors": {
+                    error_id: {
+                        "traceback": traceback_list,
+                        "module": "process",
+                        "intents": {
+                            spotting_identifier: {
+                                datetime.now().strftime(
+                                    "%Y-%m-%d %H:%M:%S"
+                                ): {}
+                            }
+                        },
+                    }
+                },
+            }
+        )
         logging.exception("An error occured during batch processing")
         return
+
     try:
-        cid: str = await upload_to_ipfs(processed_batch)
-        logging.info("Successfully uploaded file to ipfs")
-        post_upload_file: dict = await download_ipfs_file(cid)
-        await count_rep_for_each_domain(counter, post_upload_file)
-        item_count = len(post_upload_file["items"])
+        await websocket_send(
+            {
+                "jobs": {
+                    spotting_identifier: {
+                        "steps": {
+                            "ipfs_upload": {
+                                "start": datetime.now().strftime(
+                                    "%Y-%m-%d %H:%M:%S"
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        )
+        cid: Union[str, None] = await upload_to_ipfs(
+            processed_batch, str(spotting_identifier), websocket_send
+        )
+        if cid != None:
+            logging.info("Successfully uploaded file to ipfs")
+            post_upload_file: dict = await download_ipfs_file(cid)
+            await count_rep_for_each_domain(counter, post_upload_file)
+            item_count = len(post_upload_file["items"])
+            await websocket_send(
+                {
+                    "jobs": {
+                        spotting_identifier: {
+                            "steps": {
+                                "ipfs_upload": {
+                                    "end": datetime.now().strftime(
+                                        "%Y-%m-%d %H:%M:%S"
+                                    ),
+                                    "cid": cid,
+                                    "count": item_count,
+                                }
+                            }
+                        }
+                    }
+                }
+            )
+        else:
+            item_count = 0
     except:
         logging.exception("An error occured during IPFS uploading")
         return
     if item_count == 0:
+        await websocket_send(
+            {
+                "jobs": {
+                    spotting_identifier: {"new_items_collected": item_count}
+                }
+            }
+        )
         logging.error(
             "All items of previous batch are already discovered, skipped."
         )
         return
+    await websocket_send(
+        {
+            "jobs": {
+                spotting_identifier: {
+                    "steps": {
+                        "filter": {
+                            "end": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                        }
+                    }
+                }
+            }
+        }
+    )
+
     try:
         logging.info(f"Building a spot-data transaction ({item_count} items)")
         transaction_hash, previous_nonce = await spot_data(
@@ -144,16 +282,86 @@ async def spotting(
             static_configuration["contracts"],
             static_configuration["read_web3"],
             static_configuration["write_web3"],
+            static_configuration,
+        )
+        await websocket_send(
+            {"jobs": {spotting_identifier: {"steps": {"send_spot": "ok"}}}}
         )
     except:
         logging.exception("An error occured during transaction building")
         return
     try:
+        await websocket_send(
+            {
+                "jobs": {
+                    spotting_identifier: {
+                        "steps": {
+                            "receipt": {
+                                "start": datetime.now().strftime(
+                                    "%Y-%m-%d %H:%M:%S"
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        )
+
         logging.info("Looking for transaction receipt")
-        await get_transaction_receipt(
+        receipt = await get_transaction_receipt(
             transaction_hash, previous_nonce, static_configuration
         )
-    except:
+        await websocket_send(
+            {
+                "jobs": {
+                    spotting_identifier: {
+                        "steps": {
+                            "receipt": {
+                                "value": str(receipt.blockNumber),
+                                "end": datetime.now().strftime(
+                                    "%Y-%m-%d %H:%M:%S"
+                                ),
+                            }
+                        }
+                    }
+                },
+                "receipt": {
+                    str(spotting_identifier): {
+                        "value": str(receipt.blockNumber),
+                        "end": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    }
+                },
+            }
+        )
+
+    except Exception as e:
+        traceback_list = traceback.format_exception(
+            type(e), e, e.__traceback__
+        )
+        error_identifier = create_error_identifier(traceback_list)
+
+        await websocket_send(
+            {
+                "jobs": {
+                    spotting_identifier: {
+                        "steps": {"receipt": {"failed": error_identifier}}
+                    }
+                },
+                "errors": {
+                    error_identifier: {
+                        "traceback": traceback_list,
+                        "module": "upload_to_ipfs",
+                        "intents": {
+                            spotting_identifier: {
+                                datetime.now().strftime(
+                                    "%Y-%m-%d %H:%M:%S"
+                                ): {}
+                            }
+                        },
+                    }
+                },
+            }
+        )
         logging.exception("An error occured during transaction validation")
         return
     logging.info("+ A receipt for previous transaction has been confirmed")
