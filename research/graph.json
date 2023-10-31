@@ -1,0 +1,470 @@
+{
+    "exorde.read_web3": [
+        "random",
+        "exorde.instanciate_w3",
+        "web3"
+    ],
+    "exorde.urls": [
+        "typing",
+        "random",
+        "aiohttp",
+        "random",
+        "lxml",
+        "logging"
+    ],
+    "exorde.tag": [
+        "json",
+        "pandas",
+        "numpy",
+        "sentence_transformers",
+        "transformers",
+        "huggingface_hub",
+        "vaderSentiment.vaderSentiment",
+        "tensorflow",
+        "swifter",
+        "exorde.models"
+    ],
+    "exorde.persist": [
+        "logging",
+        "aiofiles",
+        "json",
+        "asyncio",
+        "os",
+        "datetime",
+        "collections",
+        "pathlib",
+        "typing",
+        "os"
+    ],
+    "exorde.at": [
+        "datetime",
+        "typing",
+        "datetime",
+        "collections",
+        "exorde.persist"
+    ],
+    "exorde.lab_initialization": [
+        "os",
+        "requests",
+        "spacy",
+        "torch",
+        "transformers",
+        "argostranslate"
+    ],
+    "exorde.counter": [
+        "asyncio",
+        "collections",
+        "datetime",
+        "typing",
+        "exorde.persist"
+    ],
+    "exorde.web": [
+        "aiohttp",
+        "logging",
+        "asyncio",
+        "os",
+        "typing",
+        "exorde.persist",
+        "ssl",
+        "os"
+    ],
+    "exorde.translate": [
+        "logging",
+        "ftlangdetect",
+        "exorde.models"
+    ],
+    "exorde.notification": [
+        "logging",
+        "aiohttp",
+        "argparse",
+        "exorde.counter",
+        "exorde.models"
+    ],
+    "exorde.get_contracts_and_abi_cnf": [
+        "aiohttp",
+        "asyncio",
+        "logging",
+        "typing"
+    ],
+    "exorde.get_live_configuration": [
+        "json",
+        "typing",
+        "logging",
+        "functools",
+        "aiohttp",
+        "exorde.models"
+    ],
+    "exorde.item": [
+        "logging",
+        "argparse",
+        "typing",
+        "exorde.brain",
+        "exorde_data",
+        "types",
+        "exorde.counter",
+        "typing",
+        "uuid",
+        "datetime",
+        "traceback",
+        "pkg_resources",
+        "exorde.create_error_identifier"
+    ],
+    "exorde.schema": [
+        "json",
+        "models",
+        "madtypes"
+    ],
+    "exorde.weighted_choice": [
+        "random",
+        "typing"
+    ],
+    "exorde.get_network_configuration": [
+        "aiohttp",
+        "json"
+    ],
+    "exorde.extract_keywords": [
+        "yake",
+        "re",
+        "string",
+        "keybert",
+        "exorde.models",
+        "nltk"
+    ],
+    "exorde.get_current_rep": [
+        "aiohttp",
+        "json"
+    ],
+    "exorde.faucet": [
+        "logging",
+        "os",
+        "asyncio",
+        "web3",
+        "exorde.select_random_faucet",
+        "exorde.models"
+    ],
+    "exorde.inactivity_notification": [
+        "argparse",
+        "exorde.counter",
+        "exorde.models",
+        "exorde.notification"
+    ],
+    "exorde.statistics_notification": [
+        "argparse",
+        "exorde.counter",
+        "exorde.models",
+        "exorde.notification"
+    ],
+    "exorde.docker_version_notifier": [
+        "os",
+        "logging",
+        "argparse",
+        "typing",
+        "exorde.persist",
+        "exorde.notification",
+        "exorde.models"
+    ],
+    "exorde.time_generation": [
+        "datetime"
+    ],
+    "exorde.test_item": [
+        "hashlib",
+        "datetime",
+        "pytest",
+        "typing",
+        "exorde.item",
+        "exorde_data.models"
+    ],
+    "exorde.module_loader": [
+        "logging",
+        "traceback",
+        "importlib",
+        "re",
+        "aiohttp",
+        "subprocess",
+        "types",
+        "importlib.metadata",
+        "os",
+        "typing",
+        "datetime",
+        "uuid",
+        "exorde.create_error_identifier"
+    ],
+    "exorde.write_web3": [
+        "random",
+        "exorde.instanciate_w3"
+    ],
+    "exorde.pre_install": [
+        "transformers",
+        "argostranslate",
+        "typing",
+        "logging",
+        "wtpsplit",
+        "sentence_transformers",
+        "transformers",
+        "huggingface_hub",
+        "vaderSentiment.vaderSentiment"
+    ],
+    "exorde.get_static_configuration": [
+        "exorde.get_contracts",
+        "exorde.read_web3",
+        "exorde.write_web3",
+        "exorde.get_worker_account",
+        "exorde.get_protocol_configuration",
+        "exorde.get_contracts_and_abi_cnf",
+        "exorde.get_network_configuration",
+        "exorde.models",
+        "argparse",
+        "exorde.lab_initialization"
+    ],
+    "exorde.get_protocol_configuration": [
+        "os",
+        "yaml"
+    ],
+    "exorde.spotting": [
+        "logging",
+        "argparse",
+        "exorde.models",
+        "typing",
+        "exorde.prepare_batch",
+        "exorde.process_batch",
+        "exorde.spot_data",
+        "exorde.get_transaction_receipt",
+        "exorde.ipfs",
+        "exorde.models",
+        "exorde.counter",
+        "json",
+        "logging",
+        "argparse",
+        "aiohttp",
+        "typing",
+        "exorde.counter",
+        "datetime",
+        "uuid",
+        "exorde.create_error_identifier",
+        "traceback"
+    ],
+    "exorde.process": [
+        "json",
+        "logging",
+        "exorde.preprocess",
+        "exorde.translate",
+        "exorde.extract_keywords",
+        "exorde.zero_shot",
+        "exorde.models",
+        "exorde.evaluate_token_count"
+    ],
+    "exorde.zero_shot": [
+        "exorde_data",
+        "exorde.models"
+    ],
+    "exorde.throttle": [
+        "asyncio",
+        "datetime",
+        "typing",
+        "exorde.persist",
+        "unittest.mock",
+        "freezegun",
+        "datetime",
+        "collections"
+    ],
+    "exorde.prepare_batch": [
+        "logging",
+        "time",
+        "typing",
+        "argparse",
+        "wtpsplit",
+        "exorde.item",
+        "exorde.models",
+        "exorde.process",
+        "exorde_data",
+        "typing",
+        "tiktoken",
+        "ftlangdetect",
+        "exorde.counter",
+        "exorde.evaluate_token_count",
+        "typing",
+        "datetime"
+    ],
+    "exorde.spot_data": [
+        "logging",
+        "exorde.estimate_gas",
+        "asyncio",
+        "exorde.faucet"
+    ],
+    "exorde.estimate_gas": [
+        "exorde.models"
+    ],
+    "exorde.evaluate_token_count": [
+        "logging",
+        "time",
+        "tiktoken"
+    ],
+    "exorde.arguments": [
+        "argparse",
+        "re",
+        "logging",
+        "typing"
+    ],
+    "exorde.get_balance": [
+        "exorde.models"
+    ],
+    "exorde.ipfs": [
+        "asyncio",
+        "json",
+        "itertools",
+        "logging",
+        "aiohttp",
+        "aiohttp",
+        "traceback",
+        "datetime",
+        "enum",
+        "typing",
+        "exorde.create_error_identifier"
+    ],
+    "exorde.instanciate_w3": [
+        "web3",
+        "web3.middleware.async_cache"
+    ],
+    "exorde.create_error_identifier": [
+        "hashlib"
+    ],
+    "exorde.last_notification": [
+        "logging",
+        "argparse",
+        "typing",
+        "exorde.persist",
+        "exorde.notification",
+        "exorde.models"
+    ],
+    "exorde.main": [
+        "wtpsplit",
+        "os",
+        "argparse",
+        "asyncio",
+        "time",
+        "exorde.models",
+        "web3",
+        "exorde.claim_master",
+        "exorde.get_current_rep",
+        "exorde.self_update",
+        "exorde.counter",
+        "exorde.web",
+        "exorde.last_notification",
+        "exorde.docker_version_notifier",
+        "exorde.get_static_configuration",
+        "exorde.get_live_configuration",
+        "exorde.arguments",
+        "exorde.verify_balance",
+        "logging",
+        "exorde.spotting"
+    ],
+    "exorde.get_contracts": [
+        "logging"
+    ],
+    "exorde.brain": [
+        "os",
+        "json",
+        "logging",
+        "argparse",
+        "exorde.get_keywords",
+        "exorde.module_loader",
+        "aiohttp",
+        "datetime",
+        "typing",
+        "types",
+        "exorde.counter",
+        "datetime",
+        "exorde.at",
+        "datetime",
+        "logging",
+        "exorde.at",
+        "datetime",
+        "logging",
+        "exorde.statistics_notification",
+        "typing",
+        "exorde.models",
+        "exorde.weighted_choice",
+        "asyncio"
+    ],
+    "exorde.preprocess": [
+        "re",
+        "exorde_data"
+    ],
+    "exorde.models": [
+        "enum",
+        "madtypes",
+        "eth_account.signers.local",
+        "exorde_data",
+        "web3",
+        "typing",
+        "exorde_data",
+        "dataclasses",
+        "typing"
+    ],
+    "exorde.self_update": [
+        "os",
+        "subprocess",
+        "importlib",
+        "packaging",
+        "logging",
+        "exorde.get_latest_tag"
+    ],
+    "exorde.get_transaction_receipt": [
+        "logging",
+        "asyncio"
+    ],
+    "exorde.get_keywords": [
+        "logging",
+        "os",
+        "json",
+        "aiohttp",
+        "time",
+        "re",
+        "random",
+        "asyncio",
+        "traceback",
+        "datetime",
+        "exorde.models",
+        "typing",
+        "os",
+        "itertools",
+        "exorde.create_error_identifier"
+    ],
+    "exorde.get_latest_tag": [
+        "aiohttp"
+    ],
+    "exorde.get_worker_account": [
+        "json",
+        "random",
+        "logging",
+        "string",
+        "os",
+        "pathlib",
+        "eth_account"
+    ],
+    "exorde.verify_balance": [
+        "exorde.models",
+        "exorde.get_balance",
+        "exorde.faucet",
+        "exorde.claim_master",
+        "argparse",
+        "logging",
+        "time",
+        "asyncio",
+        "os"
+    ],
+    "exorde.process_batch": [
+        "logging",
+        "importlib",
+        "datetime",
+        "numpy",
+        "exorde.models",
+        "exorde.models",
+        "exorde_data",
+        "exorde.tag",
+        "collections"
+    ],
+    "exorde.select_random_faucet": [
+        "random"
+    ]
+}
