@@ -67,7 +67,9 @@ stream_handler.setFormatter(
 
 
 logger = logging.getLogger()
-logging.basicConfig(level=logging.INFO, handlers=[stream_handler])
+logging.basicConfig(level=logging.INFO, 
+#    handlers=[stream_handler]
+)
 # logging.disable()
 
 

@@ -2,8 +2,9 @@ import os
 import json
 import logging
 import argparse
-from exorde.get_keywords import choose_keyword
+from exorde.get_keywords import choose_keyword, get_keywords
 from exorde.module_loader import get_scraping_module
+from exorde.expiration_calc import retrieve_and_calculate_word_freq
 import aiohttp
 import datetime
 from typing import Union, Callable
@@ -291,19 +292,34 @@ async def think(
         if remaining_iterations_looping <= 0:
             break
 
-    keyword: str = await choose_keyword(
+    (keyword, alg) = await choose_keyword(
         module.__name__, ponderation, websocket_send, intent_id
     )
+    """
+    These parameters are module parameters defined trough configuration files
+    """
     generic_modules_parameters: dict[
         str, Union[int, str, bool, dict]
     ] = ponderation.generic_modules_parameters
     specific_parameters: dict[
         str, Union[int, str, bool, dict]
     ] = ponderation.specific_modules_parameters.get(choosen_module_path, {})
+    # specific parameters can contain
+    # - max_oldness_seconds
+    # - pick_default_keyword_weight
+    # - maximum_items_to_collect
+    # - and others
     parameters: dict[str, Union[int, str, bool, dict]] = {
         "url_parameters": {"keyword": keyword},
         "keyword": keyword,
     }
     parameters.update(generic_modules_parameters)
     parameters.update(specific_parameters)
+    """
+    if we are using the 'old' alg we should overwrite the 'max_oldness_seconds'
+    parameters by the one retrieved from the expiration_calculator
+    """
+    if alg == 'old':
+        word_freq = await retrieve_and_calculate_word_freq() 
+        parameters['max_oldness_seconds'] = word_freq.get(keyword, 42000)
     return (module, parameters, domain)
