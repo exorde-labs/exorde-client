@@ -1,6 +1,5 @@
 """
-Scraper.py uses a scraping modules and pushes it's results - it contains
-a versioning api which allows the orchestrator to change it's configuration.
+Scraper.py uses a scraping modules and pushes it's results 
 """
 # scraper.py
 import argparse

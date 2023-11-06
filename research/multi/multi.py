@@ -9,8 +9,7 @@ solutions instead of the multi.py. (which should provide a much robust
 scaling options than this.)
 
 Thefor it is self-prohibited to implement any buisness logic in this and is
-prefered to use the orchestrator to this intent (which is spawnable alone trough
-a blade)
+prefered to use the orchestrator to this intent (which is a standalone blade) 
 
 """
 
@@ -42,15 +41,15 @@ def ensure_virtualenv(venv_path):
     else:
         print(f"Virtual environment already exists at {venv_path}")
 
-def run_blade_server(module_config, topology):
+def run_blade_server(_config, topology):
     blade_path = "blades/blade.py"
     if not os.path.exists(blade_path):
         print(f"ERROR: '{blade_path}' does not exist in the current directory.", file=sys.stderr)
         return
 
-    venv_path = module_config.get('venv')
+    venv_path = _config.get('venv')
     if not venv_path:
-        print(f"ERROR: 'venv' path not provided in module configuration.", file=sys.stderr)
+        print(f"ERROR: 'venv' path not provided in  configuration.", file=sys.stderr)
         return
 
     # Ensure the virtual environment exists or create it if it doesn't
@@ -63,14 +62,14 @@ def run_blade_server(module_config, topology):
     cmd = [
         python_executable, blade_path,
         "--topology", json.dumps(topology),
-        "--blade", json.dumps(module_config)
+        "--blade", json.dumps(_config)
     ]
 
     while True:
-        print(f"INFO: Starting server {module_config['name']}.", file=sys.stdout)
+        print(f"INFO: Starting server {_config['name']}.", file=sys.stdout)
         process = subprocess.Popen(cmd)
         process.wait()
-        print(f"WARNING: Server {module_config['name']} terminated. Restarting...", file=sys.stderr)
+        print(f"WARNING: Server {_config['name']} terminated. Restarting...", file=sys.stderr)
         time.sleep(1)
 
 def load_config(filepath):
@@ -91,14 +90,14 @@ if __name__ == '__main__':
 
     config = load_config(args.config)
 
-    if not config or "modules" not in config:
-        print(f"ERROR: Configuration file '{args.config}' is either empty or does not contain a 'modules' section.", file=sys.stderr)
+    if not config or "blades" not in config:
+        print(f"ERROR: Configuration file '{args.config}' is either empty or does not contain a 'blades' section.", file=sys.stderr)
         sys.exit(1)
 
     processes = []
-    for module_config in config.get("modules", []):
-        if module_config.get("managed", False):
-            p = Process(target=run_blade_server, args=(module_config, config))
+    for _config in config.get("blades", []):
+        if _config.get("managed", False):
+            p = Process(target=run_blade_server, args=(_config, config))
             p.start()
             processes.append(p)
 

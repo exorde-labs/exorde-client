@@ -1,8 +1,8 @@
-modules:
+blades:
   - name: orchestrator
-    module: orchestrator
+    blade: orchestrator
     managed: true
-    params:
+    static_cluster_parameters:
       scrapers:
         - exorde-labs/rss007d0675444aa13fc
     host: 127.0.0.1
@@ -10,23 +10,23 @@ modules:
     venv: "./venvs/orchestrator"
 
   - name: spotting
-    module: spotting
+    blade: spotting
     managed: true
-    params:
+    static_cluster_parameters:
       main_address: 0x0C3d8B32e22fe3714372608218b98D8b11Ae49dd 
     host: 127.0.0.1
     port: 8081
     venv: "./venvs/spotting"
 
   - name: scraper_one
-    module: scraper
+    blade: scraper
     managed: true
     host: 127.0.0.1
     port: 8002
     venv: "./venvs/scraper_one"
 
   - name: scraper_two
-    module: scraper
+    blade: scraper
     managed: true
     host: 127.0.0.1
     port: 8003

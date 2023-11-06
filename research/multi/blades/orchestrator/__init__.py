@@ -1,21 +1,26 @@
 """
-The orchestrator is a python process which controls a cluster of exorde modules.
+The orchestrator is a python process which controls a cluster of exorde blades.
 
-It interface with blade.py which can be any exorde-submodule. It's goal is to
-keep the cluster properly configured under exorde's and user's parameters.
+It interface with blade.py which is a exorde-cluster-client module. 
+
+It's goal is to keep the cluster properly configured under exorde's and user's 
+parameters.
 
 1. Version control
     the orchestrator should be able to make a report on the version being used
-    by the submodules and what best version should be used. In order to do that
-    we need to:
-        - Be able to update the scraping module if there is a new version
-        - Be able to mark a version as erronous and prevent submodules from
+    by the blade and what best version should be used. 
+
+    In order to do that we need to:
+        - update the scraping module if there is a new version
+        - mark a version as deffective and prevent scraping-blades from
             using it. Effectively rolling back by skipping this version.
         - Report on versions being used by modules
-        - Report on all versions
+        - Report on versions available
+
 2. Perf control 
     the orchestrator should be able to measure the performance of different
-    modules and provide a report on it.
+    modules and provide a report on it. (not for this PR)
+
 """
 
 import asyncio
@@ -26,8 +31,7 @@ import json
 
 
 """
-
-So what we do as orchestrator:
+# Orchestrator algorithm in pseudo-code:
 
     - monitor
         - is craper on correct configuration ?
@@ -40,12 +44,10 @@ So what we do as orchestrator:
 The scraper jobs is then to push it's data to a spotting module so we never
 receive any data here.
 
-
 note: start / stop are not process controls but interface controls which are
 defined in scraping.py ; we have a .start and .stop endpoint.
 
 This way we can have different scrapers online that do nothing.
-
 """
 
 async def get_github_tags_sorted(repo:str): # {owner}/{repo_id}
@@ -88,20 +90,37 @@ For example for scrapping the interface design is the following :
 """
 @dataclass
 class ScraperIntentParameters:
-    module: str # the scrapping module to use
-    version: str # the version the module should use
+    """
+    note that both scraping modules and blades are versioned and that is because
+    they are different entities due to legacy design ; scraping modules were not
+    initially designed as blades and have their own repository and versions.
+
+    To solve this a KISS approach has been prefered and both are differenciated
+    and handled in the orchestrator.
+
+    The scraper.py blade therfor contains two versioning systems :
+
+        - blade versioning (blade.py) which controls the blade's code
+        - scraping versioning (scraper.py) which controls the scraper's code
+    """
     keyword: str # the keyword to scrap
     extra_parameters: dict # regular buisness related parameters
     target: str # spotting host to send data to
-
+    module: str # the scraping module to use
+    version: str # the version of scraping module to use
 
 @dataclass
 class SpottingIntentParameters:
     """
     For now there is no specific configuration around the Spotting module
-    because it's main_address is configured trough the configuration file
-    which is sufficient for static topology.
+    because it's main_address is configured trough config which is sufficient 
+    for static topology.
     """
+    pass
+
+@dataclass
+class OrchestratorIntentParameters:
+    """Does-Nothing"""
     pass
 
 
@@ -111,7 +130,13 @@ class Intent:
     Intents are wrapped to contain a host (they always are meant to an entity)
     """
     host: str # including port
-    params: Union[SpottingIntentParameters, ScraperIntentParameters] 
+    blade: str # blade to use
+    version: str # blade's version
+    params: Union[
+        SpottingIntentParameters, 
+        ScraperIntentParameters,
+        OrchestratorIntentParameters,
+    ]
 
 """
 Resolvers are the interface trough which we can express scrappers behavior
@@ -132,6 +157,8 @@ def scraping_resolver(node) -> Intent:
     """
     return Intent(
         host='{}:{}'.format(node['host'], node['port']),
+        blade='scraper',
+        version='0.1',
         params=ScraperIntentParameters(
             module="exorde-labs/rss007d0675444aa13fc",
             version="0.0.3",
@@ -142,17 +169,29 @@ def scraping_resolver(node) -> Intent:
         )
     )
 
-
 def spotting_resolver(node) -> Intent:
     """The spotting resolver has no special implementation on static top"""
     return Intent(
+        blade='spotting', # we never change a blade's behavior in static top
+        version='0.1',
         host='{}:{}'.format(node['host'], node['port']),
         params=SpottingIntentParameters() # does nothing for spotting, maybe pass worker addr
     )
 
+def orchestrator_resolver(node) -> Intent:
+    """The orchestrator resolver has no special implementation on static top"""
+    return Intent(
+        blade='orchestrator',
+        version='0.1',
+        host='{}:{}'.format(node['host'], node['port']),
+        params=OrchestratorIntentParameters() # does nothing for orch,  NOTE : both need to control
+                                                                              # version
+    )
+
 RESOLVERS = {
-    'src.scraper': scraping_resolver,
-    'src.spotting': spotting_resolver
+    'scraper': scraping_resolver,
+    'spotting': spotting_resolver,
+    'orchestrator': orchestrator_resolver
 }
 
 def monitor(modules) -> list[Intent]:
@@ -171,7 +210,7 @@ def monitor(modules) -> list[Intent]:
 
     note: 
 
-        - The overall monitoring behind this architecture is to assume an instable
+        - The overall idea behind this architecture is to assume an instable
         software which may interup at anytime (due to pip installs & exit) ; 
 
         - it also provides us a way to assume the status of the system and have
@@ -197,11 +236,9 @@ def monitor(modules) -> list[Intent]:
     """
     result: list[Intent] = []
     def resolve(node: dict) -> Intent:
-        return RESOLVERS[node['module']](node)
+        return RESOLVERS[node['blade']](node)
 
-    for node in app['topology']['modules']:
-        if node['module'] == 'src.orchestrator':
-            continue
+    for node in app['topology']['blades']:
         result.append(resolve(node))
     return result
 
@@ -215,7 +252,7 @@ async def orchestrate(app):
     while True:
         await asyncio.sleep(1) # to let the servers set up
         # create an intent map
-        intent = monitor(app['topology']['modules'])
+        intent = monitor(app['topology']['blades'])
         # inform the nodes 
         for intent in intent:
             print('\t{}'.format(intent))
