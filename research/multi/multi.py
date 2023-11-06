@@ -1,4 +1,20 @@
 #! python3.10
+
+"""
+
+This control different python processes with separate virtual envs.
+
+being sufficiently ISO with K8 or compose interface allows the user to use those
+solutions instead of the multi.py. (which should provide a much robust
+scaling options than this.)
+
+Thefor it is self-prohibited to implement any buisness logic in this and is
+prefered to use the orchestrator to this intent (which is spawnable alone trough
+a blade)
+
+"""
+
+
 import sys
 import json
 import argparse
@@ -8,6 +24,7 @@ import time
 import os
 import subprocess
 from venv import EnvBuilder
+
 
 def ensure_virtualenv(venv_path):
     if not os.path.exists(venv_path):
@@ -26,7 +43,7 @@ def ensure_virtualenv(venv_path):
         print(f"Virtual environment already exists at {venv_path}")
 
 def run_blade_server(module_config, topology):
-    blade_path = "blade.py"
+    blade_path = "blades/blade.py"
     if not os.path.exists(blade_path):
         print(f"ERROR: '{blade_path}' does not exist in the current directory.", file=sys.stderr)
         return
@@ -46,7 +63,7 @@ def run_blade_server(module_config, topology):
     cmd = [
         python_executable, blade_path,
         "--topology", json.dumps(topology),
-        "--node", json.dumps(module_config)
+        "--blade", json.dumps(module_config)
     ]
 
     while True:

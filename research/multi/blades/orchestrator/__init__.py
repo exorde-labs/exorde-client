@@ -1,10 +1,55 @@
+"""
+The orchestrator is a python process which controls a cluster of exorde modules.
+
+It interface with blade.py which can be any exorde-submodule. It's goal is to
+keep the cluster properly configured under exorde's and user's parameters.
+
+1. Version control
+    the orchestrator should be able to make a report on the version being used
+    by the submodules and what best version should be used. In order to do that
+    we need to:
+        - Be able to update the scraping module if there is a new version
+        - Be able to mark a version as erronous and prevent submodules from
+            using it. Effectively rolling back by skipping this version.
+        - Report on versions being used by modules
+        - Report on all versions
+2. Perf control 
+    the orchestrator should be able to measure the performance of different
+    modules and provide a report on it.
+"""
+
 import asyncio
 from aiohttp import web, ClientSession
 from dataclasses import dataclass, asdict
 from typing import Union
 import json
 
+
+"""
+
+So what we do as orchestrator:
+
+    - monitor
+        - is craper on correct configuration ?
+            - if not , is it running ?
+                - stop it
+            - configure the scraper
+            - start it
+
+
+The scraper jobs is then to push it's data to a spotting module so we never
+receive any data here.
+
+
+note: start / stop are not process controls but interface controls which are
+defined in scraping.py ; we have a .start and .stop endpoint.
+
+This way we can have different scrapers online that do nothing.
+
+"""
+
 async def get_github_tags_sorted(repo:str): # {owner}/{repo_id}
+    """This retrieves every tag for a specific module."""
     async def fetch_json(url:str):
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as response:
@@ -31,24 +76,60 @@ async def get_github_tags_sorted(repo:str): # {owner}/{repo_id}
     }
     return result
 
+"""
+Design note on Intents.
+
+The system is designed as a configuration rather than instructions. The goal is
+therefor to start, stop, re-configure different modules rather than specificly
+follow each instruction and centralize them.
+
+For example for scrapping the interface design is the following :
+
+"""
+@dataclass
+class ScraperIntentParameters:
+    module: str # the scrapping module to use
+    version: str # the version the module should use
+    keyword: str # the keyword to scrap
+    extra_parameters: dict # regular buisness related parameters
+    target: str # spotting host to send data to
+
 
 @dataclass
 class SpottingIntentParameters:
+    """
+    For now there is no specific configuration around the Spotting module
+    because it's main_address is configured trough the configuration file
+    which is sufficient for static topology.
+    """
     pass
 
-@dataclass
-class ScraperIntentParameters:
-    module: str
-    version: str
-    keyword: str
-    extra_parameters: dict # regular buisness related parameters
 
 @dataclass
 class Intent:
+    """
+    Intents are wrapped to contain a host (they always are meant to an entity)
+    """
     host: str # including port
     params: Union[SpottingIntentParameters, ScraperIntentParameters] 
 
+"""
+Resolvers are the interface trough which we can express scrappers behavior
+changes.
+
+They are tailored for different types of nodes (scraper, spotting, quality)
+and allow us to re-configure the node at runtime.
+
+"""
+
 def scraping_resolver(node) -> Intent:
+    """
+    Using resolvers we can configure nodes parameters such as keywords, timeout
+    etc... but most importantly the version of modules. The node will be able
+    to re-install a new version in it's venv and restart*.
+
+    *not a container-stop but a process-stop 
+    """
     return Intent(
         host='{}:{}'.format(node['host'], node['port']),
         params=ScraperIntentParameters(
@@ -63,6 +144,7 @@ def scraping_resolver(node) -> Intent:
 
 
 def spotting_resolver(node) -> Intent:
+    """The spotting resolver has no special implementation on static top"""
     return Intent(
         host='{}:{}'.format(node['host'], node['port']),
         params=SpottingIntentParameters() # does nothing for spotting, maybe pass worker addr
@@ -73,7 +155,7 @@ RESOLVERS = {
     'src.spotting': spotting_resolver
 }
 
-def think(modules) -> list[Intent]:
+def monitor(modules) -> list[Intent]:
     """
     Low Level Note:
 
@@ -89,12 +171,12 @@ def think(modules) -> list[Intent]:
 
     note: 
 
-        - The overall thinking behind this architecture is to assume an instable
+        - The overall monitoring behind this architecture is to assume an instable
         software which may interup at anytime (due to pip installs & exit) ; 
 
         - it also provides us a way to assume the status of the system and have
-        enoug data available in order to change the behavior or even topology of
-        the system.
+        enough data available in order to change the behavior or even topology
+        of the system.
 
         (eg data / failure rate of module/version for behavior)
         (   and capacity evaluation based on spotting threshold )
@@ -132,11 +214,8 @@ async def orchestrate(app):
     """
     while True:
         await asyncio.sleep(1) # to let the servers set up
-        print('')
-        print('-----------------------')
-        print('')
         # create an intent map
-        intent = think(app['topology']['modules'])
+        intent = monitor(app['topology']['modules'])
         # inform the nodes 
         for intent in intent:
             print('\t{}'.format(intent))

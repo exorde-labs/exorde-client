@@ -1,6 +1,6 @@
 modules:
   - name: orchestrator
-    module: src.orchestrator
+    module: orchestrator
     managed: true
     params:
       scrapers:
@@ -10,7 +10,7 @@ modules:
     venv: "./venvs/orchestrator"
 
   - name: spotting
-    module: src.spotting
+    module: spotting
     managed: true
     params:
       main_address: 0x0C3d8B32e22fe3714372608218b98D8b11Ae49dd 
@@ -19,14 +19,14 @@ modules:
     venv: "./venvs/spotting"
 
   - name: scraper_one
-    module: src.scraper
+    module: scraper
     managed: true
     host: 127.0.0.1
     port: 8002
     venv: "./venvs/scraper_one"
 
   - name: scraper_two
-    module: src.scraper
+    module: scraper
     managed: true
     host: 127.0.0.1
     port: 8003
