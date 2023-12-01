@@ -38,6 +38,7 @@ async def faucet(static_configuration: StaticConfiguration):
             "to": worker_account.address,
             "value": 50000000000000,
             "data": b"Hi Exorde!",
+            "chainId": 2139927552
         },
         selected_faucet[1],
     )
