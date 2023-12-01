@@ -37,7 +37,7 @@ async def spot_data(
                         "nonce": previous_nonce,
                         "from": worker_account.address,
                         "gasPrice": configuration["default_gas_price"],
-                        "chainId": "2139927552"
+                        "chainId": 2139927552
                     }
                 )
             )
