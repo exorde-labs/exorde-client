@@ -1,6 +1,6 @@
 import logging
 import argparse
-
+import os
 from exorde.models import Processed
 
 from typing import Union
@@ -146,6 +146,22 @@ async def spotting(
             batch, static_configuration
         )
         logging.info("Successfully processed batch")
+        ###############################################
+        ###   SETTING HUGGINFACE HUB TO OFFLINE MODE
+        ##### NOW THAT ALL MODELS ARE PROVEN OK
+        # check if TRANSFORMERS_OFFLINE env var is 0
+        # if so, set it to 1 and print the change
+
+        # Check if the TRANSFORMERS_OFFLINE environment variable is set and not equal to '1'
+        if os.environ.get("TRANSFORMERS_OFFLINE") != "1":
+            # Set the TRANSFORMERS_OFFLINE environment variable to '1'
+            os.environ["TRANSFORMERS_OFFLINE"] = "1"
+            print("TRANSFORMERS_OFFLINE environment variable was set to 1.")
+        else:
+            # If the variable is already set to '1', inform the user
+            print("[HUGGING FACE MODE] OFFLINE")
+
+        ###############################################
         await websocket_send(
             {
                 "jobs": {
