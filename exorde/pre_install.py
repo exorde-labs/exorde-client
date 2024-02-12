@@ -19,7 +19,8 @@ models = [
     "marieke93/MiniLM-evidence-types",
     "alimazhar-110/website_classification",
     "mrm8488/distilroberta-finetuned-financial-news-sentiment-analysis",
-    "lxyuan/distilbert-base-multilingual-cased-sentiments-student"
+    "lxyuan/distilbert-base-multilingual-cased-sentiments-student",
+    "bert-large-uncased",
 ]
 
 def install_hugging_face_models(models):
@@ -29,6 +30,25 @@ def install_hugging_face_models(models):
 
 model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
 install_hugging_face_models(models)
+
+cache_dir = os.path.join(os.getenv('HOME'), '.cache', 'huggingface', 'hub')
+
+print("install emoji_lexicon")
+emoji_lexicon = hf_hub_download(
+    repo_id="ExordeLabs/SentimentDetection",
+    filename="emoji_unic_lexicon.json",
+    cache_dir=cache_dir
+)
+print(f"emoji lexicon downloaded : {emoji_lexicon}")
+print("install loughran_dict")
+loughran_dict = hf_hub_download(
+    repo_id="ExordeLabs/SentimentDetection",
+    filename="loughran_dict.json",
+    cache_dir=cache_dir
+)
+print(f"loughran downloaded : {loughran_dict}")
+content_list = os.listdir(cache_dir)
+print("Contents of the cache folder:", content_list)
 
 ### install (pre install) models target for English, and exclude low frequency ones to not overload the isntall
 def is_english_target(s):
