@@ -1,20 +1,17 @@
-from wtpsplit import WtP
-print("Pre importing wtp model")
-wtp = WtP("wtp-canine-s-1l")
 from transformers import AutoModel, AutoTokenizer
 import os
 from argostranslate import package
 from typing import cast
 import logging
-from wtpsplit import WtP
 from sentence_transformers import SentenceTransformer
 from transformers import AutoTokenizer, pipeline
 from huggingface_hub import hf_hub_download
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+from ftlangdetect import detect as ft_test_detect
 
+print("init ftlangdetect")
+test_lang_detect = ft_test_detect("test")
 
-print("importing wtpsplit....")
-wtp = WtP("wtp-canine-s-1l")
 models = [
     "MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli",
     "SamLowe/roberta-base-go_emotions",
