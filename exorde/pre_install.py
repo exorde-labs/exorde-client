@@ -1,3 +1,6 @@
+from wtpsplit import WtP
+print("Pre importing wtp model")
+wtp = WtP("wtp-canine-s-1l")
 from transformers import AutoModel, AutoTokenizer
 import os
 from argostranslate import package
@@ -9,8 +12,10 @@ from transformers import AutoTokenizer, pipeline
 from huggingface_hub import hf_hub_download
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
+
+print("importing wtpsplit....")
+wtp = WtP("wtp-canine-s-1l")
 models = [
-    "benjamin/wtp-canine-s-1l",
     "MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli",
     "SamLowe/roberta-base-go_emotions",
     "cardiffnlp/twitter-roberta-base-irony",
@@ -30,9 +35,6 @@ def install_hugging_face_models(models):
 
 model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
 install_hugging_face_models(models)
-
-print("importing wtpsplit....")
-wtp = WtP("wtp-canine-s-1l")
 
 cache_dir = os.path.join(os.getenv('HOME'), '.cache', 'huggingface', 'hub')
 
