@@ -9,6 +9,7 @@ except:
     print("nltk already downloaded or error")
 from exorde.models import Keywords, Translation
 
+MAX_KEYWORD_LENGTH = 50
 
 def is_good_1gram(word):
     special_chars = set(string.punctuation.replace("-", ""))
@@ -154,9 +155,11 @@ def remove_invalid_keywords(input_list):
     for s in input_list:
         # remove any double slash and any url. ex: "//CONNECT.COM" and "https://CONNECT.COM"
         s = re.sub(r'//|https?:\/\/.*[\r\n]*', '', s)
-        if len(s) > 2:
+        # Add check for length of the keyword
+        if 2 < len(s) and len(s) <= MAX_KEYWORD_LENGTH and s not in output_list:
             output_list.append(s)
     return output_list
+
 
 def extract_keywords(translation: Translation) -> Keywords:
     content: str = translation.translation       
