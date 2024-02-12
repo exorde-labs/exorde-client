@@ -9,10 +9,8 @@ from transformers import AutoTokenizer, pipeline
 from huggingface_hub import hf_hub_download
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
-print("importing wtpsplit....")
-wtp = WtP("wtp-canine-s-1l")
-
 models = [
+    "benjamin/wtp-canine-s-1l",
     "MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli",
     "SamLowe/roberta-base-go_emotions",
     "cardiffnlp/twitter-roberta-base-irony",
@@ -26,11 +24,15 @@ models = [
 
 def install_hugging_face_models(models):
     for model in models:
+        print(f"installing model {model}...")        
         __tokenizer__ = AutoTokenizer.from_pretrained(model)
         model = AutoModel.from_pretrained(model)
 
 model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
 install_hugging_face_models(models)
+
+print("importing wtpsplit....")
+wtp = WtP("wtp-canine-s-1l")
 
 cache_dir = os.path.join(os.getenv('HOME'), '.cache', 'huggingface', 'hub')
 
