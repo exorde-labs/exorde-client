@@ -156,10 +156,10 @@ async def spotting(
         if os.environ.get("TRANSFORMERS_OFFLINE") != "1":
             # Set the TRANSFORMERS_OFFLINE environment variable to '1'
             os.environ["TRANSFORMERS_OFFLINE"] = "1"
-            print("TRANSFORMERS_OFFLINE environment variable was set to 1.")
+            logging.info("TRANSFORMERS_OFFLINE environment variable was set to 1.")
         else:
             # If the variable is already set to '1', inform the user
-            print("[HUGGING FACE MODE] OFFLINE")
+            logging.info("[HUGGING FACE MODE] OFFLINE")
 
         ###############################################
         await websocket_send(
