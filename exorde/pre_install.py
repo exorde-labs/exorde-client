@@ -13,6 +13,7 @@ print("importing wtpsplit....")
 wtp = WtP("wtp-canine-s-1l")
 
 models = [
+    "MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli",
     "SamLowe/roberta-base-go_emotions",
     "cardiffnlp/twitter-roberta-base-irony",
     "salesken/query_wellformedness_score",
