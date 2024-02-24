@@ -92,7 +92,12 @@ def get_extra_special_keywords(text):
         isalpha_count = sum(1 for char in word if char.isalpha())
         total_chars = len(word)
         punctuation = re.compile(r'[^\w\s,]')
-        return (uppercase_count / total_chars >= 0.3) and (punctuation.search(word) is not None) and (isalpha_count>1)
+        # Prevent division by zero
+        if total_chars > 0:
+            return (uppercase_count / total_chars >= 0.3) and (punctuation.search(word) is not None) and (isalpha_count>1)
+        else:
+            return False
+
     
     words = nltk.word_tokenize(text)
     filtered_words = filter(is_valid_keyword, words)
@@ -138,7 +143,11 @@ def get_symbol_acronyms(text):
         uppercase_count = sum(1 for char in word if char.isupper())
         isalpha_count = sum(1 for char in word if char.isalpha())
         total_chars = len(word)
-        return (uppercase_count / total_chars >= 0.3) and (isalpha_count>=1) and len(word) >= 2
+        # Prevent division by zero
+        if total_chars > 0:
+            return (uppercase_count / total_chars >= 0.3) and (isalpha_count>=1) and len(word) >= 2
+        else:
+            return False
     
     # split by space and special punctuation: comma, point, period
     # not nltk tokenize
