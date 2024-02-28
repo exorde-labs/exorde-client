@@ -9,7 +9,7 @@ async def estimate_gas(
         estimate = await read_web3.eth.estimate_gas(transaction) * 1.5
         if estimate < 100_000:
             gas = estimate + 500_000
-        return max(10_000_000, gas)
+        return max(3_000_000, gas)
 
     function_bytecode = str(transaction["data"])[2:10]
     data_length = len(str(transaction["data"]))
