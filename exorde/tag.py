@@ -154,21 +154,24 @@ def tag(documents: list[str], lab_configuration):
         ).reshape(1, -1)
     )
 
-    # Sentiment analysis using VADER
-    emoji_lexicon = hf_hub_download(
-        repo_id="ExordeLabs/SentimentDetection",
-        filename="emoji_unic_lexicon.json",
-    )
-    loughran_dict = hf_hub_download(
-        repo_id="ExordeLabs/SentimentDetection", filename="loughran_dict.json"
-    )
-    with open(emoji_lexicon) as f:
-        unic_emoji_dict = json.load(f)
-    with open(loughran_dict) as f:
-        Loughran_dict = json.load(f)
     sentiment_analyzer = SentimentIntensityAnalyzer()
-    sentiment_analyzer.lexicon.update(Loughran_dict)
-    sentiment_analyzer.lexicon.update(unic_emoji_dict)
+    try:
+        # Sentiment analysis using VADER
+        emoji_lexicon = hf_hub_download(
+            repo_id="ExordeLabs/SentimentDetection",
+            filename="emoji_unic_lexicon.json",
+        )
+        loughran_dict = hf_hub_download(
+            repo_id="ExordeLabs/SentimentDetection", filename="loughran_dict.json"
+        )
+        with open(emoji_lexicon) as f:
+            unic_emoji_dict = json.load(f)
+        with open(loughran_dict) as f:
+            Loughran_dict = json.load(f)
+        sentiment_analyzer.lexicon.update(Loughran_dict)
+        sentiment_analyzer.lexicon.update(unic_emoji_dict)
+    except Exception as e:
+        logging.info("[TAGGING] Error loading Loughran_dict & unic_emoji_dict for sentiment_analyzer. Doing without.")
 
     
     ############################
