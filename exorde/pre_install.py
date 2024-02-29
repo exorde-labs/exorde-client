@@ -33,23 +33,8 @@ def install_hugging_face_models(models):
         __tokenizer__ = AutoTokenizer.from_pretrained(model)
         model = AutoModel.from_pretrained(model)
 
-        
-custom_model_data = [
-    ("Age", "ExordeLabs/AgeDetection", "ageDetection.h5"),
-    ("Gender", "ExordeLabs/GenderDetection", "genderDetection.h5")]
-
-def install_custom_models(custom_model_data):
-    for model in custom_model_data:
-        print(f"installing model {model[0]}...")
-        hf_hub_download(
-            repo_id=model[1],
-            filename=model[2],
-            cache_dir=cache_dir
-        )
-
 model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
 install_hugging_face_models(models)
-install_custom_models(custom_model_data)
 
 cache_dir = os.path.join(os.getenv('HOME'), '.cache', 'huggingface', 'hub')
 
