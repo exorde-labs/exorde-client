@@ -1,3 +1,6 @@
+from wtpsplit import WtP
+print("[PRE-INSTALL] Installing WtP")
+wtp = WtP("wtp-canine-s-1l")
 from transformers import AutoModel, AutoTokenizer
 import os
 from argostranslate import package
@@ -13,7 +16,6 @@ print("init ftlangdetect")
 test_lang_detect = ft_test_detect("test")
 
 models = [
-    "benjamin/wtp-canine-s-1l",
     "MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli",
     "SamLowe/roberta-base-go_emotions",
     "cardiffnlp/twitter-roberta-base-irony",
