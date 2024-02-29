@@ -270,31 +270,6 @@ def tag(documents: list[str], lab_configuration):
     # financial sentiment swifter apply compounded_financial_sentiment
     tmp["FinancialSentiment"] = tmp["Translation"].swifter.apply(compounded_financial_sentiment)
 
-    # Custom model pipelines
-    custom_model_data = [
-        ("Age", "ExordeLabs/AgeDetection", "ageDetection.h5"),
-        ("Gender", "ExordeLabs/GenderDetection", "genderDetection.h5"),
-        # (
-        #     "HateSpeech",
-        #     "ExordeLabs/HateSpeechDetection",
-        #     "hateSpeechDetection.h5",
-        # ),
-    ]
-
-    for col_name, repo_id, file_name in custom_model_data:
-        model_file = hf_hub_download(repo_id=repo_id, filename=file_name)
-        custom_model = tf.keras.models.load_model(
-            model_file,
-            custom_objects={
-                "TokenAndPositionEmbedding": TokenAndPositionEmbedding,
-                "TransformerBlock": TransformerBlock,
-            },
-        )
-        tmp[col_name] = tmp["Embedded"].swifter.apply(
-            lambda x: predict(x, custom_model, col_name, mappings)
-        )
-        del custom_model  # free ram for latest custom_model
-
     del tmp["Embedded"]
     # The output is a list of dictionaries, where each dictionary represents a single input text and contains
     # various processed data like embeddings, text classifications, sentiment, etc., as key-value pairs.
@@ -309,10 +284,8 @@ def tag(documents: list[str], lab_configuration):
 
         embedding = Embedding(tmp[i]["Embedding"])
 
-        gender = Gender(
-            male=tmp[i]["Gender"][0][1], female=tmp[i]["Gender"][1][1]
-        )
-
+        # mock gender
+        gender = Gender(male=0.5, female=0.5)
         types = {item[0]: item[1] for item in tmp[i]["TextType"]}
         text_type = TextType(
             assumption=types["Assumption"],
@@ -359,14 +332,16 @@ def tag(documents: list[str], lab_configuration):
 
         irony = Irony(irony=ironies["irony"], non_irony=ironies["non_irony"])
 
-        ages = {item[0]: item[1] for item in tmp[i]["Age"]}
+        # ages = {item[0]: item[1] for item in tmp[i]["Age"]}
 
-        age = Age(
-            below_twenty=ages["<20"],
-            twenty_thirty=ages["20<30"],
-            thirty_forty=ages["30<40"],
-            forty_more=ages[">=40"],
-        )
+        # age = Age(
+        #     below_twenty=ages["<20"],
+        #     twenty_thirty=ages["20<30"],
+        #     thirty_forty=ages["30<40"],
+        #     forty_more=ages[">=40"],
+        # )
+        # hardcode age / unused
+        age = Age(below_twenty=0.0, twenty_thirty=0.0, thirty_forty=0.0, forty_more=0.0)
 
         analysis = Analysis(
             language_score=language_score,
