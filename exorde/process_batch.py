@@ -192,40 +192,14 @@ def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
     return merged_item
 
 
-SOCIAL_DOMAINS = [
-    "4chan",
-    "4channel.org",
-    "reddit.com",
-    "twitter.com",
-    "t.com",
-    "x.com",
-    "youtube.com",
-    "yt.co",
-    "lemmy.world",
-    "mastodon.social",
-    "mastodon",
-    "weibo.com",
-    "nostr.social",
-    "nostr.com",
-    "jeuxvideo.com",
-    "forocoches.com",
-    "bitcointalk.org",
-    "ycombinator.com",
-    "news.ycombinator.com",
-    "tradingview.com",
-    "followin.in",
-    "seekingalpha.io",
-]
-
-
-def get_source_type(item: ProtocolItem) -> SourceType:
-    if item.domain in SOCIAL_DOMAINS:
+def get_source_type(item: ProtocolItem, live_configuration) -> SourceType:
+    if item.domain in live_configuration["source_type_map"]:
         return SourceType("social")
     return SourceType("news")
 
 
 async def process_batch(
-    batch: list[tuple[int, Processed]], static_configuration
+    batch: list[tuple[int, Processed]], static_configuration, live_configuration
 ) -> Batch:
     lab_configuration: dict = static_configuration["lab_configuration"]
     logging.info(f"running batch for {len(batch)}")
@@ -263,7 +237,7 @@ async def process_batch(
                 gender=analysis.gender,
                 sentiment=analysis.sentiment,
                 embedding=analysis.embedding,
-                source_type=get_source_type(prot_item),
+                source_type=get_source_type(prot_item, live_configuration),
                 text_type=analysis.text_type,
                 emotion=analysis.emotion,
                 irony=analysis.irony,
