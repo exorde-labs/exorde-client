@@ -143,7 +143,7 @@ async def spotting(
     logging.info("Processing batch")
     try:
         processed_batch: Batch = await process_batch(
-            batch, static_configuration
+            batch, static_configuration, live_configuration
         )
         logging.info("Successfully processed batch")
         ###############################################
