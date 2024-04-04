@@ -50,7 +50,7 @@ async def process(
             raise err
 
         try:
-            top_keywords: Keywords = extract_keywords(translation)
+            top_keywords: Keywords, top_keywords_weights: KeywordsWeights = extract_keywords(translation)
         except Exception as err:
             logging.error("An error occured populating keywords for an item")
             logging.error(err)
@@ -71,6 +71,7 @@ async def process(
             item=item,
             translation=translation,
             top_keywords=top_keywords,
+            top_keywords_weights=top_keywords_weights,
             classification=classification,
         )
     except Exception as err:
