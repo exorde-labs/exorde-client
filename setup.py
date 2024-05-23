@@ -47,7 +47,7 @@ setup(
         "torch==1.13.0",
         "vaderSentiment==3.3.2",
         "yake==0.4.8",
-        "argostranslate==1.8.0",
+        "argostranslate==1.9.6",
         "wtpsplit==1.3.0"
     ],
     python_requires=">=3.10",
