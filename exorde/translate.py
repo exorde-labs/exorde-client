@@ -26,6 +26,7 @@ def translate(
             translated = translation(
                 language["lang"], "en", installed_languages
             ).translate(text)
+            translated.replace("▁", " ")
         else:
             translated = item.content
         return Translation(
