@@ -8,6 +8,8 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && ln -s /usr/bin/chromedriver  /usr/local/bin/chromedriver
+    
+RUN apt-get update && apt-get install -y libhdf5-dev
 
 RUN pip3.10 install --no-cache-dir \
         'git+https://github.com/exorde-labs/exorde_data.git' \
