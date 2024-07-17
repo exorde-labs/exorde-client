@@ -1,6 +1,5 @@
 FROM python:3.10.11
 
-
 # Update and install dependencies
 RUN apt-get update \
     && apt-get upgrade -y \

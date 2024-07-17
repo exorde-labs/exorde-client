@@ -13,7 +13,7 @@ class EnumEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, Enum):
             return obj.name  # Serialize Enum value as its name
-        return super().default(obj)
+        return str(super().default(obj))
 
 
 async def upload_to_ipfs(

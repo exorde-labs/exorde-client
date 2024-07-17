@@ -15,6 +15,8 @@ from exorde_data import (
     ExternalId,
     ExternalParentId,
     Domain,
+    Content,
+    Item
 )
 from dataclasses import dataclass
 
@@ -200,6 +202,7 @@ class LiveConfiguration(dict):
 
 class Processed(dict, metaclass=MadType):
     translation: Translation
+    raw_content: Content
     top_keywords: Keywords
     classification: Classification
     item: Item
@@ -233,6 +236,8 @@ class ProtocolItem(dict, metaclass=MadType):
 
     created_at: CreatedAt
     title: Optional[Title]  # titre obligatoire si pas de contenu
+    raw_content: Optional[Content]
+    translated_content: Optional[Content]
     summary: Optional[Summary]  # <- description or summary available
     picture: Optional[Url]
     author: Optional[Author]
