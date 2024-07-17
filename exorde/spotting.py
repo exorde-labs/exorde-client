@@ -9,10 +9,15 @@ from exorde.process_batch import process_batch, Batch
 from exorde.spot_data import spot_data
 
 from exorde.get_transaction_receipt import get_transaction_receipt
-from exorde.ipfs import download_ipfs_file, upload_to_ipfs
+from exorde.ipfs import download_ipfs_file, upload_to_ipfs, EnumEncoder
 from exorde.models import LiveConfiguration, StaticConfiguration
 from exorde.counter import AsyncItemCounter
 
+import json
+import os
+import hashlib
+import random
+import string
 import json
 import logging
 import argparse
@@ -98,6 +103,22 @@ async def count_rep_for_each_domain(
         alias = aliases.get(domain, "other")
         await counter.increment(f"rep_{alias}")
 
+
+def save_json_to_file(data, folder_path='output_folder'):
+    """Save JSON data to a file with a random hash filename in the specified folder."""
+    # Ensure the folder exists
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+    
+    # Generate a random hash for the filename
+    filename = f"{generate_random_hash()}.json"
+    file_path = os.path.join(folder_path, filename)
+    
+    # Write JSON data to the file
+    with open(file_path, 'w') as file:
+        json.dump(data, file, indent=4, cls=EnumEncoder)
+    
+    return file_path
 
 async def spotting(
     live_configuration: LiveConfiguration,

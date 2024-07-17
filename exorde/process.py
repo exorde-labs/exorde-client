@@ -69,6 +69,7 @@ async def process(
             raise err
         return Processed(
             item=item,
+            raw_content=item.content,
             translation=translation,
             top_keywords=top_keywords,
             classification=classification,

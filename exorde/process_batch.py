@@ -29,7 +29,7 @@ from exorde.models import (
     Gender,
     Analysis
 )
-from exorde_data import Url
+from exorde_data import Url, Content
 
 from exorde.tag import tag
 from collections import Counter
@@ -236,6 +236,8 @@ async def process_batch(
     complete_processes: dict[int, list[ProcessedItem]] = {}
     for (id, processed), analysis in zip(batch, analysis_results):
         prot_item: ProtocolItem = ProtocolItem(
+            raw_content=Content(processed.raw_content),
+            translated_content=Content(processed.translation.translation),
             created_at=processed.item.created_at,
             domain=processed.item.domain,
             url=Url(processed.item.url),
