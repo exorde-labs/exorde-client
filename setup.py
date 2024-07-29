@@ -24,7 +24,7 @@ setup(
         "HTMLParser",
         "pytz",
         "pyyaml",
-        "web3",
+        "web3==6.20.0",
         "packaging",
         "finvader==1.0.2",
         "aiofiles==23.2.1",
