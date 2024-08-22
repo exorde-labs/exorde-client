@@ -191,12 +191,12 @@ def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
         merged_item = None
     return merged_item
 
-
 SOCIAL_DOMAINS = [
     "4chan",
     "4channel.org",
     "reddit.com",
     "twitter.com",
+    "bsky.app",
     "t.com",
     "x.com",
     "youtube.com",
@@ -214,9 +214,8 @@ SOCIAL_DOMAINS = [
     "news.ycombinator.com",
     "tradingview.com",
     "followin.in",
-    "seekingalpha.io",
+    "seekingalpha.io"
 ]
-
 
 def get_source_type(item: ProtocolItem) -> SourceType:
     if item.domain in SOCIAL_DOMAINS:
