@@ -19,11 +19,57 @@ from exorde.log_user_rep import log_user_rep
 from exorde.arguments import setup_arguments
 from exorde.verify_balance import verify_balance
 
+import time
+import json
 import logging
 from typing import Callable
 
+
+class JsonFormatter(logging.Formatter):
+    def __init__(self, *__args__, **kwargs):
+        self.host = kwargs["host"]
+        self.api = kwargs["api"]
+
+    LEVEL_MAP = {
+        logging.INFO: 1,
+        logging.DEBUG: 2,
+        logging.ERROR: 3,
+        logging.CRITICAL: 4,
+    }
+
+    def format(self, record):
+        try:
+            logcheck = record.logcheck
+        except:
+            logcheck = {}
+
+        log_record = {
+            "version": "1.1",
+            "host": self.host,
+            "short_message": record.getMessage()[:25] + "...",
+            "full_message": record.getMessage(),
+            "timestamp": time.time(),
+            "level": self.LEVEL_MAP.get(record.levelno, 1),
+            "line": record.lineno,
+            "X-OVH-TOKEN": self.api,
+            "_details": json.dumps(logcheck),
+        }
+        return json.dumps(log_record)
+
+
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(
+    JsonFormatter(
+        host="node.exorde.dev",
+        api="78268784-6006-485e-b7b4-c58d08549990",
+    )
+)
+
+
 logger = logging.getLogger()
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, 
+#    handlers=[stream_handler]
+)
 # logging.disable()
 
 

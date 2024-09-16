@@ -1,0 +1,137 @@
+:root {
+	font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+	line-height: 1.5;
+	font-weight: 400;
+
+	color-scheme: light dark;
+	color: rgba(255, 255, 255, 0.87);
+
+	font-synthesis: none;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	-webkit-text-size-adjust: 100%;
+}
+
+body {
+    background: rgba(133,133,133,1);
+	margin: 0;
+	display: flex;
+	place-items: center;
+	min-width: 320px;
+	min-height: 100vh;
+}
+
+a {
+	font-weight: 500;
+	color: #646cff;
+    fill: #646cff;
+	text-decoration: inherit;
+}
+a rect {
+    transition: all .2s;
+}
+a:hover rect {
+    fill: #646cff !important;
+}
+a:hover tspan {
+    fill: white;
+}
+
+a:active tspan {
+    fill: #646cff;
+}
+a:active rect {
+    fill: white!important;
+}
+
+a tspan {
+    transition .2s;
+}
+#run_job_details {
+    opacity: 1;
+}
+
+
+h1 {
+	font-size: 3.2em;
+	line-height: 1.1;
+}
+
+button {
+	border-radius: 8px;
+	border: 1px solid transparent;
+	padding: 0.6em 1.2em;
+	font-size: 1em;
+	font-weight: 500;
+	font-family: inherit;
+	background-color: #1a1a1a;
+	cursor: pointer;
+	transition: border-color 0.25s;
+}
+button:hover {
+	border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+	outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+	:root {
+		color: #213547;
+		background-color: #ffffff;
+	}
+	a:hover {
+		color: #747bff;
+	}
+	button {
+		background-color: #f9f9f9;
+	}
+}
+
+#app {
+    overflow: hidden;
+    width:100%;
+    height:100vh;
+	text-align: center;
+}
+
+.logo {
+	height: 6em;
+	padding: 1.5em;
+}
+.logo:hover {
+	filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.preact:hover {
+	filter: drop-shadow(0 0 2em #673ab8aa);
+}
+
+.card {
+	padding: 2em;
+}
+
+.read-the-docs {
+	color: #888;
+}
+
+.details {
+    background: rgba(35,35,35, .7);
+    color:white;
+    backdrop-filter: blur(5px);  /* Adjust the pixel value to control the amount of blur */
+    text-align: left;
+    padding-left: 20px;
+    position: fixed;
+    left: 0px;
+    bottom: 0px;
+    width: 100%;
+    transition: all .2s;
+}
+
+.djs-group path {
+    stroke: white !important;
+}
+.djs-shape rect {
+    fill: rgba(33,33,33,1);
+}
