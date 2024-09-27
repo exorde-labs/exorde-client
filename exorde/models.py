@@ -64,6 +64,13 @@ class Keywords(list, metaclass=MadType):
 class TopKeywords(dict, metaclass=MadType):
     top_keywords: Keywords
 
+class KeywordsWeights(list, metaclass=MadType):
+    description = "The main keywords weights extracted from the content field"
+    annotation = list[float]
+
+class TopKeywordsWeights(dict, metaclass=MadType):
+    top_keywords_weights: KeywordsWeights
+
 
 class Classification(dict, metaclass=MadType):
     description = "label and score of zero_shot"

@@ -2,6 +2,7 @@ import yake
 import re
 import string
 from keybert import KeyBERT
+from typing import Tuple
 try:
     import nltk
     nltk.download('punkt')
@@ -170,27 +171,38 @@ def remove_invalid_keywords(input_list):
     return output_list
 
 
-def extract_keywords(translation: Translation) -> Keywords:
+def extract_keywords(translation: Translation) -> Tuple[Keywords, KeywordsWeights]:
     content: str = translation.translation       
     kx1 = _extract_keywords1(content)
     keywords_weighted = list(set(kx1))
     keywords_ = [e[0] for e in set(keywords_weighted)]
+    weights_ = [e[1] for e in set(keywords_weighted)]
+    
     keywords_.extend(_extract_keywords2(content))    
     kx2 = _extract_keywords_bis(content)
     keywords_weighted = list(set(kx2))
     keywords_.extend([e[0] for e in set(keywords_weighted)])
+    weights_.extend([e[1] for e in set(keywords_weighted)])
     keywords_ = filter_strings(keywords_)
     try:
-        keywords_.extend(get_ticker_symbols(content))   
+        tickers = get_ticker_symbols(content)
+        keywords_.extend(tickers)   
+        weights_.extend(1 / len(tickers) for t in tickers)
     except Exception as e:
         print(f"Error in ticker symbols extraction: {e}")
     try:
         bonus_keywords = get_extra_special_keywords(content)
-        keywords_.extend(bonus_keywords)         
+        keywords_.extend(bonus_keywords)   
+        weights_.extend(1 / len(bonus_keywords) for t in bonus_keywords)   
         acronyms = get_symbol_acronyms(content)
         keywords_.extend(acronyms)
+        weights_.extend(1 / len(acronyms) for t in acronyms)   
+        #print(get_concatened_keywords(keywords_))
         keywords_ = get_concatened_keywords(keywords_)
         keywords_ = remove_invalid_keywords(keywords_)
+        keywords_ = order_keywords(keywords_, content)
     except Exception as e:
         print(f"Error in advanced keywords extraction: {e}")
-    return Keywords(list(set(keywords_)))
+    output = [(i, j) for i, j in zip(Keywords(order_keywords(list(set(keywords_)), content)), weights_)]
+    output = Keywords([item[0] for item in output]), KeywordsWeights([item[1] for item in output])
+    return output
