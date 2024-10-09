@@ -136,8 +136,9 @@ def tag(documents: list[str], lab_configuration):
         )
         # special case for Classification model, we return everything
         if col_name == "Classification":
+            classification_labels = list(lab_configuration["labeldict"].keys())
             tmp[col_name] = tmp["Translation"].swifter.apply(
-                lambda x: pipe(x, labels=lab_configuration["labeldict"])
+                lambda x: pipe(x, labels=classification_labels)
             )
         else:
             tmp[col_name] = tmp["Translation"].swifter.apply(
