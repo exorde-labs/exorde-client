@@ -123,7 +123,6 @@ def tag(documents: list[str], lab_configuration):
     # Text classification pipelines
     text_classification_models = [
         ("Emotion", "SamLowe/roberta-base-go_emotions"),
-        ("Classification", "MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33"),
         ("Irony", "cardiffnlp/twitter-roberta-base-irony"),
         ("TextType", "marieke93/MiniLM-evidence-types"),
     ]
@@ -136,19 +135,25 @@ def tag(documents: list[str], lab_configuration):
             max_length=512,
             padding=True,
         )
-        # special case for Classification model, we return everything
-        if col_name == "Classification":
-            classification_labels = list(lab_configuration["labeldict"].keys())
-            # print them
-            logging.info(f"[TAGGING] Classification labels: {classification_labels}")
-            tmp[col_name] = tmp["Translation"].swifter.apply(
-                lambda x: pipe(x, candidate_labels=classification_labels)
-            )
-        else:
-            tmp[col_name] = tmp["Translation"].swifter.apply(
-                lambda x: [(y["label"], float(y["score"])) for y in pipe(x)[0]]
-            )
+        tmp[col_name] = tmp["Translation"].swifter.apply(
+            lambda x: [(y["label"], float(y["score"])) for y in pipe(x)[0]]
+        )
         del pipe  # free ram for latest pipe
+
+    # Initialize the zero-shot classification pipeline
+    zs_pipe = pipeline(
+        "zero-shot-classification",
+        model="MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33",
+        device=device,
+    )
+
+    # Assuming lab_configuration["labeldict"] contains the candidate labels
+    classification_labels = list(lab_configuration["labeldict"].keys())
+
+    # Apply the zero-shot classification
+    tmp["Classification"] = tmp["Translation"].swifter.apply(
+        lambda x: zs_pipe(x, candidate_labels=classification_labels)
+    )
 
     # Tokenization for custom models
     tokenizer = AutoTokenizer.from_pretrained("bert-large-uncased")
@@ -299,6 +304,8 @@ def tag(documents: list[str], lab_configuration):
 
         # add Classification
         classification_data = {item[0]: item[1] for item in tmp[i]["Classification"]}
+        # log classification_data
+        logging.info(f"[TAGGING] classification_data: {classification_data}")
         # Get the label and score of the top classification
         top_label = classification_data["labels"][0]
         top_score = round(classification_data["scores"][0], 4)
