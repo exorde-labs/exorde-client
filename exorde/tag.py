@@ -294,12 +294,12 @@ def tag(documents: list[str], lab_configuration):
         # add Embedding
         embedding = Embedding(tmp[i]["Embedding"])
 
-        classification_data = {item[0]: item[1] for item in tmp[i]["Classification"]}
-        # log classification_data
-        # Get the label and score of the top classification
-        top_label = classification_data["labels"][0]
-        top_score = round(classification_data["scores"][0], 4)
-        # Create the classification dictionary in the desired format
+        # log tmp[i]["Classification"]
+        logging.info(f"[TAGGING] classification item: {tmp[i]['Classification']}")
+        # they are of the form {'sequence': 'text', 'labels': ['label1', 'label2', ...], 'scores': [score1, score2, ...]}
+        # we keep only the top label and score into a Classification object (tuple)
+        top_label = tmp[i]["Classification"]["labels"][0]
+        top_score = round(tmp[i]["Classification"]["scores"][0], 4)
         classification = Classification(label=top_label, score=top_score)
         
         # mock gender
