@@ -10,6 +10,7 @@ import tensorflow as tf
 import swifter
 from exorde.models import (
     Translation,
+    Classification,
     LanguageScore,
     Sentiment,
     Embedding,
@@ -120,8 +121,8 @@ def tag(documents: list[str], lab_configuration):
     # Text classification pipelines
     text_classification_models = [
         ("Emotion", "SamLowe/roberta-base-go_emotions"),
+        ("Classification", "MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33"),
         ("Irony", "cardiffnlp/twitter-roberta-base-irony"),
-        ("LanguageScore", "salesken/query_wellformedness_score"),
         ("TextType", "marieke93/MiniLM-evidence-types"),
     ]
     for col_name, model_name in text_classification_models:
@@ -278,12 +279,21 @@ def tag(documents: list[str], lab_configuration):
 
     _out = []
     for i in range(len(tmp)):
-        language_score = LanguageScore(tmp[i]["LanguageScore"][0][1])
 
+        # add Sentiment
         sentiment = Sentiment(tmp[i]["Sentiment"])
 
+        # add Embedding
         embedding = Embedding(tmp[i]["Embedding"])
 
+        # add Classification
+        classification_data = {item[0]: item[1] for item in tmp[i]["Classification"]}
+        # Get the label and score of the top classification
+        top_label = classification_data["labels"][0]
+        top_score = round(classification_data["scores"][0], 4)
+        # Create the classification dictionary in the desired format
+        classification = Classification(label=top_label, score=top_score)
+        
         # mock gender
         gender = Gender(male=0.5, female=0.5)
         types = {item[0]: item[1] for item in tmp[i]["TextType"]}
@@ -297,7 +307,10 @@ def tag(documents: list[str], lab_configuration):
             study=types["Statistics/Study"],
         )
 
+        # Emotions
         emotions = {item[0]: item[1] for item in tmp[i]["Emotion"]}
+        # round all values to 4 decimal places
+        emotions = {k: round(v, 4) for k, v in emotions.items()}
         emotion = Emotion(
             love=emotions["love"],
             admiration=emotions["admiration"],
@@ -328,22 +341,16 @@ def tag(documents: list[str], lab_configuration):
             nervousness=emotions["nervousness"],
         )
 
+        # Irony
         ironies = {item[0]: item[1] for item in tmp[i]["Irony"]}
-
         irony = Irony(irony=ironies["irony"], non_irony=ironies["non_irony"])
-
-        # ages = {item[0]: item[1] for item in tmp[i]["Age"]}
-
-        # age = Age(
-        #     below_twenty=ages["<20"],
-        #     twenty_thirty=ages["20<30"],
-        #     thirty_forty=ages["30<40"],
-        #     forty_more=ages[">=40"],
-        # )
-        # hardcode age / unused
+        # Age (untrained model)
         age = Age(below_twenty=0.0, twenty_thirty=0.0, thirty_forty=0.0, forty_more=0.0)
-
+        # Language score (untrained model)
+        language_score = LanguageScore(int(1)) # default value
+        # Add the analysis to the output list
         analysis = Analysis(
+            classification=classification,
             language_score=language_score,
             sentiment=sentiment,
             embedding=embedding,
