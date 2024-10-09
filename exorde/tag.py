@@ -294,8 +294,6 @@ def tag(documents: list[str], lab_configuration):
         # add Embedding
         embedding = Embedding(tmp[i]["Embedding"])
 
-        # add Classification
-        logging.info(f"[TAGGING] classification_data: {tmp[i]["Classification"]}")
         classification_data = {item[0]: item[1] for item in tmp[i]["Classification"]}
         # log classification_data
         # Get the label and score of the top classification
