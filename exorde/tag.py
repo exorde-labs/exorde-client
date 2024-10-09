@@ -83,7 +83,6 @@ def tag(documents: list[str], lab_configuration):
         documents (list): A list of text documents (strings) to be analyzed and tagged.
         nlp: model
         device: device
-        mappings: labels
 
     Returns:
         list: A list of dictionaries, where each dictionary represents a single input text and
@@ -92,15 +91,6 @@ def tag(documents: list[str], lab_configuration):
     """
     nlp = lab_configuration["nlp"]
     device = lab_configuration["device"]
-    mappings = lab_configuration["mappings"]
-
-    def predict(text, pipe, tag, mappings):
-        preds = pipe.predict(text, verbose=0)[0]
-        result = []
-        for i in range(len(preds)):
-            result.append((mappings[tag][i], float(preds[i])))
-        return result
-
     # get text content attribute from all items
     for doc in documents:
         assert isinstance(doc, str)
@@ -112,7 +102,24 @@ def tag(documents: list[str], lab_configuration):
     tmp["Translation"] = documents
 
     assert tmp["Translation"] is not None
-    assert len(tmp["Translation"]) > 0
+    assert len(tmp["Translation"]) > 0    
+
+    # Initialize the zero-shot classification pipeline
+    zs_pipe = pipeline(
+        "zero-shot-classification",
+        model="MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33",
+        device=device,
+    )
+
+    # Assuming lab_configuration["labeldict"] contains the candidate labels
+    classification_labels = list(lab_configuration["labeldict"].keys())
+
+    # Apply the zero-shot classification
+    tmp["Classification"] = tmp["Translation"].swifter.apply(
+        lambda x: zs_pipe(x, candidate_labels=classification_labels)
+    )
+    # log classification_data
+    logging.info(f"[TAGGING] classification_data raw: {tmp['Classification']}")
 
     # Compute sentence embeddings
     model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
@@ -139,21 +146,6 @@ def tag(documents: list[str], lab_configuration):
             lambda x: [(y["label"], float(y["score"])) for y in pipe(x)[0]]
         )
         del pipe  # free ram for latest pipe
-
-    # Initialize the zero-shot classification pipeline
-    zs_pipe = pipeline(
-        "zero-shot-classification",
-        model="MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33",
-        device=device,
-    )
-
-    # Assuming lab_configuration["labeldict"] contains the candidate labels
-    classification_labels = list(lab_configuration["labeldict"].keys())
-
-    # Apply the zero-shot classification
-    tmp["Classification"] = tmp["Translation"].swifter.apply(
-        lambda x: zs_pipe(x, candidate_labels=classification_labels)
-    )
 
     # Tokenization for custom models
     tokenizer = AutoTokenizer.from_pretrained("bert-large-uncased")
@@ -303,9 +295,9 @@ def tag(documents: list[str], lab_configuration):
         embedding = Embedding(tmp[i]["Embedding"])
 
         # add Classification
+        logging.info(f"[TAGGING] classification_data: {tmp[i]["Classification"]}")
         classification_data = {item[0]: item[1] for item in tmp[i]["Classification"]}
         # log classification_data
-        logging.info(f"[TAGGING] classification_data: {classification_data}")
         # Get the label and score of the top classification
         top_label = classification_data["labels"][0]
         top_score = round(classification_data["scores"][0], 4)
