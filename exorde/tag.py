@@ -15,7 +15,7 @@ from exorde.models import (
     Sentiment,
     Embedding,
     SourceType,
-    TextType,
+    TextType,   
     Emotion,
     Irony,
     Age,
@@ -134,9 +134,15 @@ def tag(documents: list[str], lab_configuration):
             max_length=512,
             padding=True,
         )
-        tmp[col_name] = tmp["Translation"].swifter.apply(
-            lambda x: [(y["label"], float(y["score"])) for y in pipe(x)[0]]
-        )
+        # special case for Classification model, we return everything
+        if col_name == "Classification":
+            tmp[col_name] = tmp["Translation"].swifter.apply(
+                lambda x: pipe(x, labels=lab_configuration["labeldict"])
+            )
+        else:
+            tmp[col_name] = tmp["Translation"].swifter.apply(
+                lambda x: [(y["label"], float(y["score"])) for y in pipe(x)[0]]
+            )
         del pipe  # free ram for latest pipe
 
     # Tokenization for custom models
