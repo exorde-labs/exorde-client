@@ -118,8 +118,6 @@ def tag(documents: list[str], lab_configuration):
     tmp["Classification"] = tmp["Translation"].swifter.apply(
         lambda x: zs_pipe(x, candidate_labels=classification_labels)
     )
-    # log classification_data
-    logging.info(f"[TAGGING] classification_data raw: {tmp['Classification']}")
 
     # Compute sentence embeddings
     model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
@@ -295,7 +293,7 @@ def tag(documents: list[str], lab_configuration):
         embedding = Embedding(tmp[i]["Embedding"])
 
         # log tmp[i]["Classification"]
-        logging.info(f"[TAGGING] classification item: {tmp[i]['Classification']}")
+        # logging.info(f"[TAGGING] classification item: {tmp[i]['Classification']}")
         # they are of the form {'sequence': 'text', 'labels': ['label1', 'label2', ...], 'scores': [score1, score2, ...]}
         # we keep only the top label and score into a Classification object (tuple)
         top_label = tmp[i]["Classification"]["labels"][0]
@@ -355,7 +353,7 @@ def tag(documents: list[str], lab_configuration):
         # Age (untrained model)
         age = Age(below_twenty=0.0, twenty_thirty=0.0, thirty_forty=0.0, forty_more=0.0)
         # Language score (untrained model)
-        language_score = LanguageScore(int(1)) # default value
+        language_score = LanguageScore(1.0) # default value
         # Add the analysis to the output list
         analysis = Analysis(
             classification=classification,
