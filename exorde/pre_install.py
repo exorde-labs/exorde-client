@@ -16,7 +16,7 @@ print("init ftlangdetect")
 test_lang_detect = ft_test_detect("test")
 
 models = [
-    "MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli",
+    "MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33",
     "SamLowe/roberta-base-go_emotions",
     "cardiffnlp/twitter-roberta-base-irony",
     "salesken/query_wellformedness_score",
