@@ -8,6 +8,7 @@ from huggingface_hub import hf_hub_download
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import tensorflow as tf
 import swifter
+import logging
 from exorde.models import (
     Translation,
     Classification,
@@ -23,6 +24,7 @@ from exorde.models import (
     Analysis,
 )
 
+logging.basicConfig(level=logging.INFO)
 
 class TokenAndPositionEmbedding(tf.keras.layers.Layer):
     def __init__(self, maxlen, vocab_size, embed_dim, **__kwargs__):
