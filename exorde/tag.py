@@ -137,8 +137,10 @@ def tag(documents: list[str], lab_configuration):
         # special case for Classification model, we return everything
         if col_name == "Classification":
             classification_labels = list(lab_configuration["labeldict"].keys())
+            # print them
+            logging.info(f"[TAGGING] Classification labels: {classification_labels}")
             tmp[col_name] = tmp["Translation"].swifter.apply(
-                lambda x: pipe(x, labels=classification_labels)
+                lambda x: pipe(x, candidate_labels=classification_labels)
             )
         else:
             tmp[col_name] = tmp["Translation"].swifter.apply(
