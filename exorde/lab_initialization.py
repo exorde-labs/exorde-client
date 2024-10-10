@@ -10,7 +10,7 @@ def lab_initialization():
     device = torch.cuda.current_device() if torch.cuda.is_available() else -1
     classifier = pipeline(
         "zero-shot-classification",
-        model="MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli",
+        model="MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33",
         device=device,
         batch_size=16,
         top_k=None,

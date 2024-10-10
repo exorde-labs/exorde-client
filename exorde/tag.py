@@ -8,13 +8,15 @@ from huggingface_hub import hf_hub_download
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import tensorflow as tf
 import swifter
+import logging
 from exorde.models import (
     Translation,
+    Classification,
     LanguageScore,
     Sentiment,
     Embedding,
     SourceType,
-    TextType,
+    TextType,   
     Emotion,
     Irony,
     Age,
@@ -22,6 +24,7 @@ from exorde.models import (
     Analysis,
 )
 
+logging.basicConfig(level=logging.INFO)
 
 class TokenAndPositionEmbedding(tf.keras.layers.Layer):
     def __init__(self, maxlen, vocab_size, embed_dim, **__kwargs__):
@@ -80,7 +83,6 @@ def tag(documents: list[str], lab_configuration):
         documents (list): A list of text documents (strings) to be analyzed and tagged.
         nlp: model
         device: device
-        mappings: labels
 
     Returns:
         list: A list of dictionaries, where each dictionary represents a single input text and
@@ -89,15 +91,6 @@ def tag(documents: list[str], lab_configuration):
     """
     nlp = lab_configuration["nlp"]
     device = lab_configuration["device"]
-    mappings = lab_configuration["mappings"]
-
-    def predict(text, pipe, tag, mappings):
-        preds = pipe.predict(text, verbose=0)[0]
-        result = []
-        for i in range(len(preds)):
-            result.append((mappings[tag][i], float(preds[i])))
-        return result
-
     # get text content attribute from all items
     for doc in documents:
         assert isinstance(doc, str)
@@ -109,7 +102,22 @@ def tag(documents: list[str], lab_configuration):
     tmp["Translation"] = documents
 
     assert tmp["Translation"] is not None
-    assert len(tmp["Translation"]) > 0
+    assert len(tmp["Translation"]) > 0    
+
+    # Initialize the zero-shot classification pipeline
+    zs_pipe = pipeline(
+        "zero-shot-classification",
+        model="MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33",
+        device=device,
+    )
+
+    # Assuming lab_configuration["labeldict"] contains the candidate labels
+    classification_labels = list(lab_configuration["labeldict"].keys())
+
+    # Apply the zero-shot classification
+    tmp["Classification"] = tmp["Translation"].swifter.apply(
+        lambda x: zs_pipe(x, candidate_labels=classification_labels)
+    )
 
     # Compute sentence embeddings
     model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
@@ -121,7 +129,6 @@ def tag(documents: list[str], lab_configuration):
     text_classification_models = [
         ("Emotion", "SamLowe/roberta-base-go_emotions"),
         ("Irony", "cardiffnlp/twitter-roberta-base-irony"),
-        ("LanguageScore", "salesken/query_wellformedness_score"),
         ("TextType", "marieke93/MiniLM-evidence-types"),
     ]
     for col_name, model_name in text_classification_models:
@@ -278,12 +285,21 @@ def tag(documents: list[str], lab_configuration):
 
     _out = []
     for i in range(len(tmp)):
-        language_score = LanguageScore(tmp[i]["LanguageScore"][0][1])
 
+        # add Sentiment
         sentiment = Sentiment(tmp[i]["Sentiment"])
 
+        # add Embedding
         embedding = Embedding(tmp[i]["Embedding"])
 
+        # log tmp[i]["Classification"]
+        # logging.info(f"[TAGGING] classification item: {tmp[i]['Classification']}")
+        # they are of the form {'sequence': 'text', 'labels': ['label1', 'label2', ...], 'scores': [score1, score2, ...]}
+        # we keep only the top label and score into a Classification object (tuple)
+        top_label = tmp[i]["Classification"]["labels"][0]
+        top_score = round(tmp[i]["Classification"]["scores"][0], 4)
+        classification = Classification(label=top_label, score=top_score)
+        
         # mock gender
         gender = Gender(male=0.5, female=0.5)
         types = {item[0]: item[1] for item in tmp[i]["TextType"]}
@@ -297,7 +313,10 @@ def tag(documents: list[str], lab_configuration):
             study=types["Statistics/Study"],
         )
 
+        # Emotions
         emotions = {item[0]: item[1] for item in tmp[i]["Emotion"]}
+        # round all values to 4 decimal places
+        emotions = {k: round(v, 4) for k, v in emotions.items()}
         emotion = Emotion(
             love=emotions["love"],
             admiration=emotions["admiration"],
@@ -328,22 +347,16 @@ def tag(documents: list[str], lab_configuration):
             nervousness=emotions["nervousness"],
         )
 
+        # Irony
         ironies = {item[0]: item[1] for item in tmp[i]["Irony"]}
-
         irony = Irony(irony=ironies["irony"], non_irony=ironies["non_irony"])
-
-        # ages = {item[0]: item[1] for item in tmp[i]["Age"]}
-
-        # age = Age(
-        #     below_twenty=ages["<20"],
-        #     twenty_thirty=ages["20<30"],
-        #     thirty_forty=ages["30<40"],
-        #     forty_more=ages[">=40"],
-        # )
-        # hardcode age / unused
+        # Age (untrained model)
         age = Age(below_twenty=0.0, twenty_thirty=0.0, thirty_forty=0.0, forty_more=0.0)
-
+        # Language score (untrained model)
+        language_score = LanguageScore(1.0) # default value
+        # Add the analysis to the output list
         analysis = Analysis(
+            classification=classification,
             language_score=language_score,
             sentiment=sentiment,
             embedding=embedding,
