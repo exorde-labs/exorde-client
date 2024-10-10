@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y libhdf5-dev
 
 RUN pip3.10 install --no-cache-dir \
         'git+https://github.com/exorde-labs/exorde_data.git' \
-        'git+https://github.com/exorde-labs/exorde-client.git@new_zeroshot'\
+        'git+https://github.com/exorde-labs/exorde-client.git'\
         selenium==4.2.0 \
         wtpsplit==1.3.0 \
     && pip3.10 install --no-cache-dir --upgrade 'git+https://github.com/JustAnotherArchivist/snscrape.git'
