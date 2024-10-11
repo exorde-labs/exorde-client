@@ -104,7 +104,9 @@ def initialize_models(device):
     
     return models
 
-def tag(documents: list[str], lab_configuration, models):
+def tag(documents: list[str], lab_configuration):
+    # loading from lab configuration, previously initialized
+    models = lab_configuration["models"]
     
     for doc in documents:
         assert isinstance(doc, str)
@@ -113,18 +115,20 @@ def tag(documents: list[str], lab_configuration, models):
     tmp["Translation"] = documents
 
     assert tmp["Translation"] is not None
-    assert len(tmp["Translation"]) > 0
-    
+    assert len(tmp["Translation"]) > 0    
+
+    logging.info("Starting Tagging Batch pipeline...")
+    model = models['sentence_transformer']
+    tmp["Embedding"] = tmp["Translation"].swifter.apply(
+        lambda x: list(model.encode(x).astype(float))
+    )
+
     zs_pipe = models['zs_pipe']
     classification_labels = list(lab_configuration["labeldict"].keys())
     tmp["Classification"] = tmp["Translation"].swifter.apply(
         lambda x: zs_pipe(x, candidate_labels=classification_labels)
     )
 
-    model = models['sentence_transformer']
-    tmp["Embedding"] = tmp["Translation"].swifter.apply(
-        lambda x: list(model.encode(x).astype(float))
-    )
 
     text_classification_models = ["Emotion", "Irony", "TextType"]
     for col_name in text_classification_models:
@@ -194,12 +198,21 @@ def tag(documents: list[str], lab_configuration, models):
 
     _out = []
     for i in range(len(tmp)):
+        # add Sentiment
         sentiment = Sentiment(tmp[i]["Sentiment"])
+
+        # add Embedding
         embedding = Embedding(tmp[i]["Embedding"])
+
+        # log tmp[i]["Classification"]
+        # logging.info(f"[TAGGING] classification item: {tmp[i]['Classification']}")
+        # they are of the form {'sequence': 'text', 'labels': ['label1', 'label2', ...], 'scores': [score1, score2, ...]}
+        # we keep only the top label and score into a Classification object (tuple)
         top_label = tmp[i]["Classification"]["labels"][0]
         top_score = round(tmp[i]["Classification"]["scores"][0], 4)
         classification = Classification(label=top_label, score=top_score)
         
+        # mock gender
         gender = Gender(male=0.5, female=0.5)
         types = {item[0]: item[1] for item in tmp[i]["TextType"]}
         text_type = TextType(
@@ -212,14 +225,48 @@ def tag(documents: list[str], lab_configuration, models):
             study=types["Statistics/Study"],
         )
 
-        emotions = {item[0]: round(item[1], 4) for item in tmp[i]["Emotion"]}
-        emotion = Emotion(**emotions)
+        # Emotions
+        emotions = {item[0]: item[1] for item in tmp[i]["Emotion"]}
+        # round all values to 4 decimal places
+        emotions = {k: round(v, 4) for k, v in emotions.items()}
+        emotion = Emotion(
+            love=emotions["love"],
+            admiration=emotions["admiration"],
+            joy=emotions["joy"],
+            approval=emotions["approval"],
+            caring=emotions["caring"],
+            excitement=emotions["excitement"],
+            gratitude=emotions["gratitude"],
+            desire=emotions["desire"],
+            anger=emotions["anger"],
+            optimism=emotions["optimism"],
+            disapproval=emotions["disapproval"],
+            grief=emotions["grief"],
+            annoyance=emotions["annoyance"],
+            pride=emotions["pride"],
+            curiosity=emotions["curiosity"],
+            neutral=emotions["neutral"],
+            disgust=emotions["disgust"],
+            disappointment=emotions["disappointment"],
+            realization=emotions["realization"],
+            fear=emotions["fear"],
+            relief=emotions["relief"],
+            confusion=emotions["confusion"],
+            remorse=emotions["remorse"],
+            embarrassment=emotions["embarrassment"],
+            surprise=emotions["surprise"],
+            sadness=emotions["sadness"],
+            nervousness=emotions["nervousness"],
+        )
 
+        # Irony
         ironies = {item[0]: item[1] for item in tmp[i]["Irony"]}
         irony = Irony(irony=ironies["irony"], non_irony=ironies["non_irony"])
+        # Age (untrained model)
         age = Age(below_twenty=0.0, twenty_thirty=0.0, thirty_forty=0.0, forty_more=0.0)
-        language_score = LanguageScore(1.0)
-        
+        # Language score (untrained model)
+        language_score = LanguageScore(1.0) # default value
+        # Add the analysis to the output list
         analysis = Analysis(
             classification=classification,
             language_score=language_score,
