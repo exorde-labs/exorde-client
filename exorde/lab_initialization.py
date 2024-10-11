@@ -4,18 +4,13 @@ import spacy
 import torch
 from transformers import pipeline
 from argostranslate import translate as _translate
+from exorde.tag import initialize_models
 
 
 def lab_initialization():
     device = torch.cuda.current_device() if torch.cuda.is_available() else -1
-    classifier = pipeline(
-        "zero-shot-classification",
-        model="MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33",
-        device=device,
-        batch_size=16,
-        top_k=None,
-        max_length=64,
-    )
+    # initalize models
+    models = initialize_models(device)
     labels = requests.get(
         "https://raw.githubusercontent.com/exorde-labs/TestnetProtocol/main/targets/class_names.json"
     ).json()
@@ -34,7 +29,7 @@ def lab_initialization():
     installed_languages = _translate.get_installed_languages()
     return {
         "device": device,
-        "classifier": classifier,
+        "models": models,
         "labeldict": labels,
         "mappings": mappings,
         "nlp": nlp,
