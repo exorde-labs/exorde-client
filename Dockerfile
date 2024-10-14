@@ -14,8 +14,7 @@ RUN pip3.10 install --no-cache-dir \
         'git+https://github.com/exorde-labs/exorde_data.git' \
         'git+https://github.com/exorde-labs/exorde-client.git'\
         selenium==4.2.0 \
-        wtpsplit==1.3.0 \
-    && pip3.10 install --no-cache-dir --upgrade 'git+https://github.com/JustAnotherArchivist/snscrape.git'
+        wtpsplit==1.3.0
 
 # Clean cache now that we have installed everything
 RUN rm -rf /root/.cache/* \
