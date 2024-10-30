@@ -183,6 +183,9 @@ def process_keywords(keywords):
         else:
             # If the keyword is already lowercase, keep it as is
             processed_keywords.append(keyword)
+    
+    # Remove case-sensitive duplicates
+    return list(dict.fromkeys(processed_keywords))
 
 def extract_keywords(translation: Translation) -> Keywords:
     content: str = translation.translation     
@@ -211,4 +214,4 @@ def extract_keywords(translation: Translation) -> Keywords:
         keywords_ = process_keywords(keywords_)
     except Exception as e:
         print(f"Error in advanced keywords extraction: {e}")
-    return Keywords(list(set(keywords_)))
+    return Keywords(list(keywords_))
