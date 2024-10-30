@@ -8,6 +8,7 @@ try:
 except:
     print("nltk already downloaded or error")
 from exorde.models import Keywords, Translation
+from exorde.preprocess import preprocess
 
 MAX_KEYWORD_LENGTH = 50
 
@@ -171,7 +172,9 @@ def remove_invalid_keywords(input_list):
 
 
 def extract_keywords(translation: Translation) -> Keywords:
-    content: str = translation.translation       
+    content: str = translation.translation     
+    # use preprocess first
+    content = preprocess(content, True)
     kx1 = _extract_keywords1(content)
     keywords_weighted = list(set(kx1))
     keywords_ = [e[0] for e in set(keywords_weighted)]
