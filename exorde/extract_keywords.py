@@ -10,7 +10,7 @@ except:
 from exorde.models import Keywords, Translation
 from exorde.preprocess import preprocess
 
-MAX_KEYWORD_LENGTH = 50
+MAX_KEYWORD_LENGTH = 100
 
 def is_good_1gram(word):
     special_chars = set(string.punctuation.replace("-", ""))
