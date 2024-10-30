@@ -20,7 +20,7 @@ def translate(
     item: Item, installed_languages, low_memory: bool = False
 ) -> Translation:
     text = str(item.content if item.content else item.title)
-    language = _detect(text.replace("\n", " "), low_memory)
+    language = _detect(text, low_memory)
     try:
         if language["lang"] != "en":
             translated = translation(
