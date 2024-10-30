@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="exorde",
-    version="v2.5.11",
+    version="v2.5.12",
     author="Exorde Labs",
     author_email="hello@exordelabs.com",
     description="The AI-based client to mine data and power the Exorde Network",
