@@ -43,6 +43,6 @@ def preprocess_text(text: str, remove_stopwords: bool) -> str:
 
 
 def preprocess(item, remove_stopwords):
-    item.content = Content(preprocess_text(item.content, remove_stopwords))
-    item.content = Content(item.content.replace("\n", " "))
+    # item.content = Content(preprocess_text(item.content, remove_stopwords))
+    # item.content = Content(item.content.replace("\n", " "))
     return item
