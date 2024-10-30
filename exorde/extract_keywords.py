@@ -8,9 +8,8 @@ try:
 except:
     print("nltk already downloaded or error")
 from exorde.models import Keywords, Translation
-from exorde.preprocess import preprocess
 
-MAX_KEYWORD_LENGTH = 100
+MAX_KEYWORD_LENGTH = 50
 
 def is_good_1gram(word):
     special_chars = set(string.punctuation.replace("-", ""))
@@ -169,28 +168,10 @@ def remove_invalid_keywords(input_list):
         if 2 < len(s) and len(s) <= MAX_KEYWORD_LENGTH and s not in output_list:
             output_list.append(s)
     return output_list
-    
-def process_keywords(keywords):
-    processed_keywords = []
-    for keyword in keywords:
-        if keyword.isupper():
-            # If the keyword is fully uppercase, keep it and add a lowercase version
-            processed_keywords.append(keyword)
-            processed_keywords.append(keyword.lower())
-        elif not keyword.islower():
-            # If the keyword is partly upper & lowercase, convert it to lowercase
-            processed_keywords.append(keyword.lower())
-        else:
-            # If the keyword is already lowercase, keep it as is
-            processed_keywords.append(keyword)
-    
-    # Remove case-sensitive duplicates
-    return list(dict.fromkeys(processed_keywords))
+
 
 def extract_keywords(translation: Translation) -> Keywords:
-    content: str = translation.translation     
-    # use preprocess first
-    content = preprocess(content, True)
+    content: str = translation.translation       
     kx1 = _extract_keywords1(content)
     keywords_weighted = list(set(kx1))
     keywords_ = [e[0] for e in set(keywords_weighted)]
@@ -209,9 +190,7 @@ def extract_keywords(translation: Translation) -> Keywords:
         acronyms = get_symbol_acronyms(content)
         keywords_.extend(acronyms)
         keywords_ = get_concatened_keywords(keywords_)
-        keywords_ = remove_invalid_keywords(keywords_)        
-        # Process the keywords for case handling
-        keywords_ = process_keywords(keywords_)
+        keywords_ = remove_invalid_keywords(keywords_)
     except Exception as e:
         print(f"Error in advanced keywords extraction: {e}")
-    return Keywords(list(keywords_))
+    return Keywords(list(set(keywords_)))
