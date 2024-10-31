@@ -207,7 +207,7 @@ def extract_keywords(translation: Translation) -> Keywords:
         acronyms = get_symbol_acronyms(content)
         keywords_.extend(acronyms)
         keywords_ = get_concatened_keywords(keywords_)
-        keywords_ = remove_invalid_keywords(keywords_)        
+        keywords_ = remove_invalid_keywords(keywords_)
         # Process the keywords for case handling
         keywords_ = process_keywords(keywords_)
     except Exception as e:
