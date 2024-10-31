@@ -188,7 +188,7 @@ def process_keywords(keywords):
 
 
 def extract_keywords(translation: Translation) -> Keywords:
-    content: str = translation.translation     
+    content: str = translation.translation
     kx1 = _extract_keywords1(content)
     keywords_weighted = list(set(kx1))
     keywords_ = [e[0] for e in set(keywords_weighted)]
