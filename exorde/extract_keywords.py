@@ -236,4 +236,4 @@ def extract_keywords(translation: Translation) -> Keywords:
         keywords_ = process_keywords(keywords_)
     except Exception as e:
         print(f"Error in advanced keywords extraction: {e}")
-    return Keywords(list(keywords_))
+    return Keywords(list(set(keywords_)))
