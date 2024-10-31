@@ -1,8 +1,5 @@
 import re
 from exorde_data import Content
-import logging
-
-logging.basicConfig(level=logging.INFO)
 
 
 def preprocess_text(text: str, remove_stopwords: bool) -> str:
