@@ -35,7 +35,7 @@ def preprocess_text(text: str, remove_stopwords: bool) -> str:
     text = text.replace("#", "")
     text = remove_unicode_escapes(text)
     text = preprocess(text)
-    text = text.lower().strip()
+    text = text.strip()
 
     return text
 
