@@ -8,7 +8,6 @@ try:
 except:
     print("nltk already downloaded or error")
 from exorde.models import Keywords, Translation
-from exorde.preprocess import preprocess
 
 MAX_KEYWORD_LENGTH = 100
 
