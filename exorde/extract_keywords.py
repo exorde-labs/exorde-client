@@ -187,26 +187,7 @@ def process_keywords(keywords):
     return list(dict.fromkeys(processed_keywords))
 
 def preprocess_text(text: str) -> str:
-    def remove_unicode_escapes(s):
-        return re.sub(r"\\u[\da-fA-F]{4}", "", s)
-
-    def contains_only_special_chars(s):
-        pattern = r"^[^\w\s]+$"
-        return bool(re.match(pattern, s))
-
-    def preprocess(text):
-        new_text = [
-            wrd
-            for wrd in text.split(" ")
-            if wrd.startswith("@") == False and wrd.startswith("http") == False
-        ]
-        return " ".join(new_text)
-
-    text = text.replace("#", "")
-    text = remove_unicode_escapes(text)
-    text = preprocess(text)
     text = text.lower().strip()
-
     return text
 
 def extract_keywords(translation: Translation) -> Keywords:
