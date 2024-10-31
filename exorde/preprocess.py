@@ -36,18 +36,16 @@ def preprocess_text(text: str, remove_stopwords: bool) -> str:
         return " ".join(new_text)
 
     text = text.replace("#", "")
-    texst = remove_unicode_escapes(text)
+    text = remove_unicode_escapes(text)
     text = preprocess(text)
     text = text.lower().strip()
 
-    if contains_only_special_chars(text):
-        text = ""
     return text
 
 
 def preprocess(item, remove_stopwords):
-    logging.info("CONTENT TEXT = %s",item.content)
-    logging.info("CONTENT TYPE = %s",type(item.content))
+    logging.info("CONTENT TEXT = %s",item)
+    logging.info("CONTENT TYPE = %s",type(item))
     # item.content = Content(preprocess_text(item.content, remove_stopwords))
     # item.content = Content(item.content.replace("\n", " "))
     return item
