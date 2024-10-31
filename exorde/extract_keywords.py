@@ -193,7 +193,7 @@ def preprocess_text(text: str) -> str:
 def extract_keywords(translation: Translation) -> Keywords:
     content: str = translation.translation     
     # use preprocess first
-    content = preprocess_text(content)
+    # content = preprocess_text(content)
     kx1 = _extract_keywords1(content)
     keywords_weighted = list(set(kx1))
     keywords_ = [e[0] for e in set(keywords_weighted)]
