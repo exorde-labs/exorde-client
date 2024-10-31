@@ -186,14 +186,9 @@ def process_keywords(keywords):
     # Remove case-sensitive duplicates
     return list(dict.fromkeys(processed_keywords))
 
-def preprocess_text(text: str) -> str:
-    text = text.lower().strip()
-    return text
 
 def extract_keywords(translation: Translation) -> Keywords:
     content: str = translation.translation     
-    # use preprocess first
-    # content = preprocess_text(content)
     kx1 = _extract_keywords1(content)
     keywords_weighted = list(set(kx1))
     keywords_ = [e[0] for e in set(keywords_weighted)]
