@@ -191,8 +191,9 @@ def merge_chunks(chunks: list[ProcessedItem]) -> ProcessedItem:
         merged_item = None
     return merged_item
 
+
 SOCIAL_DOMAINS = [
-    "4chan",
+    "4chan.org",
     "4channel.org",
     "reddit.com",
     "twitter.com",
@@ -203,7 +204,6 @@ SOCIAL_DOMAINS = [
     "yt.co",
     "lemmy.world",
     "mastodon.social",
-    "mastodon",
     "weibo.com",
     "nostr.social",
     "nostr.com",
@@ -214,7 +214,45 @@ SOCIAL_DOMAINS = [
     "news.ycombinator.com",
     "tradingview.com",
     "followin.in",
-    "seekingalpha.io"
+    "seekingalpha.io",
+    "threads.net",
+    "telegram.org",
+    "tumblr.com",
+    "facebook.com",
+    "instagram.com",
+    "tiktok.com",
+    "whatsapp.com",
+    "9gag.com",
+    "techhaven.org",
+    "hey.xyz",
+    "dscvr.one",
+    "warpcast.com",
+    "discord.com",
+    "matrix.org",
+    "gab.com",
+    "parler.com",
+    "truthsocial.com",
+    "vk.com",
+    "vero.co",
+    "substack.com",
+    "8kun.top",
+    "ello.co",
+    "minds.com",
+    "mewe.com",
+    "livejournal.com",
+    "plurk.com",
+    "friendica.net",
+    "aminoapps.com",
+    "bitchute.com",
+    "gettr.com",
+    "odysee.com",
+    "poal.co",
+    "rumble.com",
+    "wimkin.com",
+    "twitch.tv",
+    "rocket.chat",
+    "snap.com",
+    "vidlii.com"
 ]
 
 def get_source_type(item: ProtocolItem) -> SourceType:
