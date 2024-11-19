@@ -214,7 +214,8 @@ SOCIAL_DOMAINS = [
     "news.ycombinator.com",
     "tradingview.com",
     "followin.in",
-    "seekingalpha.io"
+    "seekingalpha.io",
+    "threads.net"
 ]
 
 def get_source_type(item: ProtocolItem) -> SourceType:
