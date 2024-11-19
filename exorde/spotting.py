@@ -63,6 +63,7 @@ async def _get_alias() -> dict[str, str]:
                     "tradingview.com": "tradingview",
                     "followin.in": "followin",
                     "seekingalpha.io": "seekingalpha",
+                    "threads.net":"threads"
                 }
             return json_data
 
