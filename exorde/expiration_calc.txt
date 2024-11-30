@@ -1,0 +1,4076 @@
+$1cov, (1) : 42000
+$1inch, (1) : 42000
+$9984.t, (1) : 42000
+$aag, (2) : 6463
+$abbn, (1) : 42000
+$abi, (1) : 42000
+$abt, (2) : 6463
+$ach, (1) : 42000
+$acn, (2) : 6463
+$adbe, (2) : 6463
+$aden, (1) : 42000
+$ads, (2) : 6463
+$adv, (1) : 42000
+$afx, (2) : 6463
+$aixa, (1) : 42000
+$alc, (1) : 42000
+$alv, (2) : 6463
+$amd, (2) : 6463
+$amgn, (1) : 42000
+$amp, (1) : 42000
+$amt, (1) : 42000
+$arl, (1) : 42000
+$aryn, (1) : 42000
+$ath, (1) : 42000
+$atl, (1) : 42000
+$autn, (1) : 42000
+$avgo, (2) : 6463
+$axp, (2) : 6463
+$ba, (2) : 6463
+$baba, (1) : 42000
+$bac, (2) : 6463
+$baer, (1) : 42000
+$baln, (1) : 42000
+$barn, (1) : 42000
+$bas, (2) : 6463
+$bayn, (2) : 6463
+$bc8, (1) : 42000
+$bcvn, (1) : 42000
+$bdt, (1) : 42000
+$bdx, (2) : 6463
+$bei, (1) : 42000
+$bell, (1) : 42000
+$bfwl, (1) : 42000
+$bmw, (2) : 6463
+$bmy, (2) : 6463
+$bobnn, (1) : 42000
+$bosn, (1) : 42000
+$boss, (1) : 42000
+$bskp, (1) : 42000
+$bsl, (1) : 42000
+$bucn, (1) : 42000
+$cat, (1) : 42000
+$cbk, (2) : 6463
+$cec, (1) : 42000
+$cev, (1) : 42000
+$cfr, (1) : 42000
+$ckb, (1) : 42000
+$cln, (1) : 42000
+$cmbn, (1) : 42000
+$cok, (1) : 42000
+$com, (1) : 42000
+$con, (2) : 6463
+$cop, (2) : 6463
+$cost, (2) : 6463
+$cotn, (1) : 42000
+$crm, (2) : 6463
+$cro, (4) : 994
+$csco, (2) : 6463
+$csgn, (1) : 42000
+$csh, (1) : 42000
+$ctsi, (1) : 42000
+$cvx, (4) : 994
+$d6h, (1) : 42000
+$dai, (2) : 6463
+$db1, (2) : 6463
+$dbk, (2) : 6463
+$deso, (1) : 42000
+$dgb, (1) : 42000
+$dher, (1) : 42000
+$dhr, (1) : 42000
+$dis, (2) : 6463
+$dksh, (1) : 42000
+$dlg, (1) : 42000
+$doka, (1) : 42000
+$dpw, (2) : 6463
+$dri, (3) : 2162
+$dte, (2) : 6463
+$dufn, (1) : 42000
+$dwni, (2) : 6463
+$emsn, (1) : 42000
+$eoan, (2) : 6463
+$eu, (1) : 42000
+$euz, (1) : 42000
+$evd, (1) : 42000
+$ever, (1) : 42000
+$evk, (1) : 42000
+$evt, (1) : 42000
+$fhzn, (1) : 42000
+$fme, (2) : 6463
+$fntn, (1) : 42000
+$forn, (1) : 42000
+$fre, (2) : 6463
+$fton, (1) : 42000
+$fx, (1) : 42000
+$gale, (1) : 42000
+$gam, (1) : 42000
+$ge, (2) : 6463
+$gebn, (1) : 42000
+$gft, (1) : 42000
+$gil, (1) : 42000
+$gild, (1) : 42000
+$givn, (1) : 42000
+$gm, (2) : 6463
+$gmm, (1) : 42000
+$goog, (1) : 42000
+$gs, (2) : 6463
+$hd, (2) : 6463
+$hei, (2) : 6463
+$heln, (1) : 42000
+$hen, (1) : 42000
+$hen3, (1) : 42000
+$hon, (2) : 6463
+$hrt, (1) : 42000
+$hsba, (2) : 6463
+$hyq, (1) : 42000
+$ibm, (2) : 6463
+$id, (1) : 42000
+$ifx, (2) : 6463
+$igy, (1) : 42000
+$imc, (1) : 42000
+$impn, (1) : 42000
+$inrn, (1) : 42000
+$intc, (2) : 6463
+$jen, (1) : 42000
+$jnj, (2) : 6463
+$jpm, (2) : 6463
+$karn, (1) : 42000
+$knc, (1) : 42000
+$knin, (1) : 42000
+$ko, (2) : 6463
+$krn, (1) : 42000
+$lehn, (1) : 42000
+$leo, (3) : 2162
+$lha, (2) : 6463
+$lhn, (1) : 42000
+$lin, (2) : 6463
+$lly, (3) : 2162
+$lmt, (1) : 42000
+$logn, (1) : 42000
+$lonn, (1) : 42000
+$lsk, (1) : 42000
+$lxs, (1) : 42000
+$m5z, (1) : 42000
+$ma, (2) : 6463
+$mbtn, (1) : 42000
+$mcd, (2) : 6463
+$mdg1, (1) : 42000
+$mdt, (1) : 42000
+$metis, (1) : 42000
+$mina, (3) : 2162
+$mmm, (2) : 6463
+$mor, (1) : 42000
+$mozn, (1) : 42000
+$mrk, (5) : 544
+$ms, (2) : 6463
+$msft, (2) : 6463
+$msol, (1) : 42000
+$mtx, (2) : 6463
+$muv2, (2) : 6463
+$ndx1, (2) : 6463
+$nea, (1) : 42000
+$near, (4) : 994
+$nee, (1) : 42000
+$nesn, (1) : 42000
+$nflx, (2) : 6463
+$nke, (2) : 6463
+$novn, (1) : 42000
+$nu, (1) : 42000
+$nvda, (2) : 6463
+$nwo, (1) : 42000
+$o1bc, (1) : 42000
+$oerl, (1) : 42000
+$okx, (2) : 6463
+$orcl, (2) : 6463
+$osr, (1) : 42000
+$pat, (1) : 42000
+$pbb, (1) : 42000
+$pep, (2) : 6463
+$pfe, (2) : 6463
+$pfv, (1) : 42000
+$pg, (2) : 6463
+$pghn, (1) : 42000
+$pld, (2) : 6463
+$poly, (1) : 42000
+$polyx, (1) : 42000
+$prox, (1) : 42000
+$pspn, (1) : 42000
+$pum, (1) : 42000
+$pwtn, (1) : 42000
+$pypl, (2) : 6463
+$qcom, (2) : 6463
+$qsc, (1) : 42000
+$rds.a, (1) : 42000
+$rog, (1) : 42000
+$rsk, (1) : 42000
+$rsr, (1) : 42000
+$rtx, (1) : 42000
+$rwe, (2) : 6463
+$s92, (1) : 42000
+$sant, (1) : 42000
+$sap, (2) : 6463
+$sbux, (2) : 6463
+$schp, (1) : 42000
+$scmn, (1) : 42000
+$sdf, (1) : 42000
+$sfsn, (1) : 42000
+$sgl, (2) : 6463
+$sgsn, (1) : 42000
+$sie, (2) : 6463
+$sika, (1) : 42000
+$skb, (1) : 42000
+$skl, (4) : 994
+$slhn, (1) : 42000
+$soon, (1) : 42000
+$sow, (1) : 42000
+$spr, (1) : 42000
+$spsn, (1) : 42000
+$srcg, (1) : 42000
+$sren, (1) : 42000
+$srt, (1) : 42000
+$steth, (2) : 6463
+$stmn, (1) : 42000
+$strd, (1) : 42000
+$sur, (1) : 42000
+$sys, (1) : 42000
+$szg, (1) : 42000
+$szz, (1) : 42000
+$t, (2) : 6463
+$tamn, (1) : 42000
+$tc1, (1) : 42000
+$tcehy, (1) : 42000
+$tecn, (1) : 42000
+$tel, (1) : 42000
+$tka, (1) : 42000
+$tmo, (1) : 42000
+$tomo, (1) : 42000
+$tti, (1) : 42000
+$ttk, (1) : 42000
+$txn, (2) : 6463
+$ubsg, (1) : 42000
+$uhr, (1) : 42000
+$una, (1) : 42000
+$unh, (2) : 6463
+$unp, (1) : 42000
+$ustc, (1) : 42000
+$utdi, (1) : 42000
+$v, (1) : 42000
+$valn, (1) : 42000
+$vet, (3) : 2162
+$vifn, (1) : 42000
+$vna, (2) : 6463
+$vos, (1) : 42000
+$vow3, (2) : 6463
+$vowg, (1) : 42000
+$vt9, (1) : 42000
+$vz, (2) : 6463
+$wac, (1) : 42000
+$wch, (1) : 42000
+$wdi, (2) : 6463
+$wfc, (2) : 6463
+$wild, (1) : 42000
+$wmt, (2) : 6463
+$xlm, (4) : 994
+$xno, (1) : 42000
+$xom, (2) : 6463
+$yfi, (1) : 42000
+$zen, (1) : 42000
+$zil2, (1) : 42000
+$zo1, (1) : 42000
+$zurn, (1) : 42000
+$aave, (2) : 6463
+$acs, (1) : 42000
+$ada, (4) : 994
+$agix, (2) : 6463
+$akt, (6) : 332
+$algo, (2) : 6463
+$alusd, (1) : 42000
+$ankr, (1) : 42000
+$ant, (1) : 42000
+$ape, (2) : 6463
+$apt, (2) : 6463
+$ar, (2) : 6463
+$arb, (2) : 6463
+$astr, (1) : 42000
+$atom, (2) : 6463
+$audio, (1) : 42000
+$avax, (2) : 6463
+$axl, (1) : 42000
+$axs, (2) : 6463
+$azero, (1) : 42000
+$bal, (1) : 42000
+$band, (1) : 42000
+$bat, (1) : 42000
+$bch, (2) : 6463
+$bgb, (3) : 2162
+$bico, (1) : 42000
+$bit, (2) : 6463
+$bitmax, (1) : 42000
+$blur, (1) : 42000
+$bone, (1) : 42000
+$bora, (1) : 42000
+$brise, (1) : 42000
+$bsv, (2) : 6463
+$btc, (3) : 2162
+$btg, (1) : 42000
+$btse, (1) : 42000
+$btt, (2) : 6463
+$busd, (2) : 6463
+$cake, (1) : 42000
+$cdai, (1) : 42000
+$cdt, (1) : 42000
+$celo, (1) : 42000
+$cet, (1) : 42000
+$ceth, (2) : 6463
+$cfx, (2) : 6463
+$chsb, (1) : 42000
+$chz, (1) : 42000
+$comp, (1) : 42000
+$core, (1) : 42000
+$crv, (2) : 6463
+$cspr, (2) : 6463
+$cusdc, (1) : 42000
+$cusdt, (1) : 42000
+$cvxcrv, (1) : 42000
+$dag, (1) : 42000
+$dao, (1) : 42000
+$dash, (2) : 6463
+$dcr, (1) : 42000
+$dfi, (1) : 42000
+$dot, (4) : 994
+$dydx, (2) : 6463
+$edu, (1) : 42000
+$egld, (2) : 6463
+$elf, (1) : 42000
+$elg, (1) : 42000
+$elon, (1) : 42000
+$enj, (1) : 42000
+$ens, (1) : 42000
+$eos, (2) : 6463
+$etc, (2) : 6463
+$eth, (3) : 2162
+$ethw, (1) : 42000
+$eurs, (1) : 42000
+$eurt, (1) : 42000
+$ewt, (1) : 42000
+$exd, (3) : 2162
+$fet, (2) : 6463
+$fil, (2) : 6463
+$flex, (1) : 42000
+$floki, (1) : 42000
+$flow, (2) : 6463
+$flr, (1) : 42000
+$flux, (1) : 42000
+$fnsa, (1) : 42000
+$frax, (2) : 6463
+$frxeth, (2) : 6463
+$ftm, (2) : 6463
+$fxs, (2) : 6463
+$gala, (2) : 6463
+$gate, (1) : 42000
+$gfarm2, (1) : 42000
+$glm, (1) : 42000
+$glmr, (1) : 42000
+$gmt, (1) : 42000
+$gmx, (2) : 6463
+$gno, (2) : 6463
+$gns, (1) : 42000
+$grt, (2) : 6463
+$gusd, (2) : 6463
+$hbar, (2) : 6463
+$hbtc, (1) : 42000
+$hnt, (1) : 42000
+$hot, (1) : 42000
+$ht, (2) : 6463
+$icp, (2) : 6463
+$icx, (1) : 42000
+$ilv, (1) : 42000
+$imx, (2) : 6463
+$inj, (2) : 6463
+$iost, (1) : 42000
+$iota, (2) : 6463
+$iotx, (1) : 42000
+$jasmy, (1) : 42000
+$joe, (1) : 42000
+$jst, (1) : 42000
+$kas, (2) : 6463
+$kava, (2) : 6463
+$kcs, (2) : 6463
+$kda, (1) : 42000
+$klay, (2) : 6463
+$krd, (1) : 42000
+$ksm, (1) : 42000
+$kub, (1) : 42000
+$kuji, (1) : 42000
+$ldo, (2) : 6463
+$link, (5) : 544
+$lpt, (1) : 42000
+$lrc, (1) : 42000
+$ltc, (2) : 6463
+$luna, (2) : 6463
+$lunc, (1) : 42000
+$lusd, (1) : 42000
+$lyxe, (1) : 42000
+$magic, (1) : 42000
+$mana, (2) : 6463
+$mask, (2) : 6463
+$matic, (2) : 6463
+$mdlz, (1) : 42000
+$mkr, (2) : 6463
+$mrs, (1) : 42000
+$mx, (1) : 42000
+$neo, (2) : 6463
+$nexo, (2) : 6463
+$nxm, (2) : 6463
+$nym, (1) : 42000
+$ocean, (1) : 42000
+$ohm, (1) : 42000
+$okb, (1) : 42000
+$okt, (1) : 42000
+$omi, (1) : 42000
+$one, (1) : 42000
+$ont, (1) : 42000
+$op, (2) : 6463
+$ordi, (1) : 42000
+$osmo, (2) : 6463
+$paxg, (2) : 6463
+$pepe, (1) : 42000
+$pundix, (1) : 42000
+$qnt, (2) : 6463
+$qtum, (1) : 42000
+$rbn, (1) : 42000
+$reth, (2) : 6463
+$rlc, (1) : 42000
+$rndr, (2) : 6463
+$ron, (1) : 42000
+$rose, (1) : 42000
+$rpl, (2) : 6463
+$rune, (1) : 42000
+$rvn, (1) : 42000
+$sand, (2) : 6463
+$sc, (1) : 42000
+$seth2, (1) : 42000
+$sfp, (1) : 42000
+$shib, (2) : 6463
+$snx, (2) : 6463
+$sol, (5) : 544
+$ssv, (1) : 42000
+$stg, (1) : 42000
+$stx, (2) : 6463
+$sui, (2) : 6463
+$sure, (1) : 42000
+$sushi, (1) : 42000
+$sxp, (1) : 42000
+$syn, (1) : 42000
+$tfuel, (1) : 42000
+$theta, (2) : 6463
+$tkx, (2) : 6463
+$tomi, (2) : 6463
+$ton, (2) : 6463
+$trac, (1) : 42000
+$tribe, (1) : 42000
+$trx, (2) : 6463
+$tusd, (2) : 6463
+$twt, (1) : 42000
+$uni, (2) : 6463
+$usdc, (2) : 6463
+$usdd, (2) : 6463
+$usdp, (1) : 42000
+$uw3s, (1) : 42000
+$vvs, (1) : 42000
+$waves, (1) : 42000
+$waxp, (1) : 42000
+$wbeth, (1) : 42000
+$wbt, (1) : 42000
+$wbtc, (2) : 6463
+$wemix, (1) : 42000
+$wld, (2) : 6463
+$woo, (2) : 6463
+$xaut, (2) : 6463
+$xch, (1) : 42000
+$xdc, (2) : 6463
+$xec, (1) : 42000
+$xem, (1) : 42000
+$xmr, (1) : 42000
+$xrd, (2) : 6463
+$xtz, (2) : 6463
+$zec, (1) : 42000
+$zil, (2) : 6463
+$zrx, (1) : 42000
+0x protocol, (1) : 42000
+0x protocol (zrx), (1) : 42000
+1&1 drillisch ag, (1) : 42000
+1&1 drillisch ag (dri), (1) : 42000
+1. fsv mainz 05, (1) : 42000
+19th arrondissement, (1) : 42000
+1inch, (1) : 42000
+1inch (1inch), (1) : 42000
+2. bundesliga, (1) : 42000
+3d printing 3di, (2) : 6463
+3m co, (2) : 6463
+3m co (mmm), (2) : 6463
+500 startups, (1) : 42000
+51% attack, (1) : 42000
+5am ventures, (1) : 42000
+aapl, (3) : 2162
+abb ltd, (1) : 42000
+abb ltd (abbn), (1) : 42000
+abbv, (1) : 42000
+amc entertainement, (1) : 42000
+amd, (3) : 2162
+aml, (1) : 42000
+amp, (1) : 42000
+amp (amp), (1) : 42000
+amzn, (3) : 2162
+at&t inc., (2) : 6463
+at&t inc. (t), (2) : 6463
+aud, (1) : 42000
+audi, (1) : 42000
+aareal bank ag, (1) : 42000
+aareal bank ag (arl), (1) : 42000
+abbott laboratories, (2) : 6463
+abbott laboratories (abt), (2) : 6463
+abu dhabi, (2) : 6463
+accel, (1) : 42000
+accenture plc, (2) : 6463
+accenture plc (acn), (2) : 6463
+acqua di parma, (1) : 42000
+adecco group ag, (1) : 42000
+adecco group ag (aden), (1) : 42000
+adidas ag, (2) : 6463
+adidas ag (ads), (3) : 2162
+adobe systems incorporated, (2) : 6463
+adobe systems incorporated (adbe), (2) : 6463
+adva optical networking se, (1) : 42000
+adva optical networking se (adv), (1) : 42000
+advanced micro devices, (2) : 6463
+advanced micro devices (amd), (3) : 2162
+airbnb, (1) : 42000
+aixtron se, (1) : 42000
+aixtron se (aixa), (1) : 42000
+alcon inc, (1) : 42000
+alcon inc (alc), (1) : 42000
+alex ohanian, (1) : 42000
+alexander mcqueen, (1) : 42000
+alexis kohler, (1) : 42000
+algolia, (2) : 6463
+alibaba group holding ltd, (1) : 42000
+alibaba group holding ltd (baba), (1) : 42000
+all time high, (1) : 42000
+all time high (ath), (1) : 42000
+all time low, (1) : 42000
+all time low (atl), (1) : 42000
+allianz se, (2) : 6463
+allianz se (alv), (2) : 6463
+alphabet, (1) : 42000
+alphabet (goog), (1) : 42000
+altcoins, (3) : 2162
+altimeter capital, (2) : 6463
+altos ventures, (2) : 6463
+ambient.ai, (1) : 42000
+american express company, (2) : 6463
+american express company (axp), (2) : 6463
+american tower corp, (1) : 42000
+american tower corp (amt), (1) : 42000
+amgen inc., (1) : 42000
+amgen inc. (amgn), (1) : 42000
+amplitude analytics, (1) : 42000
+andreessen horowitz, (3) : 2162
+android, (1) : 42000
+anheuser busch inbev nv, (1) : 42000
+anheuser busch inbev nv (abi), (1) : 42000
+ao yun, (1) : 42000
+apax partners, (1) : 42000
+apollo.io, (2) : 6463
+apple, (2) : 6463
+apptimize, (1) : 42000
+aquiline capital partners, (1) : 42000
+ardbeg, (1) : 42000
+armory.io, (1) : 42000
+artificial intelligence, (2) : 6463
+aryzta ag, (1) : 42000
+aryzta ag (aryn), (1) : 42000
+aumann ag, (2) : 6463
+aumann ag (aag), (2) : 6463
+autoneum holding ag, (1) : 42000
+autoneum holding ag (autn), (1) : 42000
+avalanche, (3) : 2162
+axel springer se, (1) : 42000
+axel springer se (spr), (1) : 42000
+basf se, (2) : 6463
+basf se (bas), (2) : 6463
+bep-20, (1) : 42000
+bfw liegenschaften ag, (1) : 42000
+bfw liegenschaften ag (bfwl), (1) : 42000
+bite beauty, (1) : 42000
+bmw, (1) : 42000
+bmw ag, (2) : 6463
+bmw ag (bmw), (2) : 6463
+bnb, (5) : 544
+brc-20, (1) : 42000
+brics, (4) : 994
+btc, (15) : 30
+backerkit, (1) : 42000
+balenciaga, (1) : 42000
+baloise holding ag, (1) : 42000
+baloise holding ag (baln), (1) : 42000
+bank of america corp, (2) : 6463
+bank of america corp (bac), (2) : 6463
+banque cantonale vaudoise, (1) : 42000
+banque cantonale vaudoise (bcvn), (1) : 42000
+barry callebaut ag, (1) : 42000
+barry callebaut ag (barn), (1) : 42000
+basler ag, (1) : 42000
+basler ag (bsl), (1) : 42000
+basler kantonalbank, (1) : 42000
+basler kantonalbank (bskp), (1) : 42000
+battery ventures, (2) : 6463
+bayer ag, (2) : 6463
+bayer ag (bayn), (2) : 6463
+bechtle ag, (1) : 42000
+bechtle ag (bc8), (1) : 42000
+becton, (1) : 42000
+beiersdorf ag, (1) : 42000
+beiersdorf ag (bei), (1) : 42000
+beijing, (3) : 2162
+bell food group ag, (1) : 42000
+bell food group ag (bell), (1) : 42000
+belmond, (1) : 42000
+belvedere, (1) : 42000
+benchmark capital, (2) : 6463
+benefit cosmetics, (1) : 42000
+berkshire, (4) : 994
+berluti, (1) : 42000
+bertrandt ag, (1) : 42000
+bertrandt ag (bdt), (1) : 42000
+binance, (4) : 994
+bitcoin, (10) : 83
+bitcoin blockchain, (1) : 42000
+bitcoin etf, (1) : 42000
+bitcoin mining, (1) : 42000
+bitcoin price, (1) : 42000
+bitcoin regulation, (1) : 42000
+bitget, (3) : 2162
+bitstamp, (2) : 6463
+black dragon, (1) : 42000
+blackrock, (1) : 42000
+blockchain, (4) : 994
+blockchain news, (1) : 42000
+blockchain technology, (1) : 42000
+bluecrew, (1) : 42000
+bobst group sa, (1) : 42000
+bobst group sa (bobnn), (1) : 42000
+bodega numanthia, (1) : 42000
+boeing co, (2) : 6463
+boeing co (ba), (2) : 6463
+bolloré, (1) : 42000
+bossard holding ag, (1) : 42000
+bossard holding ag (bosn), (1) : 42000
+brazil, (3) : 2162
+bright capital, (2) : 6463
+bristol-myers squibb co, (2) : 6463
+bristol-myers squibb co (bmy), (2) : 6463
+broadcom inc, (2) : 6463
+broadcom inc (avgo), (2) : 6463
+bucher industries ag, (1) : 42000
+bucher industries ag (bucn), (1) : 42000
+bulgari, (2) : 6463
+cac, (1) : 42000
+cac40, (1) : 42000
+cbdc, (2) : 6463
+cenit ag, (1) : 42000
+cenit ag (csh), (1) : 42000
+ceras ventures, (1) : 42000
+cex, (2) : 6463
+coin, (5) : 544
+csco, (1) : 42000
+cts eventim ag & co kgaa, (1) : 42000
+cts eventim ag & co kgaa (evd), (1) : 42000
+canaan partners, (2) : 6463
+canada, (3) : 2162
+cancom se, (1) : 42000
+cancom se (cok), (1) : 42000
+cape mentelle, (1) : 42000
+cardano, (3) : 2162
+carl zeiss meditec ag, (2) : 6463
+carl zeiss meditec ag (afx), (2) : 6463
+cartier, (2) : 6463
+caterpillar inc., (1) : 42000
+caterpillar inc. (cat), (1) : 42000
+ceconomy ag, (1) : 42000
+ceconomy ag (cec), (1) : 42000
+celine, (1) : 42000
+cembra money bank ag, (1) : 42000
+cembra money bank ag (cmbn), (1) : 42000
+centrotec sustainable ag, (1) : 42000
+centrotec sustainable ag (cev), (1) : 42000
+cha ling, (1) : 42000
+chandon, (1) : 42000
+chanel, (1) : 42000
+charles river ventures, (2) : 6463
+chaumet, (1) : 42000
+checkr, (1) : 42000
+cheval des andes, (1) : 42000
+chevron corporation, (2) : 6463
+chevron corporation (cvx), (2) : 6463
+china, (3) : 2162
+christian dior, (1) : 42000
+château cheval blanc, (1) : 42000
+château d'esclans, (1) : 42000
+château d'yquem, (1) : 42000
+circle medical, (1) : 42000
+cisco systems inc, (2) : 6463
+cisco systems inc (csco), (2) : 6463
+citadel securities, (2) : 6463
+clariant ag, (1) : 42000
+clariant ag (cln), (1) : 42000
+cleartax, (1) : 42000
+clos des lambrays, (1) : 42000
+cloudy bay, (1) : 42000
+coca-cola co, (2) : 6463
+coca-cola co (ko), (2) : 6463
+codecademy, (1) : 42000
+coinbase, (4) : 994
+colgin cellars, (1) : 42000
+columbus nova, (2) : 6463
+comdirect bank ag, (1) : 42000
+comdirect bank ag (com), (1) : 42000
+comet holding ag, (1) : 42000
+comet holding ag (cotn), (1) : 42000
+commerzbank ag, (2) : 6463
+commerzbank ag (cbk), (2) : 6463
+compugroup medical se & co. kgaa, (1) : 42000
+compugroup medical se & co. kgaa (cop), (1) : 42000
+connaissance des arts, (1) : 42000
+conocophillips, (1) : 42000
+conocophillips (cop), (1) : 42000
+continental ag, (2) : 6463
+continental ag (con), (2) : 6463
+cosmos, (1) : 42000
+costco wholesale corporation, (2) : 6463
+costco wholesale corporation (cost), (2) : 6463
+cova, (1) : 42000
+covestro ag, (1) : 42000
+covestro ag (1cov), (1) : 42000
+credit suisse group ag, (1) : 42000
+credit suisse group ag (csgn), (1) : 42000
+cross-chain, (1) : 42000
+crypto, (18) : 30
+crypto investment, (1) : 42000
+crypto news, (1) : 42000
+crypto trading, (1) : 42000
+cryptocurrencies, (2) : 6463
+cryptocurrency, (8) : 153
+cryptos, (1) : 42000
+cybersecurity, (2) : 6463
+dag ventures, (1) : 42000
+dai, (1) : 42000
+dao, (1) : 42000
+dapp, (3) : 2162
+dcm ventures, (2) : 6463
+defi, (6) : 332
+dex, (4) : 994
+dfs, (1) : 42000
+difx, (1) : 42000
+dior, (2) : 6463
+dis, (1) : 42000
+dksh holding ag, (1) : 42000
+dksh holding ag (dksh), (1) : 42000
+dmg mori ag, (1) : 42000
+dmg mori ag (gil), (1) : 42000
+doge, (9) : 111
+drw, (1) : 42000
+dwf labs, (3) : 2162
+daimler ag, (2) : 6463
+daimler ag (dai), (2) : 6463
+danaher corporation, (2) : 6463
+danaher corporation (dhr), (1) : 42000
+daniel roth, (1) : 42000
+datagroup se, (1) : 42000
+datagroup se (d6h), (1) : 42000
+defi exploit, (1) : 42000
+delivery hero se, (1) : 42000
+delivery hero se (dher), (1) : 42000
+deutsche bank, (3) : 2162
+deutsche bank ag, (2) : 6463
+deutsche bank ag (dbk), (4) : 994
+deutsche boerse ag, (2) : 6463
+deutsche boerse ag (db1), (2) : 6463
+deutsche lufthansa ag, (1) : 42000
+deutsche lufthansa ag (lha), (1) : 42000
+deutsche pfandbriefbank ag, (1) : 42000
+deutsche pfandbriefbank ag (pbb), (1) : 42000
+deutsche post ag, (2) : 6463
+deutsche post ag (dpw), (2) : 6463
+deutsche telekom ag, (2) : 6463
+deutsche telekom ag (dte), (2) : 6463
+deutsche wohnen se, (2) : 6463
+deutsche wohnen se (dwni), (2) : 6463
+dialog semiconductor plc, (1) : 42000
+dialog semiconductor plc (dlg), (1) : 42000
+dickinson and co, (1) : 42000
+dickinson and co (bdx), (1) : 42000
+docker, (1) : 42000
+dogecoin, (7) : 219
+dolce & gabbana, (2) : 6463
+dom pérignon, (1) : 42000
+dormakaba holding ag, (1) : 42000
+dormakaba holding ag (doka), (1) : 42000
+dowjones, (1) : 42000
+draper fisher jurvetson, (1) : 42000
+drillisch ag, (2) : 6463
+drillisch ag (dri), (2) : 6463
+dropbox, (1) : 42000
+dubai, (3) : 2162
+dublin, (1) : 42000
+duff & phelps, (1) : 42000
+dufry ag, (1) : 42000
+dufry ag (dufn), (1) : 42000
+e.on se, (2) : 6463
+e.on se (eoan), (2) : 6463
+eip-4337, (1) : 42000
+erc-1155, (1) : 42000
+erc-20, (1) : 42000
+erc-721, (1) : 42000
+etf, (1) : 42000
+eth, (18) : 30
+exd, (1) : 42000
+exmo, (1) : 42000
+eckert & ziegler strahlen- und medizintechnik ag, (1) : 42000
+eckert & ziegler strahlen- und medizintechnik ag (euz), (1) : 42000
+elevation partners, (1) : 42000
+eli lilly and co, (2) : 6463
+eli lilly and co (lly), (2) : 6463
+eli lilly and company, (1) : 42000
+eli lilly and company (lly), (1) : 42000
+elon musk, (3) : 2162
+elringklinger ag, (1) : 42000
+elringklinger ag (zil2), (1) : 42000
+elrond, (1) : 42000
+emilio pucci, (1) : 42000
+ems-chemie holding ag, (1) : 42000
+ems-chemie holding ag (emsn), (1) : 42000
+estée lauder, (2) : 6463
+ethereum, (14) : 33
+europe, (1) : 42000
+european union, (1) : 42000
+european union (eu), (1) : 42000
+evonik industries ag, (1) : 42000
+evonik industries ag (evk), (1) : 42000
+evotec se, (1) : 42000
+evotec se (evt), (1) : 42000
+exchange, (1) : 42000
+exchange news, (1) : 42000
+exit scam, (1) : 42000
+exxon mobil corporation, (2) : 6463
+exxon mobil corporation (xom), (2) : 6463
+fb stock, (1) : 42000
+fiat, (1) : 42000
+fomo, (1) : 42000
+ford, (1) : 42000
+ftse, (1) : 42000
+faceid, (1) : 42000
+faire, (1) : 42000
+farming, (1) : 42000
+feintool international holding ag, (1) : 42000
+feintool international holding ag (fton), (1) : 42000
+fendi, (3) : 2162
+fenty beauty by rihanna, (1) : 42000
+fermion capital, (1) : 42000
+fidelity investments, (1) : 42000
+finance news, (1) : 42000
+first round capital, (1) : 42000
+firstmark capital, (1) : 42000
+fivestars, (1) : 42000
+flash loans, (1) : 42000
+flow traders, (1) : 42000
+flughafen zurich ag, (1) : 42000
+flughafen zurich ag (fhzn), (1) : 42000
+font awesome, (1) : 42000
+forbo holding ag, (1) : 42000
+forbo holding ag (forn), (1) : 42000
+founders fund, (1) : 42000
+france, (3) : 2162
+france riot, (1) : 42000
+francisco partners, (1) : 42000
+fred, (1) : 42000
+freenet ag, (1) : 42000
+freenet ag (fntn), (1) : 42000
+fresenius medical care ag & co kgaa, (1) : 42000
+fresenius medical care ag & co kgaa (fme), (1) : 42000
+fresenius medical care ag & co. kgaa, (1) : 42000
+fresenius medical care ag & co. kgaa (fme), (1) : 42000
+fresenius se & co kgaa, (1) : 42000
+fresenius se & co kgaa (fre), (1) : 42000
+fresenius se & co. kgaa, (1) : 42000
+fresenius se & co. kgaa (fre), (1) : 42000
+fresh beauty, (1) : 42000
+fundersclub, (1) : 42000
+g20, (2) : 6463
+gam holding ag, (1) : 42000
+gam holding ag (gam), (1) : 42000
+gft technologies se, (1) : 42000
+gft technologies se (gft), (1) : 42000
+ggv capital, (1) : 42000
+gi partners, (1) : 42000
+gpt, (2) : 6463
+gpt3, (1) : 42000
+gpt4, (1) : 42000
+gsr market maker, (2) : 6463
+gv, (1) : 42000
+galenica ag, (1) : 42000
+galenica ag (gale), (1) : 42000
+gamefi, (1) : 42000
+gamestop gme, (3) : 2162
+gaming, (1) : 42000
+gas fees, (1) : 42000
+gate.io gate labs, (1) : 42000
+gaza, (3) : 2162
+gazahospital, (1) : 42000
+geberit ag, (1) : 42000
+geberit ag (gebn), (1) : 42000
+general atlantic, (1) : 42000
+general catalyst, (1) : 42000
+general electric company, (2) : 6463
+general electric company (ge), (2) : 6463
+general motors co, (2) : 6463
+general motors co (gm), (2) : 6463
+gensler, (1) : 42000
+gerald genta, (1) : 42000
+germany, (3) : 2162
+gilead sciences inc, (1) : 42000
+gilead sciences inc (gild), (1) : 42000
+giorgio armani, (1) : 42000
+gitlab, (2) : 6463
+givaudan sa, (1) : 42000
+givaudan sa (givn), (1) : 42000
+givenchy, (3) : 2162
+glenmorangie, (1) : 42000
+goldman sachs, (2) : 6463
+goldman sachs group inc, (2) : 6463
+goldman sachs group inc (gs), (2) : 6463
+google, (2) : 6463
+grammer ag, (1) : 42000
+grammer ag (gmm), (1) : 42000
+greylock partners, (1) : 42000
+growthx, (1) : 42000
+gucci, (2) : 6463
+guerlain, (1) : 42000
+guggenheim partners, (1) : 42000
+h.i.g. capital, (1) : 42000
+hike, (1) : 42000
+hodl, (1) : 42000
+hsbc holdings plc, (2) : 6463
+hsbc holdings plc (hsba), (2) : 6463
+htc tech, (1) : 42000
+hackerrank, (1) : 42000
+halving, (1) : 42000
+harbourvest partners, (1) : 42000
+hard fork, (1) : 42000
+heidelbergcement ag, (2) : 6463
+heidelbergcement ag (hei), (2) : 6463
+hellosign, (1) : 42000
+helvetia holding ag, (1) : 42000
+helvetia holding ag (heln), (1) : 42000
+henkel ag & co. kgaa, (1) : 42000
+henkel ag & co. kgaa (hen), (1) : 42000
+henkel ag & co. kgaa vz., (1) : 42000
+henkel ag & co. kgaa vz. (hen3), (1) : 42000
+hennessy, (1) : 42000
+hermes, (1) : 42000
+heroku, (1) : 42000
+highland capital partners, (1) : 42000
+home depot inc, (2) : 6463
+home depot inc (hd), (2) : 6463
+honeywell international inc, (2) : 6463
+honeywell international inc (hon), (2) : 6463
+hong kong, (1) : 42000
+hublot, (2) : 6463
+hudson river trading, (1) : 42000
+hudson river trading (hrt), (1) : 42000
+hugo boss ag, (1) : 42000
+hugo boss ag (boss), (1) : 42000
+hypoport ag, (1) : 42000
+hypoport ag (hyq), (1) : 42000
+ibm, (3) : 2162
+ibm (ibm), (2) : 6463
+ig markets ltd, (1) : 42000
+imc financial markets, (1) : 42000
+imc financial markets (imc), (1) : 42000
+imf, (1) : 42000
+ipfs, (1) : 42000
+ipo, (1) : 42000
+ivp, (1) : 42000
+ivp (institutional venture partners), (1) : 42000
+implenia ag, (1) : 42000
+implenia ag (impn), (1) : 42000
+inc., (2) : 6463
+inc. (mrk), (2) : 6463
+index ventures, (1) : 42000
+india, (2) : 6463
+infineon technologies ag, (2) : 6463
+infineon technologies ag (ifx), (2) : 6463
+initial coin offering, (1) : 42000
+innogy se, (1) : 42000
+innogy se (igy), (1) : 42000
+insight partners, (1) : 42000
+insignius capital, (1) : 42000
+institutional venture partners, (2) : 6463
+intel corporation, (2) : 6463
+intel corporation (intc), (2) : 6463
+interwest partners, (1) : 42000
+interroll holding ag, (1) : 42000
+interroll holding ag (inrn), (1) : 42000
+investir, (1) : 42000
+italy, (2) : 6463
+j.p. morgan asset management, (1) : 42000
+jeep, (1) : 42000
+jpmorgan chase & co., (2) : 6463
+jpmorgan chase & co. (jpm), (2) : 6463
+jw anderson, (1) : 42000
+jane street, (1) : 42000
+japan, (3) : 2162
+jardin d'acclimatation, (1) : 42000
+jenoptik ag, (1) : 42000
+jenoptik ag (jen), (1) : 42000
+johnson & johnson, (3) : 2162
+johnson & johnson (jnj), (2) : 6463
+julius baer gruppe ag, (1) : 42000
+julius baer gruppe ag (baer), (1) : 42000
+k+s ag, (1) : 42000
+k+s ag (sdf), (1) : 42000
+kkr & co. inc., (1) : 42000
+kpcb, (1) : 42000
+kvd vegan beauty, (1) : 42000
+kardex ag, (1) : 42000
+kardex ag (karn), (1) : 42000
+kenzo, (2) : 6463
+kenzo parfums, (1) : 42000
+khosla ventures, (1) : 42000
+kleiner perkins, (1) : 42000
+koenig & bauer ag, (1) : 42000
+koenig & bauer ag (skb), (1) : 42000
+kohlberg kravis roberts, (1) : 42000
+krones ag, (1) : 42000
+krones ag (krn), (1) : 42000
+krug, (1) : 42000
+kucoin, (3) : 2162
+kuehne + nagel international ag, (1) : 42000
+kuehne + nagel international ag (knin), (1) : 42000
+llc, (1) : 42000
+loom, (1) : 42000
+luno, (1) : 42000
+lvmh, (2) : 6463
+la grande epicerie, (1) : 42000
+la samaritaine, (1) : 42000
+lafargeholcim ltd, (1) : 42000
+lafargeholcim ltd (lhn), (1) : 42000
+lanxess ag, (1) : 42000
+lanxess ag (lxs), (1) : 42000
+le bon marché, (1) : 42000
+le parisien, (1) : 42000
+le pen, (2) : 6463
+lem holding sa, (1) : 42000
+lem holding sa (lehn), (1) : 42000
+leoni ag, (1) : 42000
+leoni ag (leo), (1) : 42000
+les echos, (1) : 42000
+lightning network, (1) : 42000
+lightspeed venture partners, (2) : 6463
+linde plc, (2) : 6463
+linde plc (lin), (2) : 6463
+lockheed martin corporation, (1) : 42000
+lockheed martin corporation (lmt), (1) : 42000
+loewe, (1) : 42000
+logitech international sa, (1) : 42000
+logitech international sa (logn), (1) : 42000
+london, (2) : 6463
+lone pine capital, (1) : 42000
+lonza group ag, (1) : 42000
+lonza group ag (lonn), (1) : 42000
+loro piana, (1) : 42000
+louis vuitton, (4) : 994
+lufthansa ag, (1) : 42000
+lufthansa ag (lha), (1) : 42000
+lynx vr r1, (3) : 2162
+mexc, (1) : 42000
+mmm, (1) : 42000
+mtu aero engines ag, (2) : 6463
+mtu aero engines ag (mtx), (2) : 6463
+maison francis kurkdjian, (1) : 42000
+maisons cheval blanc, (1) : 42000
+make up for ever, (1) : 42000
+makena capital management, (1) : 42000
+manz ag, (1) : 42000
+manz ag (m5z), (1) : 42000
+marc jacobs, (2) : 6463
+marc jacobs beauty, (1) : 42000
+mastercard inc, (2) : 6463
+mastercard inc (ma), (2) : 6463
+matterport, (1) : 42000
+maverick capital, (1) : 42000
+maveron, (1) : 42000
+mayfield fund, (1) : 42000
+mbappé, (2) : 6463
+mcdonald's corporation, (2) : 6463
+mcdonald's corporation (mcd), (2) : 6463
+medigene ag, (1) : 42000
+medigene ag (mdg1), (1) : 42000
+medtronic plc, (1) : 42000
+medtronic plc (mdt), (1) : 42000
+menlo ventures, (1) : 42000
+mercier, (1) : 42000
+merck & co., (3) : 2162
+merck & co. (mrk), (1) : 42000
+merck kgaa, (2) : 6463
+merck kgaa (mrk), (2) : 6463
+meta quest, (1) : 42000
+metaverse, (3) : 2162
+meteorologists, (1) : 42000
+mexico, (2) : 6463
+meyer burger technology ag, (1) : 42000
+meyer burger technology ag (mbtn), (1) : 42000
+microsoft, (4) : 994
+microsoft (msft), (2) : 6463
+midjourney, (3) : 2162
+mining, (1) : 42000
+mithril capital management, (1) : 42000
+mobilezone holding ag, (1) : 42000
+mobilezone holding ag (mozn), (1) : 42000
+mohr davidow ventures, (1) : 42000
+mondelez international, (1) : 42000
+mondelez international (mdlz), (1) : 42000
+morgan stanley, (3) : 2162
+morgan stanley (ms), (2) : 6463
+morgenthaler, (1) : 42000
+morphosys ag, (1) : 42000
+morphosys ag (mor), (1) : 42000
+move2earn, (3) : 2162
+moynat, (1) : 42000
+moët & chandon, (1) : 42000
+munich re, (2) : 6463
+munich re (muv2), (2) : 6463
+n26, (1) : 42000
+nasdaq, (5) : 544
+nato, (1) : 42000
+nea, (1) : 42000
+nea (new enterprise associates), (1) : 42000
+nflx, (1) : 42000
+nft, (6) : 332
+nfts, (1) : 42000
+nlp, (1) : 42000
+nuri, (1) : 42000
+nvda, (4) : 994
+nyse, (4) : 994
+nemetschek se, (1) : 42000
+nemetschek se (nea), (1) : 42000
+nestle sa, (1) : 42000
+nestle sa (nesn), (1) : 42000
+netflix inc, (2) : 6463
+netflix inc (nflx), (2) : 6463
+new enterprise associates, (2) : 6463
+new work se, (1) : 42000
+new work se (nwo), (1) : 42000
+new york, (1) : 42000
+news, (1) : 42000
+newton vineyard, (1) : 42000
+nextera energy inc, (1) : 42000
+nextera energy inc (nee), (1) : 42000
+nexus venture partners, (1) : 42000
+nike inc, (3) : 2162
+nike inc (nke), (2) : 6463
+nomura, (1) : 42000
+nordex se, (2) : 6463
+nordex se (ndx1), (2) : 6463
+norwest venture partners, (1) : 42000
+novartis ag, (1) : 42000
+novartis ag (novn), (1) : 42000
+nvidia corporation, (2) : 6463
+nvidia corporation (nvda), (3) : 2162
+oc oerlikon corporation ag, (1) : 42000
+oc oerlikon corporation ag (oerl), (1) : 42000
+okex, (3) : 2162
+okx, (1) : 42000
+opec, (1) : 42000
+opel, (1) : 42000
+orcl, (1) : 42000
+ota, (1) : 42000
+oxo capital, (1) : 42000
+oaktree capital management, (1) : 42000
+off-white, (1) : 42000
+officine universelle buly, (1) : 42000
+oilprice, (1) : 42000
+ole henriksen, (1) : 42000
+onesignal, (1) : 42000
+onset ventures, (1) : 42000
+optiver, (1) : 42000
+oracle corporation, (2) : 6463
+oracle corporation (orcl), (2) : 6463
+osram licht ag, (1) : 42000
+osram licht ag (osr), (1) : 42000
+our world in data, (1) : 42000
+outlier ventures, (1) : 42000
+p2b, (1) : 42000
+psp swiss property ag, (1) : 42000
+psp swiss property ag (pspn), (1) : 42000
+palantir, (1) : 42000
+palantir tech, (1) : 42000
+palar capital, (1) : 42000
+panalpina welttransport holding ag, (1) : 42000
+panalpina welttransport holding ag (pwtn), (1) : 42000
+parfums christian dior, (1) : 42000
+parfums givenchy, (1) : 42000
+paris, (3) : 2162
+partners group holding ag, (1) : 42000
+partners group holding ag (pghn), (1) : 42000
+patou, (1) : 42000
+patrizia immobilien ag, (1) : 42000
+patrizia immobilien ag (pat), (1) : 42000
+paypal holdings inc, (2) : 6463
+paypal holdings inc (pypl), (2) : 6463
+pepsico inc, (2) : 6463
+pepsico inc (pep), (2) : 6463
+perez sport, (1) : 42000
+perfumes loewe, (1) : 42000
+permira, (1) : 42000
+pfeiffer vacuum technology ag, (1) : 42000
+pfeiffer vacuum technology ag (pfv), (1) : 42000
+pfizer inc., (2) : 6463
+pfizer inc. (pfe), (2) : 6463
+phoebe philo, (1) : 42000
+pictet group, (1) : 42000
+pictet group (private), (1) : 42000
+pimax portal, (1) : 42000
+play to earn, (1) : 42000
+play2earn, (1) : 42000
+point72 asset management, (1) : 42000
+polkabridge, (1) : 42000
+polkadot, (3) : 2162
+polygon, (3) : 2162
+portfolio, (1) : 42000
+powerhouse, (1) : 42000
+prada, (2) : 6463
+procter & gamble co, (2) : 6463
+procter & gamble co (pg), (2) : 6463
+prologis inc, (2) : 6463
+prologis inc (pld), (2) : 6463
+proof of stake, (1) : 42000
+proof of work, (1) : 42000
+protocol labs, (1) : 42000
+providence equity partners, (1) : 42000
+proximus plc, (1) : 42000
+proximus plc (prox), (1) : 42000
+puma se, (1) : 42000
+puma se (pum), (1) : 42000
+qed investors, (1) : 42000
+qqqq, (1) : 42000
+qsc ag, (1) : 42000
+qsc ag (qsc), (1) : 42000
+qualcomm inc, (2) : 6463
+qualcomm inc (qcom), (2) : 6463
+roku, (1) : 42000
+rwe ag, (2) : 6463
+rwe ag (rwe), (2) : 6463
+radio classique, (1) : 42000
+ralph lauren, (2) : 6463
+raytheon technologies corporation, (1) : 42000
+raytheon technologies corporation (rtx), (1) : 42000
+razorpay, (1) : 42000
+reddit, (2) : 6463
+redpoint ventures, (1) : 42000
+regulation, (1) : 42000
+relay ventures, (1) : 42000
+repossi, (1) : 42000
+revolution capital, (1) : 42000
+richemont sa, (1) : 42000
+richemont sa (cfr), (1) : 42000
+ridecell, (1) : 42000
+rimowa, (1) : 42000
+riot, (1) : 42000
+ripple, (5) : 544
+roche holding ag, (1) : 42000
+roche holding ag (rog), (1) : 42000
+rolex, (2) : 6463
+royal dutch shell plc, (1) : 42000
+royal dutch shell plc (rds.a), (1) : 42000
+royal van lent, (1) : 42000
+rug pull, (1) : 42000
+ruinart, (1) : 42000
+russia, (7) : 219
+s&p 500, (5) : 544
+s&t ag, (1) : 42000
+s&t ag (sant), (1) : 42000
+saab, (1) : 42000
+sap se, (2) : 6463
+sap se (sap), (2) : 6463
+sawa crypto, (1) : 42000
+sbux, (1) : 42000
+sec, (1) : 42000
+sfs group ag, (1) : 42000
+sfs group ag (sfsn), (1) : 42000
+sgl carbon se, (2) : 6463
+sgl carbon se (sgl), (2) : 6463
+sgs sa, (1) : 42000
+sgs sa (sgsn), (1) : 42000
+sig, (1) : 42000
+sig (susquehanna international group), (1) : 42000
+skale, (1) : 42000
+skale (skl), (1) : 42000
+sma solar technology ag, (1) : 42000
+sma solar technology ag (s92), (1) : 42000
+sp500, (2) : 6463
+sv angel, (1) : 42000
+svg ventures, (1) : 42000
+saheel capital, (1) : 42000
+salesforce.com inc, (2) : 6463
+salesforce.com inc (crm), (2) : 6463
+salzgitter ag, (1) : 42000
+salzgitter ag (szg), (1) : 42000
+sapphire ventures, (1) : 42000
+sartorius ag, (1) : 42000
+sartorius ag (srt), (1) : 42000
+scam crypto, (1) : 42000
+scam nft, (1) : 42000
+schindler holding ag, (1) : 42000
+schindler holding ag (schp), (1) : 42000
+scribd, (1) : 42000
+seed phrase, (1) : 42000
+segment, (1) : 42000
+sephora, (1) : 42000
+sequoia capital, (1) : 42000
+services, (1) : 42000
+shanghai, (2) : 6463
+sharding, (1) : 42000
+shasta ventures, (1) : 42000
+shiba, (1) : 42000
+shiba inu, (3) : 2162
+shiftall, (1) : 42000
+siemens ag, (2) : 6463
+siemens ag (sie), (2) : 6463
+sierra ventures, (1) : 42000
+sika ag, (1) : 42000
+sika ag (sika), (1) : 42000
+silver lake, (1) : 42000
+silver lake partners, (1) : 42000
+singapore, (2) : 6463
+sinnerschrader ag, (1) : 42000
+sinnerschrader ag (szz), (1) : 42000
+slow ventures, (1) : 42000
+smart contract, (1) : 42000
+smartasset, (1) : 42000
+snapdocs, (1) : 42000
+snapdragon, (1) : 42000
+social capital, (1) : 42000
+société générale, (2) : 6463
+sofinnova ventures, (1) : 42000
+soft fork, (1) : 42000
+softbank vision fund, (1) : 42000
+softbank group corp, (1) : 42000
+softbank group corp (9984.t), (1) : 42000
+software ag, (1) : 42000
+software ag (sow), (1) : 42000
+solana, (18) : 30
+sommium, (1) : 42000
+sonova holding ag, (1) : 42000
+sonova holding ag (soon), (1) : 42000
+sony: playstation vr, (1) : 42000
+sorare, (2) : 6463
+sourceress, (1) : 42000
+south korea, (1) : 42000
+spark capital, (1) : 42000
+spot etf, (2) : 6463
+stablecoins, (3) : 2162
+staking, (1) : 42000
+starboard cruise, (1) : 42000
+starbucks corporation, (2) : 6463
+starbucks corporation (sbux), (2) : 6463
+stella mccartney, (2) : 6463
+storm ventures, (1) : 42000
+straumann holding ag, (1) : 42000
+straumann holding ag (stmn), (1) : 42000
+strikingly, (1) : 42000
+sunrise communications group ag, (1) : 42000
+sunrise communications group ag (srcg), (1) : 42000
+surteco group se, (1) : 42000
+surteco group se (sur), (1) : 42000
+susquehanna international group, (1) : 42000
+swatch group ag, (1) : 42000
+swatch group ag (uhr), (1) : 42000
+swiss life holding ag, (1) : 42000
+swiss life holding ag (slhn), (1) : 42000
+swiss prime site ag, (1) : 42000
+swiss prime site ag (spsn), (1) : 42000
+swiss re ag, (1) : 42000
+swiss re ag (sren), (1) : 42000
+swisscom ag, (1) : 42000
+swisscom ag (scmn), (1) : 42000
+switzerland, (2) : 6463
+t. rowe price, (1) : 42000
+tag heuer, (1) : 42000
+tcv, (1) : 42000
+tcv (technology crossover ventures), (1) : 42000
+tpg capital, (1) : 42000
+tsla, (3) : 2162
+takkt ag, (1) : 42000
+takkt ag (ttk), (1) : 42000
+tamedia ag, (1) : 42000
+tamedia ag (tamn), (1) : 42000
+taxation, (1) : 42000
+tecan group ag, (1) : 42000
+tecan group ag (tecn), (1) : 42000
+technology crossover ventures, (1) : 42000
+technology news, (1) : 42000
+teespring, (1) : 42000
+tele columbus ag, (1) : 42000
+tele columbus ag (tc1), (1) : 42000
+temasek holdings, (1) : 42000
+tencent holdings ltd, (1) : 42000
+tencent holdings ltd (tcehy), (1) : 42000
+terrazas de los andes, (1) : 42000
+tesla, (3) : 2162
+tether, (2) : 6463
+texas instruments incorporated, (2) : 6463
+texas instruments incorporated (txn), (2) : 6463
+the blackstone group, (2) : 6463
+the carlyle group, (1) : 42000
+the jordan company, (1) : 42000
+the muse, (1) : 42000
+the westly group, (1) : 42000
+thermo fisher scientific inc., (1) : 42000
+thermo fisher scientific inc. (tmo), (1) : 42000
+thyssenkrupp ag, (1) : 42000
+thyssenkrupp ag (tka), (1) : 42000
+tiffany, (1) : 42000
+tiffany & co., (1) : 42000
+tiger global management, (1) : 42000
+tokenization, (1) : 42000
+tokenomics, (3) : 2162
+tokyo, (2) : 6463
+tom tailor holding ag, (1) : 42000
+tom tailor holding ag (tti), (1) : 42000
+tower research, (1) : 42000
+trinity ventures, (1) : 42000
+triplepoint capital, (1) : 42000
+twitch, (1) : 42000
+u.s. venture partners, (1) : 42000
+ubs group ag, (2) : 6463
+ubs group ag (ubsg), (1) : 42000
+ups, (1) : 42000
+usa, (6) : 332
+usd, (2) : 6463
+usdc, (7) : 219
+usdt, (5) : 544
+ukraine, (4) : 994
+unilever nv, (1) : 42000
+unilever nv (una), (1) : 42000
+union pacific corporation, (2) : 6463
+union pacific corporation (unp), (1) : 42000
+uniswap, (3) : 2162
+united arab emirates, (2) : 6463
+united internet ag, (1) : 42000
+united internet ag (utdi), (1) : 42000
+united kingdom, (3) : 2162
+united states, (4) : 994
+unitedhealth group inc, (2) : 6463
+unitedhealth group inc (unh), (2) : 6463
+valr, (1) : 42000
+vc capital partners, (1) : 42000
+visa, (1) : 42000
+vtg ag, (1) : 42000
+vtg ag (vt9), (1) : 42000
+valentino, (2) : 6463
+valor equity partners, (1) : 42000
+valora holding ag, (1) : 42000
+valora holding ag (valn), (1) : 42000
+vanguard 500 etf, (3) : 2162
+vanguard and blackrock, (1) : 42000
+verizon communications inc, (2) : 6463
+verizon communications inc (vz), (2) : 6463
+versace, (2) : 6463
+vespertine capital, (1) : 42000
+vetropack holding ag, (1) : 42000
+vetropack holding ag (vet), (1) : 42000
+veuve clicquot, (1) : 42000
+vifor pharma ag, (1) : 42000
+vifor pharma ag (vifn), (1) : 42000
+visa inc., (1) : 42000
+visa inc. (v), (1) : 42000
+vision pro, (3) : 2162
+volcan de mi tierra, (1) : 42000
+volkswagen ag, (2) : 6463
+volkswagen ag (vow3), (1) : 42000
+volkswagen ag (vowg), (1) : 42000
+volkswagen ag vz., (1) : 42000
+volkswagen ag vz. (vow3), (1) : 42000
+vonovia se, (2) : 6463
+vonovia se (vna), (2) : 6463
+vossloh ag, (1) : 42000
+vossloh ag (vos), (1) : 42000
+web3, (5) : 544
+wolverine trading, (1) : 42000
+wacker chemie ag, (1) : 42000
+wacker chemie ag (wch), (1) : 42000
+wacker neuson se, (1) : 42000
+wacker neuson se (wac), (1) : 42000
+wagner military, (1) : 42000
+wallstreet, (1) : 42000
+wallet, (2) : 6463
+walmart inc., (2) : 6463
+walmart inc. (wmt), (2) : 6463
+walt disney co, (2) : 6463
+walt disney co (dis), (2) : 6463
+warburg pincus, (1) : 42000
+warrenbuffett, (1) : 42000
+wepay, (1) : 42000
+web3 news, (1) : 42000
+webflow, (2) : 6463
+weebly, (1) : 42000
+wellington management, (1) : 42000
+wells fargo & co, (2) : 6463
+wells fargo & co (wfc), (2) : 6463
+weston presidio, (1) : 42000
+whale rock capital management, (1) : 42000
+wirecard ag, (2) : 6463
+wirecard ag (wdi), (2) : 6463
+woodinville, (1) : 42000
+worldquant ventures, (1) : 42000
+wrapped coin, (1) : 42000
+xauusd, (1) : 42000
+xom, (1) : 42000
+xrp, (4) : 994
+xing se, (1) : 42000
+xing se (o1bc), (1) : 42000
+y combinator, (2) : 6463
+yield farming, (2) : 6463
+york capital management, (1) : 42000
+yves saint laurent, (1) : 42000
+zk rollup, (1) : 42000
+zapier, (1) : 42000
+zemmour, (2) : 6463
+zenith, (1) : 42000
+zephyrus capital, (1) : 42000
+zero-knowledge proof, (1) : 42000
+zooplus ag, (1) : 42000
+zooplus ag (zo1), (1) : 42000
+zurich insurance group ag, (1) : 42000
+zurich insurance group ag (zurn), (1) : 42000
+a69 autoroute, (1) : 42000
+aarhus, (1) : 42000
+aaron ramsdale, (1) : 42000
+aave, (2) : 6463
+aave (aave), (2) : 6463
+abbott, (1) : 42000
+abbvie, (1) : 42000
+abidjan, (1) : 42000
+abomey-calavi, (1) : 42000
+abuja, (1) : 42000
+abymes, (1) : 42000
+accenture, (1) : 42000
+access protocol, (1) : 42000
+access protocol (acs), (1) : 42000
+accra, (1) : 42000
+acropolis, (1) : 42000
+addis, (1) : 42000
+addu city, (1) : 42000
+aden, (1) : 42000
+adidas, (1) : 42000
+aelf, (1) : 42000
+aelf (elf), (1) : 42000
+afghanistan, (1) : 42000
+african, (1) : 42000
+agata muceniece, (1) : 42000
+age bagholding, (1) : 42000
+ai, (1) : 42000
+airdrop, (2) : 6463
+aires, (1) : 42000
+aiwo, (1) : 42000
+akash, (4) : 994
+akash network, (1) : 42000
+akash network (akt), (1) : 42000
+akureyri, (1) : 42000
+al ahmadi, (1) : 42000
+al rayyan, (1) : 42000
+al wakrah, (1) : 42000
+alajuela, (1) : 42000
+albania, (1) : 42000
+alchemix usd, (1) : 42000
+alchemix usd (alusd), (1) : 42000
+alchemy, (1) : 42000
+alchemy pay, (1) : 42000
+alchemy pay (ach), (1) : 42000
+alejandra marquez, (1) : 42000
+aleksandr lukashenko, (1) : 42000
+aleksandr morozov, (1) : 42000
+alen, (1) : 42000
+aleph zero, (1) : 42000
+aleph zero (azero), (1) : 42000
+aleppo, (1) : 42000
+alexa grasso, (1) : 42000
+alexander petrov, (1) : 42000
+alexanderplatz, (1) : 42000
+alexandra trusova, (1) : 42000
+alexandre mcqueen, (1) : 42000
+alexandria, (1) : 42000
+alexandria ocasio-cortez, (1) : 42000
+alfa romeo, (1) : 42000
+algeria, (1) : 42000
+algiers, (1) : 42000
+algorand, (2) : 6463
+algorand (algo), (3) : 2162
+alisher usmanov, (1) : 42000
+almaty, (1) : 42000
+altcoin, (1) : 42000
+alts, (2) : 6463
+altseason, (2) : 6463
+alyona vodonayeva, (1) : 42000
+america, (3) : 2162
+amman, (1) : 42000
+amsterdam, (1) : 42000
+analytics, (1) : 42000
+ancient, (1) : 42000
+andorra, (1) : 42000
+andrea iannone, (1) : 42000
+angel falls, (1) : 42000
+angela merkel, (1) : 42000
+angola, (1) : 42000
+anibare bay, (1) : 42000
+ankara, (1) : 42000
+ankr network, (1) : 42000
+ankr network (ankr), (1) : 42000
+anna terekhova, (1) : 42000
+anse boileau, (1) : 42000
+antananarivo, (1) : 42000
+antigua, (1) : 42000
+antsirabe, (1) : 42000
+apecoin, (2) : 6463
+apecoin (ape), (3) : 2162
+aphrodite's, (1) : 42000
+apia, (1) : 42000
+aptos, (2) : 6463
+aptos (apt), (3) : 2162
+aquaplaning, (1) : 42000
+arab, (1) : 42000
+aragon, (1) : 42000
+aragon (ant), (1) : 42000
+arbitrum, (2) : 6463
+arbitrum (arb), (3) : 2162
+arcelormittal, (1) : 42000
+archaeological, (1) : 42000
+arenal, (1) : 42000
+arequipa, (1) : 42000
+argentina, (1) : 42000
+argentine, (1) : 42000
+ariana grande, (1) : 42000
+arlan kokshetau, (1) : 42000
+armani, (1) : 42000
+armed conflict, (2) : 6463
+armenia, (2) : 6463
+armenian, (2) : 6463
+arno atoll, (1) : 42000
+arqus, (1) : 42000
+artsakh, (2) : 6463
+artur parfenchikov, (1) : 42000
+artyom zdunov, (1) : 42000
+arundhati roy, (1) : 42000
+arusha, (1) : 42000
+arweave, (2) : 6463
+arweave (ar), (3) : 2162
+ascendex, (1) : 42000
+ascendex (bitmax), (1) : 42000
+ashgabat, (1) : 42000
+asians shitposting, (1) : 42000
+askreddit, (1) : 42000
+asmara, (1) : 42000
+assal, (1) : 42000
+astar, (1) : 42000
+astar (astr), (1) : 42000
+astarta holding, (1) : 42000
+aston martin, (1) : 42000
+astrafer, (2) : 6463
+astrafer (astrafer), (1) : 42000
+asunción, (1) : 42000
+athens, (1) : 42000
+atlantis, (1) : 42000
+auckland, (1) : 42000
+audemars piguet, (1) : 42000
+audius, (1) : 42000
+audius (audio), (1) : 42000
+audollar, (1) : 42000
+augmented reality, (1) : 42000
+auki, (1) : 42000
+aussie, (1) : 42000
+australia, (1) : 42000
+australian, (1) : 42000
+australian capital territory, (1) : 42000
+austria, (1) : 42000
+autonomous vehicles, (1) : 42000
+ava labs, (1) : 42000
+avalanche (avax), (3) : 2162
+avenue of the baobabs, (1) : 42000
+aviv, (1) : 42000
+avoidable situation, (1) : 42000
+axelar, (1) : 42000
+axelar (axl), (1) : 42000
+axie infinity, (2) : 6463
+axie infinity (axs), (3) : 2162
+azerbaijan, (1) : 42000
+azeri–chirag–gunashli, (1) : 42000
+baa atoll biosphere reserve, (1) : 42000
+babruysk, (1) : 42000
+babruysk district, (1) : 42000
+baby doge coin, (1) : 42000
+baby doge coin (babydoge), (1) : 42000
+babydoge, (1) : 42000
+babylon, (1) : 42000
+baccarat, (1) : 42000
+badshahi mosque, (1) : 42000
+bagan, (1) : 42000
+baghdad, (1) : 42000
+bagholding, (1) : 42000
+bagholding link, (1) : 42000
+bahamas, (1) : 42000
+bahir, (1) : 42000
+bahrain, (1) : 42000
+baht, (1) : 42000
+baie-mahault, (1) : 42000
+bairiki, (1) : 42000
+baku, (1) : 42000
+baku–novorossiysk pipeline, (1) : 42000
+balancer, (1) : 42000
+balancer (bal), (1) : 42000
+bali, (1) : 42000
+bamako, (1) : 42000
+bamiyan, (1) : 42000
+banaue rice terraces, (1) : 42000
+band protocol, (1) : 42000
+band protocol (band), (1) : 42000
+bandar, (1) : 42000
+bandung, (1) : 42000
+bangkok, (1) : 42000
+bangladesh, (1) : 42000
+bangui, (1) : 42000
+banja, (1) : 42000
+banjul, (1) : 42000
+bank, (1) : 42000
+bank of america, (1) : 42000
+bank of canada, (1) : 42000
+barbados, (1) : 42000
+barbuda, (1) : 42000
+barcelona, (1) : 42000
+barrier, (1) : 42000
+bartenders unionizingwhat, (1) : 42000
+basic attention, (1) : 42000
+basic attention (bat), (1) : 42000
+basra, (1) : 42000
+basseterre, (1) : 42000
+bata, (1) : 42000
+battle, (2) : 6463
+battles, (2) : 6463
+batumi, (1) : 42000
+baucau, (1) : 42000
+baxter international, (1) : 42000
+bay of kotor, (1) : 42000
+bayer 04 leverkusen, (1) : 42000
+bazaruto archipelago, (1) : 42000
+bear market, (2) : 6463
+bearish, (3) : 2162
+beau bassin-rose hill, (1) : 42000
+beau vallon, (1) : 42000
+becton dickinson, (1) : 42000
+begawan, (1) : 42000
+beira, (1) : 42000
+beirut, (1) : 42000
+belait, (1) : 42000
+beldex, (1) : 42000
+beldex (bdx), (1) : 42000
+belgrade, (1) : 42000
+belize, (1) : 42000
+belmopan, (1) : 42000
+ben chilwell, (1) : 42000
+benghazi, (1) : 42000
+benin, (1) : 42000
+benoît magimel, (1) : 42000
+bentley, (1) : 42000
+bequia, (1) : 42000
+berat, (1) : 42000
+berberati, (1) : 42000
+bergen, (1) : 42000
+berkshire hathaway, (3) : 2162
+berlin, (1) : 42000
+berlin wall, (1) : 42000
+bern, (1) : 42000
+bernard goutta, (1) : 42000
+bernie sanders, (1) : 42000
+bertrand dicale, (1) : 42000
+bhp group, (1) : 42000
+bhutan, (1) : 42000
+biarritz olympique, (1) : 42000
+biconomy, (1) : 42000
+biconomy (bico), (1) : 42000
+bicske, (1) : 42000
+bigone, (1) : 42000
+bill gates, (2) : 6463
+billerica, (1) : 42000
+billie eilish, (1) : 42000
+bimbo, (1) : 42000
+binance us, (3) : 2162
+binance usd, (2) : 6463
+binance usd (busd), (2) : 6463
+bingx, (1) : 42000
+bir-hakeim, (1) : 42000
+birgu, (1) : 42000
+birmingham, (1) : 42000
+bishkek, (1) : 42000
+bitbank, (1) : 42000
+bitci tr, (1) : 42000
+bitcoin cash, (2) : 6463
+bitcoin cash (bch), (3) : 2162
+bitcoin depot, (1) : 42000
+bitcoin gold, (1) : 42000
+bitcoin gold (btg), (1) : 42000
+bitcoin sv, (2) : 6463
+bitcoin sv (bsv), (3) : 2162
+bitdao, (2) : 6463
+bitdao (bit), (3) : 2162
+bitfinex, (1) : 42000
+bitflyer, (1) : 42000
+bitforex, (1) : 42000
+bitfury, (1) : 42000
+bitgert, (1) : 42000
+bitgert (brise), (1) : 42000
+bitget (bgb), (3) : 2162
+bitget token, (1) : 42000
+bitget token (bgb), (1) : 42000
+bitgo, (1) : 42000
+bithumb, (1) : 42000
+bitkub, (1) : 42000
+bitkub (kub), (1) : 42000
+bitmart, (1) : 42000
+bitmex, (1) : 42000
+bitola, (1) : 42000
+bitopro, (1) : 42000
+bitpanda, (1) : 42000
+bitrue, (1) : 42000
+bitso, (1) : 42000
+bittorrent, (2) : 6463
+bittorrent (btt), (3) : 2162
+bittrex, (1) : 42000
+bittrex global, (1) : 42000
+bitvavo, (1) : 42000
+black rock, (2) : 6463
+blantyre, (1) : 42000
+blizzcon, (1) : 42000
+block daemon, (1) : 42000
+blockchain.com, (3) : 2162
+blockfi, (1) : 42000
+blox, (1) : 42000
+blox (cdt), (1) : 42000
+blue, (1) : 42000
+blur, (1) : 42000
+blur (blur), (1) : 42000
+bo soybean oil, (1) : 42000
+bobo-dioulasso, (1) : 42000
+boeing, (1) : 42000
+bogotá, (1) : 42000
+bolivia, (1) : 42000
+bolshoi theatre, (1) : 42000
+bonds, (1) : 42000
+bone shibaswap, (1) : 42000
+bone shibaswap (bone), (1) : 42000
+bora, (1) : 42000
+bora (bora), (1) : 42000
+borgo maggiore, (1) : 42000
+boris johnson, (1) : 42000
+boris pasternak, (1) : 42000
+boris shakhlin, (1) : 42000
+borussia dortmund, (1) : 42000
+borussia mönchengladbach, (1) : 42000
+bosnia, (1) : 42000
+botswana, (1) : 42000
+bottega veneta, (1) : 42000
+bouaké, (1) : 42000
+bran castle, (1) : 42000
+brandenburg gate, (1) : 42000
+brasília, (1) : 42000
+bratislava, (1) : 42000
+brazilian, (1) : 42000
+brazzaville, (1) : 42000
+breaking news, (1) : 42000
+brescia calcio, (1) : 42000
+bricquebec, (1) : 42000
+bridgetown, (1) : 42000
+brikama, (1) : 42000
+british, (1) : 42000
+brittney sykes, (1) : 42000
+brk-a, (1) : 42000
+brl brazilian real, (1) : 42000
+brno, (1) : 42000
+brunei, (1) : 42000
+brunello cucinelli, (1) : 42000
+brusselscapital region, (1) : 42000
+bryansk oblast, (1) : 42000
+btcex, (1) : 42000
+btcmarkets, (1) : 42000
+btcturk pro, (1) : 42000
+btse token, (1) : 42000
+btse token (btse), (1) : 42000
+buchanan, (1) : 42000
+bucharest, (1) : 42000
+buda, (1) : 42000
+budapest, (1) : 42000
+buddha, (1) : 42000
+budućnost voli, (1) : 42000
+bugatti, (1) : 42000
+bujumbura, (1) : 42000
+bukhara, (1) : 42000
+bulawayo, (1) : 42000
+bulgaria, (1) : 42000
+bull market, (2) : 6463
+bullish, (2) : 6463
+bundesliga, (2) : 6463
+burberry, (1) : 42000
+burj khalifa, (1) : 42000
+burkina, (1) : 42000
+burundi, (1) : 42000
+buryatia, (1) : 42000
+busan, (1) : 42000
+business, (1) : 42000
+butare, (1) : 42000
+bybit, (3) : 2162
+bz brent crude oil, (1) : 42000
+bălți, (1) : 42000
+c-patex, (1) : 42000
+cabo, (1) : 42000
+cad canadian dollar, (1) : 42000
+cadillac, (1) : 42000
+cairo, (1) : 42000
+cali, (1) : 42000
+camagüey, (1) : 42000
+cambodia, (1) : 42000
+cameroon, (1) : 42000
+cana, (1) : 42000
+canberra, (1) : 42000
+candice renoir, (1) : 42000
+candy, (1) : 42000
+cap-haïtien, (1) : 42000
+cape town, (1) : 42000
+capital, (3) : 2162
+capitol, (1) : 42000
+capsizing, (1) : 42000
+captur, (1) : 42000
+caracas, (1) : 42000
+cardano (ada), (1) : 42000
+carlo ancelotti, (1) : 42000
+cartagena, (1) : 42000
+cartesi, (1) : 42000
+cartesi (ctsi), (1) : 42000
+carthage, (1) : 42000
+casa, (1) : 42000
+casablanca, (1) : 42000
+cash app, (2) : 6463
+casper mattress, (1) : 42000
+casper network, (2) : 6463
+casper network (cspr), (3) : 2162
+castle, (1) : 42000
+castries, (1) : 42000
+cdai, (1) : 42000
+cdai (cdai), (1) : 42000
+cedars of lebanon, (1) : 42000
+celo, (1) : 42000
+celo (celo), (1) : 42000
+central, (1) : 42000
+central suriname nature reserve, (1) : 42000
+centralization, (1) : 42000
+cerén, (1) : 42000
+ceth, (2) : 6463
+ceth (ceth), (3) : 2162
+cex.io, (1) : 42000
+cf industries, (1) : 42000
+chad, (1) : 42000
+chaguanas, (1) : 42000
+chainalysis, (2) : 6463
+chainlink, (6) : 332
+chainlink (link), (3) : 2162
+chamarel colored earths, (1) : 42000
+championnat national 2, (1) : 42000
+champs elysees, (1) : 42000
+chantepie, (1) : 42000
+charles de gaulle, (1) : 42000
+charles schwab, (1) : 42000
+charlestown, (1) : 42000
+chartres, (1) : 42000
+charyn canyon, (1) : 42000
+checkpoint charlie, (1) : 42000
+chefchaouen, (1) : 42000
+chemillé-melay, (1) : 42000
+chernobyl exclusion zone, (1) : 42000
+chevrolet, (1) : 42000
+chevron, (1) : 42000
+chf swiss franc, (1) : 42000
+chfranc, (1) : 42000
+chia, (1) : 42000
+chia (xch), (1) : 42000
+chiang mai, (1) : 42000
+chichen itza, (1) : 42000
+chile, (1) : 42000
+chiliz, (3) : 2162
+chiliz (chz), (1) : 42000
+china bank, (1) : 42000
+chittagong, (1) : 42000
+chitungwiza, (1) : 42000
+chișinău, (1) : 42000
+chongjin, (1) : 42000
+christ, (1) : 42000
+christchurch, (1) : 42000
+circle, (2) : 6463
+circuito de jerez, (1) : 42000
+citadelle, (1) : 42000
+citizens financial, (1) : 42000
+citroën, (1) : 42000
+city, (1) : 42000
+ciudad de la costa, (1) : 42000
+ciudad del este, (1) : 42000
+cl crude oil, (1) : 42000
+cliffs, (1) : 42000
+climate change, (1) : 42000
+clio, (1) : 42000
+clp chilean peso, (1) : 42000
+club athletico paranaense, (1) : 42000
+clube atlético mineiro, (1) : 42000
+cluj-napoca, (1) : 42000
+cmcsa, (1) : 42000
+cms energy, (1) : 42000
+cny chinese yuan, (1) : 42000
+coca cola, (1) : 42000
+coimbra, (1) : 42000
+coincidentally correct, (1) : 42000
+coinex, (1) : 42000
+coinex (cet), (1) : 42000
+coinflip, (1) : 42000
+coinmarketcap, (1) : 42000
+coinone, (1) : 42000
+coins.ph, (1) : 42000
+coinsbit, (1) : 42000
+coinstore, (1) : 42000
+cointr pro, (1) : 42000
+cold, (1) : 42000
+colombia, (1) : 42000
+colombo, (1) : 42000
+colonia, (1) : 42000
+colosseum, (1) : 42000
+colón, (1) : 42000
+commodity, (1) : 42000
+commonwealth, (1) : 42000
+communicateincorrect, (1) : 42000
+comoros, (1) : 42000
+compagnie financiere richemont sa, (1) : 42000
+compound, (1) : 42000
+compound (comp), (1) : 42000
+concepción, (1) : 42000
+conflagration, (2) : 6463
+conflict, (3) : 2162
+conflux, (2) : 6463
+conflux (cfx), (3) : 2162
+congo, (1) : 42000
+consensys, (2) : 6463
+constantine, (1) : 42000
+constellation, (1) : 42000
+constellation (dag), (1) : 42000
+convex crv, (1) : 42000
+convex crv (cvxcrv), (1) : 42000
+convex finance, (2) : 6463
+convex finance (cvx), (3) : 2162
+cop colombian peso, (1) : 42000
+copenhagen, (1) : 42000
+coppa italia, (1) : 42000
+core, (1) : 42000
+core (core), (1) : 42000
+corey lajoie, (1) : 42000
+cork, (1) : 42000
+coronavirus, (1) : 42000
+cosmos hub, (2) : 6463
+cosmos hub (atom), (3) : 2162
+costa, (1) : 42000
+cotentin peninsula, (1) : 42000
+cotonou, (1) : 42000
+covid-19, (1) : 42000
+crimean peninsula, (2) : 6463
+crisis, (1) : 42000
+crispr, (1) : 42000
+cristiano ronaldo, (1) : 42000
+criticizing, (1) : 42000
+criticizing adlnot, (1) : 42000
+croatia, (1) : 42000
+cronos, (2) : 6463
+cronos (cro), (3) : 2162
+cruz, (1) : 42000
+crypto regulation, (1) : 42000
+crypto.com, (2) : 6463
+crypto.com (cro), (2) : 6463
+cryptoblades, (1) : 42000
+cryptology, (1) : 42000
+ct cotton, (1) : 42000
+cuba, (1) : 42000
+cuenca, (1) : 42000
+cupecoy, (1) : 42000
+currency, (2) : 6463
+curve, (1) : 42000
+curve dao, (2) : 6463
+curve dao (crv), (3) : 2162
+cusco, (1) : 42000
+cusdc, (1) : 42000
+cusdc (cusdc), (1) : 42000
+cusdt, (1) : 42000
+cusdt (cusdt), (1) : 42000
+cyberattack, (1) : 42000
+cyberwar, (1) : 42000
+cyprus, (1) : 42000
+cyril lignac, (1) : 42000
+czech, (1) : 42000
+czk czech koruna, (1) : 42000
+córdoba, (1) : 42000
+côte, (1) : 42000
+côte d'ivoire, (1) : 42000
+d.c., (1) : 42000
+da nang, (1) : 42000
+dacia, (1) : 42000
+dahlak, (1) : 42000
+daihatsu, (1) : 42000
+dakar, (1) : 42000
+dalai lama, (1) : 42000
+daler kuzyayev, (1) : 42000
+damascus, (1) : 42000
+dao maker, (1) : 42000
+dao maker (dao), (1) : 42000
+dar es salaam, (1) : 42000
+darkhan, (1) : 42000
+darvaza gas crater, (1) : 42000
+dash, (2) : 6463
+dash (dash), (3) : 2162
+data privacy, (1) : 42000
+datcha, (1) : 42000
+daugavpils, (1) : 42000
+davao city, (1) : 42000
+david, (1) : 42000
+davita inc, (1) : 42000
+dawa, (1) : 42000
+daşoguz, (1) : 42000
+deborra-lee furness, (1) : 42000
+debrecen, (1) : 42000
+debt, (1) : 42000
+decentraland, (2) : 6463
+decentraland (mana), (3) : 2162
+decentralized finance, (2) : 6463
+decentralized social, (1) : 42000
+decentralized social (deso), (1) : 42000
+decred, (1) : 42000
+decred (dcr), (1) : 42000
+deepcoin, (1) : 42000
+deepfakes, (2) : 6463
+defensa y justicia, (1) : 42000
+defichain, (1) : 42000
+defichain (dfi), (1) : 42000
+deion sanders, (1) : 42000
+delta exchange, (1) : 42000
+democratic, (1) : 42000
+demoralized finding, (1) : 42000
+denigomodu, (1) : 42000
+denmark, (1) : 42000
+deportivo alavés, (1) : 42000
+dex-trade, (1) : 42000
+dfb-pokal, (1) : 42000
+dhaka, (1) : 42000
+dictation, (1) : 42000
+didier digard, (1) : 42000
+diego maradona, (1) : 42000
+dieppe bay town, (1) : 42000
+dietitian, (2) : 6463
+differdange, (1) : 42000
+digibyte, (1) : 42000
+digibyte (dgb), (1) : 42000
+digifinex, (1) : 42000
+digital, (1) : 42000
+digital assets, (3) : 2162
+digression, (1) : 42000
+dili, (1) : 42000
+dinar, (1) : 42000
+diprotodon, (1) : 42000
+dire, (1) : 42000
+dirham, (1) : 42000
+djamel belmadi, (1) : 42000
+djenné mosque, (1) : 42000
+djibouti, (1) : 42000
+dkk danish krone, (1) : 42000
+dmitri hvorostovsky, (1) : 42000
+dockyard, (1) : 42000
+dodge, (1) : 42000
+dodoma, (1) : 42000
+dogelon mars, (1) : 42000
+dogelon mars (elon), (1) : 42000
+doha, (1) : 42000
+dolisie, (1) : 42000
+dollar, (3) : 2162
+domingo, (1) : 42000
+dominica, (1) : 42000
+dominican, (1) : 42000
+donald trump, (1) : 42000
+douala, (1) : 42000
+dow inc, (3) : 2162
+dow jones, (3) : 2162
+downvote, (1) : 42000
+drake, (1) : 42000
+dramatically reshape, (1) : 42000
+drones, (1) : 42000
+dte energy, (1) : 42000
+dubai airport, (1) : 42000
+dubai city, (1) : 42000
+dubai frame, (1) : 42000
+dubai mall, (1) : 42000
+dubai marina, (1) : 42000
+dubai metro, (1) : 42000
+dubrovnik, (1) : 42000
+dupage county, (1) : 42000
+durres, (1) : 42000
+dushanbe, (1) : 42000
+duster, (1) : 42000
+dydx, (2) : 6463
+dydx (dydx), (3) : 2162
+dzanga-sangha, (1) : 42000
+east, (1) : 42000
+ebebiyin, (1) : 42000
+ebeye, (1) : 42000
+ecash, (1) : 42000
+ecash (xec), (1) : 42000
+ecomi, (1) : 42000
+ecomi (omi), (1) : 42000
+economics, (3) : 2162
+economy, (2) : 6463
+ecuador, (1) : 42000
+ed sheeran, (1) : 42000
+efl championship, (1) : 42000
+egp egyptian pound, (1) : 42000
+egypt, (1) : 42000
+eiffel tower, (1) : 42000
+electric vehicles, (1) : 42000
+emergency, (1) : 42000
+emeutes, (1) : 42000
+emmanuel macron, (2) : 6463
+emmaus france, (1) : 42000
+encamp, (1) : 42000
+encarnación, (1) : 42000
+energy budgets, (1) : 42000
+energy web, (1) : 42000
+energy web (ewt), (1) : 42000
+enjin coin, (1) : 42000
+enjin coin (enj), (1) : 42000
+entergy, (1) : 42000
+eos, (2) : 6463
+eos (eos), (3) : 2162
+equatorial, (1) : 42000
+erdenet, (1) : 42000
+eritrea, (1) : 42000
+ermenegildo zegna, (1) : 42000
+esch-sur-alzette, (1) : 42000
+escoin, (1) : 42000
+escoin (elg), (1) : 42000
+espoo, (1) : 42000
+estonia, (1) : 42000
+eswatini, (1) : 42000
+ether, (1) : 42000
+ethereum classic, (2) : 6463
+ethereum classic (etc), (3) : 2162
+ethereum name service, (1) : 42000
+ethereum name service (ens), (1) : 42000
+ethereumpow, (1) : 42000
+ethereumpow (ethw), (1) : 42000
+ethiopia, (1) : 42000
+ethnography, (1) : 42000
+ethusd, (1) : 42000
+eu, (1) : 42000
+eugene onegin, (1) : 42000
+eur euro, (1) : 42000
+euro, (1) : 42000
+euro tether, (1) : 42000
+euro tether (eurt), (1) : 42000
+euroc, (1) : 42000
+eurocr, (1) : 42000
+eurocup basketball, (1) : 42000
+eurocurr, (1) : 42000
+eurofins scientific, (1) : 42000
+eurozone, (1) : 42000
+everscale, (1) : 42000
+everscale (ever), (1) : 42000
+evil geniuses, (1) : 42000
+exchange rate, (1) : 42000
+exchange traded fund, (1) : 42000
+exorde, (1) : 42000
+extortion, (1) : 42000
+fabien galthié, (1) : 42000
+fabio celestini, (1) : 42000
+facebook, (1) : 42000
+facial recognition, (1) : 42000
+factorization, (1) : 42000
+faits divers, (1) : 42000
+faleula, (1) : 42000
+fallback optionopenbsd, (1) : 42000
+falls, (1) : 42000
+famex, (1) : 42000
+fantom, (2) : 6463
+fantom (ftm), (3) : 2162
+faso, (1) : 42000
+fau "glavgosekspertiza rossii", (1) : 42000
+fb, (1) : 42000
+fc chelyabinsk, (1) : 42000
+fc maktaaral, (1) : 42000
+fc metallurg lipetsk, (1) : 42000
+fc okzhetpes, (1) : 42000
+fc shakhtar donetsk, (2) : 6463
+federative, (1) : 42000
+federico chiesa, (1) : 42000
+felix tshisekedi, (1) : 42000
+feodor chaliapin, (1) : 42000
+fernando botero, (1) : 42000
+ferrari, (1) : 42000
+fetch.ai, (2) : 6463
+fetch.ai (fet), (2) : 6463
+fifth third bank, (1) : 42000
+figment, (1) : 42000
+figure market maker, (1) : 42000
+fiji, (1) : 42000
+fijian dollar, (1) : 42000
+filecoin, (2) : 6463
+filecoin (fil), (3) : 2162
+fim superbike world championship, (1) : 42000
+finance, (3) : 2162
+fingerprintable, (1) : 42000
+finistere, (1) : 42000
+finland, (1) : 42000
+finland stubs, (1) : 42000
+finschia, (1) : 42000
+finschia (fnsa), (1) : 42000
+fitbit, (1) : 42000
+fk kaspiy aktau, (1) : 42000
+flagellum, (1) : 42000
+flare, (1) : 42000
+flare (flr), (1) : 42000
+flavio briatore, (1) : 42000
+flex coin, (1) : 42000
+flex coin (flex), (1) : 42000
+floatplane, (1) : 42000
+floki, (1) : 42000
+floki (floki), (1) : 42000
+floods, (1) : 42000
+florence, (1) : 42000
+flow, (2) : 6463
+flow (flow), (3) : 2162
+flux, (1) : 42000
+flux (flux), (1) : 42000
+fmfw.io, (1) : 42000
+followers, (1) : 42000
+fomboni, (1) : 42000
+forbidden city, (1) : 42000
+forex, (1) : 42000
+forint, (1) : 42000
+fort, (1) : 42000
+fortaleza esporte clube, (1) : 42000
+fortune, (1) : 42000
+franc, (1) : 42000
+franceville, (1) : 42000
+francistown, (1) : 42000
+frax, (2) : 6463
+frax (frax), (3) : 2162
+frax ether, (2) : 6463
+frax ether (frxeth), (3) : 2162
+frax share, (2) : 6463
+frax share (fxs), (3) : 2162
+freeport, (1) : 42000
+freetown, (1) : 42000
+freiburg im breisgau, (1) : 42000
+french, (1) : 42000
+friends congratulating, (1) : 42000
+fromsoftware inc., (1) : 42000
+frontignan, (1) : 42000
+frontline, (1) : 42000
+frunzensky district, (1) : 42000
+fumio kishida, (2) : 6463
+funafuti, (1) : 42000
+funafuti conservation area, (1) : 42000
+function x, (1) : 42000
+function x (fx), (1) : 42000
+fuvahmulah, (1) : 42000
+g7, (1) : 42000
+gabon, (1) : 42000
+gaborone, (1) : 42000
+gains farm, (1) : 42000
+gains farm (gfarm2), (1) : 42000
+gains network, (1) : 42000
+gains network (gns), (1) : 42000
+gala, (2) : 6463
+gala (gala), (3) : 2162
+galapagos, (1) : 42000
+galle, (1) : 42000
+galway, (1) : 42000
+gambia, (1) : 42000
+ganja, (1) : 42000
+gardens by the bay, (1) : 42000
+garoua, (1) : 42000
+gate, (1) : 42000
+gate (gate), (1) : 42000
+gate.io, (3) : 2162
+gazillionaire, (1) : 42000
+gazimestan, (1) : 42000
+gazprombank, (1) : 42000
+gbarnga, (1) : 42000
+gbp british pound, (1) : 42000
+gbpound, (1) : 42000
+gc gold, (1) : 42000
+geghard, (1) : 42000
+geirangerfjord, (1) : 42000
+gemini, (1) : 42000
+gemini dollar, (2) : 6463
+gemini dollar (gusd), (3) : 2162
+gene editing, (1) : 42000
+general electric, (1) : 42000
+general mills, (1) : 42000
+general motors, (1) : 42000
+geneva, (1) : 42000
+genghis khan, (1) : 42000
+gennady golovkin, (1) : 42000
+george town, (1) : 42000
+george's, (1) : 42000
+georgetown, (1) : 42000
+georgia, (1) : 42000
+ghana, (1) : 42000
+gitarama, (1) : 42000
+gitega, (1) : 42000
+giza, (1) : 42000
+gizo, (1) : 42000
+gjilan, (1) : 42000
+glacier, (1) : 42000
+global warming, (1) : 42000
+glossier skincare, (1) : 42000
+gmx, (2) : 6463
+gmx (gmx), (3) : 2162
+gnosis, (2) : 6463
+gnosis (gno), (3) : 2162
+goalkeeper, (1) : 42000
+gobi desert, (1) : 42000
+goiás esporte clube, (1) : 42000
+golem, (1) : 42000
+golem (glm), (1) : 42000
+gonaïves, (1) : 42000
+gopro, (1) : 42000
+goree island, (1) : 42000
+gosier, (1) : 42000
+gothenburg, (1) : 42000
+gouyave, (1) : 42000
+grand, (1) : 42000
+great, (1) : 42000
+great wall, (1) : 42000
+greece, (1) : 42000
+grenada, (1) : 42000
+greta gerwig, (1) : 42000
+greta thunberg, (1) : 42000
+growth, (1) : 42000
+guadalajara, (1) : 42000
+guadeloupe, (1) : 42000
+guaita tower, (1) : 42000
+guangzhou, (1) : 42000
+guayaquil, (1) : 42000
+guiana, (1) : 42000
+gulfoss, (1) : 42000
+gulu, (1) : 42000
+gun control, (1) : 42000
+guyana, (1) : 42000
+gyumri, (1) : 42000
+gérald kierzek, (1) : 42000
+ha long bay, (1) : 42000
+hagia sophia, (1) : 42000
+haifa, (1) : 42000
+haiti, (1) : 42000
+halliburton, (1) : 42000
+hamburg, (1) : 42000
+hamhung, (1) : 42000
+handelsnytt, (1) : 42000
+hanoi, (1) : 42000
+harare, (1) : 42000
+harbour, (1) : 42000
+hardware, (1) : 42000
+hargeisa, (1) : 42000
+harmony, (1) : 42000
+harmony (one), (1) : 42000
+harrison's, (1) : 42000
+harrods, (1) : 42000
+hashtag, (1) : 42000
+hasidic judaism, (1) : 42000
+hassan rouhani, (1) : 42000
+havana, (1) : 42000
+haveluliku, (1) : 42000
+hawalli, (1) : 42000
+hedera, (2) : 6463
+hedera (hbar), (3) : 2162
+helium, (1) : 42000
+helium (hnt), (1) : 42000
+hellenic, (1) : 42000
+helsinki, (1) : 42000
+hemorrhoids, (1) : 42000
+henry schein, (1) : 42000
+heraklion, (1) : 42000
+herat, (1) : 42000
+herceg novi, (1) : 42000
+hergnies, (1) : 42000
+hermès, (1) : 42000
+herzegovina, (1) : 42000
+hess corporation, (1) : 42000
+hewlett packard enterprise, (1) : 42000
+hexagone, (1) : 42000
+hg copper, (1) : 42000
+hilton worldwide, (1) : 42000
+hiroyuki sawano, (1) : 42000
+hkd hong kong dollar, (1) : 42000
+hkdollar, (1) : 42000
+ho chi minh city, (1) : 42000
+ho heating oil, (1) : 42000
+holo, (1) : 42000
+holo (hot), (1) : 42000
+holstein kiel, (1) : 42000
+home depot, (1) : 42000
+homs, (1) : 42000
+honda, (1) : 42000
+honduras, (1) : 42000
+honeywell, (1) : 42000
+hong, (1) : 42000
+honiara, (1) : 42000
+honorarium, (1) : 42000
+horizen, (1) : 42000
+horizen (zen), (1) : 42000
+hormel foods, (1) : 42000
+hp inc, (1) : 42000
+hrk croatian kuna, (1) : 42000
+huambo, (1) : 42000
+huf hungarian forint, (1) : 42000
+hugh jackman, (1) : 42000
+hungarian, (1) : 42000
+hungary, (1) : 42000
+hunter biden, (1) : 42000
+huobi, (2) : 6463
+huobi (ht), (3) : 2162
+huobi btc, (1) : 42000
+huobi btc (hbtc), (1) : 42000
+hurricane, (1) : 42000
+hydro flask, (1) : 42000
+hyperactivity, (1) : 42000
+hyperfixations, (1) : 42000
+hypothec, (1) : 42000
+hypothetically, (1) : 42000
+hyundai, (1) : 42000
+ibrahima konaté, (1) : 42000
+icon, (1) : 42000
+icon (icx), (1) : 42000
+idr indonesian rupiah, (1) : 42000
+iexec, (1) : 42000
+iexec (rlc), (1) : 42000
+ignacio, (1) : 42000
+iguazu falls, (1) : 42000
+ileksky district, (1) : 42000
+illuvium, (1) : 42000
+illuvium (ilv), (1) : 42000
+ils israeli shekel, (1) : 42000
+ilyushin il-96, (1) : 42000
+iman shumpert, (1) : 42000
+immigration, (1) : 42000
+immutable, (1) : 42000
+immutablex, (2) : 6463
+immutablex (imx), (3) : 2162
+improbable, (1) : 42000
+incheon, (1) : 42000
+incomprehensible, (1) : 42000
+independent reserve, (1) : 42000
+index fund, (1) : 42000
+indias, (1) : 42000
+indodax, (1) : 42000
+indonesia, (1) : 42000
+indonesian, (1) : 42000
+industrial revolution, (1) : 42000
+industry, (1) : 42000
+indycar series, (1) : 42000
+infiniti, (1) : 42000
+injective, (2) : 6463
+injective (inj), (3) : 2162
+inna bilokon, (1) : 42000
+innsbruck, (1) : 42000
+inr indian rupee, (1) : 42000
+insure defi, (1) : 42000
+insure defi (sure), (1) : 42000
+intelligenceyour, (1) : 42000
+internet computer, (2) : 6463
+internet computer (icp), (3) : 2162
+intersectionalist, (1) : 42000
+invention, (1) : 42000
+iost, (1) : 42000
+iost (iost), (1) : 42000
+iota, (2) : 6463
+iota (iota), (3) : 2162
+iotex, (1) : 42000
+iotex (iotx), (1) : 42000
+iovlabs, (1) : 42000
+iphone, (1) : 42000
+ipoh, (1) : 42000
+iran, (1) : 42000
+iraq, (1) : 42000
+irbid, (1) : 42000
+ireland, (1) : 42000
+irina gaidamachuk, (1) : 42000
+irkutsk oblast, (1) : 42000
+irmelin indenbirken, (1) : 42000
+isfahan, (1) : 42000
+isk icelandic krona, (1) : 42000
+islamabad, (1) : 42000
+islamic, (1) : 42000
+island, (1) : 42000
+isolationnice, (1) : 42000
+israel, (1) : 42000
+israeli, (1) : 42000
+issyk-kul lake, (1) : 42000
+istanbul, (1) : 42000
+izmir, (1) : 42000
+jack ma, (1) : 42000
+jacques mayol, (1) : 42000
+jaguar, (1) : 42000
+jair bolsonaro, (1) : 42000
+jalal-abad, (1) : 42000
+jamaic, (1) : 42000
+jamy gourmaud, (1) : 42000
+janibek alimkhanuly, (1) : 42000
+jared bednar, (1) : 42000
+jasmycoin, (1) : 42000
+jasmycoin (jasmy), (1) : 42000
+javier tebas, (1) : 42000
+jda dijon basket, (1) : 42000
+jean dujardin, (1) : 42000
+jean paul gaultier, (1) : 42000
+jeddah, (1) : 42000
+jeff bezos, (1) : 42000
+jerusalem, (1) : 42000
+jimmy choo, (1) : 42000
+jo malone, (1) : 42000
+jod jordanian dinar, (1) : 42000
+joe, (1) : 42000
+joe (joe), (1) : 42000
+joe biden, (1) : 42000
+johannesburg, (1) : 42000
+john's, (1) : 42000
+jonathan drouin, (1) : 42000
+jordan, (1) : 42000
+josé mourinho, (1) : 42000
+joya, (1) : 42000
+jp morgan, (1) : 42000
+jpmorgan chase, (1) : 42000
+jpy japanese yen, (1) : 42000
+juba, (1) : 42000
+juliette binoche, (1) : 42000
+jurong east, (1) : 42000
+just, (1) : 42000
+just (jst), (1) : 42000
+justin trudeau, (1) : 42000
+jürgen klopp, (1) : 42000
+kabul, (1) : 42000
+kadena, (1) : 42000
+kadena (kda), (1) : 42000
+kadjar, (1) : 42000
+kaieteur, (1) : 42000
+kakum, (1) : 42000
+kalandula, (1) : 42000
+kamala harris, (1) : 42000
+kamennaya lestnitsa, (1) : 42000
+kampala, (1) : 42000
+kandahar, (1) : 42000
+kandy, (1) : 42000
+kanga, (1) : 42000
+kano, (1) : 42000
+kaohsiung, (1) : 42000
+kara, (1) : 42000
+karachay-cherkessia, (1) : 42000
+karachays, (1) : 42000
+karachi, (1) : 42000
+karaganda, (1) : 42000
+karma, (1) : 42000
+karthala, (1) : 42000
+kaspa, (2) : 6463
+kaspa (kas), (3) : 2162
+kassym-jomart tokayev, (1) : 42000
+kate middleton, (1) : 42000
+kate spade aapl, (1) : 42000
+kategoria superiore, (1) : 42000
+kathmandu, (1) : 42000
+kaunas, (1) : 42000
+kava, (2) : 6463
+kava (kava), (3) : 2162
+kazakhstan, (1) : 42000
+kazatomprom, (1) : 42000
+kazmunaygas, (1) : 42000
+keflavík, (1) : 42000
+kelechi iheanacho, (1) : 42000
+kemerovo oblast, (1) : 42000
+kenema, (1) : 42000
+kenya, (1) : 42000
+keren, (1) : 42000
+kes kenyan shilling, (1) : 42000
+kessel racing, (1) : 42000
+keukenhof gardens, (1) : 42000
+khamovniki district, (1) : 42000
+kharkiv, (1) : 42000
+khartoum, (1) : 42000
+kherson oblast, (1) : 42000
+khujand, (1) : 42000
+khulna, (1) : 42000
+kickboxing, (1) : 42000
+kiev, (1) : 42000
+kiffa, (1) : 42000
+kigali, (1) : 42000
+kim jong-un, (1) : 42000
+kim kardashian, (1) : 42000
+kingdom, (1) : 42000
+kingstown, (1) : 42000
+kinshasa, (1) : 42000
+kinteh, (1) : 42000
+kiribati, (1) : 42000
+kismayo, (1) : 42000
+kisumu, (1) : 42000
+kitwe, (1) : 42000
+klaipėda, (1) : 42000
+klasychne derby, (1) : 42000
+klay thompson, (1) : 42000
+klaytn, (2) : 6463
+klaytn (klay), (3) : 2162
+kokoda track, (1) : 42000
+kolkata, (1) : 42000
+kong, (1) : 42000
+kongliterally, (1) : 42000
+koper, (1) : 42000
+korbit, (1) : 42000
+korea, (1) : 42000
+korean, (1) : 42000
+koror, (1) : 42000
+kosovo, (1) : 42000
+kostanay, (1) : 42000
+kostanay region, (1) : 42000
+kotak mahindra bank, (1) : 42000
+koudougou, (1) : 42000
+kourtney kardashian, (1) : 42000
+košice, (1) : 42000
+krak des chevaliers, (1) : 42000
+kraken, (3) : 2162
+kraków, (1) : 42000
+krasnoyarsk, (1) : 42000
+kremlin, (1) : 42000
+kristen welker, (1) : 42000
+kristina asmus, (1) : 42000
+krona, (1) : 42000
+kronborg, (1) : 42000
+krw south korean won, (1) : 42000
+krwon, (1) : 42000
+krypton dao, (1) : 42000
+krypton dao (krd), (1) : 42000
+kuala, (1) : 42000
+kuala lumpur, (1) : 42000
+kuang si falls, (1) : 42000
+kucoin (kcs), (3) : 2162
+kujira, (1) : 42000
+kujira (kuji), (1) : 42000
+kulob, (1) : 42000
+kumasi, (1) : 42000
+kuna exchange, (1) : 42000
+kunta, (1) : 42000
+kusama, (1) : 42000
+kusama (ksm), (1) : 42000
+kutaisi, (1) : 42000
+kuwait, (1) : 42000
+kuwait city, (1) : 42000
+kuwait towers, (1) : 42000
+kyber network, (1) : 42000
+kyber network (knc), (1) : 42000
+kyiv, (1) : 42000
+kylian mbappé, (1) : 42000
+kyoto, (1) : 42000
+kyrgyz republic, (1) : 42000
+kyrgyzstan, (1) : 42000
+l'oréal, (1) : 42000
+la condamine, (1) : 42000
+la mer, (1) : 42000
+laas geel, (1) : 42000
+laferrière, (1) : 42000
+lagos, (1) : 42000
+lahemaa, (1) : 42000
+lahore, (1) : 42000
+lake, (1) : 42000
+lake bled, (1) : 42000
+lake malawi, (1) : 42000
+lake ohrid, (1) : 42000
+lake sammamish, (1) : 42000
+lalitpur, (1) : 42000
+lamborghini, (1) : 42000
+lampedusa, (1) : 42000
+land rover, (1) : 42000
+lao people's democratic republic, (1) : 42000
+laos, (1) : 42000
+larnaca, (1) : 42000
+latoken, (1) : 42000
+latvia, (1) : 42000
+laura beach, (1) : 42000
+laurent fabius, (1) : 42000
+lautoka, (1) : 42000
+lbank, (1) : 42000
+lbs lumber, (1) : 42000
+lc live cattle, (1) : 42000
+lebanon, (1) : 42000
+ledger, (4) : 994
+ledger nano x, (1) : 42000
+legalization, (1) : 42000
+lelydorp, (1) : 42000
+leni olumi klum, (1) : 42000
+leningrad oblast, (1) : 42000
+leningradskiy zoopark, (1) : 42000
+leo token, (2) : 6463
+leo token (leo), (3) : 2162
+leonardo dicaprio, (2) : 6463
+leonid brezhnev, (1) : 42000
+leptis magna, (1) : 42000
+leribe, (1) : 42000
+lesopoval, (1) : 42000
+lesotho, (1) : 42000
+lexus, (1) : 42000
+león, (1) : 42000
+lgbtq rights, (1) : 42000
+lh lean hogs, (1) : 42000
+liberia, (1) : 42000
+liberta, (1) : 42000
+libreville, (1) : 42000
+libya, (1) : 42000
+lido dao, (2) : 6463
+lido dao (ldo), (3) : 2162
+lido staked ether, (2) : 6463
+lido staked ether (steth), (3) : 2162
+liechtenstein, (1) : 42000
+liepaja, (1) : 42000
+liga portugal, (1) : 42000
+likes, (1) : 42000
+lilongwe, (1) : 42000
+lima, (1) : 42000
+limassol, (1) : 42000
+limón, (1) : 42000
+lincoln, (1) : 42000
+lincoln financial, (1) : 42000
+lincoln memorial, (1) : 42000
+linden, (1) : 42000
+lionel messi, (2) : 6463
+liquidation, (1) : 42000
+liquidity, (4) : 994
+liquidity pools, (1) : 42000
+liquity usd, (1) : 42000
+liquity usd (lusd), (1) : 42000
+lira, (1) : 42000
+lisbon, (1) : 42000
+lisk, (1) : 42000
+lisk (lsk), (1) : 42000
+litecoin, (2) : 6463
+litecoin (ltc), (3) : 2162
+lithuania, (1) : 42000
+live, (1) : 42000
+livepeer, (1) : 42000
+livepeer (lpt), (1) : 42000
+ljubljana, (1) : 42000
+loango, (1) : 42000
+lobamba, (1) : 42000
+lobito, (1) : 42000
+lockheed martin, (1) : 42000
+lomé, (1) : 42000
+loopring, (1) : 42000
+loopring (lrc), (1) : 42000
+loréal, (1) : 42000
+los angeles, (1) : 42000
+lotus, (1) : 42000
+louis dreyfus, (1) : 42000
+louvre, (1) : 42000
+lowes, (1) : 42000
+luanda, (1) : 42000
+luang prabang, (1) : 42000
+lubumbashi, (1) : 42000
+lufthansa, (1) : 42000
+luganville, (1) : 42000
+luka, (1) : 42000
+lukso, (1) : 42000
+lukso (lyxe), (1) : 42000
+lusaka, (1) : 42000
+luxembourg, (1) : 42000
+luxembourg castle, (1) : 42000
+luxembourg city, (1) : 42000
+luxor, (1) : 42000
+luzhniki embankment, (1) : 42000
+lviv, (1) : 42000
+lyon, (1) : 42000
+lyubov uspenskaya, (1) : 42000
+m soybean meal, (1) : 42000
+maasai mara national reserve, (1) : 42000
+macbook, (1) : 42000
+machu picchu, (1) : 42000
+mack trucks, (1) : 42000
+madagascar, (1) : 42000
+madrid, (1) : 42000
+magdeburg, (1) : 42000
+magic, (1) : 42000
+magic (magic), (1) : 42000
+mahilioŭliftmaš, (1) : 42000
+maidan nezalezhnosti, (1) : 42000
+maiden, (1) : 42000
+maintenon, (1) : 42000
+majuro, (1) : 42000
+maker, (2) : 6463
+maker (mkr), (3) : 2162
+malabo, (1) : 42000
+malakal, (1) : 42000
+malawi, (1) : 42000
+malaysia, (1) : 42000
+maldives, (1) : 42000
+mali, (1) : 42000
+maliana, (1) : 42000
+malmö, (1) : 42000
+malta, (1) : 42000
+malé, (1) : 42000
+managua, (1) : 42000
+manama, (1) : 42000
+manasquan inlet, (1) : 42000
+manchester, (1) : 42000
+mandalay, (1) : 42000
+manila, (1) : 42000
+manolo blahnik, (1) : 42000
+manzini, (1) : 42000
+maputo, (1) : 42000
+maracaibo, (1) : 42000
+maracas bay, (1) : 42000
+maradi, (1) : 42000
+marc albrighton, (1) : 42000
+marco materazzi, (1) : 42000
+margarita terekhova, (1) : 42000
+margot robbie, (2) : 6463
+maria, (1) : 42000
+mariachi, (1) : 42000
+maribor, (1) : 42000
+marie portolano, (1) : 42000
+marigot, (1) : 42000
+marina bay sands, (1) : 42000
+marinade staked sol, (1) : 42000
+marinade staked sol (msol), (1) : 42000
+mark ruffalo, (1) : 42000
+mark zuckerberg, (2) : 6463
+market, (2) : 6463
+market maker, (3) : 2162
+market making, (2) : 6463
+markets, (1) : 42000
+marovo lagoon, (1) : 42000
+marrakesh, (1) : 42000
+mars mission, (1) : 42000
+marseille, (1) : 42000
+marsh, (1) : 42000
+marshall islands, (1) : 42000
+marsupials, (1) : 42000
+masaya, (1) : 42000
+maserati, (1) : 42000
+maseru, (1) : 42000
+mashhad, (1) : 42000
+mask network, (2) : 6463
+mask network (mask), (3) : 2162
+massana, (1) : 42000
+massandrovsky beach, (1) : 42000
+massawa, (1) : 42000
+mastercard, (1) : 42000
+mathematicians, (1) : 42000
+mathias ortega, (1) : 42000
+matterhorn, (1) : 42000
+matthijs de ligt, (1) : 42000
+maun, (1) : 42000
+mauricio pochettino, (2) : 6463
+mauritania, (1) : 42000
+mauritius, (1) : 42000
+max maicoin, (1) : 42000
+max verstappen, (1) : 42000
+mazda, (1) : 42000
+mbabane, (1) : 42000
+mbuji-mayi, (1) : 42000
+mcdonalds, (1) : 42000
+mclaren, (1) : 42000
+mdina, (1) : 42000
+mecca, (1) : 42000
+medellín, (1) : 42000
+medina, (1) : 42000
+megane, (1) : 42000
+meghan markle, (1) : 42000
+melatonin, (1) : 42000
+melbourne, (1) : 42000
+memorialization, (1) : 42000
+mercedes-benz, (1) : 42000
+merceuil, (1) : 42000
+merchandise, (1) : 42000
+mercotte, (1) : 42000
+meroë pyramids, (1) : 42000
+metallurg magnitogorsk, (1) : 42000
+metamask, (3) : 2162
+metars genesis, (1) : 42000
+metars genesis (mrs), (1) : 42000
+meteo, (1) : 42000
+metis, (1) : 42000
+metis (metis), (1) : 42000
+metoo, (1) : 42000
+mexican peso, (1) : 42000
+mexico city, (1) : 42000
+mfs milk, (1) : 42000
+mgm resorts, (1) : 42000
+mica law, (1) : 42000
+michael kors, (1) : 42000
+micronesia, (1) : 42000
+miguel, (1) : 42000
+mikel arteta, (1) : 42000
+mikhail mishustin, (1) : 42000
+mikhail tanich, (1) : 42000
+mikhail vedernikov, (1) : 42000
+milan, (1) : 42000
+millionaires, (1) : 42000
+mina, (1) : 42000
+mina (mina), (1) : 42000
+mina protocol, (2) : 6463
+mina protocol (mina), (3) : 2162
+mindelo, (1) : 42000
+miniseries, (1) : 42000
+misrata, (1) : 42000
+mitsubishi, (1) : 42000
+mlilwane, (1) : 42000
+mogadishu, (1) : 42000
+mogilevliftmash rup, (1) : 42000
+mohamed salah, (1) : 42000
+moher, (1) : 42000
+moldova, (1) : 42000
+mombasa, (1) : 42000
+monaco, (1) : 42000
+monastery, (1) : 42000
+monero, (2) : 6463
+monero (xmr), (1) : 42000
+money, (2) : 6463
+mongol empire, (1) : 42000
+mongolia, (1) : 42000
+monrovia, (1) : 42000
+montblanc, (1) : 42000
+monte, (1) : 42000
+monte carlo, (1) : 42000
+montenegro, (1) : 42000
+monterrey, (1) : 42000
+montevideo, (1) : 42000
+montmartre, (1) : 42000
+montreal canadiens, (1) : 42000
+moonbeam, (1) : 42000
+moonbeam (glmr), (1) : 42000
+moonpay, (1) : 42000
+mopti, (1) : 42000
+moralization, (1) : 42000
+morbihan, (1) : 42000
+moreno, (1) : 42000
+morne, (1) : 42000
+morocco, (3) : 2162
+moroni, (1) : 42000
+moscow, (1) : 42000
+moscow oblast, (1) : 42000
+mosoblenergo, (1) : 42000
+mostar, (1) : 42000
+mosul, (1) : 42000
+moundou, (1) : 42000
+mount, (1) : 42000
+mount everest, (1) : 42000
+mount fuji, (1) : 42000
+mount hagen, (1) : 42000
+mount paektu, (1) : 42000
+mount yasur, (1) : 42000
+mozambique, (1) : 42000
+muharraq, (1) : 42000
+multiversx, (2) : 6463
+multiversx (egld), (3) : 2162
+mumbai, (1) : 42000
+munich, (1) : 42000
+muscat, (1) : 42000
+museum, (1) : 42000
+mutsamudu, (1) : 42000
+muyezersky, (1) : 42000
+muyinga, (1) : 42000
+mw spring wheat, (1) : 42000
+mx, (1) : 42000
+mx (mx), (1) : 42000
+mxn mexican peso, (1) : 42000
+myanmar, (1) : 42000
+mykola matviyenko, (1) : 42000
+myr malaysian ringgit, (1) : 42000
+mytishchinsky district, (1) : 42000
+mzuzu, (1) : 42000
+n'ajjer, (1) : 42000
+n'djamena, (1) : 42000
+naberezhnye chelny, (1) : 42000
+nachman of breslov, (1) : 42000
+nadi, (1) : 42000
+nairobi, (1) : 42000
+namibia, (1) : 42000
+nampula, (1) : 42000
+nan madol, (1) : 42000
+nano, (1) : 42000
+nano (xno), (1) : 42000
+nano s, (1) : 42000
+naperville ribfest, (1) : 42000
+narendra modi, (2) : 6463
+narva, (1) : 42000
+nasdaq inc, (1) : 42000
+nassau, (1) : 42000
+natalya zemtsova, (1) : 42000
+nathalie péchalat, (1) : 42000
+nathalie saint-cricq, (1) : 42000
+national, (1) : 42000
+nationalized, (1) : 42000
+nauru, (1) : 42000
+naypyidaw, (1) : 42000
+nbcuniversal, (1) : 42000
+ndola, (1) : 42000
+near, (2) : 6463
+near (near), (2) : 6463
+near protocol, (2) : 6463
+near protocol (near), (3) : 2162
+neiafu, (1) : 42000
+nekoinverterthat, (1) : 42000
+nelson's, (1) : 42000
+nem, (1) : 42000
+nem (xem), (1) : 42000
+neo, (2) : 6463
+neo (neo), (3) : 2162
+nepal, (1) : 42000
+nervos network, (1) : 42000
+nervos network (ckb), (1) : 42000
+nestlé, (1) : 42000
+nestor shufrych, (1) : 42000
+net neutrality, (1) : 42000
+netherlands, (1) : 42000
+neuschwanstein, (1) : 42000
+neutrino usd, (1) : 42000
+new york city, (1) : 42000
+new zealand, (1) : 42000
+newegg, (1) : 42000
+newell brands, (1) : 42000
+newsflash, (1) : 42000
+nexo, (2) : 6463
+nexo (nexo), (3) : 2162
+nexus mutual, (2) : 6463
+nexus mutual (nxm), (3) : 2162
+ng natural gas, (1) : 42000
+ngerulmud, (1) : 42000
+ngn nigerian naira, (1) : 42000
+niagara, (1) : 42000
+niamey, (1) : 42000
+nicaragua, (1) : 42000
+nicehash, (1) : 42000
+nicosia, (1) : 42000
+nieuw nickerie, (1) : 42000
+niger, (3) : 2162
+nigeria, (3) : 2162
+nikola kovač, (1) : 42000
+nikšić, (1) : 42000
+nintendo switch, (1) : 42000
+nissan, (1) : 42000
+nizhnekamsk, (1) : 42000
+nizhny novgorod, (1) : 42000
+nok norwegian krone, (1) : 42000
+nomad astana, (1) : 42000
+nordson corporation, (1) : 42000
+nordstrom, (1) : 42000
+norsup, (1) : 42000
+north, (1) : 42000
+north macedonia, (1) : 42000
+northern, (1) : 42000
+northrop grumman, (1) : 42000
+norway, (1) : 42000
+norwegian cruise line holdings, (1) : 42000
+notre dame, (1) : 42000
+nouadhibou, (1) : 42000
+nouakchott, (1) : 42000
+novi sad, (1) : 42000
+novo nordisk, (1) : 42000
+novosibirsk, (2) : 6463
+novozybkov, (1) : 42000
+nuclear energy, (1) : 42000
+nucypher, (1) : 42000
+nucypher (nu), (1) : 42000
+nuku'alofa, (1) : 42000
+nukufetau, (1) : 42000
+nur-sultan, (1) : 42000
+nym, (1) : 42000
+nym (nym), (1) : 42000
+nyoiseau, (1) : 42000
+nzd new zealand dollar, (1) : 42000
+oasis, (1) : 42000
+oasis network, (1) : 42000
+oasis network (rose), (1) : 42000
+obtained activations, (1) : 42000
+occidental petroleum, (1) : 42000
+ocean protocol, (1) : 42000
+ocean protocol (ocean), (1) : 42000
+oculus quest, (1) : 42000
+odense, (1) : 42000
+odzala-kokoua, (1) : 42000
+ohrid, (1) : 42000
+oistins, (1) : 42000
+okavango, (1) : 42000
+okb, (1) : 42000
+okb (okb), (1) : 42000
+okcoin, (2) : 6463
+okcoin (okx), (2) : 6463
+okt chain, (1) : 42000
+okt chain (okt), (1) : 42000
+oleg kuvshinnikov, (1) : 42000
+olivier giroud, (1) : 42000
+olympus, (1) : 42000
+olympus (ohm), (1) : 42000
+oman, (1) : 42000
+omdurman, (1) : 42000
+ometepe island, (1) : 42000
+onepoint, (1) : 42000
+ontology, (1) : 42000
+ontology (ont), (1) : 42000
+open campus, (1) : 42000
+open campus (edu), (1) : 42000
+open sea, (1) : 42000
+openai, (1) : 42000
+oprah winfrey, (1) : 42000
+optimism, (2) : 6463
+optimism (op), (3) : 2162
+oran, (1) : 42000
+orange, (1) : 42000
+orange group, (1) : 42000
+orange mobile, (1) : 42000
+orange s.a., (1) : 42000
+ordi, (1) : 42000
+ordi (ordi), (1) : 42000
+oreilly auto parts, (1) : 42000
+orenburg oblast, (1) : 42000
+organon co, (1) : 42000
+orheiul vechi, (1) : 42000
+origintrail, (1) : 42000
+origintrail (trac), (1) : 42000
+orsha district, (1) : 42000
+osaka, (1) : 42000
+oslo, (1) : 42000
+osmosis, (2) : 6463
+osmosis (osmo), (3) : 2162
+ostrava, (1) : 42000
+ottawa, (1) : 42000
+otto group, (1) : 42000
+ouagadougou, (1) : 42000
+pa palladium, (1) : 42000
+pagani, (1) : 42000
+paine, (1) : 42000
+pakistan, (1) : 42000
+pakse, (1) : 42000
+palau, (1) : 42000
+palikir, (1) : 42000
+palm jumeirah, (1) : 42000
+pamir mountains, (1) : 42000
+panama, (1) : 42000
+panama canal, (1) : 42000
+panama city, (1) : 42000
+pancakeswap, (1) : 42000
+pancakeswap (cake), (1) : 42000
+papersthankfully, (1) : 42000
+papua new guinea, (1) : 42000
+paradise, (1) : 42000
+paraguay, (1) : 42000
+paramaribo, (1) : 42000
+paribu, (1) : 42000
+paris agreement, (1) : 42000
+parity technologies, (1) : 42000
+park, (1) : 42000
+parker hannifin, (1) : 42000
+paro, (1) : 42000
+patek philippe, (1) : 42000
+pathologically, (1) : 42000
+pathologically autistic, (1) : 42000
+patrice duhamel, (1) : 42000
+paulo, (1) : 42000
+pavel priluchniy, (1) : 42000
+pax dollar, (1) : 42000
+pax dollar (usdp), (1) : 42000
+pax gold, (2) : 6463
+pax gold (paxg), (3) : 2162
+paychex, (1) : 42000
+paycom, (1) : 42000
+peleliu, (1) : 42000
+peloton bike, (1) : 42000
+pen peruvian sol, (1) : 42000
+pendjari, (1) : 42000
+penh, (1) : 42000
+penny stocks, (1) : 42000
+pensioner, (1) : 42000
+people's, (1) : 42000
+pep guardiola, (1) : 42000
+pepe, (1) : 42000
+pepe (pepe), (1) : 42000
+pepsico, (1) : 42000
+peregrine pearson, (1) : 42000
+perito, (1) : 42000
+persepolis, (1) : 42000
+peru, (1) : 42000
+peso, (1) : 42000
+petra, (1) : 42000
+petronas twin towers, (1) : 42000
+petrozavodsk, (1) : 42000
+peugeot, (1) : 42000
+pfc krylia sovetov samara, (1) : 42000
+pfizer, (1) : 42000
+pge corporation, (1) : 42000
+phemex, (1) : 42000
+philip morris, (1) : 42000
+philippines, (1) : 42000
+phnom, (1) : 42000
+phoenix islands protected area, (1) : 42000
+php philippine peso, (1) : 42000
+phuket, (1) : 42000
+phuntsholing, (1) : 42000
+picketing, (1) : 42000
+pionex, (1) : 42000
+piraeus bank, (1) : 42000
+pitons, (1) : 42000
+piula cave pool, (1) : 42000
+pkr pakistani rupee, (1) : 42000
+pl platinum, (1) : 42000
+platypus finance, (1) : 42000
+plausible deniability, (1) : 42000
+plitvice, (1) : 42000
+pln polish zloty, (1) : 42000
+plovdiv, (1) : 42000
+plurinational, (1) : 42000
+podgorica, (1) : 42000
+pointe-noire, (1) : 42000
+pointpay, (1) : 42000
+pokhara, (1) : 42000
+poland, (1) : 42000
+polish, (1) : 42000
+political maneuvering, (1) : 42000
+politics, (1) : 42000
+polkadot (dot), (1) : 42000
+poloniex, (3) : 2162
+polygon (matic), (3) : 2162
+polymath, (1) : 42000
+polymath (poly), (1) : 42000
+polymesh, (1) : 42000
+polymesh (polyx), (1) : 42000
+pool corporation, (1) : 42000
+pope francis, (1) : 42000
+porsche, (1) : 42000
+port louis, (1) : 42000
+port moresby, (1) : 42000
+port of spain, (1) : 42000
+port sudan, (1) : 42000
+port vila, (1) : 42000
+port-au-prince, (1) : 42000
+port-gentil, (1) : 42000
+port-louis, (1) : 42000
+porto, (1) : 42000
+porto-novo, (1) : 42000
+portsmouth, (1) : 42000
+portugal, (1) : 42000
+post malone, (1) : 42000
+pound, (1) : 42000
+prague, (1) : 42000
+praia, (1) : 42000
+pretoria, (1) : 42000
+prešov, (1) : 42000
+price, (1) : 42000
+primark, (1) : 42000
+prince harry, (1) : 42000
+prince william, (1) : 42000
+principality, (1) : 42000
+pristina, (1) : 42000
+private, (1) : 42000
+prizren, (1) : 42000
+procter gamble, (1) : 42000
+product, (1) : 42000
+production, (1) : 42000
+profit, (1) : 42000
+prokhor chaliapin, (1) : 42000
+prokopyevsk, (1) : 42000
+pskov oblast, (1) : 42000
+pulsex, (1) : 42000
+pundi x, (1) : 42000
+pundi x (pundix), (1) : 42000
+punta, (1) : 42000
+punta del este, (1) : 42000
+purgatory, (1) : 42000
+pyongyang, (1) : 42000
+pyramids, (1) : 42000
+qar qatari riyal, (1) : 42000
+qatar, (1) : 42000
+qmall, (1) : 42000
+qtum, (1) : 42000
+qtum (qtum), (1) : 42000
+quant, (2) : 6463
+quant (qnt), (3) : 2162
+quantum computing, (1) : 42000
+queen elizabeth ii, (1) : 42000
+quest diagnostics, (1) : 42000
+quezon city, (1) : 42000
+quid, (1) : 42000
+quito, (1) : 42000
+quotidien, (1) : 42000
+rabat, (1) : 42000
+radix, (2) : 6463
+radix (xrd), (3) : 2162
+rain, (1) : 42000
+ramelau, (1) : 42000
+rand, (1) : 42000
+ransomware, (1) : 42000
+raphaël lenglet, (1) : 42000
+ravencoin, (1) : 42000
+ravencoin (rvn), (1) : 42000
+rayo vallecano, (1) : 42000
+rb gasoline, (1) : 42000
+readit, (1) : 42000
+real, (1) : 42000
+real betis balompié, (1) : 42000
+realty income, (1) : 42000
+reap, (1) : 42000
+recep tayyip erdogan, (1) : 42000
+recession, (1) : 42000
+recur, (1) : 42000
+red square, (1) : 42000
+redd, (1) : 42000
+reddet, (1) : 42000
+redditor, (1) : 42000
+reddt, (1) : 42000
+redeemer, (1) : 42000
+redit, (1) : 42000
+reditt, (1) : 42000
+reef, (1) : 42000
+reforestation, (1) : 42000
+registan square, (1) : 42000
+regulationmeaning, (1) : 42000
+reichstag, (1) : 42000
+relative juxtaposition, (1) : 42000
+renalt, (1) : 42000
+renault, (3) : 2162
+renault trucks, (1) : 42000
+renaultsport, (1) : 42000
+render, (2) : 6463
+render (rndr), (3) : 2162
+renderinganyone, (1) : 42000
+renualt, (1) : 42000
+republic, (1) : 42000
+republic services, (1) : 42000
+reserve rights, (1) : 42000
+reserve rights (rsr), (1) : 42000
+retweet, (1) : 42000
+revolut, (1) : 42000
+revolutionize financial, (1) : 42000
+reykjavík, (1) : 42000
+ribbon finance, (1) : 42000
+ribbon finance (rbn), (1) : 42000
+riffa, (1) : 42000
+riga, (1) : 42000
+rila, (1) : 42000
+ring security, (1) : 42000
+riots, (1) : 42000
+risk trade, (1) : 42000
+riyadh, (1) : 42000
+roatán, (1) : 42000
+robert lewandowski, (1) : 42000
+roberto cavalli, (1) : 42000
+roblox, (1) : 42000
+rock islands, (1) : 42000
+rocket pool, (2) : 6463
+rocket pool (rpl), (3) : 2162
+rocket pool eth, (2) : 6463
+rocket pool eth (reth), (3) : 2162
+roger federer, (1) : 42000
+roland lehoucq, (1) : 42000
+rollins inc, (1) : 42000
+rolls-royce, (1) : 42000
+roman reigns, (1) : 42000
+romania, (1) : 42000
+romelu lukaku, (1) : 42000
+ron romanian leu, (1) : 42000
+ronin, (1) : 42000
+ronin (ron), (1) : 42000
+rosario, (1) : 42000
+roscosmos, (1) : 42000
+roseau, (1) : 42000
+rosh hashanah, (1) : 42000
+ross stores, (1) : 42000
+rossiyane, (1) : 42000
+rote memorization, (1) : 42000
+rotterdam, (1) : 42000
+royal caribbean, (1) : 42000
+rr rice, (1) : 42000
+rr rough rice, (1) : 42000
+rredit, (1) : 42000
+rsk infrastructure framework, (1) : 42000
+rsk infrastructure framework (rsk), (1) : 42000
+rub russian ruble, (1) : 42000
+rubtsovsk, (1) : 42000
+ruins, (1) : 42000
+rundu, (1) : 42000
+rupee, (1) : 42000
+rupiah, (1) : 42000
+rusizi, (1) : 42000
+russian ruble, (1) : 42000
+rwanda, (1) : 42000
+ryan gosling, (1) : 42000
+ryazan oblast, (1) : 42000
+s soybeans, (1) : 42000
+s&p500, (1) : 42000
+sabieh, (1) : 42000
+sabre, (1) : 42000
+safemoon, (2) : 6463
+safemoon (safemoon), (1) : 42000
+safepal, (1) : 42000
+safepal (sfp), (1) : 42000
+sagrada familia, (1) : 42000
+saint basil's cathedral, (1) : 42000
+saint kitts and nevis, (1) : 42000
+saint lucia, (1) : 42000
+saint petersburg, (1) : 42000
+saint sophia's cathedral, (1) : 42000
+saint vincent and the grenadines, (1) : 42000
+saint-paul, (1) : 42000
+saints, (1) : 42000
+salalah, (1) : 42000
+salar, (1) : 42000
+salto, (1) : 42000
+salvador, (1) : 42000
+salvatore ferragamo, (1) : 42000
+salzburg, (1) : 42000
+sam altman, (1) : 42000
+samaltman, (1) : 42000
+samarkand, (2) : 6463
+sammamish river, (1) : 42000
+samoa, (1) : 42000
+samruk-kazyna, (1) : 42000
+san fernando, (1) : 42000
+san marino, (1) : 42000
+sana'a, (1) : 42000
+santa, (1) : 42000
+santa muerte, (1) : 42000
+santana, (1) : 42000
+santiago, (1) : 42000
+santo amaro, (1) : 42000
+sao tome and principe, (1) : 42000
+sar saudi riyal, (1) : 42000
+sarajevo, (1) : 42000
+sarh, (1) : 42000
+satoshi, (1) : 42000
+satya nadella, (1) : 42000
+saudi arabia, (1) : 42000
+saudi aramco, (1) : 42000
+sb sugar, (1) : 42000
+scania, (1) : 42000
+schaan, (1) : 42000
+schlumberger, (1) : 42000
+schönbrunn, (1) : 42000
+sclessin, (1) : 42000
+scott morrison, (1) : 42000
+sea limited, (1) : 42000
+seeb, (1) : 42000
+seine river, (1) : 42000
+sek swedish krona, (1) : 42000
+sekrona, (1) : 42000
+selena gomez, (1) : 42000
+selichot, (1) : 42000
+semanticsfoundations, (1) : 42000
+senegal, (1) : 42000
+seoul, (1) : 42000
+serbia, (1) : 42000
+serekunda, (1) : 42000
+serena williams, (1) : 42000
+sergei gavrilov, (1) : 42000
+sergey bezrukov, (1) : 42000
+seri, (1) : 42000
+serravalle, (1) : 42000
+seth2, (1) : 42000
+seth2 (seth2), (1) : 42000
+sevastopol, (1) : 42000
+severodonetsk, (1) : 42000
+seychelles, (1) : 42000
+sfax, (1) : 42000
+sfrxeth, (1) : 42000
+sgd singapore dollar, (1) : 42000
+shapeshifter, (1) : 42000
+sharjah, (1) : 42000
+shchyolkovo, (1) : 42000
+shekel, (1) : 42000
+shell, (1) : 42000
+sherbrooke, (1) : 42000
+sherwinwilliams, (1) : 42000
+shiba inu (shib), (3) : 2162
+si silver, (1) : 42000
+siacoin, (1) : 42000
+siacoin (sc), (1) : 42000
+sibirskie snaipery, (1) : 42000
+sidon, (1) : 42000
+siem, (1) : 42000
+siemens, (1) : 42000
+sierra leone, (1) : 42000
+sigiriya, (1) : 42000
+signature bank, (1) : 42000
+sihanoukville, (1) : 42000
+sikasso, (1) : 42000
+simferopol, (1) : 42000
+simien, (1) : 42000
+sina corp, (1) : 42000
+singularitynet, (2) : 6463
+singularitynet (agix), (3) : 2162
+sisley, (1) : 42000
+skechers, (1) : 42000
+skoda, (1) : 42000
+skopje, (1) : 42000
+slovakia, (1) : 42000
+slovenia, (1) : 42000
+sm soybean meal, (1) : 42000
+sme entrepreneurship, (1) : 42000
+smithsonian, (1) : 42000
+sociedade esportiva palmeiras, (1) : 42000
+socotra, (1) : 42000
+sofia, (1) : 42000
+sokodé, (1) : 42000
+solana (sol), (3) : 2162
+solar power, (1) : 42000
+solomon islands, (1) : 42000
+somalia, (1) : 42000
+sonos, (1) : 42000
+soufrière, (1) : 42000
+sousse, (1) : 42000
+south, (1) : 42000
+south africa, (1) : 42000
+south sudan, (1) : 42000
+south tarawa, (1) : 42000
+space exploration, (1) : 42000
+space id, (1) : 42000
+space id (id), (1) : 42000
+spain, (1) : 42000
+speightstown, (1) : 42000
+spermatozoon, (1) : 42000
+spezia calcio, (1) : 42000
+spiš castle, (1) : 42000
+split, (1) : 42000
+sri lanka, (1) : 42000
+ssv network, (1) : 42000
+ssv network (ssv), (1) : 42000
+stablecoin, (2) : 6463
+stacks, (2) : 6463
+stacks (stx), (3) : 2162
+stacks coin, (1) : 42000
+stade toulousain, (1) : 42000
+staked frax ether, (1) : 42000
+staked frax ether (sfrxeth), (1) : 42000
+stalnye lisy, (1) : 42000
+stanley black decker, (1) : 42000
+stargate finance, (1) : 42000
+stargate finance (stg), (1) : 42000
+stari, (1) : 42000
+stasis euro, (1) : 42000
+stasis euro (eurs), (1) : 42000
+state of kuwait, (1) : 42000
+statistics, (1) : 42000
+statues, (1) : 42000
+stavanger, (1) : 42000
+stefon diggs, (1) : 42000
+stellar, (4) : 994
+stellar (xlm), (5) : 544
+stepn, (1) : 42000
+stepn (gmt), (1) : 42000
+sterling, (1) : 42000
+steth, (3) : 2162
+steven defour, (1) : 42000
+stock market, (3) : 2162
+stockholm, (1) : 42000
+stockholm archipelago, (1) : 42000
+stocks, (2) : 6463
+stonehenge, (1) : 42000
+storage, (1) : 42000
+storm, (1) : 42000
+stride, (1) : 42000
+stride (strd), (1) : 42000
+stryker corporation, (1) : 42000
+stuart weitzman, (1) : 42000
+stx coin, (1) : 42000
+styleastonishing, (1) : 42000
+subaru, (1) : 42000
+subreddit, (1) : 42000
+sucre, (1) : 42000
+sudan, (1) : 42000
+sui, (2) : 6463
+sui (sui), (3) : 2162
+sula, (1) : 42000
+sulawesi, (1) : 42000
+sultan qaboos grand mosque, (1) : 42000
+sumqayit, (1) : 42000
+sundar pichai, (1) : 42000
+sundarbans, (1) : 42000
+sunflowers, (1) : 42000
+superbike racing, (1) : 42000
+surabaya, (1) : 42000
+suriname, (1) : 42000
+sushi, (1) : 42000
+sushi (sushi), (1) : 42000
+suva, (1) : 42000
+suzuki, (1) : 42000
+svetitskhoveli, (1) : 42000
+svetlana loboda, (1) : 42000
+swakopmund, (1) : 42000
+swarovski, (1) : 42000
+swastika, (1) : 42000
+sweden, (1) : 42000
+swedish, (1) : 42000
+swiss, (1) : 42000
+swissborg, (1) : 42000
+swissborg (chsb), (1) : 42000
+switcher locomotive, (1) : 42000
+sxp, (1) : 42000
+sxp (sxp), (1) : 42000
+sychkovo, (1) : 42000
+sydney, (1) : 42000
+sygnum bank ag, (1) : 42000
+synapse, (1) : 42000
+synapse (syn), (1) : 42000
+synchrony financial, (1) : 42000
+synthetix network, (2) : 6463
+synthetix network (snx), (3) : 2162
+syria, (1) : 42000
+sysco, (1) : 42000
+syscoin, (1) : 42000
+syscoin (sys), (1) : 42000
+szeged, (1) : 42000
+são tomé, (1) : 42000
+tacugama chimpanzee sanctuary, (1) : 42000
+tadjourah, (1) : 42000
+taekwondo, (1) : 42000
+taekwondo athlete, (1) : 42000
+taganrog, (1) : 42000
+taichung, (1) : 42000
+taipei, (1) : 42000
+taiwan, (1) : 42000
+taiz, (1) : 42000
+tajikistan, (1) : 42000
+taktsang, (1) : 42000
+tallinn, (1) : 42000
+tamale, (1) : 42000
+tambov oblast, (1) : 42000
+tampere, (1) : 42000
+tanzania, (1) : 42000
+tapestry inc, (1) : 42000
+taras stepanenko, (1) : 42000
+tarawa, (1) : 42000
+target corporation, (1) : 42000
+taroko gorge, (1) : 42000
+tartu, (1) : 42000
+tashkent, (1) : 42000
+tassili, (1) : 42000
+tata consultancy services, (1) : 42000
+taylor swift, (1) : 42000
+tbilisi, (1) : 42000
+technocommunists, (1) : 42000
+tegucigalpa, (1) : 42000
+telcoin, (1) : 42000
+telcoin (tel), (1) : 42000
+telecom, (1) : 42000
+terra, (3) : 2162
+terra (luna), (3) : 2162
+terra (lunc), (1) : 42000
+terraclassicusd, (1) : 42000
+terraclassicusd (ustc), (1) : 42000
+tesla inc, (1) : 42000
+tether gold, (2) : 6463
+tether gold (xaut), (3) : 2162
+tethys finance, (1) : 42000
+texas instruments, (1) : 42000
+teyana taylor, (1) : 42000
+teyateyaneng, (1) : 42000
+tezos, (2) : 6463
+tezos (xtz), (3) : 2162
+thaba bosiu, (1) : 42000
+thai, (1) : 42000
+thailand, (1) : 42000
+thb thai baht, (1) : 42000
+the block, (1) : 42000
+the graph, (2) : 6463
+the graph (grt), (3) : 2162
+the hague, (1) : 42000
+the pearl-qatar, (1) : 42000
+the sandbox, (2) : 6463
+the sandbox (sand), (3) : 2162
+the weeknd, (1) : 42000
+thessaloniki, (1) : 42000
+theta fuel, (1) : 42000
+theta fuel (tfuel), (1) : 42000
+theta network, (2) : 6463
+theta network (theta), (3) : 2162
+thimphu, (1) : 42000
+thiès, (1) : 42000
+thomas tuchel, (2) : 6463
+thorchain, (1) : 42000
+thorchain (rune), (1) : 42000
+thunder, (1) : 42000
+thunderstorm, (1) : 42000
+tiananmen square, (1) : 42000
+tidex, (1) : 42000
+tiffany & co, (1) : 42000
+tiffany co, (1) : 42000
+tiger's, (1) : 42000
+tim cook, (1) : 42000
+timișoara, (1) : 42000
+timor, (1) : 42000
+timor-leste, (1) : 42000
+tirana, (1) : 42000
+tiraspol, (1) : 42000
+tj maxx, (1) : 42000
+tjx companies, (1) : 42000
+toamasina, (1) : 42000
+tobago cays, (1) : 42000
+togo, (1) : 42000
+togoville, (1) : 42000
+token, (1) : 42000
+token economy, (2) : 6463
+tokenize xchange, (2) : 6463
+tokenize xchange (tkx), (3) : 2162
+tokens, (2) : 6463
+tominet, (2) : 6463
+tominet (tomi), (3) : 2162
+tomochain, (1) : 42000
+tomochain (tomo), (1) : 42000
+toncoin, (2) : 6463
+toncoin (ton), (3) : 2162
+tonga, (1) : 42000
+toobit, (1) : 42000
+toronto, (1) : 42000
+torres, (1) : 42000
+touba, (1) : 42000
+tower, (1) : 42000
+toyota, (1) : 42000
+trade war, (1) : 42000
+traded fund, (1) : 42000
+trading, (7) : 219
+trakai island castle, (1) : 42000
+tribe, (1) : 42000
+tribe (tribe), (1) : 42000
+triesen, (1) : 42000
+trinidad and tobago, (1) : 42000
+tripoli, (1) : 42000
+tron, (2) : 6463
+tron (trx), (3) : 2162
+truck, (2) : 6463
+true usd, (1) : 42000
+trueusd, (2) : 6463
+trueusd (tusd), (3) : 2162
+trust wallet, (1) : 42000
+trust wallet (twt), (1) : 42000
+try turkish lira, (1) : 42000
+tunis, (1) : 42000
+tunisia, (1) : 42000
+turkey, (1) : 42000
+turkish, (1) : 42000
+turkmenistan, (1) : 42000
+tuvalu, (1) : 42000
+tuvaluan dollar, (1) : 42000
+twd taiwan dollar, (1) : 42000
+tweet, (1) : 42000
+tweeter, (1) : 42000
+twetter, (1) : 42000
+twiiter, (1) : 42000
+twiter, (1) : 42000
+twitter, (1) : 42000
+twitter limit, (1) : 42000
+twittr, (1) : 42000
+twtr, (1) : 42000
+twtter, (1) : 42000
+türkmenabat, (1) : 42000
+uah ukrainian hryvnia, (1) : 42000
+udmurt republic, (1) : 42000
+udr inc, (1) : 42000
+uganda, (1) : 42000
+ukraine luxury, (1) : 42000
+ulaanbaatar, (1) : 42000
+underclocking, (1) : 42000
+undervolting, (1) : 42000
+unilever, (1) : 42000
+union, (1) : 42000
+union island, (1) : 42000
+unionizingwhat hellhole, (1) : 42000
+uniqlo, (1) : 42000
+uniswap (uni), (3) : 2162
+united airlines holdings, (1) : 42000
+united parcel service, (1) : 42000
+united rentals, (1) : 42000
+united states dollar, (1) : 42000
+united states of america, (1) : 42000
+unitedhealth group, (1) : 42000
+unknowingly exposing, (1) : 42000
+upbit, (1) : 42000
+upvote, (1) : 42000
+uruguay, (1) : 42000
+us bank, (1) : 42000
+us election, (1) : 42000
+usd coin, (2) : 6463
+usd coin (usdc), (3) : 2162
+usd us dollar, (1) : 42000
+usdd, (2) : 6463
+usdd (usdd), (3) : 2162
+utility web3shot, (1) : 42000
+utility web3shot (uw3s), (1) : 42000
+utopiales, (1) : 42000
+uyuni, (1) : 42000
+uzbekistan, (1) : 42000
+vaccine, (1) : 42000
+vacoas-phoenix, (1) : 42000
+vaduz, (1) : 42000
+vaduz castle, (1) : 42000
+vaitele, (1) : 42000
+vaitupu, (1) : 42000
+valencia, (1) : 42000
+valentina shevchenko, (1) : 42000
+valero energy, (1) : 42000
+valery solovei, (1) : 42000
+vall, (1) : 42000
+valletta, (1) : 42000
+vallée de mai nature reserve, (1) : 42000
+valparaíso, (1) : 42000
+valtteri bottas, (1) : 42000
+vanadzor, (1) : 42000
+vancouver, (1) : 42000
+vanuatu, (1) : 42000
+varadero, (1) : 42000
+varna, (1) : 42000
+vasiliy lomachenko, (1) : 42000
+vatican city, (1) : 42000
+vechain, (2) : 6463
+vechain (vet), (3) : 2162
+veikkausliiga, (1) : 42000
+vella, (1) : 42000
+venezuela, (1) : 42000
+verde, (1) : 42000
+verka serduchka, (1) : 42000
+verkhovna rada, (1) : 42000
+vf corporation, (1) : 42000
+victoria, (1) : 42000
+victoria bonya, (1) : 42000
+victoria falls, (1) : 42000
+vienna, (1) : 42000
+vientiane, (1) : 42000
+vietnam, (1) : 42000
+vieux fort, (1) : 42000
+vilnius, (1) : 42000
+vinicius junior, (2) : 6463
+virat kohli, (1) : 42000
+virtual reality, (1) : 42000
+virunga, (1) : 42000
+viticulture, (1) : 42000
+vittoria ceretti, (1) : 42000
+vladimir mineev, (1) : 42000
+vladimir putin, (1) : 42000
+vlore, (1) : 42000
+vnd vietnamese dong, (1) : 42000
+volkswagen, (1) : 42000
+vologda oblast, (1) : 42000
+volvo, (2) : 6463
+volvo group, (1) : 42000
+volvo penta, (1) : 42000
+volvo trucks, (1) : 42000
+voodoo, (1) : 42000
+vornado realty trust, (1) : 42000
+vpro gids, (1) : 42000
+vulcan materials company, (1) : 42000
+vvs finance, (1) : 42000
+vvs finance (vvs), (1) : 42000
+walgreens boots alliance, (1) : 42000
+walmart, (1) : 42000
+war, (3) : 2162
+warfare, (2) : 6463
+warren buffet, (1) : 42000
+warren buffett, (1) : 42000
+warsaw, (1) : 42000
+washington, (1) : 42000
+washington mystics, (1) : 42000
+wat arun, (1) : 42000
+watch, (1) : 42000
+waters corporation, (1) : 42000
+waves, (1) : 42000
+waves (waves), (1) : 42000
+wawel castle, (1) : 42000
+wax, (1) : 42000
+wax (waxp), (1) : 42000
+waza, (1) : 42000
+weather, (1) : 42000
+wellington, (1) : 42000
+wells fargo, (1) : 42000
+wemix, (1) : 42000
+wemix (wemix), (1) : 42000
+weno, (1) : 42000
+wework, (1) : 42000
+white house, (1) : 42000
+whitebit token, (1) : 42000
+whitebit token (wbt), (1) : 42000
+wilder world, (1) : 42000
+wilder world (wild), (1) : 42000
+wilfred ndidi, (1) : 42000
+windhoek, (1) : 42000
+winemaker, (1) : 42000
+woo network, (2) : 6463
+woo network (woo), (3) : 2162
+woo x, (1) : 42000
+woodlands, (1) : 42000
+worldcoin, (5) : 544
+worldcoin (wld), (2) : 6463
+wrapped beacon eth, (1) : 42000
+wrapped beacon eth (wbeth), (1) : 42000
+wrapped bitcoin, (2) : 6463
+wrapped bitcoin (wbtc), (3) : 2162
+wrecking yard, (1) : 42000
+wrestlemania, (1) : 42000
+xdc network, (2) : 6463
+xdc network (xdc), (3) : 2162
+xenotransplantation, (1) : 42000
+xi jinping, (1) : 42000
+xt.com, (1) : 42000
+xylem, (1) : 42000
+yamoussoukro, (1) : 42000
+yangon, (1) : 42000
+yann barthès, (1) : 42000
+yaouank festival, (1) : 42000
+yaoundé, (1) : 42000
+yaren, (1) : 42000
+yearn.finance, (1) : 42000
+yearn.finance (yfi), (1) : 42000
+yelena valyushkina, (1) : 42000
+yemen, (1) : 42000
+yerevan, (1) : 42000
+yeti cooler, (1) : 42000
+yevgeny prigozhin, (1) : 42000
+youtube sharecroppers, (1) : 42000
+yum brands, (1) : 42000
+yuri bashmet, (1) : 42000
+yury borisov, (1) : 42000
+zagreb, (1) : 42000
+zakouma, (1) : 42000
+zambia, (1) : 42000
+zarand, (1) : 42000
+zarqa, (1) : 42000
+zc corn, (1) : 42000
+zcash, (1) : 42000
+zcash (zec), (1) : 42000
+zilliqa, (2) : 6463
+zilliqa (zil), (3) : 2162
+zimbabwe, (1) : 42000
+zinder, (1) : 42000
+zloty, (1) : 42000
+zuma rock, (1) : 42000
+zurich, (1) : 42000
+złoty, (1) : 42000
+ħal saflieni hypogeum, (1) : 42000
+łódź, (1) : 42000
+ (1) : 42000
