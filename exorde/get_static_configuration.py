@@ -18,7 +18,7 @@ async def do_get_static_configuration(
     protocol_configuration: dict = get_protocol_configuration()
     network_configuration: dict = await get_network_configuration()
     contracts_and_abi = await get_contracts_and_abi_cnf(
-        protocol_configuration, live_configuration
+        protocol_configuration, live_configuration, command_line_arguments
     )
     read_web3 = _read_web3(
         protocol_configuration, network_configuration, live_configuration

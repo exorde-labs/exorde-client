@@ -87,6 +87,7 @@ def setup_arguments() -> argparse.Namespace:
         return {domain: quota}
 
     parser = argparse.ArgumentParser()
+    parser.add_argument("--quality", help="Runs quality instead of spotting", type=bool, default=False)
     parser.add_argument(
         "--main_address", help="Main wallet", type=str, required=True
     )

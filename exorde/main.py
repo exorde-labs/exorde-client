@@ -52,6 +52,7 @@ async def run_job(
         )
     await asyncio.sleep(live_configuration["inter_spot_delay_seconds"])
 
+from .quality import quality
 
 async def main(command_line_arguments: argparse.Namespace):
     websocket_send = await setup_web(command_line_arguments)
@@ -60,9 +61,7 @@ async def main(command_line_arguments: argparse.Namespace):
     if not Web3.is_address(command_line_arguments.main_address):
         logging.error("The provided address is not a valid Web3 address")
         os._exit(1)
-
     live_configuration: LiveConfiguration = await update_live_configuration()
-
     static_configuration: StaticConfiguration = await get_static_configuration(
         command_line_arguments, live_configuration
     )
@@ -92,9 +91,10 @@ async def main(command_line_arguments: argparse.Namespace):
                 live_configuration, command_line_arguments
             )
             await last_notification(live_configuration, command_line_arguments)
+            job = quality if command_line_arguments.quality else spotting
             await run_job(
                 command_line_arguments,
-                spotting,
+                job,
                 live_configuration,
                 static_configuration,
                 counter,

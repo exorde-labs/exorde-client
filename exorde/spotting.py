@@ -104,6 +104,26 @@ async def count_rep_for_each_domain(
         await counter.increment(f"rep_{alias}")
 
 
+def generate_random_hash(length=64):
+    """
+    Generates a random hash of the specified length.
+
+    :param length: Length of the hexadecimal hash string (default is 64).
+    :return: A random hash as a string.
+    """
+    if length % 2 != 0:
+        raise ValueError("Length must be an even number to generate a valid hexadecimal string.")
+    
+    # Generate a random sequence of bytes
+    random_bytes = os.urandom(length // 2)  # Divide by 2 because each byte is two hex characters
+    
+    # Convert to a hexadecimal hash
+    random_hash = hashlib.sha256(random_bytes).hexdigest()
+    
+    # Return the hash truncated to the desired length
+    return random_hash[:length]
+
+
 def save_json_to_file(data, folder_path='output_folder'):
     """Save JSON data to a file with a random hash filename in the specified folder."""
     # Ensure the folder exists
