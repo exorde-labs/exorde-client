@@ -51,6 +51,18 @@
                      "language":{
                         "description":"ISO639-1 language code that consists of two lowercase letters",
                         "type":"string"
+                     },
+                     "username": {
+                        "description": "Username of the author (clear text)",
+                        "type": "string"
+                     },
+                     "userprofile_url": {
+                        "description": "URL of the user profile (optional)",
+                        "type": "string"
+                     },
+                     "location": {
+                        "description": "Location of the author (string text)",
+                        "type": "string"
                      }
                   },
                   "required":[
@@ -361,3 +373,4 @@
       "kind"
    ]
 }
+
