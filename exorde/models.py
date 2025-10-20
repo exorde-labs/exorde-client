@@ -23,6 +23,10 @@ from dataclasses import dataclass
 from typing import Dict, List, Union
 
 
+# ============================================================
+# ---------------------- CONFIGURATION ------------------------
+# ============================================================
+
 @dataclass
 class Ponderation:
     enabled_modules: Dict[str, List[str]]
@@ -33,15 +37,17 @@ class Ponderation:
     new_keyword_alg: int  # weight for #986
 
 
+# ============================================================
+# ------------------------ TYPES ------------------------------
+# ============================================================
+
 class Translated(str, metaclass=MadType):
     description = "The content translated in English language"
     annotation = str
 
 
 class Language(str, metaclass=MadType):
-    description = (
-        "ISO639-1 language code that consists of two lowercase letters"
-    )
+    description = "ISO639-1 language code that consists of two lowercase letters"
     annotation = str
 
 
@@ -66,18 +72,22 @@ class TopKeywords(dict, metaclass=MadType):
 
 
 class Classification(dict, metaclass=MadType):
-    description = "label and score of zero_shot"
+    description = "Label and score of zero_shot"
     score: float
     label: str
 
 
 class Sentiment(float, metaclass=MadType):
-    description = "Measure of post sentiment from negative to positive (-1 = negative, +1 = positive, 0 = neutral)"
+    description = (
+        "Measure of post sentiment from negative to positive (-1 = negative, +1 = positive, 0 = neutral)"
+    )
     annotation = float
 
 
 class Embedding(list, metaclass=MadType):
-    description = "Vector/numerical representation of the translated content (field: translation), produced by a NLP encoder model"
+    description = (
+        "Vector/numerical representation of the translated content (field: translation), produced by a NLP encoder model"
+    )
     annotation = list[float]
 
 
@@ -164,6 +174,10 @@ class Analysis(dict, metaclass=MadType):
     age: Age
 
 
+# ============================================================
+# --------------------- CONFIGURATION -------------------------
+# ============================================================
+
 class StaticConfiguration(dict):
     main_address: str
     worker_account: LocalAccount
@@ -182,8 +196,6 @@ class LiveConfiguration(dict):
     Configuration is not a MadType because we do not want to break the
     configuration instantiation if a key is not defined in the python
     code.
-    ! it therfor requires a manual checking ; what happens when the user
-    is unable to reach the configuration but the protocol is still online ?
     """
 
     remote_kill: bool
@@ -201,6 +213,10 @@ class LiveConfiguration(dict):
     last_notification: str
 
 
+# ============================================================
+# -------------------- PROCESSING TYPES -----------------------
+# ============================================================
+
 class Processed(dict, metaclass=MadType):
     translation: Translation
     raw_content: Content
@@ -216,9 +232,7 @@ class CollectedAt(str, metaclass=MadType):
 
 
 class CollectionClientVersion(str, metaclass=MadType):
-    description = (
-        "Client identifier with version of the client that collected the item."
-    )
+    description = "Client identifier with version of the client that collected the item."
     annotation = str
 
 
@@ -227,27 +241,42 @@ class CollectionModule(str, metaclass=MadType):
     annotation = str
 
 
+class Username(str, metaclass=MadType):
+    description = "The display name or handle of the author"
+    annotation = str
+
+
+class UserProfileUrl(str, metaclass=MadType):
+    description = "URL to the author's profile or page"
+    annotation = str
+
+
 class BatchKindEnum(Enum):
     SPOTTING = "SPOTTING"
     VALIDATION = "VALIDATION"
 
 
+# ============================================================
+# ------------------- MAIN PROTOCOL TYPES ---------------------
+# ============================================================
+
 class ProtocolItem(dict, metaclass=MadType):
-    """Created by a scraping module, it represent a post, article, comment..."""
+    """Created by a scraping module, it represents a post, article, comment..."""
 
     created_at: CreatedAt
-    title: Optional[Title]  # titre obligatoire si pas de contenu
+    title: Optional[Title]  # title required if no content
     raw_content: Optional[Content]
     translated_content: Optional[Content]
-    summary: Optional[Summary]  # <- description or summary available
+    summary: Optional[Summary]
     picture: Optional[Url]
     author: Optional[Author]
+    username: Optional[Username]  # 👈 NEW FIELD
+    userprofile_url: Optional[UserProfileUrl]  # 👈 NEW FIELD
     external_id: Optional[ExternalId]
     external_parent_id: Optional[ExternalParentId]
     domain: Domain
     url: Url
     language: Language
-    # type: Type # work in progress
 
     def is_valid(self, **kwargs) -> bool:
         """object is valid if we either have content or title"""
