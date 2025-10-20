@@ -7,7 +7,6 @@ import os
 import argparse
 import asyncio
 from exorde.models import LiveConfiguration, StaticConfiguration
-from web3 import Web3
 from exorde.self_update import self_update
 from exorde.counter import AsyncItemCounter
 from exorde.web import setup_web
@@ -56,11 +55,7 @@ async def run_job(
 async def main(command_line_arguments: argparse.Namespace):
     websocket_send = await setup_web(command_line_arguments)
     counter: AsyncItemCounter = AsyncItemCounter()
-
-    if not Web3.is_address(command_line_arguments.main_address):
-        logging.error("The provided address is not a valid Web3 address")
-        os._exit(1)
-
+    
     live_configuration: LiveConfiguration = await update_live_configuration()
 
     static_configuration: StaticConfiguration = await get_static_configuration(
