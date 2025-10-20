@@ -255,6 +255,7 @@ async def spotting(
         
         # Serialize processed_batch as-is (same as upload_to_ipfs did)
         batch_json = json.dumps(processed_batch, cls=EnumEncoder)
+        batch_dict = json.loads(batch_json)  # Parse once for both uses
         
         # Get MAIN_ADDRESS from command line args
         main_address = command_line_arguments.main_address
@@ -269,21 +270,40 @@ async def spotting(
         async with aiohttp.ClientSession() as session:
             async with session.post(
                 "http://upload.exorde.network/v1/upload",
-                data=form,  # ✅ FormData instead of raw JSON
-                headers={
-                    "MAIN_ADDRESS": main_address
-                    # Don't set Content-Type - FormData sets it automatically with boundary
-                },
+                data=form,
+                headers={"MAIN_ADDRESS": main_address},
                 timeout=aiohttp.ClientTimeout(total=60)
             ) as resp:
                 if resp.status == 200:
                     response_data = await resp.json()
-                    item_count = response_data.get("total_items", len(processed_batch.items))
                     
-                    logging.info(f"Successfully submitted batch ({item_count} items) via HTTP")
+                    # Log full API response
+                    logging.info(f"[API Response] {json.dumps(response_data, indent=2)}")
                     
-                    # Parse to dict for count_rep_for_each_domain
-                    batch_dict = json.loads(batch_json)
+                    # Extract metrics
+                    total_items = response_data.get("total_items", 0)
+                    filtered_items = response_data.get("filtered_items", 0)
+                    rejected_items = response_data.get("rejected_items", 0)
+                    duplicate_items = response_data.get("duplicate_items", 0)
+                    file_id = response_data.get("file_id", "unknown")
+                    processing_ms = response_data.get("processing_time_ms", 0)
+                    
+                    # Calculate submitted count
+                    submitted_count = len(batch_dict.get("items", []))
+                    
+                    # Detailed logging
+                    logging.info(
+                        f"✅ Batch uploaded successfully:\n"
+                        f"  File ID: {file_id}\n"
+                        f"  Submitted: {submitted_count} items\n"
+                        f"  Total processed: {total_items} items\n"
+                        f"  Accepted (filtered): {filtered_items} items\n"
+                        f"  Rejected: {rejected_items} items\n"
+                        f"  Duplicates: {duplicate_items} items\n"
+                        f"  API processing time: {processing_ms}ms"
+                    )
+                    
+                    # Count rep for each domain using filtered items
                     await count_rep_for_each_domain(counter, batch_dict)
                     
                     await websocket_send({
@@ -292,17 +312,21 @@ async def spotting(
                                 "steps": {
                                     "http_submit": {
                                         "end": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                                        "count": item_count
+                                        "submitted": submitted_count,
+                                        "accepted": filtered_items,
+                                        "rejected": rejected_items,
+                                        "duplicates": duplicate_items,
+                                        "file_id": file_id
                                     }
                                 },
-                                "new_items_collected": item_count
+                                "new_items_collected": filtered_items  # Use filtered count
                             }
                         }
                     })
                     
                 else:
                     error_text = await resp.text()
-                    logging.error(f"API submission failed: {resp.status} - {error_text}")
+                    logging.error(f"❌ API submission failed: HTTP {resp.status}\n{error_text}")
                     await websocket_send({
                         "jobs": {
                             spotting_identifier: {
