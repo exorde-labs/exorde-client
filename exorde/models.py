@@ -12,6 +12,8 @@ from exorde_data import (
     Author,
     ExternalId,
     ExternalParentId,
+    Username,
+    UserProfileUrl,
     Domain,
     Content,
     Item
@@ -234,6 +236,8 @@ class ProtocolItem(dict, metaclass=MadType):
     summary: Optional[Summary]  # <- description or summary available
     picture: Optional[Url]
     author: Optional[Author]
+    username: Optional[Username]
+    userprofile_url: Optional[UserProfileUrl]
     external_id: Optional[ExternalId]
     external_parent_id: Optional[ExternalParentId]
     domain: Domain
