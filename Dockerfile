@@ -29,7 +29,10 @@ WORKDIR /exorde
 ## INSTALL ALL MODELS: hugginface, langdetect, spacy
 RUN mkdir -p /tmp/fasttext-langdetect
 RUN wget -O /tmp/fasttext-langdetect/lid.176.bin https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin
-RUN python3.10 -m spacy download en_core_web_trf
+
+# FIX: Use direct URL install instead of spacy download
+RUN python3.10 -m pip install https://github.com/explosion/spacy-models/releases/download/en_core_web_trf-3.5.0/en_core_web_trf-3.5.0-py3-none-any.whl
+
 RUN python3.10 exorde_install_models.py
 
 ## INSTALL THE APP
