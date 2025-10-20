@@ -16,7 +16,6 @@ from exorde.get_static_configuration import get_static_configuration
 from exorde.update_live_configuration import update_live_configuration
 from exorde.log_user_rep import log_user_rep
 from exorde.arguments import setup_arguments
-from exorde.verify_balance import verify_balance
 
 import logging
 from typing import Callable
@@ -60,13 +59,6 @@ async def main(command_line_arguments: argparse.Namespace):
 
     static_configuration: StaticConfiguration = await get_static_configuration(
         command_line_arguments, live_configuration
-    )
-    logging.info(
-        f"Worker-Address is : {static_configuration['worker_account'].address}"
-    )
-
-    await verify_balance(
-        static_configuration, live_configuration, command_line_arguments
     )
 
     # this import takes a long time
@@ -113,3 +105,4 @@ if __name__ == "__main__":
         "\n****************\nExorde Client starting...\n********************\n"
     )
     run()
+
