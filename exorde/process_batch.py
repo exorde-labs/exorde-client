@@ -293,6 +293,11 @@ async def process_batch(
             prot_item.external_id = processed.item.external_id
         if processed.item.external_parent_id:
             prot_item.external_parent_id = processed.item.external_parent_id
+        if hasattr(processed.item, 'username') and processed.item.username:
+            prot_item.username = processed.item.username
+        if hasattr(processed.item, 'userprofile_url') and processed.item.userprofile_url:
+            prot_item.userprofile_url = processed.item.userprofile_url
+
         completed: ProcessedItem = ProcessedItem(
             item=prot_item,
             analysis=ProtocolAnalysis(
@@ -324,3 +329,4 @@ async def process_batch(
             aggregated.append(merged_)
     result_batch: Batch = Batch(items=aggregated, kind=BatchKindEnum.SPOTTING)
     return result_batch
+
