@@ -273,9 +273,9 @@ async def spotting(
             ) as resp:
                 if resp.status == 200:
                     response_data = await resp.json()
-                    item_count = response_data.get("item_count", len(processed_batch.items))
+                    item_count = response_data.get("filtered_items", len(processed_batch.items))
                     
-                    logging.info(f"Successfully submitted batch ({item_count} items) via HTTP")
+                    logging.info(f"Successfully submitted batch ({item_count} filtered items) via HTTP")
                     
                     # Parse to dict for count_rep_for_each_domain
                     batch_dict = json.loads(batch_json)
