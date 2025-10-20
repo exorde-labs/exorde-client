@@ -237,7 +237,6 @@ async def spotting(
         )
         logging.exception("An error occured during batch processing")
         return
-    
     # HTTP POST submission (replaces IPFS + blockchain)
     try:
         await websocket_send(
@@ -260,22 +259,28 @@ async def spotting(
         # Get MAIN_ADDRESS from command line args
         main_address = command_line_arguments.main_address
         
+        # Create FormData with file field (API expects multipart/form-data)
+        form = aiohttp.FormData()
+        form.add_field('file', batch_json, 
+                       filename=f'batch_{spotting_identifier}.json',
+                       content_type='application/json')
+        
         # POST to API
         async with aiohttp.ClientSession() as session:
             async with session.post(
                 "http://upload.exorde.network/v1/upload",
-                data=batch_json,
+                data=form,  # ✅ FormData instead of raw JSON
                 headers={
-                    "MAIN_ADDRESS": main_address,
-                    "Content-Type": "application/json"
+                    "MAIN_ADDRESS": main_address
+                    # Don't set Content-Type - FormData sets it automatically with boundary
                 },
                 timeout=aiohttp.ClientTimeout(total=60)
             ) as resp:
                 if resp.status == 200:
                     response_data = await resp.json()
-                    item_count = response_data.get("filtered_items", len(processed_batch.items))
+                    item_count = response_data.get("total_items", len(processed_batch.items))
                     
-                    logging.info(f"Successfully submitted batch ({item_count} filtered items) via HTTP")
+                    logging.info(f"Successfully submitted batch ({item_count} items) via HTTP")
                     
                     # Parse to dict for count_rep_for_each_domain
                     batch_dict = json.loads(batch_json)
@@ -311,7 +316,7 @@ async def spotting(
                         }
                     })
                     return
-
+    
     except Exception as e:
         logging.exception("An error occurred during HTTP submission")
         traceback_list = traceback.format_exception(type(e), e, e.__traceback__)
@@ -336,5 +341,5 @@ async def spotting(
             }
         })
         return
-
+    
     logging.info("+ Batch submitted successfully via HTTP POST")
