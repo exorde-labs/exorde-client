@@ -30,7 +30,7 @@ from exorde.models import (
     Analysis
 )
 from exorde_data import Url, Content
-
+from exorde_data import Username, UserProfileUrl
 from exorde.tag import tag
 from collections import Counter
 
@@ -293,10 +293,15 @@ async def process_batch(
             prot_item.external_id = processed.item.external_id
         if processed.item.external_parent_id:
             prot_item.external_parent_id = processed.item.external_parent_id
+        # Pass through username if present
         if hasattr(processed.item, 'username') and processed.item.username:
-            prot_item.username = processed.item.username
+            prot_item.username = Username(processed.item.username)
+            
+        # Pass through userprofile_url if present (future use)
         if hasattr(processed.item, 'userprofile_url') and processed.item.userprofile_url:
-            prot_item.userprofile_url = processed.item.userprofile_url
+            prot_item.userprofile_url = UserProfileUrl(processed.item.userprofile_url)
+        
+
 
         completed: ProcessedItem = ProcessedItem(
             item=prot_item,
@@ -329,4 +334,5 @@ async def process_batch(
             aggregated.append(merged_)
     result_batch: Batch = Batch(items=aggregated, kind=BatchKindEnum.SPOTTING)
     return result_batch
+
 
