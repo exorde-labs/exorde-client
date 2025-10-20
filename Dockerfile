@@ -11,6 +11,7 @@ RUN apt-get update \
 RUN apt-get update && apt-get install -y libhdf5-dev
 
 RUN pip3.10 install --no-cache-dir \
+        scikit-learn==1.2.2 \
         'git+https://github.com/exorde-labs/exorde_data.git' \
         'git+https://github.com/exorde-labs/exorde-client.git'\
         selenium==4.2.0 \
