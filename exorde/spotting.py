@@ -260,6 +260,29 @@ async def spotting(
         # Get MAIN_ADDRESS from command line args
         main_address = command_line_arguments.main_address
         
+        # Log what we're sending (structure + sample)
+        items = batch_dict.get("items", [])
+        logging.info(f"[Batch Payload] Preparing to send {len(items)} items")
+        logging.info(f"[Batch Payload] Root keys: {list(batch_dict.keys())}")
+        
+        if items:
+            # Log first item structure
+            first_item = items[0]
+            logging.info(f"[Batch Payload] First item keys: {list(first_item.keys())}")
+            
+            # Log detailed structure with truncated values
+            sample = {}
+            for key, value in first_item.items():
+                if isinstance(value, dict):
+                    sample[key] = {k: (str(v)[:50] + "..." if len(str(v)) > 50 else v) 
+                                  for k, v in value.items()}
+                elif isinstance(value, str) and len(value) > 100:
+                    sample[key] = value[:100] + "..."
+                else:
+                    sample[key] = value
+            
+            logging.info(f"[Batch Payload] Sample item structure:\n{json.dumps(sample, indent=2)}")
+        
         # Create FormData with file field (API expects multipart/form-data)
         form = aiohttp.FormData()
         form.add_field('file', batch_json, 
@@ -278,7 +301,7 @@ async def spotting(
                     response_data = await resp.json()
                     
                     # Log full API response
-                    logging.info(f"[API Response] {json.dumps(response_data, indent=2)}")
+                    logging.info(f"[API Response] Full response:\n{json.dumps(response_data, indent=2)}")
                     
                     # Extract metrics
                     total_items = response_data.get("total_items", 0)
@@ -289,7 +312,7 @@ async def spotting(
                     processing_ms = response_data.get("processing_time_ms", 0)
                     
                     # Calculate submitted count
-                    submitted_count = len(batch_dict.get("items", []))
+                    submitted_count = len(items)
                     
                     # Detailed logging
                     logging.info(
@@ -367,3 +390,4 @@ async def spotting(
         return
     
     logging.info("+ Batch submitted successfully via HTTP POST")
+
