@@ -14,7 +14,6 @@ from exorde.last_notification import last_notification
 from exorde.docker_version_notifier import docker_version_notifier
 from exorde.get_static_configuration import get_static_configuration
 from exorde.update_live_configuration import update_live_configuration
-from exorde.log_user_rep import log_user_rep
 from exorde.arguments import setup_arguments
 
 import logging
@@ -72,7 +71,6 @@ async def main(command_line_arguments: argparse.Namespace):
         if cursor == 10:
             cursor = 0
             if cursor % 3 == 0:
-                await log_user_rep(command_line_arguments)
                 await self_update()
                 live_configuration = await update_live_configuration()
             await docker_version_notifier(
@@ -105,4 +103,5 @@ if __name__ == "__main__":
         "\n****************\nExorde Client starting...\n********************\n"
     )
     run()
+
 
