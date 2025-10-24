@@ -30,6 +30,7 @@ from exorde.models import (
     Analysis
 )
 from exorde_data import Url, Content
+from exorde_data import ExternalId, ExternalParentId
 from exorde_data import Username, UserProfileUrl
 from exorde.tag import tag
 from collections import Counter
@@ -290,9 +291,17 @@ async def process_batch(
         if processed.item.author:
             prot_item.author = processed.item.author
         if processed.item.external_id:
-            prot_item.external_id = processed.item.external_id
+            if isinstance(processed.item.external_id, str):
+                prot_item.external_id = ExternalId(processed.item.external_id)
+            else:
+                prot_item.external_id = processed.item.external_id
+                
         if processed.item.external_parent_id:
-            prot_item.external_parent_id = processed.item.external_parent_id
+            if isinstance(processed.item.external_parent_id, str):
+                prot_item.external_parent_id = ExternalParentId(processed.item.external_parent_id)
+            else:
+                prot_item.external_parent_id = processed.item.external_parent_id
+
         # Pass through username if present
         if hasattr(processed.item, 'username') and processed.item.username:
             prot_item.username = Username(processed.item.username)
@@ -334,5 +343,3 @@ async def process_batch(
             aggregated.append(merged_)
     result_batch: Batch = Batch(items=aggregated, kind=BatchKindEnum.SPOTTING)
     return result_batch
-
-
