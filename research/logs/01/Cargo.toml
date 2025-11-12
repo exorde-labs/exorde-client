@@ -1,0 +1,13 @@
+[package]
+name = "exorde-nurse"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+tokio = { version = "1", features = ["full"] }
+native-tls = '0.2'
+tokio-native-tls = "0.3"
+serde = "1"
+serde_json = "1"

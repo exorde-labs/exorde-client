@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/home/r17/work/exorde/research/./consumer.py", line 74, in <module>
+    run(theship(profiles, 3))
+  File "/usr/lib/python3.10/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/home/r17/work/exorde/research/./consumer.py", line 68, in theship
+    await gather(*tasks, borg(result_queue))
+  File "/usr/lib/python3.10/asyncio/tasks.py", line 783, in gather
+    fut = _ensure_future(arg, loop=loop)
+  File "/usr/lib/python3.10/asyncio/tasks.py", line 630, in _ensure_future
+    raise TypeError('An asyncio.Future, a coroutine or an awaitable '
+TypeError: An asyncio.Future, a coroutine or an awaitable is required

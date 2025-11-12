@@ -1,1 +1,1 @@
-git pull origin web
+git pull origin staging

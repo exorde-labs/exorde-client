@@ -111,7 +111,8 @@ async def get_keywords():
         )
 
     # If execution reaches here, it means either fetch_keywords returned None
-    # or there was an error during processing the keywords. Attempt to return the keywords from the JSON file, if it exists.
+    # or there was an error during processing the keywords. 
+    # Attempt to return the keywords from the JSON file, if it exists.
     if os.path.exists(JSON_FILE_PATH):
         try:
             with open(JSON_FILE_PATH, "r", encoding="utf-8") as json_file:
@@ -220,6 +221,13 @@ async def default_choose_keyword():
 
 from exorde.create_error_identifier import create_error_identifier
 
+"""
+
+Notes:
+
+    - there is currently two formats of keywords used which are feature-flipped
+    and used interchangably ; both are being currently researched on
+"""
 
 async def choose_keyword(
     module_name: str,
@@ -229,6 +237,8 @@ async def choose_keyword(
 ) -> str:
     algorithm_choose_cursor = module_configuration.new_keyword_alg
     random_number = random.randint(0, 99)
+    alg = None
+    result = None
     if random_number <= algorithm_choose_cursor:
         try:
             await websocket_send(
@@ -242,9 +252,10 @@ async def choose_keyword(
                     }
                 }
             )
-            return await new_choose_keyword(
+            result = await new_choose_keyword(
                 module_name, module_configuration, websocket_send, intent_id
             )
+            alg = 'new'
         except Exception as e:
             traceback_list = traceback.format_exception(
                 type(e), e, e.__traceback__
@@ -276,7 +287,8 @@ async def choose_keyword(
                     },
                 }
             )
-            return await default_choose_keyword()
+            result = await default_choose_keyword()
+            alg = 'old'
     await websocket_send(
         {
             "intents": {
@@ -289,4 +301,6 @@ async def choose_keyword(
         }
     )
 
-    return await default_choose_keyword()
+    result = await default_choose_keyword()
+    alg = 'old'
+    return (result, alg)

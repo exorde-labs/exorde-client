@@ -2,6 +2,7 @@ import argparse
 import re
 import logging
 import os
+import sys
 
 
 def write_env(email, password, username, http_proxy=""):
@@ -54,6 +55,11 @@ def clear_env():
         with open(".env", "w") as f:
             f.write(content)
         logging.info("clear_env: .env file cleared.")
+
+
+def hide_stdout():
+    # Redirect stdout to os.devnull
+    sys.stdout = open(os.devnull, "w")
 
 
 def setup_arguments() -> argparse.Namespace:
@@ -119,7 +125,7 @@ def setup_arguments() -> argparse.Namespace:
         action="append",  # allow reuse of the option in the same run
         help="quota a domain per 24h (domain=amount)",
     )
-
+    parser.add_argument("--noout", action="store_true", help="Hide stdout")
     parser.add_argument(
         "-ntfy",
         "--ntfy",
@@ -164,6 +170,9 @@ def setup_arguments() -> argparse.Namespace:
     )
     args = parser.parse_args()
 
+    if args.noout:
+        hide_stdout()
+
     # Check that either all or none of Twitter arguments are provided
     args_list = [
         args.twitter_username,
@@ -197,7 +206,6 @@ def setup_arguments() -> argparse.Namespace:
             "[Init] No login arguments detected: using login-less scraping"
         )
         clear_env()
-
     command_line_arguments: argparse.Namespace = parser.parse_args()
     if len(command_line_arguments.notify_at) == 0:
         command_line_arguments.notify_at = [12, 19]
